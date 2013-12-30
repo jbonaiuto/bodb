@@ -8,7 +8,7 @@ from bodb.views.document import DocumentDetailView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
-class EditBOPMixin(BODBView):
+class EditBOPMixin():
     model = BOP
     form_class = BOPForm
     template_name = 'bodb/bop/bop_detail.html'

@@ -14,12 +14,15 @@ class UserMessageListView(BODBView):
         context['messages']=self.request.user.message_recipient_set.all()
         context['sent']=self.request.user.message_sender_set.all()
         context['helpPage']='BODB-Messaging'
-        context['ispopup']=('_popup' in self.request.GET)
+        context['ispopup']=('_popup' in request.GET)
         return context
 
+    def get(self, request, *args, **kwargs):
+        context=self.get_context(request)
+        return render(request, self.template_name, context)
+
     def post(self, request, *args, **kwargs):
-        self.request=request
-        context=self.get_context_data(**kwargs)
+        context=self.get_context(request)
         # for each selected message Id
         for msg_id in request.POST.getlist('message'):
             # load message
@@ -36,7 +39,7 @@ class UserMessageListView(BODBView):
         return render(request, self.template_name, context)
 
 
-class CreateUserMessageView(BODBView,CreateView):
+class CreateUserMessageView(CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'bodb/messaging/message_compose.html'
@@ -76,7 +79,7 @@ class CreateUserMessageView(BODBView,CreateView):
         return HttpResponseRedirect('/bodb/messages/')
 
 
-class ReadReplyUserMessageView(BODBView,UpdateView):
+class ReadReplyUserMessageView(UpdateView):
     model = Message
     form_class = MessageForm
     template_name = 'bodb/messaging/message_detail.html'

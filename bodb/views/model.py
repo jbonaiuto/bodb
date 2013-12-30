@@ -10,7 +10,7 @@ from bodb.views.document import DocumentDetailView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
-class EditModelMixin(BODBView):
+class EditModelMixin():
     model = Model
     form_class = ModelForm
     template_name = 'bodb/model/model_detail.html'
@@ -431,7 +431,7 @@ class ModelTaggedView(BODBView):
         return context
 
 
-class UpdateModuleView(BODBView,UpdateView):
+class UpdateModuleView(UpdateView):
     model = Module
     form_class = ModuleForm
     template_name = 'bodb/model/module_detail.html'
@@ -576,7 +576,7 @@ class SimilarModelView(JSONResponseMixin, BaseDetailView):
         return self.render_to_response(data)
 
 
-class BenchmarkModelView(BODBView):
+class BenchmarkModelView(TemplateView):
     template_name = 'bodb/model/model_benchmark.html'
 
     def post(self, request, *args, **kwargs):
@@ -671,7 +671,7 @@ class BenchmarkModelView(BODBView):
         return context
 
 
-class ReverseBenchmarkModelView(BODBView):
+class ReverseBenchmarkModelView(TemplateView):
     template_name = 'bodb/model/model_reverse_benchmark.html'
 
     def post(self, request, *args, **kwargs):

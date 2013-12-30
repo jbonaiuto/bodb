@@ -4,12 +4,12 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin
 from bodb.forms import BrainRegionRequestForm, BrainRegionRequestDenyForm, BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED
+from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord
 from bodb.search import runSEDCoordSearch
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
-class BrainRegionRequestListView(BODBView,ListView):
+class BrainRegionRequestListView(ListView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_list_view.html'
 
@@ -17,7 +17,7 @@ class BrainRegionRequestListView(BODBView,ListView):
         return BrainRegionRequest.objects.filter(user=self.request.user)
 
 
-class CreateBrainRegionRequestView(BODBView,CreateView):
+class CreateBrainRegionRequestView(CreateView):
     model=BrainRegionRequest
     form_class = BrainRegionRequestForm
     template_name = 'bodb/brainRegion/brain_region_request_detail.html'
@@ -49,7 +49,7 @@ class CheckBrainRegionRequestExistsView(JSONResponseMixin,BaseCreateView):
         return context
 
 
-class BrainRegionRequestDenyView(BODBView,UpdateView):
+class BrainRegionRequestDenyView(UpdateView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_deny.html'
     pk_url_kwarg='activation_key'
@@ -89,7 +89,7 @@ class BrainRegionRequestDenyView(BODBView,UpdateView):
         return self.render_to_response(context)
 
 
-class BrainRegionRequestApproveView(BODBView,CreateView):
+class BrainRegionRequestApproveView(CreateView):
     model=BrainRegion
     template_name = 'bodb/brainRegion/brain_region_request_approve.html'
     form_class = BrainRegionForm
@@ -133,7 +133,7 @@ class BrainRegionRequestApproveView(BODBView,CreateView):
         return redirect(self.get_success_url())
 
 
-class BrainRegionView(BODBView,DetailView):
+class BrainRegionView(DetailView):
     model = BrainRegion
     template_name='bodb/brainRegion/brain_region_view.html'
 
@@ -160,4 +160,17 @@ class BrainRegionView(BODBView,DetailView):
         context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
         context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
         context['helpPage']='BODB-View-BrainRegion'
+
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        context['selected_coord_ids']=[]
+
+        if user.is_authenticated() and not user.is_anonymous():
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+            for coord in selected_coords:
+                context['selected_coord_ids'].append(coord.sed_coordinate.id)
+
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return context

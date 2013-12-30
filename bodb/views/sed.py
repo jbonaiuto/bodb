@@ -13,7 +13,7 @@ from bodb.views.document import DocumentDetailView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
-class EditSEDMixin(BODBView):
+class EditSEDMixin():
     model = SED
     form_class = SEDForm
     template_name = 'bodb/sed/generic/generic_sed_detail.html'
@@ -218,7 +218,7 @@ class SEDDetailView(DocumentDetailView):
         return context
 
 
-class EditBrainImagingSEDMixin(BODBView):
+class EditBrainImagingSEDMixin():
     model=BrainImagingSED
     form_class=BrainImagingSEDForm
     template_name='bodb/sed/brain_imaging/brain_imaging_sed_detail.html'
@@ -589,7 +589,7 @@ class DeleteBrainImagingSEDView(DeleteView):
     success_url = '/bodb/index.html'
 
 
-class EditConnectivitySEDMixin(BODBView):
+class EditConnectivitySEDMixin():
     model = ConnectivitySED
     form_class = ConnectivitySEDForm
     template_name = 'bodb/sed/connectivity/connectivity_sed_detail.html'
@@ -695,7 +695,7 @@ class DeleteConnectivitySEDView(DeleteView):
     success_url = '/bodb/index.html'
 
 
-class EditERPSEDMixin(BODBView):
+class EditERPSEDMixin():
     model = ERPSED
     form_class = ERPSEDForm
     template_name = 'bodb/sed/erp/erp_sed_detail.html'

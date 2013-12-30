@@ -5,7 +5,7 @@ from bodb.models import Prediction, SSR, PredictionSSR
 from bodb.views.document import DocumentDetailView
 from bodb.views.main import BODBView
 
-class UpdatePredictionView(BODBView,UpdateView):
+class UpdatePredictionView(UpdateView):
     model = Prediction
     form_class = PredictionForm
     template_name = 'bodb/prediction/prediction_detail.html'

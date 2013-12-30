@@ -2,14 +2,14 @@ from django.views.generic.edit import BaseUpdateView
 import os
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import View, DeleteView
+from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord
 from bodb.views.main import BODBView
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
-class EditLiteratureMixin(BODBView):
+class EditLiteratureMixin():
     template_name = 'bodb/literature/literature_detail.html'
 
     def get_instances(self,request,id,literatureType):
@@ -215,10 +215,11 @@ class UpdateLiteratureView(EditLiteratureMixin,View):
         return journal,book,chapter,conference,thesis,unpublished,journal_authors,book_authors,chapter_authors,\
                conference_authors,thesis_authors,unpublished_authors
 
-class LiteratureDetailView(BODBView):
+class LiteratureDetailView(TemplateView):
     template_name = 'bodb/literature/literature_view.html'
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context=super(LiteratureDetailView,self).get_context_data(**kwargs)
         id = self.kwargs.get('pk', None)
 
         if Journal.objects.filter(id=id):
@@ -244,16 +245,11 @@ class LiteratureDetailView(BODBView):
         related_brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
 
         user=self.request.user
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-
-        context=super(LiteratureDetailView,self).get_context_data(**kwargs)
         context['literature']=literature
         context['literatureType']=literatureType
         context['related_brain_regions']=related_brain_regions
-        context['ispopup']=('_popup' in request.GET)
-        context['multiple']=('_multiple' in request.GET)
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['models']=Model.get_model_list(Model.get_literature_models(literature, user), user)
@@ -266,8 +262,20 @@ class LiteratureDetailView(BODBView):
         context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_literature_seds(literature,user), user)
         context['erp_seds']=SED.get_sed_list(ERPSED.get_literature_seds(literature, user), user)
 
-        # return Literature object to literature view template
-        return render(request, 'bodb/literature/literature_view.html', context)
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        context['selected_coord_ids']=[]
+
+        if user.is_authenticated() and not user.is_anonymous():
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+            for coord in selected_coords:
+                context['selected_coord_ids'].append(coord.sed_coordinate.id)
+
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
+        return context
 
 class DeleteLiteratureView(DeleteView):
     model=Literature

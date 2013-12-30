@@ -18,7 +18,7 @@ from uscbp.views import JSONResponseMixin
 workspace_permissions=['add_post','add_entry','remove_entry','add_coordinate_selection',
                        'change_coordinate_selection','delete_coordinate_selection']
 
-class WorkspaceListView(BODBView,ListView):
+class WorkspaceListView(ListView):
     template_name = 'bodb/workspace/workspace_list_view.html'
 
     def get_queryset(self):
@@ -112,7 +112,7 @@ class ActiveWorkspaceDetailView(View):
         return redirect(profile.active_workspace.get_absolute_url())
 
 
-class WorkspaceInvitationResponseView(BODBView):
+class WorkspaceInvitationResponseView(TemplateView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceInvitationResponseView,self).get_context_data(**kwargs)
         context['invitation']=get_object_or_404(WorkspaceInvitation,activation_key=context['activation_key'])
@@ -140,7 +140,7 @@ class WorkspaceInvitationResponseView(BODBView):
         return self.render_to_response(context)
 
 
-class EditWorkspaceMixin(BODBView):
+class EditWorkspaceMixin():
     model=Workspace
     form_class = WorkspaceForm
     template_name = 'bodb/workspace/workspace_detail.html'
@@ -312,6 +312,12 @@ class WorkspaceDetailView(BODBView,FormView):
                 coord_array['rCBF']=coord.sed_coordinate.rcbf.__float__()
             context['selected_coords'].append(coord_array)
 
+        # load selected coordinate Ids
+        selected_coord_ids=[]
+        for coord in selected_coord_objs:
+            selected_coord_ids.append(coord.sed_coordinate.id)
+        context['selected_coord_ids']=selected_coord_ids
+
         return context
 
 
@@ -347,7 +353,7 @@ class DeleteWorkspaceCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
         return super(DeleteWorkspaceCoordinateSelectionView,self).get_context_data(**kwargs)
 
 
-class WorkspaceUserDetailView(BODBView,DetailView):
+class WorkspaceUserDetailView(DetailView):
     model = User
     template_name = 'bodb/workspace/user_view.html'
 

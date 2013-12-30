@@ -9,7 +9,7 @@ from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
 
-class UpdateSSRView(BODBView,UpdateView):
+class UpdateSSRView(UpdateView):
     model = SSR
     form_class = SSRForm
     template_name = 'bodb/ssr/ssr_detail.html'
