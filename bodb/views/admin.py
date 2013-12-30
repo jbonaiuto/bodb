@@ -8,7 +8,6 @@ from django.views.generic import UpdateView, View, CreateView, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms import BodbProfileForm, SubscriptionFormSet, UserSubscriptionFormSet, UserForm, GroupForm
 from bodb.models import BodbProfile, Nomenclature
-from bodb.views.main import BODBView
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView
 from registration.models import User
@@ -39,7 +38,7 @@ def username_available(request):
     return HttpResponseServerError("Requires a username field.")
 
 
-class UpdateUserProfileView(BODBView, UpdateView):
+class UpdateUserProfileView(UpdateView):
     form_class = BodbProfileForm
     model = BodbProfile
     template_name = 'registration/profile_detail.html'
@@ -146,7 +145,7 @@ class EditUserMixin():
         return redirect(redirect_url)
 
 
-class CreateUserView(EditUserMixin,BODBView,CreateView):
+class CreateUserView(EditUserMixin,CreateView):
     action='add'
     helpPage='BODB-Insert-User'
 
@@ -163,7 +162,7 @@ class CreateUserView(EditUserMixin,BODBView,CreateView):
         return context
 
 
-class UpdateUserView(EditUserMixin,BODBView,UpdateView):
+class UpdateUserView(EditUserMixin,UpdateView):
     action='edit'
     helpPage='BODB-Edit-User'
 
@@ -180,7 +179,7 @@ class UpdateUserView(EditUserMixin,BODBView,UpdateView):
         return context
 
 
-class UserDetailView(BODBView,DetailView):
+class UserDetailView(DetailView):
     model = User
     template_name = 'bodb/admin/user_view.html'
 
@@ -263,7 +262,7 @@ class GetUserIconUrlView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class CreateGroupView(BODBView,CreateView):
+class CreateGroupView(CreateView):
     model = Group
     form_class = GroupForm
     template_name = 'bodb/admin/group_detail.html'
@@ -297,7 +296,7 @@ class CreateGroupView(BODBView,CreateView):
         return redirect(redirect_url)
 
 
-class UpdateGroupView(BODBView,UpdateView):
+class UpdateGroupView(UpdateView):
     model = Group
     form_class = GroupForm
     template_name = 'bodb/admin/group_detail.html'
@@ -331,7 +330,7 @@ class UpdateGroupView(BODBView,UpdateView):
         return redirect(redirect_url)
 
 
-class GroupDetailView(BODBView,DetailView):
+class GroupDetailView(DetailView):
     model = Group
     template_name = 'bodb/admin/group_view.html'
 
