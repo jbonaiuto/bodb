@@ -44,27 +44,29 @@
                 <td><span id="bop_{{ bop.id }}_message" name="bop_{{ bop.id }}_message" class="messages"></span></td>
             </tr>
         {% endfor %}
-        <tr class="col_header">
-            <td colspan="6">
-                Graph Generation Tool:&nbsp;
-                <select id="graphtool">
-                    <option value="dot">dot</option>
-                    <option value="neato">neato</option>
-                    <option value="fdp">fdp</option>
-                    <option value="sfdp">sfdp</option>
-                    <option value="twopi">twopi</option>
-                    <option value="circo">circo</option>
-                </select>&nbsp;
-                <a href="" onclick="return generateBOPDiagram(document.getElementById('graphtool').value,'{{ bopGraphId }}','{{ csrf_token }}');">Generate BOP Relationship Graph</a>
-            </td>
-        </tr>
-        <tr class="col_header">
-            <td colspan="6">
-                <img id="{{ bopGraphId }}" src="" usemap="#{{ bopGraphId }}Map"/>
-                <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
-                </map>
-                <br><span id="{{ bopGraphId }}Msg"></span>
-            </td>
-        </tr>
+        {% if not ispopup %}
+            <tr class="col_header">
+                <td colspan="6">
+                    Graph Generation Tool:&nbsp;
+                    <select id="graphtool">
+                        <option value="dot">dot</option>
+                        <option value="neato">neato</option>
+                        <option value="fdp">fdp</option>
+                        <option value="sfdp">sfdp</option>
+                        <option value="twopi">twopi</option>
+                        <option value="circo">circo</option>
+                    </select>&nbsp;
+                    <a href="" onclick="return generateBOPDiagram(document.getElementById('graphtool').value,'{{ bopGraphId }}','{{ csrf_token }}');">Generate BOP Relationship Graph</a>
+                </td>
+            </tr>
+            <tr class="col_header">
+                <td colspan="6">
+                    <img id="{{ bopGraphId }}" src="" usemap="#{{ bopGraphId }}Map"/>
+                    <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
+                    </map>
+                    <br><span id="{{ bopGraphId }}Msg"></span>
+                </td>
+            </tr>
+        {% endif %}
     </table>
 {% endif %}
