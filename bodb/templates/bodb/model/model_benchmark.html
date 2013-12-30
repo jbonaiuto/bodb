@@ -1,0 +1,42 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Model Benchmarking</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Model Benchmarking</h2>
+        <table class="tab_panel">
+            <tr>
+                <td width={{ col_width }}%>&nbsp;</td>
+                <td colspan={{ selected_models|length }} align=center><h3>Models</h3></td>
+            </tr>
+            <tr>
+                <td align=center><h3>SEDs</h3></td>
+                {% for model in selected_models %}
+                    <td class="col_header" align=center width={{ col_width }}%><a href="/bodb/model/{{model.id}}/">{{ model }}</a></td>
+                {% endfor %}
+            </tr>
+            {% for attr_row,sed in params %}
+                <tr class={% cycle "even_row" "odd_row" %} valign=top>
+                    <td><a href="/bodb/sed/{{sed.id}}/">{{ sed.title }}</a></td>
+                    {% autoescape off %}
+                        {% for attr, label, link in attr_row %}
+                            <td {{attr}}><strong>{% if link %}<a href="{{ link }}">{% endif %}{{ label }}{% if link %}</a>{% endif %}</strong></td>
+                        {% endfor %}
+                    {% endautoescape %}
+                </tr>
+            {% endfor %}
+            <tr class="col_header">
+                <td width=20%>Score=Support+Explanations-Contradictions</td>
+                {% for score in scores %}
+                    <td align=center>{{ score }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+        <br>
+        <input class="btn" type="button" value="RTF report" onclick="document.getElementById('reportForm').action='/bodb/model/benchmark/report/rtf/';document.getElementById('reportForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        <input class="btn" type="button" value="PDF report" onclick="document.getElementById('reportForm').action='/bodb/model/benchmark/report/pdf/';document.getElementById('reportForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    </div>
+    <form id="reportForm" name="reportForm" action="/bodb/model/benchmark/report/rtf/" method="post">
+    </form>
+{% endblock %}

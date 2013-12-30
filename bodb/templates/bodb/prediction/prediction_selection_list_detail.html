@@ -1,0 +1,173 @@
+<div id="predictionData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="table_header">
+            <td colspan=3>
+                <a href="#" class="add-figure" onclick="return addInlineForm('predictions','prediction','prediction');">Add new</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:150px">Title*</td>
+            <td>Description*</td>
+        </tr>
+        <tr>
+            <td colspan=3>
+                {{ prediction_formset.management_form }}
+                <div class="myerrors">
+                    {{ prediction_formset.management_form.errors }}
+                </div>
+                <div id="predictions">
+                    {% for prediction_form in prediction_formset.forms %}
+                        <div id="prediction-{{ forloop.counter0 }}" name="prediction">
+                            <input type=hidden id="id_prediction-{{ forloop.counter0 }}-DELETE" name="prediction-{{ forloop.counter0 }}-DELETE"/>
+                            {{ prediction_form.id }}
+                            {{ prediction_form.document_ptr }}
+                            {{ prediction_form.model }}
+                            {{ prediction_form.collator }}
+                            {{ prediction_form.draft }}
+                            {{ prediction_form.public }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:120px">
+                                        <a href="" onclick="return deleteInlineForm('prediction', {{ forloop.counter0 }});">Remove</a>&nbsp;
+                                    </td>
+                                    <td style="width:150px">
+                                        {{ prediction_form.title }}
+                                    </td>
+                                    <td>
+                                        {{ prediction_form.brief_description }}
+                                    </td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:120px">&nbsp;</td>
+                                    <td class="table_header" colspan=2>SSR</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td colspan=3>
+                                        <table class="tab_panel">
+                                            <tr>
+                                                <td style="width:120px">&nbsp;</td>
+                                                <td class="col_header" style="width:150px"><i>Title*</i></td>
+                                                <td class="col_header"><i>Description</i>*</td>
+                                            </tr>
+                                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                                <td colspan=4>
+                                                    {{ prediction_form.nested.management_form }}
+                                                    <div class="myerrors">
+                                                        {{ prediction_form.nested.management_form.errors }}
+                                                    </div>
+                                                    <div id="prediction-{{ forloop.counter0 }}-ssrs">
+                                                        {% for predictionssr_form in prediction_form.nested.forms %}
+                                                            <div id="prediction-{{ forloop.parentloop.counter0 }}-ssr-{{ forloop.counter0 }}" name="prediction-{{ forloop.parentloop.counter0 }}-ssr">
+                                                                {{ predictionssr_form.id }}
+                                                                {{ predictionssr_form.prediction }}
+                                                                {{ predictionssr_form.ssr }}
+                                                                {{ predictionssr_form.ssr_collator }}
+                                                                {{ predictionssr_form.ssr_draft }}
+                                                                {{ predictionssr_form.ssr_public }}
+                                                                <table class="tab_panel">
+                                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                        <td style="width:120px">&nbsp;</td>
+                                                                        <td style="width:150px">
+                                                                            {{ predictionssr_form.ssr_title }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ predictionssr_form.ssr_brief_description }}
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                                <div class="myerrors">
+                                                                    {{ predictionssr_form.errors }}
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="myerrors">
+                                {{ prediction_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="prediction-template">
+    <div id="prediction-<%= id %>" name="prediction">
+        <input type=hidden id="id_prediction-<%= id %>-DELETE" name="prediction-<%= id %>-DELETE"/>
+        <input id="id_prediction-<%= id %>-model" name="prediction-<%= id %>-model" type="hidden" />
+        <input id="id_prediction-<%= id %>-collator" name="prediction-<%= id %>-collator" type="hidden" />
+        <input id="id_prediction-<%= id %>-draft" name="prediction-<%= id %>-draft" type="hidden" />
+        <input id="id_prediction-<%= id %>-public" name="prediction-<%= id %>-public" type="hidden" />
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:120px">
+                    <a href="" onclick="return deleteInlineForm('prediction', <%= id %>);">Remove</a>&nbsp;
+                </td>
+                <td style="width:150px">
+                    <input id="id_prediction-<%= id %>-title" name="prediction-<%= id %>-title" size="13" type="text" />
+                </td>
+                <td>
+                    <textarea cols="50" id="id_prediction-<%= id %>-brief_description" name="prediction-<%= id %>-brief_description" rows="3">
+                    </textarea>
+                </td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:120px">&nbsp;</td>
+                <td class="table_header" colspan=2>SSR</td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>">
+                <td colspan=3>
+                    <table class="tab_panel">
+                        <tr>
+                            <td style="width:120px">&nbsp;</td>
+                            <td class="col_header" style="width:150px"><i>Title*</i></td>
+                            <td class="col_header"><i>Description</i>*</td>
+                        </tr>
+                        <tr class="<%= getTRTag(id) %>">
+                            <td colspan=4>
+                                <input id="id_prediction-<%= id %>-predictionssr_set-TOTAL_FORMS" name="prediction-<%= id %>-predictionssr_set-TOTAL_FORMS" type="hidden" value="1" />
+                                <input id="id_prediction-<%= id %>-predictionssr_set-INITIAL_FORMS" name="prediction-<%= id %>-predictionssr_set-INITIAL_FORMS" type="hidden" value="0" />
+                                <input id="id_prediction-<%= id %>-predictionssr_set-MAX_NUM_FORMS" name="prediction-<%= id %>-predictionssr_set-MAX_NUM_FORMS" type="hidden" value="1" />
+                                <div class="myerrors">
+                                </div>
+                                <div id="prediction-<%= id %>-ssrs">
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-id" name="prediction-<%= id %>-predictionssr_set-0-id" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-prediction" name="prediction-<%= id %>-predictionssr_set-0-prediction" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr" name="prediction-<%= id %>-predictionssr_set-0-ssr" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_collator" name="prediction-<%= id %>-predictionssr_set-0-ssr_collator" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_draft" name="prediction-<%= id %>-predictionssr_set-0-ssr_draft" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_public" name="prediction-<%= id %>-predictionssr_set-0-ssr_public" type="hidden" />
+                                    <table class="tab_panel">
+                                        <tr class="<%= getTRTag(id) %>" valign=top>
+                                            <td style="width:120px">&nbsp;</td>
+                                            <td style="width:150px">
+                                                <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_title" name="prediction-<%= id %>-predictionssr_set-0-ssr_title" size="13" type="text" />
+                                            </td>
+                                            <td>
+                                                <textarea cols="50" id="id_prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" name="prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" rows="3">
+                                                </textarea>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="myerrors">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+        </div>
+    </div>
+</script>

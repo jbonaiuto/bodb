@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Tagged BOPs</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Brain Operating Principles (BOPs) Tagged with: <a href="/bodb/tag/{{ tag }}/">{{ tag }}</a></h2>
+        <table class="tab_panel">
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <tr>
+                    <td>
+                        <a href="#" onclick="return showPopup('new_bop_subscription', 400, 200, '/bodb/subscription/new/?_popup=1&type=BOP&keywords={{ tag }}');"><strong>Add subscription</strong></a> - be notified when BOPs containing this tag are entered
+                    </td>
+                </tr>
+            {% endif %}
+            {% if perms.bodb.add_bop %}
+                <tr class="table_header">
+                    <td>
+                        <a href="/bodb/bop/new/">Add new BOP</a>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>
+                    {% with tagged_items as bops %}
+                        {% include "bodb/bop/bop_selection_list_view.html" %}
+                    {% endwith %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

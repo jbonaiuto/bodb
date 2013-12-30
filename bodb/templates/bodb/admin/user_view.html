@@ -1,0 +1,99 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - View {{ object.username }} User</title>
+    <script type="text/javascript">
+        {% if action == 'add' %}
+            opener.addUser({{ object.id }},'{{ object.username }}',{% if object.is_active %}true{% else %}false{% endif %},
+                    {% if object.is_staff %}true{% else %}false{% endif %},
+                    {% if object.is_superuser %}true{% else %}false{% endif %},
+                    '{% for group in object.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    '{{ object.first_name }} {{ object.last_name }}','{{ object.email }}');
+        {% elif action == 'edit' %}
+            opener.updateUser({{ object.id }},'{{ object.username }}',{% if object.is_active %}true{% else %}false{% endif %},
+                    {% if object.is_staff %}true{% else %}false{% endif %},
+                    {% if object.is_superuser %}true{% else %}false{% endif %},
+                    '{% for group in object.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    '{{ object.first_name }} {{ object.last_name }}','{{ object.email }}');
+        {% endif %}
+        animatedcollapse.addDiv('permissionsData', 'fade=1');
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>{{ object.username }}</h2>
+        <table class="tab_panel">
+            <tr>
+                <td colspan=2>
+                    <div id="user_info">
+                        [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
+                    </div>
+                </td>
+            </tr>
+            <tr valign=top>
+                <td width=40%><strong>Username:</strong></td>
+                <td>{{ object.username }}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>First name:</strong></td>
+                <td>{{ object.first_name }}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Last name:</strong></td>
+                <td>{{ object.last_name }}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Email:</strong></td>
+                <td>{{ object.email }}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Active:</strong></td>
+                <td>{% if object.is_active %}&nbsp;&nbsp;x{% endif %}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Staff status:</strong></td>
+                <td>{% if object.is_staff %}&nbsp;&nbsp;x{% endif %}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Admin status:</strong></td>
+                <td>{% if object.is_superuser %}&nbsp;&nbsp;x{% endif %}</td>
+            </tr>
+            <tr valign=top>
+                <td><strong>Groups:</strong></td>
+                {% for group in object.groups.all %}
+                    {% if forloop.first %}
+                        <td>{{ group.name }}</td>
+                        </tr>
+                    {% else %}
+                        <tr valign=top>
+                            <td></td>
+                            <td>{{ group.name }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=2>
+                    Permissions (<a href="javascript:animatedcollapse.toggle('permissionsData')"><span id="permissionsDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    {% include "bodb/admin/permissions_view.html" %}
+                </td>
+            </tr>
+        </table>
+        <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/user/{{object.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% if ispopup %}
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+    </div>
+{% endblock %}

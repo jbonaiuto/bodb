@@ -1,0 +1,77 @@
+<div id="permissionsData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:100px">&nbsp;</td>
+            <td style="width:200px">Insert</td>
+            <td style="width:200px">Save</td>
+            <td style="width:200px">Make public</td>
+            <td style="width:200px">Edit</td>
+            <td>Delete</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Literature</td>
+            <td><input type=checkbox name="add_literature" {% if add_literature %}checked{% endif %}/></td>
+            <td></td>
+            <td></td>
+            <td><input type=checkbox name="change_literature" {% if change_literature %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_literature" {% if delete_literature %}checked{% endif %}/></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Models</td>
+            <td><input type=checkbox name="add_model" {% if add_model %}checked{% endif %}/></td>
+            <td><input type=checkbox name="save_model" {% if save_model %}checked{% endif %}/></td>
+            <td><input type=checkbox name="public_model" {% if public_model %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_model" {% if change_model %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_model" {% if delete_model %}checked{% endif %}/></td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Modules</td>
+            <td><input type=checkbox name="add_module" {% if add_module %}checked{% endif %}/></td>
+            <td></td>
+            <td></td>
+            <td><input type=checkbox name="change_module" {% if change_module %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_module" {% if delete_module %}checked{% endif %}/></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>BOPs</td>
+            <td><input type=checkbox name="add_bop" {% if add_bop %}checked{% endif %}/></td>
+            <td><input type=checkbox name="save_bop" {% if save_bop %}checked{% endif %}/></td>
+            <td><input type=checkbox name="public_bop" {% if public_bop %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_bop" {% if change_bop %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_bop" {% if delete_bop %}checked{% endif %}/></td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>SEDs</td>
+            <td><input type=checkbox name="add_sed" {% if add_sed %}checked{% endif %}/></td>
+            <td><input type=checkbox name="save_sed" {% if save_sed %}checked{% endif %}/></td>
+            <td><input type=checkbox name="public_sed" {% if public_sed %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_sed" {% if change_sed %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_sed" {% if delete_sed %}checked{% endif %}/></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>SSRs</td>
+            <td><input type=checkbox name="add_ssr" {% if add_ssr %}checked{% endif %}/></td>
+            <td><input type=checkbox name="save_ssr" {% if save_ssr %}checked{% endif %}/></td>
+            <td><input type=checkbox name="public_ssr" {% if public_ssr %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_ssr" {% if change_ssr %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_ssr" {% if delete_ssr %}checked{% endif %}/></td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Predictions</td>
+            <td><input type=checkbox name="add_prediction" {% if add_prediction %}checked{% endif %}/></td>
+            <td><input type=checkbox name="save_prediction" {% if save_prediction %}checked{% endif %}/></td>
+            <td><input type=checkbox name="public_prediction" {% if public_prediction %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_prediction" {% if change_prediction %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_prediction" {% if delete_prediction %}checked{% endif %}/></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Nomenclatures</td>
+            <td><input type=checkbox name="add_nomenclature" {% if add_nomenclature %}checked{% endif %}/></td>
+            <td></td>
+            <td></td>
+            <td><input type=checkbox name="change_nomenclature" {% if change_nomenclature %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_nomenclature" {% if delete_nomenclature %}checked{% endif %}/></td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Add User Subscription</title>
+    <script type="text/javascript">
+        function submitForm()
+        {
+            var frm = $('#subscriptionForm');
+            $.ajax({
+                type: frm.attr('method'),
+                url: frm.attr('action'),
+                data: frm.serialize(),
+                success: function (data) {
+                    self.close();
+                },
+                error: function(data) {
+                    $("#errors").html("Something went wrong! Subscription not saved");
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Add User Subscription</h2>
+        <form id="subscriptionForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=30%>Subscribe To</td>
+                    <td>{{ subscribed_to_user }}</td>
+                </tr>
+                <tr valign=top>
+                    <td width=30%>Model Type</td>
+                    <td>{{ form.model_type }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>Keywords</td>
+                    <td>{{ form.keywords }}</td>
+                </tr>
+            </table>
+            <div class="myerrors">
+                {{ form.errors }}
+            </div>
+            <br>
+            {{ form.user }}
+            {{ form.subscribed_to_user }}
+            <input class="btn" type="button" value="Save" onclick="submitForm();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        </form>
+    </div>
+{% endblock %}

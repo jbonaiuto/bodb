@@ -1,0 +1,47 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Tagged SEDs</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Summaries of Experimental Data (SEDs) Tagged with: <a href="/bodb/tag/{{ tag }}/">{{ tag }}</a></h2>
+        <table class="tab_panel">
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <tr>
+                    <td>
+                        <a href="#" onclick="return showPopup('new_sed_subscription', 400, 200, '/bodb/subscription/new/?_popup=1&type=SED&keywords={{ tag }}');"><strong>Add subscription</strong></a> - be notified when SEDs containing this tag are entered
+                    </td>
+                </tr>
+            {% endif %}
+            {% if perms.bodb.add_sed %}
+                <tr class="table_header">
+                    <td>
+                        <a href="/bodb/sed/generic/new/">Add new generic SED</a>
+                    </td>
+                </tr>
+                <tr class="table_header">
+                    <td>
+                        <a href="/bodb/sed/imaging/new/">Add new imaging SED</a>
+                    </td>
+                </tr>
+                <tr class="table_header">
+                    <td>
+                        <a href="/bodb/sed/erp/new/">Add new ERP SED</a>
+                    </td>
+                </tr>
+                <tr class="table_header">
+                    <td>
+                        <a href="/bodb/sed/connectivity/new/">Add new Connectivity SED</a>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>
+                    {% include "bodb/sed/sed_selection_list_view.html" %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

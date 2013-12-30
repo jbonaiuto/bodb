@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T16:18:15+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('GC97') [LITID]&amp;Details=</HttpString>
+<SearchString>('GC97') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='GC97') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>GC97</ID>
+<Authors>
+<Author>
+<Initials>C</Initials>
+<LastName>Gutierrez</LastName>
+</Author>
+<Author>
+<Initials>CG</Initials>
+<LastName>Cusick</LastName>
+</Author>
+</Authors>
+<Title>Area V1 in macaque monkeys projects to multiple histochemically defined subdivisions of the inferior pulvinar complex</Title>
+<Year>1997</Year>
+<Journal>
+<JournalName>Brain Res.</JournalName>
+<Volume>765</Volume>
+<Pages>349-356</Pages>
+<PubMedID>9313911</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>GC97</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>GC97-LGN</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>LGN</Acronym>
+<FullName>dorsal Lateral geniculate nucleus</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PI</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PI</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PIc</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami, central subdivision</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PIl</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami, lateral subdivision</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl-s</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PIl-s</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami, shell of the lateral subdivision</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIm</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PIm</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami, pars medialis</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIp</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PIp</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami, posterior subdivision</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-Pul</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul</Acronym>
+<FullName>Nucleus pulvinaris thalami</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-V1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V1</Acronym>
+<FullName>Visual area 1</FullName>
+<DefType>A</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>GC97</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>FB</ID_Tracer>
+<FullName>Fast Blue</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>9 d</SurvivalTime>
+<Thickness_Sections>25 (thalamus), 40 (cortex)</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>GC97-V1</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>G</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.2</Volume>
+<Concentration>4%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p.351</TextPageNumber>
+<Quotation>&amp;quot;In one monkey, nine injections of 0.2 µl of 4% fast blue had been placed one week previously along the dorsal lip of the ectocalcarine sulcus, a location estimated to be in the upper quadrant close to the representation of the horizontal meridian.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIc</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl-s</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIp</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PL</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PLd</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm-c</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In the case of the fast blue injections (not shown), seperate patches of labeled neurons were observed in PIl and PIl-s but not in the other divisions.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>TAA</ID_Tracer>
+<FullName>Tritiated Amino Acids</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>false</Retrograde>
+<RadioactiveTracer>
+<TracerSubstance>[3H]-methionine</TracerSubstance>
+<Activity>200</Activity>
+<SpecificActivity>-</SpecificActivity>
+<Ratio>100</Ratio>
+</RadioactiveTracer>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>48 h</SurvivalTime>
+<Thickness_Sections>25 (thalamus), 40 (cortex)</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>GC97-V1</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.15</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;Fig.2: ... injections sites of ... 35S-Methionine into V1 of rhesus monkey TMT.&amp;quot; (legend to Fig.2)&amp;quot;The radiolabeled tracer appeared confined to V1 and did not produce callosal label.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIc</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>1</Degree>
+<PDC_Density>G</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl-s</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>G</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIp</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PL</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PLd</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm-c</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>WGA-HRP</ID_Tracer>
+<FullName>Horseradish peroxidase, conjugated to wheat germ agglutinin</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>48 h</SurvivalTime>
+<Thickness_Sections>25 (thalamus), 40 (cortex)</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>GC97-V1</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>2.4 - 3.3</Volume>
+<Concentration>0.5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;...injections sites of WGA-HRP ... into V1 of rhesus monkey TMT.&amp;quot; (legend to Fig. 2)&amp;quot;... the WGA-HRP deposits were centered approximately 2 mm caudal to the V1/V2 border, and the tracer approached but did not cross the V2 border.&amp;quot;</Quotation>
+<Comments>There was a light reaction product in the upper bank of the lunate sulcus. The authors state that it it appears unlikely to produce thalamic label.</Comments>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIc</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>1</Degree>
+<PDC_Density>G</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIl-s</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>G</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GC97-PIp</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GC97</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PL</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PLd</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PM</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMl</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>GCSC00-PMm-c</ID_BrainSite>
+<SiteType>Nucl_SubCtx_3D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>P</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>GCSC00</ID_Literature>
+<TextPageNumber>p. 353</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;In the two cases [GC97-cTMT-TAA and GC97-cTMT-WGA], similar correlations were found between chemoarchitectonic subdivisions and labeled connedtions with V1, and the illustrated case shows the main findings (Figs. 1-3). Striate cortex was found to connect with four of the histochemically distinct zones in PI. The largest zone was found within PIl... The lateral-shell zone contained thin patches of label... Dense patches of connections were found in PIm... A small focus of of lighter terminations occupied PIc. Projections to PIp were not observed.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

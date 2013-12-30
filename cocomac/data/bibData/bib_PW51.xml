@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T10:46:52+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('PW51') [LITID]&amp;Details=</HttpString>
+<SearchString>('PW51') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='PW51') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>PW51</ID>
+<Authors>
+<Author>
+<Initials>W</Initials>
+<LastName>Penfield</LastName>
+</Author>
+<Author>
+<Initials>K</Initials>
+<LastName>Welch</LastName>
+</Author>
+</Authors>
+<Title>The supplementary motor area of the cerebral cortex</Title>
+<Year>1951</Year>
+<Journal>
+<JournalName>Arch. Neurol. Psychiatry</JournalName>
+<Volume>66</Volume>
+<Pages>289-317</Pages>
+<PubMedID>0</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>PW51</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>PW51-SMA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA</Acronym>
+<FullName>Supplementary motor area</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

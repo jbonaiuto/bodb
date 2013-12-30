@@ -1,0 +1,36 @@
+digraph "connectivity-sed-map" {
+	graph [_gxl_hypergraph=false];
+	subgraph "24a_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"24a (MLR)"		 [URL="/bodb/brain_region/398/"];
+	}
+	subgraph F5_subgraph {
+		graph [_gxl_hypergraph=false];
+		"F5 (MLR)"		 [URL="/bodb/brain_region/5/"];
+		"F5 (CGMBOFal)"		 [URL="/bodb/brain_region/117/"];
+	}
+	subgraph "28a_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"28a (A)"		 [URL="/bodb/brain_region/6/"];
+	}
+	subgraph PMdr_subgraph {
+		graph [_gxl_hypergraph=false];
+		"PMdr (CGMBOFal)"		 [URL="/bodb/brain_region/126/"];
+	}
+	subgraph Co_subgraph {
+		graph [_gxl_hypergraph=false];
+		"Co (A)"		 [URL="/bodb/brain_region/16/"];
+	}
+	subgraph PMdc_subgraph {
+		graph [_gxl_hypergraph=false];
+		"PMdc (CGMBOFal)"		 [URL="/bodb/brain_region/125/"];
+	}
+	"24a (MLR)" -> "F5 (MLR)"	 [_gxl_id=89,
+		URL="/bodb/sed/89/"];
+	"F5 (CGMBOFal)" -> "PMdr (CGMBOFal)"	 [_gxl_id=9,
+		URL="/bodb/sed/9/"];
+	"F5 (CGMBOFal)" -> "PMdc (CGMBOFal)"	 [_gxl_id=10,
+		URL="/bodb/sed/10/"];
+	"28a (A)" -> "Co (A)"	 [_gxl_id=1567,
+		URL="/bodb/sed/1567/"];
+}

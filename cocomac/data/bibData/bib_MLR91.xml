@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T10:54:06+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('MLR91') [LITID]&amp;Details=</HttpString>
+<SearchString>('MLR91') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='MLR91') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>MLR91</ID>
+<Authors>
+<Author>
+<Initials>M</Initials>
+<LastName>Matelli</LastName>
+</Author>
+<Author>
+<Initials>G</Initials>
+<LastName>Luppino</LastName>
+</Author>
+<Author>
+<Initials>G</Initials>
+<LastName>Rizzolatti</LastName>
+</Author>
+</Authors>
+<Title>Architecture of superior and mesial area 6 and the adjacent cingulate cortex in the macaque monkey</Title>
+<Year>1991</Year>
+<Journal>
+<JournalName>J. Comp. Neurol.</JournalName>
+<Volume>311</Volume>
+<Pages>445-462</Pages>
+<PubMedID>1757597</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>MLR91</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>MLR91-23</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23</Acronym>
+<FullName>Area 23</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-24a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24a</Acronym>
+<FullName>Area 24a</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-24b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24b</Acronym>
+<FullName>Area 24b</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-24c</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24c</Acronym>
+<FullName>Area 24c (rostral part of the cingulate sulcus)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-24d</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24d</Acronym>
+<FullName>Area 24d (rostral part of the cingulate sulcus)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-F1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F1</Acronym>
+<FullName>Agranular frontal area 1 (= primary motor area)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-F2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F2</Acronym>
+<FullName>Agranular frontal area 2 (= caudal dorsolateral premotor area)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-F3</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F3</Acronym>
+<FullName>Agranular frontal area 3 (= SMA-proper)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-F6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F6</Acronym>
+<FullName>Agranular frontal area 6 (= pre-SMA)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>MLR91-F7</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F7</Acronym>
+<FullName>Agranular frontal area 7 (= rostral dorsolateral premotor area)</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

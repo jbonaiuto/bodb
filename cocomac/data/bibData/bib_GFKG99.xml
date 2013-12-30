@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:54:10+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('GFKG99') [LITID]&amp;Details=</HttpString>
+<SearchString>('GFKG99') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='GFKG99') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>GFKG99</ID>
+<Authors>
+<Author>
+<Initials>C</Initials>
+<LastName>Galletti</LastName>
+</Author>
+<Author>
+<Initials>P</Initials>
+<LastName>Fattori</LastName>
+</Author>
+<Author>
+<Initials>DF</Initials>
+<LastName>Kutz</LastName>
+</Author>
+<Author>
+<Initials>M</Initials>
+<LastName>Gamberini</LastName>
+</Author>
+</Authors>
+<Title>Brain location and visual topography of cortical area V6A in the macaque monkey</Title>
+<Year>1999</Year>
+<Journal>
+<JournalName>Eur. J. Neurosci.</JournalName>
+<Volume>11</Volume>
+<Pages>575-582</Pages>
+<PubMedID>10051757</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>GFKG99</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>GFKG99-V6A</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V6A</Acronym>
+<FullName>Visual area V6A</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

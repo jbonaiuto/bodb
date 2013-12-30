@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    function addBrainRegionMultiple(region_id, data){
+        var count = $('#related_brain_regions').children().length;
+        var tmplMarkup = $('#related_brain_region-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count, region: region_id, name: data[0], nomenclature: data[1], species: data[2] });
+        $('#related_brain_regions').append(compiledTmpl);
+        // update form count
+        $('#id_related_brain_region-TOTAL_FORMS').attr('value', count+1);
+        return false;
+    }
+</script>
+<div id="brainRegionData" style="display:none">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="table_header">
+            <td colspan=5>
+                <a href="/bodb/brain_region/search/?_multiple=1" onclick="return showPopup('search_brain_region_{{ form.instance.id }}',500,550,'/bodb/brain_region/search/?_multiple=1');">Search</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/bodb/brain_region/request/" onclick="return showPopup('request_new_brain_region_{{ form.instance.id }}',700,550,'/bodb/brain_region/request/');">Request New</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:150px">Name</td>
+            <td style="width:150px">Nomenclature</td>
+            <td style="width:150px">Species</td>
+            <td>Relationship*<td>
+        </tr>
+        <tr>
+            <td colspan=5>
+                {{ related_brain_region_formset.management_form }}
+                <div class="myerrors">
+                    {{ related_brain_region_formset.management_form.errors }}
+                </div>
+                <div id="related_brain_regions">                    
+                    {% for related_brain_region_form in related_brain_region_formset.forms %}
+                        <div id="related_brain_region-{{ forloop.counter0 }}" name="related_brain_region">
+                            <input type=hidden id="id_related_brain_region-{{ forloop.counter0 }}-DELETE" name="related_brain_region-{{ forloop.counter0 }}-DELETE"/>
+                            {{ related_brain_region_form.id }}
+                            {{ related_brain_region_form.brain_region }}
+                            {{ related_brain_region_form.document }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:120px">
+                                        <a href="" onclick="return deleteInlineForm('related_brain_region', {{ forloop.counter0 }});">Remove</a>&nbsp;
+                                    </td>
+                                    <td style="width:150px">
+                                        {% if related_brain_region_form.instance %}
+                                            <a href="/bodb/brain_region/{{ related_brain_region_form.instance.brain_region.id }}/">{{ related_brain_region_form.instance.brain_region }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:150px">
+                                        {% if related_brain_region_form.instance %}
+                                            {{ related_brain_region_form.instance.brain_region.nomenclature }}
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:150px">
+                                        {% if related_brain_region_form.instance %}
+                                            {{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ related_brain_region_form.relationship }}
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="myerrors">
+                                {{ related_brain_region_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="related_brain_region-template">
+    <div id="related_brain_region-<%= id %>" name="related_brain_region">
+        <input type=hidden id="id_related_brain_region-<%= id %>-DELETE" name="related_brain_region-<%= id %>-DELETE"/>
+        <input id="id_related_brain_region-<%= id %>-id" name="related_brain_region-<%= id %>-id" type="hidden" />
+        <input id="id_related_brain_region-<%= id %>-brain_region" name="related_brain_region-<%= id %>-brain_region" type="hidden" value="<%= region %>"/>
+        <input id="id_related_brain_region-<%= id %>-document" name="related_brain_region-<%= id %>-document" type="hidden" />
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:120px">
+                    <a href="" onclick="return deleteInlineForm('related_brain_region', <%= id %>);">Remove</a>&nbsp;
+                </td>
+                <td style="width:150px">
+                    <a href="/bodb/brain_region/<%= region %>/"><%= name %></a>
+                </td>
+                <td style="width:150px">
+                    <%= nomenclature %>
+                </td>
+                <td style="width:150px">
+                    <%= species %>
+                </td>
+                <td>
+                    <textarea cols="40" id="id_related_brain_region-<%= id %>-relationship" name="related_brain_region-<%= id %>-relationship" rows="3">
+                    </textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+        </div>
+    </div>
+</script>

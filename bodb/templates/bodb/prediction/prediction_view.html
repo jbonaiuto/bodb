@@ -1,0 +1,174 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View {{ prediction.title }} Prediction</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('figureData', 'fade=1');
+        animatedcollapse.addDiv('narrativeData', 'fade=1');
+        animatedcollapse.addDiv('ssrData', 'fade=1');
+        animatedcollapse.addDiv('discussionData', 'fade=1');
+
+        function deletePrediction()
+        {
+            if(confirm('This will delete this Prediction as well as all links to it from other entries. Do you really want to delete the current Prediction?'))
+            {
+            {% if ispopup %}
+                if(opener.document.getElementById('span_prediction_{{ prediction.id }}')!=null)
+                    clearSpan(opener.document, 'span_prediction_{{ prediction.id }}');
+            {% endif %}
+                document.location.href='/bodb/prediction/{{prediction.id}}/delete/{% if ispopup %}?_popup=1{% endif %}';
+            }
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Prediction: {{ prediction.title }} {%if prediction.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Collator:</strong> {{ prediction.get_collator_str }} {% if not prediction.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ prediction.collator.id }}&type=Prediction');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Created:</strong> {{ prediction.get_created_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified by:</strong> {{ prediction.get_modified_by_str }} {% if not prediction.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ prediction.last_modified_by.id }}&type=Prediction');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified:</strong> {{ prediction.get_modified_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Tags:</strong> {{ prediction.tags.all|join:', ' }}</td>
+            </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>{{ prediction.brief_description }}</td>
+            </tr>
+            <tr>
+                <td colspan=2 valign=top>
+                    <strong>Public:</strong>&nbsp;
+                    {% if prediction.public %}
+                        YES
+                    {% else %}
+                        NO
+                        {% if not prediction.draft and not perms.bodb.public_prediction and not user.is_superuser and prediction.collator == user %}
+                            <br>
+                            <span id="public_request">
+                                {% if public_request_sent %}
+                                    Public request sent.
+                                {% else %}
+                                    <a href="" onclick="return publicRequest({{ prediction.id }},'{{ csrf_token }}');">Request that this entry be made public</a>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% if figures %}
+                <tr class="section_subheader">
+                    <td colspan=2>
+                        Figures (<a href="javascript:animatedcollapse.toggle('figureData')"><span id="figureDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        {% include "bodb/document_figure_list.html" %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if prediction.narrative %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Narrative (<a href="javascript:animatedcollapse.toggle('narrativeData')"><span id="narrativeDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <div id="narrativeData" style="display:none">
+                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr valign=top>
+                                    <td>{{ prediction.narrative }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if ssrs %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Summaries of Simulation Results (SSRs) (<a href="javascript:animatedcollapse.toggle('ssrData')"><span id="ssrDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="ssrData" style="display:none">
+                            {% include "bodb/ssr/ssr_selection_list_view.html" %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=2>
+                    Discussion (<a href="javascript:animatedcollapse.toggle('discussionData')"><span id="discussionDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="discussionData" style="display:none">
+                        {% with prediction.forum as forum %}
+                            {% include "bodb/discussion/forum_view.html" %}
+                        {% endwith %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        {% if perms.bodb.change_prediction and canEdit%}
+            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/prediction/{{prediction.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if canManage %}
+            <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{prediction.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}{% if ispopup %}
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if perms.bodb.delete_prediction and canDelete %}
+            {% if not ispopup %}
+                <input class="btn" type="button" value="Delete" onclick="deletePrediction()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

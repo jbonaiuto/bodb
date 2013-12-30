@@ -1,0 +1,17 @@
+<div id="figureData">
+    <table class="tab_panel">
+        {% for figure in figures %}
+            <tr class="col_header">
+                <td colspan=2>Figure {{ forloop.counter }}: {{ figure.title }}</td>
+            </tr>
+            <tr valign=top>
+                <td width=150px>
+                    {% if figure.figure %}<a href="{{ figure.figure.url  }}"><img src="{{ figure.figure.url }}" width="600" alt="{{ figure.title }}" /></a>{% endif %}
+                </td>
+                <td valign=top>
+                    {{ figure.caption }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

@@ -1,0 +1,48 @@
+{% load staticfiles %}
+{% if ssrs|length %}
+    <table class="tab_panel">
+        {% if not ispopup %}
+            <tr class="col_header">
+                <td colspan=5>
+                    {% if can_add_entry or can_remove_entry %}
+                        Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllSSRSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllSSRSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        <tr class="col_header">
+            <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            <td width=200px>Title</td>
+            <td width=200px>Collator</td>
+            <td>Description</td>
+            <td width=200px>&nbsp;</td>
+        </tr>
+        {% for selected,is_favorite,subscribed,ssr in ssrs %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td style="width:{% if ispopup %}120{% else %}45{% endif %}px" align=center>
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        {% if ispopup %}
+                            {% if multiple %}
+                                <a href="../" onclick="return opener.selectMultipleSSRs({{ ssr.id }}, ['{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}'], '{{ fieldName }}', '{{ spanName }}', '{% if perms.bodb.change_ssr and canEdit %}/bodb/ssr/{{ ssr.id }}/edit/?_popup=1{% endif %}','');">Select</a>
+                            {% else %}
+                                <a href="../" onclick="opener.selectSingleSSR({{ ssr.id }}, ['{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.tags|escapejs }}'], '{{ fieldName }}', '{{ spanName }}', '{% if perms.bodb.change_ssr and canEdit %}/bodb/ssr/{{ ssr.id }}/edit/?_popup=1{% endif %}', '{% if perms.bodb.delete_ssr and canEdit %}/bodb/ssr/{{ ssr.id }}/delete/?_popup=1{% endif %}', '');self.close();return false;">Select</a>
+                            {% endif %}
+                        {% else %}
+                            <a id="favLink" href="" onclick="return toggleFavorite({{ ssr.id }},'favIcon-{{ ssr.id }}','{{ csrf_token }}');">
+                                <img id="favIcon-{{ ssr.id }}" name="favIcon-{{ ssr.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                            </a>
+                            <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_{{ ssr.id }}" value="{{ ssr.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td width=200px>
+                    <a href="/bodb/ssr/{{ ssr.id }}/">{{ ssr.title }}</a>
+                    {% if ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                </td>
+                <td width=200px>{{ ssr.get_collator_str }} {% if not ssr.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ ssr.collator.id }}&type=SSR');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td>{{ssr.brief_description }}</td>
+                <td><span id="ssr_{{ ssr.id }}_message" name="ssr_{{ ssr.id }}_message" class="messages"></span></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

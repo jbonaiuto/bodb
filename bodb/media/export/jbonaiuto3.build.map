@@ -1,0 +1,7 @@
+<map id="connectivity&#45;sed&#45;map" name="connectivity&#45;sed&#45;map">
+<area shape="poly" id="node2" href="/bodb/brain_region/117/" title="F5 (CGMBOFal)" alt="" coords="396,31 391,23 374,16 349,11 317,7 281,6 246,7 214,11 188,16 172,23 166,31 172,38 188,45 214,50 246,54 281,55 317,54 349,50 374,45 391,38"/>
+<area shape="poly" id="node4" href="/bodb/brain_region/125/" title="PMdc (CGMBOFal)" alt="" coords="269,129 263,122 244,115 215,110 178,106 137,105 97,106 60,110 31,115 12,122 5,129 12,137 31,144 60,149 97,153 137,154 178,153 215,149 244,144 263,137"/>
+<area shape="poly" id="edge5" href="/bodb/sed/10/" alt="" coords="248,56 185,100 182,95 245,52"/>
+<area shape="poly" id="node6" href="/bodb/brain_region/126/" title="PMdr (CGMBOFal)" alt="" coords="557,129 551,122 532,115 503,110 466,106 425,105 385,106 348,110 319,115 300,122 293,129 300,137 319,144 348,149 385,153 425,154 466,153 503,149 532,144 551,137"/>
+<area shape="poly" id="edge7" href="/bodb/sed/9/" alt="" coords="317,52 381,95 378,100 314,56"/>
+</map>

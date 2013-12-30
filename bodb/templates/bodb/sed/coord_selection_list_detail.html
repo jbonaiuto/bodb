@@ -1,0 +1,397 @@
+<script type="text/javascript">
+    function deleteCoordinateSelection(selectionId)
+    {
+        var data = { 'id': selectionId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/coord_selection/"+selectionId+"/delete/", data: data,
+            complete: doneDeleteCoordinateSelection };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneSaveCoordinateSelection(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status=="success")
+        {
+            if(data.action=='add')
+            {
+                var loadDivs=document.getElementsByName('loadDiv');
+                for(var i=0; i<loadDivs.length; i++)
+                    loadDivs[i].style.display='inline';
+                var count = $('#savedCoordSelections').children().length;
+                var tmplMarkup = $('#savedCoordSelection-template').html();
+                var compiledTmpl = _.template(tmplMarkup, { idx: count, id : data.id, name: data.name,
+                    collator: data.collator, description: data.description, loaded: true });
+                $('#savedCoordSelections').append(compiledTmpl);
+                document.getElementById('id_selectionCollator').innerHTML=data.collator;
+                document.getElementById('selectionLoadedButtons').style.display='inline';
+                document.getElementById('id_selectionId').value=data.id;
+                return false;
+            }
+            else
+            {
+                document.getElementById('coord-selection-'+data.id+'-name').innerHTML=data.name;
+                document.getElementById('coord-selection-'+data.id+'-description').innerHTML=data.description;
+
+            }
+        }
+        else
+            alert(txt);
+        return false;
+    }
+
+    function newCoordinateSelection()
+    {
+        // Get ID of currently loaded selection
+        selectionId=document.getElementById('id_selectionId').value;
+        if(selectionId.length>0)
+        {
+            selectionName=document.getElementById('id_selectionName').value;
+            selectionDesc=document.getElementById('id_selectionDescription').value;
+            document.getElementById('loadDiv-'+selectionId).style.display='inline';
+        }
+        var data = { 'id': selectionId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/coord_selection/close/", data: data, complete: doneNewCoordinateSelection };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneNewCoordinateSelection(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status=="success")
+        {
+            document.getElementById('id_selectionName').value='';
+            document.getElementById('id_selectionDescription').value='';
+            document.getElementById('id_selectionId').value='';
+            document.getElementById('id_selectionCollator').innerHTML='';
+            document.getElementById('selectionLoadedButtons').style.display='none';
+            $('#coords').empty();
+        }
+    }
+
+    function loadCoordinateSelection(selectionId)
+    {
+        load_divs=document.getElementsByName('loadDiv');
+        for(var i=0; i<load_divs.length; i++)
+            load_divs[i].style.display='inline';
+        var data = { 'id': selectionId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/coord_selection/"+selectionId+"/", data: data,
+            complete: doneLoadCoordinateSelection };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneLoadCoordinateSelection(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status=="success")
+        {
+            document.getElementById('id_selectionName').value=data.name;
+            document.getElementById('id_selectionDescription').value=data.description;
+            document.getElementById('id_selectionId').value=data.id;
+            document.getElementById('id_selectionCollator').innerHTML=data.collator;
+            document.getElementById('id_selectionLastModifiedBy').innerHTML=data.last_modified_by;
+            document.getElementById('loadDiv-'+data.id).style.display='none';
+            document.getElementById('selectionLoadedButtons').style.display='inline';
+            $('#coords').empty();
+            sed_coords={};
+            for(var i=0; i<data.selected_coords.length; i++)
+            {
+                coord_array=data.selected_coords[i];
+                if(!(coord_array['sed_id'] in sed_coords))
+                    sed_coords[coord_array['sed_id']]=[]
+                sed_coords[coord_array['sed_id']].push(coord_array)
+            }
+            for(var sed_id in sed_coords)
+            {
+                var tmplMarkup = $('#sedCoords-template').html();
+                var compiledTmpl = _.template(tmplMarkup, { sed_id: sed_id, sed_name: sed_coords[sed_id][0]['sed_name'] });
+                $('#coords').append(compiledTmpl);
+                for(var i=0; i<sed_coords[sed_id].length; i++)
+                {
+                    coord_array=sed_coords[sed_id][i];
+                    var tmplMarkup = $('#coord-template').html();
+                    var compiledTmpl = _.template(tmplMarkup, { idx: i, id: coord_array['id'], sed_id: sed_id,
+                        collator: coord_array['collator'], brain_region: coord_array['brain_region'],
+                        hemisphere: coord_array['hemisphere'], x: coord_array['x'], y: coord_array['y'],
+                        z: coord_array['z'], rCBF: coord_array['rCBF'], statistic: coord_array['statistic'],
+                        statistic_value: coord_array['statistic_value'], extra_data: coord_array['extra_data']});
+                    $('#sed-'+ sed_id +'-coords').append(compiledTmpl);
+                }
+            }
+        }
+        return false;
+    }
+
+    function doneDeleteCoordinateSelection(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status=="success")
+        {
+            if(data.id==document.getElementById('id_selectionId').value)
+            {
+                document.getElementById('id_selectionName').value='';
+                document.getElementById('id_selectionDescription').value='';
+                document.getElementById('id_selectionId').value='';
+                document.getElementById('id_selectionCollator').innerHTML='';
+                document.getElementById('id_selectionLastModifiedBy').innerHTML='';
+                document.getElementById('selectionLoadedButtons').style.display='none';
+            }
+            document.getElementById('savedCoordSelection-'+data.id).style.display='none';
+        }
+        return false;
+    }
+
+    function selectedCoordSelect(selected, coordId)
+    {
+        var data = { 'coordId': coordId, 'csrfmiddlewaretoken': '{{ csrf_token }}' };
+        if(document.getElementById('id_selectionId'))
+            data['selectionId']=document.getElementById('id_selectionId').value;
+        var args = { type: "POST", url: "/bodb/sed/selectedcoord/"+coordId+"/select/", data: data, complete: doneSelectedCoordSelect };
+        if(!selected)
+        {
+            args = { type: "POST", url: "/bodb/sed/selectedcoord/"+coordId+"/unselect/", data: data, complete: doneSelectedCoordSelect };
+            document.getElementById('coord-'+coordId).style.display='none';
+        }
+        $.ajax(args)
+    }
+
+    function doneSelectedCoordSelect(rest, status)
+    {
+        return false;
+    }
+</script>
+<table class="tab_panel">
+    <tr>
+        <td valign=top>
+            <table class="tab_panel">
+                <tr class="section_subheader">
+                    <td colspan=11>Active Coordinate Selection</td>
+                </tr>
+                <tr>
+                    <td colspan=11>
+                        <input type=hidden name="selectionId" id="id_selectionId" value="{% if loaded_coord_selection %}{{ loaded_coord_selection.id }}{% endif %}"/>
+                        <table class="tab_panel">
+                            <tr>
+                                <td width=100px>Name:</td>
+                                <td><input type=text name="selectionName" id="id_selectionName" value="{% if loaded_coord_selection %}{{ loaded_coord_selection.name }}{% endif %}" size=50/></td>
+                            </tr>
+                            <tr>
+                                <td valign="top">Collator:</td>
+                                <td><span id="id_selectionCollator">{% if loaded_coord_selection %}{{ loaded_coord_selection.get_collator_str }}{% endif %}</span></td>
+                            </tr>
+                            <tr>
+                                <td valign="top">Last modified by:</td>
+                                <td><span id="id_selectionLastModifiedBy">{% if loaded_coord_selection %}{{ loaded_coord_selection.get_modified_by_str }}{% endif %}</span> </td>
+                            </tr>
+                            <tr>
+                                <td valign=top>Description:</td>
+                                <td><textarea name="selectionDescription" id="id_selectionDescription" cols=57>{% if loaded_coord_selection %}{{ loaded_coord_selection.description }}{% endif %}</textarea></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=11>
+                        {% if can_change_coord_selection %}
+                            <input type=button class=btn value="Save" onclick="saveCoordinateSelection();"/>&nbsp;
+                        {% endif %}
+                        <div id="selectionLoadedButtons" style="display:{% if loaded_coord_selection %}inline{% else %}none{% endif %}">
+                            {% if can_add_coord_selection %}
+                                <input type=button class=btn value="Save As" onclick="document.getElementById('id_selectionId').value=''; saveCoordinateSelection();"/>
+                            {% endif %}
+                            {% if can_add_coord_selection and can_delete_coord_selection %}
+                                &nbsp;
+                            {% endif %}
+                            {% if can_delete_coord_selection %}
+                                <input type=button class=btn value="Delete" onclick="return deleteCoordinateSelection(document.getElementById('id_selectionId').value);"/>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="11">&nbsp;</td>
+                </tr>
+                {% regroup selected_coords|dictsort:"sed_id" by sed_name as sed_list %}
+                <tr class="col_header">
+                    <td width=25px>&nbsp;</td>
+                    <td width=200px>Collator</td>
+                    <td width=100px>Brain Region</td>
+                    <td width=100px>Hemisphere</td>
+                    <td width=50px>x</td>
+                    <td width=50px>y</td>
+                    <td width=50px>z</td>
+                    <td width=50px>rCBF</td>
+                    <td width=60px>Statistic</td>
+                    <td width=80px>Significance</td>
+                    <td>Extra Data</td>
+                </tr>
+                <tr>
+                    <td colspan=11 style="padding:0px">
+                        <div id="coords">
+                            {% for sed in sed_list %}
+                                <div id="sed-{{ sed.grouper }}">
+                                    <table class="tab_panel">
+                                        <tr class="col_header">
+                                            <td>SED: {{ sed.grouper }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:0px">
+                                                <div id="sed-{{ sed.grouper }}-coords">
+                                                    {% for coord in sed.list %}
+                                                        <div id="coord-{{ coord.id }}">
+                                                            <table class="tab_panel">
+                                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                    <td width=25px>
+                                                                        <input type=checkbox name="sed_{{ sed.grouper|slugify }}_coord_select" value="{{ coord.id }}" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
+                                                                    </td>
+                                                                    <td width=200px>{{ coord.collator }}</td>
+                                                                    <td width=100px>{{ coord.brain_region }}</td>
+                                                                    <td width=100px>{{ coord.hemisphere }}</td>
+                                                                    <td width=50px>{{ coord.x }}</td>
+                                                                    <td width=50px>{{ coord.y }}</td>
+                                                                    <td width=50px>{{ coord.z }}</td>
+                                                                    <td width=50px>{{ coord.rCBF|floatformat:2 }}</td>
+                                                                    <td width=60px>{{ coord.statistic }}</td>
+                                                                    <td width=80px>{{ coord.statistic_value|floatformat:2 }}</td>
+                                                                    <td>{{ coord.extra_data }}</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="../" onclick="return setAllCoordinatesSelected('sed_{{ sed.grouper|slugify }}_coord_select',false);">Unselect All</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td valign="top">
+            <table class="tab_panel">
+                <tr class="section_subheader">
+                    <td colspan=11>Saved Coordinate Selections</td>
+                </tr>
+                <tr>
+                    <td colspan=11 style="padding:0px">
+                        <table class="tab_panel">
+                            <tr class="col_header">
+                                <td width=75px>&nbsp;</td>
+                                <td width=300px>Name</td>
+                                <td width=200px>Collator</td>
+                                <td>Description</td>
+                            </tr>
+                            <tr>
+                                <td colspan=4>
+                                    <div id="savedCoordSelections">
+                                        {% for selection in saved_coord_selections %}
+                                            <div id="savedCoordSelection-{{ selection.id }}" name="savedCoordSelection">
+                                                <table class="tab_panel">
+                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                        <td width=75px>
+                                                            <div name="loadDiv" id="loadDiv-{{ selection.id }}" style="display:{% ifequal selection user.get_profile.loaded_coordinate_selection %}none{% else %}inline{% endifequal %}">
+                                                                <a href="" onclick="return loadCoordinateSelection('{{ selection.id }}');">Load</a>
+                                                            </div>
+                                                            {% if can_delete_coord_selection %}
+                                                                <br><a href="../"onclick="return deleteCoordinateSelection('{{ selection.id }}');">Delete</a>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td width=300px><span id="coord-selection-{{ selection.id }}-name">{{ selection.name }}</span></td>
+                                                        <td width=200px>{{ selection.get_collator_str }}</td>
+                                                        <td><span id="coord-selection-{{ selection.id }}-description">{{ selection.description }}</span></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {% if can_add_coord_selection %}
+                    <tr>
+                        <td colspan="10">
+                            <input type=button class=btn value="New" onclick="newCoordinateSelection();"/>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        </td>
+    </tr>
+</table>
+<script type="text/html" id="savedCoordSelection-template">
+    <div id="savedCoordSelection-<%= id %>" named="savedCoordSelection">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=100px>
+                    <div name="loadDiv" id="loadDiv-<%= id %>" style="display:<% if(loaded){ %>none<% } else{ %>inline<% } %>">
+                        <a href="/bodb/coord_selection/<%= id %>/">Load</a>
+                    </div>
+                    {% if can_delete_coord_selection %}
+                        <br><a href="../"onclick="return deleteCoordinateSelection('<%= id %>');">Delete</a>
+                    {% endif %}
+                </td>
+                <td width=300px><span id="coord-selection-<%= id %>-name"><%= name %></span></td>
+                <td width=200px><%= collator %></td>
+                <td><span id="coord-selection-<%= id %>-description"><%= description %></span></td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/html" id="coord-template">
+    <div id="coord-<%= id %>}}">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=25px>
+                    <input type=checkbox name="sed_<%= sed_id %>_coord_select" value="<%= id %>" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
+                </td>
+                <td width=200px><%= collator %></td>
+                <td width=100px><%= brain_region %></td>
+                <td width=100px><%= hemisphere %></td>
+                <td width=50px><%= x %></td>
+                <td width=50px><%= y %></td>
+                <td width=50px><%= z %></td>
+                <td width=50px><%= rCBF %></td>
+                <td width=60px><%= statistic %></td>
+                <td width=80px><%= statistic_value %></td>
+                <td><%= extra_data %></td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/html" id="sedCoords-template">
+    <div id="sed-<%= sed_id %>">
+        <table class="tab_panel">
+            <tr class="col_header">
+                <td>SED: <%= sed_name %></td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <div id="sed-<%= sed_id %>-coords">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="../" onclick="return setAllCoordinatesSelected('sed_<%= sed_id %>_coord_select',false);">Unselect All</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>

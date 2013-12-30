@@ -1,0 +1,13 @@
+<map id="connectivity&#45;sed&#45;map" name="connectivity&#45;sed&#45;map">
+<area shape="poly" id="node2" href="/bodb/brain_region/398/" title="24a (MLR)" alt="" coords="171,31 167,23 155,16 137,11 114,7 88,6 62,7 39,11 21,16 9,23 5,31 9,38 21,45 39,50 62,54 88,55 114,54 137,50 155,45 167,38"/>
+<area shape="poly" id="node4" href="/bodb/brain_region/5/" title="F5 (MLR)" alt="" coords="162,129 159,122 148,115 132,110 111,106 88,105 65,106 44,110 28,115 17,122 14,129 17,137 28,144 44,149 65,153 88,154 111,153 132,149 148,144 159,137"/>
+<area shape="poly" id="edge8" href="/bodb/sed/89/" alt="" coords="91,56 91,91 85,91 85,56"/>
+<area shape="poly" id="node5" href="/bodb/brain_region/117/" title="F5 (CGMBOFal)" alt="" coords="578,31 572,23 556,16 530,11 498,7 463,6 427,7 395,11 370,16 353,23 348,31 353,38 370,45 395,50 427,54 463,55 498,54 530,50 556,45 572,38"/>
+<area shape="poly" id="node9" href="/bodb/brain_region/126/" title="PMdr (CGMBOFal)" alt="" coords="451,129 444,122 425,115 396,110 359,106 319,105 278,106 241,110 212,115 193,122 187,129 193,137 212,144 241,149 278,153 319,154 359,153 396,149 425,144 444,137"/>
+<area shape="poly" id="edge10" href="/bodb/sed/9/" alt="" coords="430,56 366,100 363,95 427,52"/>
+<area shape="poly" id="node13" href="/bodb/brain_region/125/" title="PMdc (CGMBOFal)" alt="" coords="739,129 732,122 713,115 684,110 647,106 607,105 566,106 529,110 500,115 481,122 475,129 481,137 500,144 529,149 566,153 607,154 647,153 684,149 713,144 732,137"/>
+<area shape="poly" id="edge12" href="/bodb/sed/10/" alt="" coords="499,52 562,95 559,100 496,56"/>
+<area shape="poly" id="node7" href="/bodb/brain_region/6/" title="28a (A)" alt="" coords="881,31 878,23 869,16 855,11 837,7 817,6 798,7 780,11 765,16 756,23 753,31 756,38 765,45 780,50 798,54 817,55 837,54 855,50 869,45 878,38"/>
+<area shape="poly" id="node11" href="/bodb/brain_region/16/" title="Co (A)" alt="" coords="873,129 870,122 862,115 850,110 835,106 817,105 800,106 785,110 772,115 764,122 762,129 764,137 772,144 785,149 800,153 817,154 835,153 850,149 862,144 870,137"/>
+<area shape="poly" id="edge14" href="/bodb/sed/1567/" alt="" coords="820,56 820,91 815,91 815,56"/>
+</map>

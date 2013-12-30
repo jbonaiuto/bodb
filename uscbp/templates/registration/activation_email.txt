@@ -1,0 +1,2 @@
+To complete your BODB user registration, click here: http://bodb.usc.edu/accounts/activate/{{activation_key}}/
+You must complete registration within {{ expiration_days }} days.

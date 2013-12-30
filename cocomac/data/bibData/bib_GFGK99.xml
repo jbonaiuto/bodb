@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:56:28+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('GFGK99') [LITID]&amp;Details=</HttpString>
+<SearchString>('GFGK99') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='GFGK99') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>GFGK99</ID>
+<Authors>
+<Author>
+<Initials>C</Initials>
+<LastName>Galletti</LastName>
+</Author>
+<Author>
+<Initials>P</Initials>
+<LastName>Fattori</LastName>
+</Author>
+<Author>
+<Initials>M</Initials>
+<LastName>Gamberini</LastName>
+</Author>
+<Author>
+<Initials>DF</Initials>
+<LastName>Kutz</LastName>
+</Author>
+</Authors>
+<Title>The cortical visual area V6: brain location and visual topography</Title>
+<Year>1999</Year>
+<Journal>
+<JournalName>Eur. J. Neurosci.</JournalName>
+<Volume>11</Volume>
+<Pages>3922-3936</Pages>
+<PubMedID>10583481</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>GFGK99</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>GFGK99-V1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V1</Acronym>
+<FullName>Visual area 1</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GFGK99-V2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V2</Acronym>
+<FullName>Visual area 2</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GFGK99-V3</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V3</Acronym>
+<FullName>Visual area 3</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GFGK99-V6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V6</Acronym>
+<FullName>Visual area 6</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GFGK99-V6A</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V6A</Acronym>
+<FullName>Visual area V6A</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

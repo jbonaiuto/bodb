@@ -1,0 +1,9 @@
+ <font face="Arial" size=2>
+<p>Active Server Pages</font>- <font face="Arial" size=2>Fehler 'ASP 0113'</font>
+<p>
+<font face="Arial" size=2>Timeout f&#252;r Skript</font>
+<p>
+<font face="Arial" size=2>/URLSearch.asp</font>
+<p>
+<font face="Arial" size=2>Das Zeitlimit zum Ausf&#252;hren eines Skripts wurde &#252;berschritten. Sie k&#246;nnen das Zeitlimit &#228;ndern, indem Sie einen neuen Wert f&#252;r die Eigenschaft Server.ScriptTimeOut festlegen oder den Wert f&#252;r ScriptTimeout im Verwaltungsprogramm von IIS &#228;ndern.
+</font> 

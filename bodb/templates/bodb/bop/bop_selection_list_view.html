@@ -1,0 +1,70 @@
+{% load staticfiles %}
+{% if bops|length %}
+    <table class="tab_panel">
+        {% if not ispopup %}
+            <tr class="col_header">
+                <td colspan=5>
+                    {% if can_add_entry or can_remove_entry %}
+                        Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllBOPSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllBOPSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        <tr class="col_header">
+            <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            <td width=200px>Title</td>
+            <td width=200px>Collator</td>
+            <td width=300px>Description</td>
+            <td>&nbsp;</td>
+        </tr>
+        {% for selected,is_favorite,subscribed,bop in bops %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>
+                    {% if user.is_authenticated and not user.is_anonymous %}
+                        {% if ispopup %}
+                            {% if multiple %}
+                                <a href="../" onclick="return opener.addBOPMultiple({{ bop.id }}, ['{{ bop.title|escapejs }}', '{{ bop.brief_description|escapejs }}']);">Select</a>
+                            {% else %}
+                                <a href="../" onclick="opener.selectSingleBOP({{ bop.id }}, '{{ bop.title|escapejs }}');self.close();">Select</a>
+                            {% endif %}
+                        {% else %}
+                            <a id="favLink" href="" onclick="return toggleFavorite({{ bop.id }},'favIcon-{{ bop.id }}','{{ csrf_token }}');">
+                                <img id="favIcon-{{ bop.id }}" name="favIcon-{{ bop.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                            </a>
+                            <input type=checkbox name="selectedBOPCheckbox" class="selectedBOPCheckbox" id="selectedBOPCheckbox_{{ bop.id }}" value="{{ bop.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleBOPSelect(this.value, '{{ csrf_token }}');"/>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/bodb/bop/{{ bop.id }}/">{{ bop.title }}</a>
+                    {% if bop.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                </td>
+                <td>{{ bop.get_collator_str }} {% if not bop.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ bop.collator.id }}&type=BOP');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td>{{bop.brief_description }}</td>
+                <td><span id="bop_{{ bop.id }}_message" name="bop_{{ bop.id }}_message" class="messages"></span></td>
+            </tr>
+        {% endfor %}
+        <tr class="col_header">
+            <td colspan="6">
+                Graph Generation Tool:&nbsp;
+                <select id="graphtool">
+                    <option value="dot">dot</option>
+                    <option value="neato">neato</option>
+                    <option value="fdp">fdp</option>
+                    <option value="sfdp">sfdp</option>
+                    <option value="twopi">twopi</option>
+                    <option value="circo">circo</option>
+                </select>&nbsp;
+                <a href="" onclick="return generateBOPDiagram(document.getElementById('graphtool').value,'{{ bopGraphId }}','{{ csrf_token }}');">Generate BOP Relationship Graph</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td colspan="6">
+                <img id="{{ bopGraphId }}" src="" usemap="#{{ bopGraphId }}Map"/>
+                <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
+                </map>
+                <br><span id="{{ bopGraphId }}Msg"></span>
+            </td>
+        </tr>
+    </table>
+{% endif %}

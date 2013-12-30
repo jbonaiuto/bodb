@@ -1,0 +1,276 @@
+{% load staticfiles %}
+<div id="buildSEDData">
+    <table style="background:#e6e8ed;width:100%">
+        {% if can_add_entry or can_remove_entry %}
+            <tr class="col_header">
+                <td colspan=7>
+                    Workspace Select: {% if can_add_entry %}<a href="../" onclick="toggleAllSEDSelect('Generic',true,'{{ csrf_token }}');toggleAllSEDSelect('Imaging',true,'{{ csrf_token }}');toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">Select All</a>{% endif %}
+                    {% if can_remove_entry %}/<a href="../" onclick="toggleAllSEDSelect('Generic',false,'{{ csrf_token }}');toggleAllSEDSelect('Imaging',false,'{{ csrf_token }}');toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">Unselect All</a>{% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if generic_build_seds %}
+            <tr class="section_subheader">
+                <td colspan=7>Generic building SEDs</td>
+            </tr>
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=7>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Generic',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Generic',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="col_header">
+                <td style="width:45px">&nbsp;</td>
+                <td width=150px>Title</td>
+                <td width=300px>Description</td>
+                <td width=120px>Relationship</td>
+                <td colspan="2">Relevance Narrative</td>
+                <td width=150px>&nbsp;</td>
+            </tr>
+            {% for selected,is_favorite,subscribed,buildsed in generic_build_seds %}
+                <tr>
+                    <td colspan="7">
+                        <div id="build_sed-{{ buildsed.id }}">
+                            <table style="background:#e6e8ed;width:100%">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td align=center width=45px>
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ buildsed.sed.id }},'favIcon-{{ buildsed.sed.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ buildsed.sed.id }}" name="favIcon-{{ buildsed.sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            </a>
+                                            <input type=checkbox class="selectedGenericSEDCheckbox" name="selectedSEDCheckbox_{{ buildsed.sed.id }}" id="selectedGenericSEDCheckbox_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSED" id="selectedSED_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}"/>
+                                        {% endif %}
+                                    </td>
+                                    <td width=150px>
+                                        <a href="/bodb/sed/{{ buildsed.sed.id }}/">{{ buildsed.sed.title }}</a>
+                                    </td>
+                                    <td width=300px>{{ buildsed.sed.brief_description }}</td>
+                                    <td width=120px>{{ buildsed.relationship }}</td>
+                                    <td colspan="2">{{ buildsed.relevance_narrative }}</td>
+                                    <td width=150px><span id="sed_{{ buildsed.sed.id }}_message" name="sed_{{ buildsed.sed.id }}_message" class="messages"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if connectivity_build_seds %}
+            <tr class="section_subheader">
+                <td colspan=7>Connectivity building SEDs</td>
+            </tr>
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=7>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="col_header">
+                <td style="width:45px">&nbsp;</td>
+                <td width=150px>Title</td>
+                <td width=300px>Description</td>
+                <td width=120px>Relationship</td>
+                <td colspan="2">Relevance Narrative</td>
+                <td width=150px>&nbsp;</td>
+            </tr>
+            {% for selected,is_favorite,subscribed,buildsed in connectivity_build_seds %}
+                <tr>
+                    <td colspan="7">
+                        <div id="build_sed-{{ buildsed.id }}">
+                            <table style="background:#e6e8ed;width:100%">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td align=center width=45px>
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ buildsed.sed.id }},'favIcon-{{ buildsed.sed.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ buildsed.sed.id }}" name="favIcon-{{ buildsed.sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            </a>
+                                            <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ buildsed.sed.id }}" id="selectedConnectivitySEDCheckbox_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSED" id="selectedSED_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}"/>
+                                        {% endif %}
+                                    </td>
+                                    <td width=150px>
+                                        <a href="/bodb/sed/{{ buildsed.sed.id }}/">{{ buildsed.sed.title }}</a>
+                                    </td>
+                                    <td width=300px>{{ buildsed.sed.brief_description }}</td>
+                                    <td width=120px>{{ buildsed.relationship }}</td>
+                                    <td colspan="2">{{ buildsed.relevance_narrative }}</td>
+                                    <td width=150px><span id="sed_{{ buildsed.sed.id }}_message" name="sed_{{ buildsed.sed.id }}_message" class="messages"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr class="col_header">
+                <td colspan="7">
+                    Graph Generation Tool:&nbsp;
+                    <select id="buildConnDiagramGraphtool">
+                        <option value="dot">dot</option>
+                        <option value="neato">neato</option>
+                        <option value="fdp">fdp</option>
+                        <option value="sfdp">sfdp</option>
+                        <option value="twopi">twopi</option>
+                        <option value="circo">circo</option>
+                    </select>&nbsp;
+                    <a href="" onclick="return generateConnDiagram([{% for selected,is_favorite,subscribed,buildsed in connectivity_build_seds %}{% if forloop.counter0 > 0 %},{% endif %}{{ buildsed.sed.id }}{% endfor %}],document.getElementById('buildConnDiagramGraphtool').value,'buildConnDiagram','{{ csrf_token }}');">Generate Connectivity Graph</a>
+                </td>
+            </tr>
+            <tr class="col_header">
+                <td colspan="7">
+                    <img id="buildConnDiagram" usemap="#buildConnDiagramMap"/>
+                    <map id="buildConnDiagramMap" name="buildConnDiagramMap">
+                    </map>
+                    <br><span id="buildConnDiagramMsg"></span>
+                </td>
+            </tr>
+        {% endif %}
+        {% if imaging_build_seds %}
+            <tr class="section_subheader">
+                <td colspan=7>Brain imaging building SEDs</td>
+            </tr>
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=7>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Imaging',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Imaging',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="col_header">
+                <td style="width:45px">&nbsp;</td>
+                <td width=150px>Title</td>
+                <td width=300px>Description</td>
+                <td width=120px>Relationship</td>
+                <td>Relevance Narrative</td>
+                <td>&nbsp;</td>
+                <td width=150px>&nbsp;</td>
+            </tr>
+            {% for selected,is_favorite,subscribed,buildsed,coords in imaging_build_seds %}
+                <tr>
+                    <td colspan="7">
+                        <div id="build_sed-{{ buildsed.id }}">
+                            <table style="background:#e6e8ed;width:100%">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td align=center width=45px>
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ buildsed.sed.id }},'favIcon-{{ buildsed.sed.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ buildsed.sed.id }}" name="favIcon-{{ buildsed.sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            </a>
+                                            <input type=checkbox class="selectedImagingSEDCheckbox" name="selectedSEDCheckbox_{{ buildsed.sed.id }}" id="selectedImagingSEDCheckbox_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSED" id="selectedSED_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}"/>
+                                        {% endif %}
+                                    </td>
+                                    <td width=150px>
+                                        <a href="/bodb/sed/{{ buildsed.sed.id }}/">{{ buildsed.sed.title }}</a>
+                                    </td>
+                                    <td width=300px>{{ buildsed.sed.brief_description }}</td>
+                                    <td width=120px>{{ buildsed.relationship }}</td>
+                                    <td>{{ buildsed.relevance_narrative }}</td>
+                                    <td>
+                                        {{ buildsed.sed.html_url_string|safe }}
+                                    </td>
+                                    <td width=150px><span id="sed_{{ buildsed.sed.id }}_message" name="sed_{{ buildsed.sed.id }}_message" class="messages"></span></td>
+                                </tr>
+                                {% if coords %}
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                        <td colspan="2"></td>
+                                        <td colspan="4" class="col_header">Coordinates</td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                        <td colspan="2"></td>
+                                        <td colspan="4">
+                                            <table class="tab_panel">
+                                                <tr>
+                                                    <td style="width:50px"></td>
+                                                    <td style="width:200px"><strong>Region</strong></td>
+                                                    <td style="width:100px"><strong>Hemisphere</strong></td>
+                                                    <td style="width:50px"><strong>x</strong></td>
+                                                    <td style="width:50px"><strong>y</strong></td>
+                                                    <td style="width:50px"><strong>z</strong></td>
+                                                    <td></td>
+                                                </tr>
+                                                {% for coord in coords %}
+                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                        <td>
+                                                            {% if user.is_authenticated and not user.is_anonymous %}
+                                                                <input type=checkbox name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord.id in selected_coord_ids %}checked=True{% endif %}/>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ coord.named_brain_region }}</td>
+                                                        <td>{{ coord.hemisphere }}</td>
+                                                        <td>{{ coord.coord.x }}</td>
+                                                        <td>{{ coord.coord.y }}</td>
+                                                        <td>{{ coord.coord.z }}</td>
+                                                        <td><span id="coord_{{ coord.id }}_message" class="messages"></span></td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% if user.is_authenticated and not user.is_anonymous %}
+                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                        <td colspan="7">
+                                                            <a href="../../" onclick="{% for coord in coords %}document.getElementById('sed_coord_select_{{ coord.id }}').checked=true;sedCoordSelect(true, {{ coord.id }}, '{{ csrf_token }}');{% endfor %}return false;">Select all</a> /&nbsp;
+                                                            <a href="../../" onclick="{% for coord in coords %}document.getElementById('sed_coord_select_{{ coord.id }}').checked=false;sedCoordSelect(false, {{ coord.id }}, '{{ csrf_token }}');{% endfor %}return false;">Unselect all</a>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            </table>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        {% if erp_build_seds %}
+            <tr class="section_subheader">
+                <td colspan=7>ERP building SEDs</td>
+            </tr>
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=7>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="col_header">
+                <td style="width:45px">&nbsp;</td>
+                <td width=150px>Title</td>
+                <td width=300px>Description</td>
+                <td width=120px>Relationship</td>
+                <td colspan="2">Relevance Narrative</td>
+                <td>&nbsp;</td>
+            </tr>
+            {% for selected,is_favorite,subscribed,buildsed in erp_build_seds %}
+                <tr>
+                    <td colspan="7">
+                        <div id="build_sed-{{ buildsed.id }}">
+                            <table style="background:#e6e8ed;width:100%">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td align=center width=45px>
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ buildsed.sed.id }},'favIcon-{{ buildsed.sed.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ buildsed.sed.id }}" name="favIcon-{{ buildsed.sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            </a>
+                                            <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ buildsed.sed.id }}" id="selectedERPSEDCheckbox_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSED" id="selectedSED_{{ buildsed.sed.id }}" value="{{ buildsed.sed.id }}"/>
+                                        {% endif %}
+                                    </td>
+                                    <td width=150px>
+                                        <a href="/bodb/sed/{{ buildsed.sed.id }}/">{{ buildsed.sed.title }}</a>
+                                    </td>
+                                    <td width=300px>{{ buildsed.sed.brief_description }}</td>
+                                    <td width=120px>{{ buildsed.relationship }}</td>
+                                    <td colspan="2">{{ buildsed.relevance_narrative }}</td>
+                                    <td><span id="sed_{{ buildsed.sed.id }}_message" name="sed_{{ buildsed.sed.id }}_message" class="messages"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>

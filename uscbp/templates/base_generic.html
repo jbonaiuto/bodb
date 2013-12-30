@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load staticfiles %}
+{% load guardian_tags %}
+{% load taggit_extras %}
+<head>
+    <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery-1.2.6.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/underscore-min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/animatedcollapse.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/commonFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/popup.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function()
+        {
+            animatedcollapse.init();
+        });
+        animatedcollapse.ontoggle=function($, divobj, state)
+        {
+            if(divobj!=null && document.getElementById(divobj.id+"Label")!=null)
+            {
+                if(divobj.id.substr(0,9)=="expansion")
+                    document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Collapse" : "Expand";
+                else
+                    document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Hide" : "Show";
+            }
+        }
+    </script>
+    {% block extrahead %}{% endblock %}
+</head>
+<body {% if not ispopup %}class="tundra"{% endif %}>
+    <div id="toPopup">
+        <div class="close"></div>
+        <span class="ecs_tooltip">Press Esc to close <span class="arrow"></span></span>
+        <div id="popup_content"></div>
+    </div>
+    <div class="loader"></div>
+    <div id="backgroundPopup"></div>
+    {% if not ispopup %}
+        <table style="width:100%" cellpadding=0 cellspacing=0>
+            <tr>
+                <td><h1><img height=55 src="{% static 'bodb/images/uscbp.png' %}"/> <a href="/bodb/">BODB</a></h1></td>
+                <td style="width:700px" align=left>
+                    <div id="user_info">
+                        {% if user.is_authenticated and not user.is_anonymous  %}
+                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a href="/accounts/profile">My Profile</a>]&nbsp;
+                            <br>[<a href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;[<a href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
+                            {% ifnotequal message_count 0 %}
+                                <br><div class="alert"><a href="/bodb/messages/">You have {{ message_count }} unread message{% ifnotequal message_count 1 %}s{% endifnotequal %}</a></div>
+                            {% else %}
+                                [<a href="/bodb/messages/">Messages</a>]
+                            {% endifnotequal %}
+                            {% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
+                        {% else %}
+                            <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
+                            <br>[<a href="" onclick="return openHelp('BODB_Login');">Help</a>]
+                        {% endif %}
+                    </div>
+                </td>
+                <td style="width:50px" align=right>
+                    <div id="user_img">
+                        {% if user.is_authenticated and user.get_profile.avatar %}
+                            <img height=55 src="{{ user.get_profile.avatar.url }}"/>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b>
+        <div id="navbar">
+            {% if user.is_authenticated and not user.is_anonymous  %}
+                <li><a href="/bodb/insert/">Insert</a></li>
+            {% endif %}
+            <li><a href="/bodb/search/">Search</a></li>
+            {% if user.is_authenticated and not user.is_anonymous  %}
+                <li><a href="/bodb/drafts/">Drafts</a></li>
+                <li><a href="/bodb/favorites/">Favorites</a></li>
+                <li><a href="/bodb/workspaces/">Workspaces</a></li>
+            {% endif %}
+            {% if user.is_superuser %}
+                <li><a href="/bodb/admin/">Admin</a></li>
+            {% endif %}
+            <li><a href="/bodb/about/">About</a></li>
+        </div>
+        <b class="c4f"></b><b class="c3f"></b><b class="c2f"></b><b class="c1f"></b>
+        <br>
+        <div id="sidebar" style="width:250px">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <div id="tagBar" style="display:inline;width:250px;">
+                            <div style="background:#ffffff;border:0;">
+                                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                            </div>
+                            <h2>Model tag cloud</h2>
+                            <div style="background:#e6e8ed;">
+                                {% get_tagcloud as model_tags for 'bodb.Model' %}
+                                {% for tag in model_tags %}
+                                    <a href="/bodb/model/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                {% endfor %}
+                                <br><br>
+                            </div>
+                            <h2>Brain Operating Principle tag cloud</h2>
+                            <div style="background:#e6e8ed;">
+                                {% get_tagcloud as bop_tags for 'bodb.BOP' %}
+                                {% for tag in bop_tags %}
+                                    <a href="/bodb/bop/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                {% endfor %}
+                                <br><br>
+                            </div>
+                            <h2>Summary of Experimental Data tag cloud</h2>
+                            <div style="background:#e6e8ed;">
+                                {% get_tagcloud as sed_tags for 'bodb.SED' %}
+                                {% for tag in sed_tags %}
+                                    <a href="/bodb/sed/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                {% endfor %}
+                                <br><br>
+                            </div>
+                            <h2>Prediction tag cloud</h2>
+                            <div style="background:#e6e8ed;">
+                                {% get_tagcloud as prediction_tags for 'bodb.Prediction' %}
+                                {% for tag in prediction_tags %}
+                                    <a href="/bodb/prediction/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                {% endfor %}
+                                <br><br>
+                            </div>
+                            <h2>Summary of Simulation Results tag cloud</h2>
+                            <div style="background:#e6e8ed;">
+                                {% get_tagcloud as ssr_tags for 'bodb.SSR' %}
+                                {% for tag in ssr_tags %}
+                                    <a href="/bodb/ssr/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                {% endfor %}
+                                <br><br>
+                            </div>
+                            <div style="background:#ffffff;border:0">
+                                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="controlCell" style="background:#ffffff;height: 450px">
+                        <span id="controlSidebar">
+                            <a href="javascript:animatedcollapse.toggle('tagBar')"><span id='tagBarLabel'>&lt;</span></a>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+    <div {% if not ispopup %}id="content"{% endif %}>
+        {% block content%}{%endblock%}
+    </div>
+</body>
+</html>
+

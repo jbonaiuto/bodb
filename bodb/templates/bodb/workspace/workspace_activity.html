@@ -1,0 +1,11 @@
+<table class="tab_panel">
+    {% for activity in activity_stream %}
+        <tr class="{% cycle 'odd_row' 'even_row' %}">
+            <td width=60px rowspan="2">{% if activity.user.get_profile.avatar %}<img height="55px" src="{{ activity.user.get_profile.avatar.url }}"/>{% endif %}</td>
+            <td>{{ activity.time }}</td>
+        </tr>
+        <tr class="{% cycle 'odd_row' 'even_row' %}">
+            <td colspan="2">{{ activity.text|safe }}</td>
+        <tr>
+    {% endfor %}
+</table>

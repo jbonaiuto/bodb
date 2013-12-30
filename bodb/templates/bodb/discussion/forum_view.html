@@ -1,0 +1,165 @@
+<script type="text/javascript">
+    function post(formId, formPrefix, parentDiv, margin)
+    {
+        data=$('#'+formId).serialize();
+        data+='&prefix='+formPrefix+'&parentDiv='+parentDiv+'&margin='+margin;
+        var args = { type: "POST", url: '/bodb/forum/{{ forum.id }}/new_post/', data: data, complete: donePost };
+        $.ajax(args)
+        return false;
+    }
+
+    function donePost(res, status)
+    {
+        var txt = res.responseText;
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            var data = eval('('+txt+')');
+            if(data.body.length>0)
+            {
+                var tmplMarkup = $('#post-template').html();
+                var compiledTmpl = _.template(tmplMarkup, {
+                    id : data.post_id,
+                    username: data.username,
+                    avatar_url: data.avatar_url,
+                    posted: data.posted,
+                    body: data.body,
+                    level: data.level,
+                    margin: data.margin
+                });
+                document.getElementById('id_'+data.form_prefix+'-body').value='';
+                $('#'+data.parent_div).prepend(compiledTmpl);
+            }
+        }
+    }
+</script>
+{% load mptt_tags %}
+{% if can_add_post %}
+    <table class="tab_panel">
+        <tr>
+            <td width=60px>
+                {% if user.get_profile.avatar %}
+                    <img height=55 src="{{ user.get_profile.avatar.url }}"/>
+                {% endif %}
+            </td>
+            <td width=300px>
+                <form id="postForm" name="postForm" action="" method="post">
+                    {% csrf_token %}
+                    <input id="id_post-forum" name="post-forum" type="hidden" value="{{ forum.id }}"/>
+                    {{ postForm.parent }}
+                    {{ postForm.author }}
+                    <textarea cols="57" id="id_post-body" name="post-body" rows="5"></textarea>
+                </form>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="2" align=right>
+                <input class="btn" type="button" value="Post" onclick="return post('postForm','post','discussionPosts','0');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+{% endif %}
+<div id="discussionPosts">
+    {% recursetree posts %}
+        <div id="post-{{ node.id }}" class="post" {% if not node.is_root_node %}style="margin-left: 30px;"{% endif %}>
+            <table class="tab_panel">
+                <tr>
+                    <td width=60px rowspan="2">
+                        {% if node.author.get_profile.avatar %}
+                            <img height=55 src="{{ node.author.get_profile.avatar.url }}"/>
+                        {% endif %}
+                    </td>
+                    <td>{{ node.author.username }} - {{ node.posted }}</td>
+                </tr>
+                <tr>
+                    <td width=300px>
+                        {{ node.body }}
+                    </td>
+                    <td>{% if can_add_post %}<input class="btn" type="button" value="Reply" onclick="document.getElementById('post-{{ node.id }}-reply').style.display='block';this.style.display='none';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>{% endif %}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="post-{{ node.id }}-reply" class="reply" style="display:none">
+                            <table class="tab_panel">
+                                <tr>
+                                    <td width=300px>
+                                        <form id="replyForm-{{ node.id }}" name="replyForm" action="" method="post">
+                                            {% csrf_token %}
+                                            <input id="id_post-{{ node.id }}-reply-forum" name="post-{{ node.id }}-reply-forum" type="hidden" value="{{ forum.id }}"/>
+                                            <input id="id_post-{{ node.id }}-reply-parent" name="post-{{ node.id }}-reply-parent" type="hidden" value="{{ node.id }}"/>
+                                            <textarea cols="57" id="id_post-{{ node.id }}-reply-body" name="post-{{ node.id }}-reply-body" rows="5"></textarea>
+                                        </form>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <input class="btn" type="button" value="Post" onclick="return post('replyForm-{{ node.id }}','post-{{ node.id }}-reply', 'post-{{ node.id }}-children', '30');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div id="post-{{ node.id }}-children" class="children">
+                {% if not node.is_leaf_node %}
+                    {{ children }}
+                {% endif %}
+            </div>
+            {% if node.is_root_node %}
+                <hr>
+            {% endif %}
+        </div>
+    {% endrecursetree %}
+</div>
+<script type="text/html" id="post-template">
+    <div id="post-<%= id %>" class="post" style="margin-left: <%= margin %>px;">
+        <table class="tab_panel">
+            <tr>
+                <td width=60px rowspan="2"><img height=55 src="<%= avatar_url %>"/></td>
+                <td><%= username %> - <%= posted %></td>
+            </tr>
+            <tr>
+                <td width=300px>
+                    <%= body %>
+                </td>
+                <td><input class="btn" type="button" value="Reply" onclick="document.getElementById('post-<%= id %>-reply').style.display='block';this.style.display='none';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/> </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="post-<%= id %>-reply" class="reply" style="display:none">
+                        <table class="tab_panel">
+                            <tr>
+                                <td width=300px>
+                                    <form id="replyForm-<%= id %>" name="replyForm" action="" method="post">
+                                        {% csrf_token    %}
+                                        <input id="id_post-<%= id %>-reply-forum" name="post-<%= id %>-reply-forum" type="hidden" value="{{ forum.id }}"/>
+                                        <input id="id_post-<%= id %>-reply-parent" name="post-<%= id %>-reply-parent" type="hidden" value="<%= id %>"/>
+                                        <textarea cols="57" id="id_post-<%= id %>-reply-body" name="post-<%= id %>-reply-body" rows="5"></textarea>
+                                    </form>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <input class="btn" type="button" value="Post" onclick="return post('replyForm-<%= id %>','post-<%= id %>-reply','post-<%= id %>-children','30');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div id="post-<%= id %>-children" class="children">
+        </div>
+        <% if(level==0){ %>
+        <hr>
+        <% } %>
+    </div>
+</script>

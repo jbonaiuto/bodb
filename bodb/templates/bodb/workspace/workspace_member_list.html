@@ -1,0 +1,35 @@
+<table class="tab_panel">
+    <tr class="col_header">
+        <td width=200px>Username</td>
+        <td width=300px>Real Name</td>
+        <td width=50px>Admin</td>
+    </tr>
+    {% for usr, isadmin, subscribed in members %}
+        <tr>
+            <td colspan=4>
+                <span id="spanSelectedWorkspaceUser_{{usr.id}}">
+                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                        <td width=200px>
+                            {{ usr.username }}
+                            {% if not usr == user %}
+                                {% if subscribed %}
+                                    Subscribed
+                                {% else %}
+                                    <a href="#" title="Be notified when this user creates new entries"
+                                       onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ usr.id }}&type=All');">
+                                        <strong>Subscribe</strong>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td width=300px>{{ usr.first_name }} {{ usr.last_name }}</td>
+                        <td>{% if isadmin %}x{% endif %}</td>
+                    </tr>
+                </span>
+            </td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan=4>&nbsp;</td>
+    </tr>
+</table>

@@ -1,0 +1,111 @@
+<script type="text/javascript">
+    function addBOPMultiple(bop_id, data){
+        var count = $('#related_bops').children().length;
+        var tmplMarkup = $('#related_bop-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count, bop: bop_id, title: data[0], brief_description: data[1] });
+        $('#related_bops').append(compiledTmpl);
+        // update form count
+        $('#id_related_bop-TOTAL_FORMS').attr('value', count+1);
+        return false;
+    }
+</script>
+<div id="bopData" style="display:none">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="table_header">
+            <td colspan={% if bop_relationship %}5{% else %}4{% endif %}>
+                <a href="/bodb/bop/search/?_multiple=1" onclick="return showPopup('search_bop',700,550,'/bodb/bop/search/?_multiple=1');">Search</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:150px">Title*</td>
+            <td style="width:250px">Brief Description*</td>
+            {% if bop_relationship %}
+                <td style="width:150px">Relationship*</td>
+            {% endif %}
+            <td>Relevance Narrative*</td>
+        </tr>
+        <tr>
+            <td colspan={% if bop_relationship %}5{% else %}4{% endif %}>
+                {{ related_bop_formset.management_form }}
+                <div class="myerrors">
+                    {{ related_bop_formset.management_form.errors }}
+                </div>
+                <div id="related_bops">
+                    {% for related_bop_form in related_bop_formset.forms %}
+                        <div id="related_bop-{{ forloop.counter0 }}" name="related_bop">
+                            <input type=hidden id="id_related_bop-{{ forloop.counter0 }}-DELETE" name="related_bop-{{ forloop.counter0 }}-DELETE"/>
+                            {{ related_bop_form.id }}
+                            {{ related_bop_form.bop }}
+                            {{ related_bop_form.document }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:120px">
+                                        <a href="" onclick="return deleteInlineForm('related_bop', {{ forloop.counter0 }});">Remove</a>&nbsp;
+                                    </td>
+                                    <td style="width:150px">
+                                        {% if related_bop_form.instance %}
+                                            {{ related_bop_form.instance.bop.title }}
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:350px">
+                                        {% if related_bop_form.instance %}
+                                            {{ related_bop_form.instance.bop.brief_description }}
+                                        {% endif %}
+                                    </td>
+                                    {% if bop_relationship %}
+                                        <td style="width:100px">
+                                            {{ related_bop_form.relationship }}
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        {{ related_bop_form.relevance_narrative }}
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="myerrors">
+                                {{ related_bop_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/html" id="related_bop-template">
+    <div id="related_bop-<%= id %>" name="related_bop">
+        <input type=hidden id="id_related_bop-<%= id %>-DELETE" name="related_bop-<%= id %>-DELETE"/>
+        <input id="id_related_bop-<%= id %>-id" name="related_bop-<%= id %>-id" type="hidden" />
+        <input id="id_related_bop-<%= id %>-bop" name="related_bop-<%= id %>-bop" type="hidden" value="<%= bop %>"/>
+        <input id="id_related_bop-<%= id %>-document" name="related_bop-<%= id %>-document" type="hidden" />
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:120px">
+                    <a href="" onclick="return deleteInlineForm('related_bop', <%= id %>);">Remove</a>&nbsp;
+                </td>
+                <td style="width:150px">
+                    <%= title %>
+                </td>
+                <td style="width:250px">
+                    <%= brief_description %>
+                </td>
+                {% if bop_relationship %}
+                    <td style="width:150px">
+                        <select id="id_related_bop-<%= id %>-relationship" name="related_bop-<%= id %>-relationship" style="font-size: 80%;font-family: verdana, sans-serif">
+                            <option value="involves">involves</option>
+                            <option value="synonym">synonym</option>
+                        </select>
+                    </td>
+                {% endif %}
+                <td>
+                    <textarea cols="40" id="id_related_bop-<%= id %>-relevance_narrative" name="related_bop-<%= id %>-relevance_narrative" rows="3">
+                    </textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+        </div>
+    </div>
+</script>

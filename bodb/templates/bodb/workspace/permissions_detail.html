@@ -1,0 +1,29 @@
+<div id="permissionsData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:100px">&nbsp;</td>
+            <td style="width:200px">Insert</td>
+            <td style="width:200px">Edit</td>
+            <td>Delete</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Discussion Posts</td>
+            <td><input type=checkbox name="add_post" {% if add_post %}checked{% endif %}/></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Entries</td>
+            <td><input type=checkbox name="add_entry" {% if add_entry %}checked{% endif %}/></td>
+            <td></td>
+            <td><input type=checkbox name="remove_entry" {% if remove_entry %}checked{% endif %}/></td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Coordinate Selections</td>
+            <td><input type=checkbox name="add_coordinate_selection" {% if add_coordinate_selection %}checked{% endif %}/></td>
+            <td><input type=checkbox name="change_coordinate_selection" {% if change_coordinate_selection %}checked{% endif %}/></td>
+            <td><input type=checkbox name="delete_coordinate_selection" {% if delete_coordinate_selection %}checked{% endif %}/></td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:12:29+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('ZR03') [LITID]&amp;Details=</HttpString>
+<SearchString>('ZR03') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='ZR03') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>ZR03</ID>
+<Authors>
+<Author>
+<Initials>Y</Initials>
+<LastName>Zhong</LastName>
+</Author>
+<Author>
+<Initials>KS</Initials>
+<LastName>Rockland</LastName>
+</Author>
+</Authors>
+<Title>Inferior parietal lobule projections to anterior inferotemporal cortex (area TE) in macaque monkey</Title>
+<Year>2003</Year>
+<Journal>
+<JournalName>Cereb. Cortex</JournalName>
+<Volume>13</Volume>
+<Pages>527-540</Pages>
+<PubMedID>12679299</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>ZR03</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>ZR03-PF</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PF</Acronym>
+<FullName>Rostral inferior parietal lobule</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-PFG</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PFG</Acronym>
+<FullName>Midpart of the inferior parietal lobule</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-PG</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PG</Acronym>
+<FullName>Caudal inferior parietal lobule</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-TEad</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TEad</Acronym>
+<FullName>Inferior temporal cortex, anterodorsal part</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-TEav</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TEav</Acronym>
+<FullName>Inferior temporal cortex, anteroventral part</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-TEpd</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TEpd</Acronym>
+<FullName>inferior temporal cortex, posterodorsal part</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>ZR03-TEpv</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TEpv</Acronym>
+<FullName>inferior temporal cortex, posteroventral part</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

@@ -1,0 +1,71 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - View Message</title>
+    <script type="text/javascript">
+        function deleteMessage()
+        {
+            if(confirm('Do you really want to delete this message?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/bodb/message/{{ message.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/bodb/messages/';
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list" width=100%>
+        <form id="messageForm" method="post" action="">
+            {% csrf_token %}
+            <table>
+                <tr class="table_header">
+                    <td colspan=2><a href="/bodb/messages/">Back to Inbox</a></td>
+                </tr>
+                <tr>
+                    <td style="width:100px"><strong>{% ifequal user.id message.sender.id %}To{% else %}From{% endifequal %}:</strong></td>
+                    <td>{% ifequal user.id message.sender.id %}{% if message.recipient.get_profile.get_icon_url %}<img src="{{ message.recipient.get_profile.get_icon_url }}">{% endif %} {{ message.recipient.username }}{% else %}{% if message.sender.get_profile.get_icon_url %}<img src="{{ message.sender.get_profile.get_icon_url }}">{% endif %} {{ message.sender.username }}{% endifequal %}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td>{{ message.sent }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Subject:</strong></td>
+                    <td>{{ message.subject|safe }}</td>
+                </tr>
+                <tr>
+                    <td colspan=2>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td><td>{{ message.text|safe}}</td>
+                </tr>
+            </table>
+            <br>
+            {% ifnotequal user.id message.sender.id %}<input class=btn type=button onclick="document.getElementById('reply').style.display='inline'" value="Reply"/>&nbsp;{% endifnotequal %}<input class=btn type=button onclick="document.location.href='/bodb/messages/'" value="Close"/>{% ifnotequal user.id message.sender.id %}&nbsp;<input class=btn type=button value="Delete" onclick="deleteMessage()"/>{% endifnotequal %}
+            <div id="reply" style="display:none;">
+                <input type="hidden" name="recipient" id="id_recipient" value="{{ message.sender.id }}"/>
+                <table class="tab_panel" style="background: #e6e8ed;">
+                    <tr>
+                        <td style="width:100px"><strong>Subject:</strong></td>
+                        <td><input type="text" name="subject" id="id_subject" width="37" value="Re: {{ message.subject }}"/></td>
+                        {% if form.subject.errors %}<td class="myerrors">{{ form.subject.errors }}</td>{% endif %}
+                    </tr>
+                    <tr>
+                        <td valign=top><strong>Body:</strong></td>
+                        <td>{{ form.text }}</td>
+                    </tr>
+                    {% if form.text.errors %}<tr><td colspan=2 class="myerrors">{{ form.text.errors }}</td></tr>{% endif %}
+                </table>
+                <div class="myerrors">
+                    {{ form.non_field_errors }}
+                </div>
+                <input class=btn type=submit value="Send"/>&nbsp;<input class=btn type=button value="Cancel" onclick="document.getElementById('reply').style.display='none';"/>
+            </div>
+        </form>
+    </div>
+{% endblock %}

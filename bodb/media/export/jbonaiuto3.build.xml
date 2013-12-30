@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">
+<graph id="connectivity-sed-map" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="F5">
+<graph id="F5_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="F5 (CGMBOFal)">
+<type xlink:href="/bodb/brain_region/117/" xlink:type="simple"/>
+</node>
+<node id="F5 (CGMBOFal)">
+<type xlink:href="/bodb/brain_region/117/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="PMdc">
+<graph id="PMdc_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="PMdc (CGMBOFal)">
+<type xlink:href="/bodb/brain_region/125/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="PMdr">
+<graph id="PMdr_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="PMdr (CGMBOFal)">
+<type xlink:href="/bodb/brain_region/126/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<edge id="10" to="PMdc (CGMBOFal)" from="F5 (CGMBOFal)">
+<type xlink:href="/bodb/sed/10/" xlink:type="simple"/>
+</edge>
+<edge id="9" to="PMdr (CGMBOFal)" from="F5 (CGMBOFal)">
+<type xlink:href="/bodb/sed/9/" xlink:type="simple"/>
+</edge>
+</graph>
+</gxl>

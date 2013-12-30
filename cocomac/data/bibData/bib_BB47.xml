@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T10:53:27+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('BB47') [LITID]&amp;Details=</HttpString>
+<SearchString>('BB47') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='BB47') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>BB47</ID>
+<Authors>
+<Author>
+<Initials>G</Initials>
+<LastName>von Bonin</LastName>
+</Author>
+<Author>
+<Initials>P</Initials>
+<LastName>Bailey</LastName>
+</Author>
+</Authors>
+<Title>The Neocortex of Macaca Mulatta</Title>
+<Year>1947</Year>
+<Book>
+<Publisher>University of Illinois Press</Publisher>
+<Place>Urbana</Place>
+</Book>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>BB47</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>BB47-A</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>A</Acronym>
+<FullName>Allocortex of Bonin &amp; Bailey 1947</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FA</Acronym>
+<FullName>Cortical area FA (primary motor cortex)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FAL</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FAL</Acronym>
+<FullName>Cortical area FAL</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FAS</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FAS</Acronym>
+<FullName>Cortical area FAS</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FB</Acronym>
+<FullName>Premotor area FB</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FBA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FBA</Acronym>
+<FullName>Premotor area FBA</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FC</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FC</Acronym>
+<FullName>Area FC</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FCBm</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FCBm</Acronym>
+<FullName>Premotor area FCBm</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FCop</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FCop</Acronym>
+<FullName>Frontal operculum</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FD</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FD</Acronym>
+<FullName>Prefrontal area FD</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FDdelta</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FDdelta</Acronym>
+<FullName>Prefrontal area Fddelta</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FDE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FDE</Acronym>
+<FullName>Prefrontal area FDE</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FDgamma</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FDgamma</Acronym>
+<FullName>Prefrontal area Fdgamma</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FDL</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FDL</Acronym>
+<FullName>Cortical area FDL</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FE</Acronym>
+<FullName>Cortical area FE</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FF</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FF</Acronym>
+<FullName>Cortical area FF</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-FL</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>FL</Acronym>
+<FullName>Cortical area FL</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-IA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>IA</Acronym>
+<FullName>Anterior insula</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-IB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>IB</Acronym>
+<FullName>Posterior insula</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-LA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>LA</Acronym>
+<FullName>Anterior cingulate cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-LC</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>LC</Acronym>
+<FullName>Posterior cingulate cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-OA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>OA</Acronym>
+<FullName>Extrastriate area OA</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-OB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>OB</Acronym>
+<FullName>Extrastriate area OB</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-OC</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>OC</Acronym>
+<FullName>Striate cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PA</Acronym>
+<FullName>Postcentral area PA</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PB</Acronym>
+<FullName>Postcentral area PB</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PC</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PC</Acronym>
+<FullName>Primary sensory area PC</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PCop</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PCop</Acronym>
+<FullName>Parietal operculum</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PE</Acronym>
+<FullName>Superior parietal lobule</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PEm</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PEm</Acronym>
+<FullName>Rostral superior parietal lobule</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PEp</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PEp</Acronym>
+<FullName>Caudal and medial superior parietal lobule</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PF</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PF</Acronym>
+<FullName>Rostral inferior parietal lobule</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-PG</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PG</Acronym>
+<FullName>Caudal inferior parietal lobule</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TA</Acronym>
+<FullName>Temporal area TA</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TB</Acronym>
+<FullName>Auditory area TB</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TC</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TC</Acronym>
+<FullName>Auditory koniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TE</Acronym>
+<FullName>Inferotemporal area TE</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TEO</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TEO</Acronym>
+<FullName>Posterior inferior temporal cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TF</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TF</Acronym>
+<FullName>Temporal area TF</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TG</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TG</Acronym>
+<FullName>Temporopolar area TG</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>BB47-TH</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TH</Acronym>
+<FullName>Temporal area TH</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

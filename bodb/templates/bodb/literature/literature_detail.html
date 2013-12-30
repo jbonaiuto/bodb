@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - {% if journalForm.instance.id or bookForm.instance.id or chapterForm.instance.id or conferenceForm.instance.id or thesisForm.instance.id or unpublishedForm.instance.id %}Edit{% else %}Add{% endif %} Literature</title>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('journalAuthors', 'fade=1');
+        animatedcollapse.addDiv('bookAuthors', 'fade=1');
+        animatedcollapse.addDiv('chapterAuthors', 'fade=1');
+        animatedcollapse.addDiv('conferenceAuthors', 'fade=1');
+        animatedcollapse.addDiv('thesisAuthors', 'fade=1');
+        animatedcollapse.addDiv('unpublishedAuthors', 'fade=1');
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        {% if journalForm.instance.id or bookForm.instance.id or chapterForm.instance.id or conferenceForm.instance.id or thesisForm.instance.id or unpublishedForm.instance.id %}
+            <h2>Edit Literature</h2>
+        {% else %}
+            <h2>Add Literature</h2>
+            <div style="background:#e6e8ed;">
+                To avoid having redundant references in the database, we recommend first <a href="/bodb/literature/search/">searching</a> for a desired reference
+                and then using the result if found, before adding a new reference.
+            </div><br>
+        {% endif %}
+        {% ifnotequal showTabs 'false' %}
+            Type&nbsp;
+            <select onchange="switchTab(this.value,['journal','book','chapter','conference','thesis','unpublished']);">
+                <option value="journal" {% ifequal literatureType 'journal' %}selected{% endifequal %}>Journal</option>
+                <option value="book" {% ifequal literatureType 'book' %}selected{% endifequal %}>Book</option>
+                <option value="chapter" {% ifequal literatureType 'chapter' %}selected{% endifequal %}>Book Chapter</option>
+                <option value="conference" {% ifequal literatureType 'conference' %}selected{% endifequal %}>Conference</option>
+                <option value="thesis" {% ifequal literatureType 'thesis' %}selected{% endifequal %}>Thesis</option>
+                <option value="unpublished" {% ifequal literatureType 'unpublished' %}selected{% endifequal %}>Unpublished</option>
+            </select>
+        {% endifnotequal %}
+        <div id="journalDiv" style="display:{% ifequal literatureType 'journal' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/journal_detail.html" %}
+        </div>
+        <div id="bookDiv" style="display:{% ifequal literatureType 'book' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/book_detail.html" %}
+        </div>
+        <div id="chapterDiv" style="display:{% ifequal literatureType 'chapter' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/chapter_detail.html" %}
+        </div>
+        <div id="conferenceDiv" style="display:{% ifequal literatureType 'conference' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/conference_detail.html" %}
+        </div>
+        <div id="thesisDiv" style="display:{% ifequal literatureType 'thesis' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/thesis_detail.html" %}
+        </div>
+        <div id="unpublishedDiv" style="display:{% ifequal literatureType 'unpublished' %}block{% else %}none{% endifequal %}">
+            {% include "bodb/literature/unpublished_detail.html" %}
+        </div>
+    </div>
+{% endblock %}

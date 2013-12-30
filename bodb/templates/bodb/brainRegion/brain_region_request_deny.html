@@ -1,0 +1,60 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Brain Region Request - Deny</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <H2>New Brain Region Request - Denial</H2>
+        <table class="tab_panel">
+            <tr valign=top>
+                <td width=200px>Name</td>
+                <td>{{ brainregionrequest.name }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Abbreviation</td>
+                <td>{{ brainregionrequest.abbreviation }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Parent</td>
+                <td>{{ brainregionrequest.parent }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Children</td>
+                <td>{{ brainregionrequest.children }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Nomenclature</td>
+                <td>{{ brainregionrequest.nomenclature }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Nomenclature version</td>
+                <td>{{ brainregionrequest.nomenclature_version }}</td>
+            </tr>
+            <tr valign=top>
+                <td>Rationale</td>
+                <td>{{ brainregionrequest.rationale }}</td>
+                </tr>
+        </table>
+        <form id="requestDeny" action="" method="post">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td><strong>Reason for denial:</strong></td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.reason }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="btn" type="submit" value="Submit" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        {% if msg %}
+            <span class="myerrors">{{ msg }}</span>
+        {% endif %}
+    </div>
+{% endblock %}

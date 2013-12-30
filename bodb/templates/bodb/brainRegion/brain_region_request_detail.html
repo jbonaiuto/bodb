@@ -1,0 +1,94 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Brain Region Request</title>
+    <script type="text/javascript">
+        function check_request()
+        {
+            name=document.getElementById('id_name').value
+            var data = { 'name': name, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+            var args = { type: "POST", url: "/bodb/brain_region/request_exists/", data: data, complete : done_check };
+            $.ajax(args)
+        }
+
+        function done_check(res, status)
+        {
+            var txt = res.responseText;
+            if(status=="success")
+            {
+                var data = eval('('+txt+')');
+                if(data.requestExists==1)
+                {
+                    alert('You have already submitted a request for the region: '+document.getElementById('id_name').value+". Please wait for your request to be reviewed.");
+                }
+                else
+                {
+                    var frm = $('#requestForm');
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        success: function (data) {
+                            self.close();
+                        },
+                        error: function(data) {
+                            $("#errors").html("Something went wrong! Request not submitted");
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <H2>Request New Brain Region</H2>
+        <form id="requestForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td>{{ form.name.label_tag }}*</td>
+                    <td>{{ form.name }}</td>
+                    {% if form.fname.errors %}<td class="myerrors">{{ form.name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.abbreviation.label_tag }}</td>
+                    <td>{{ form.abbreviation }}</td>
+                    {% if form.abbreviation.errors %}<td class="myerrors">{{ form.abbreviation.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.parent.label_tag }}</td>
+                    <td>{{ form.parent }}</td>
+                    {% if form.parent.errors %}<td class="myerrors">{{ form.parent.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.children.label_tag }}</td>
+                    <td>{{ form.children }}</td>
+                    {% if form.children.errors %}<td class="myerrors">{{ form.children.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.nomenclature.label_tag }}*</td>
+                    <td>{{ form.nomenclature }}</td>
+                    {% if form.nomenclature.errors %}<td class="myerrors">{{ form.nomenclature.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.nomenclature_version.label_tag }}</td>
+                    <td>{{ form.nomenclature_version }}</td>
+                    {% if form.nomenclature_version.errors %}<td class="myerrors">{{ form.nomenclature_version.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.rationale.label_tag }}*</td>
+                    <td>{{ form.rationale }}</td>
+                    {% if form.rationale.errors %}<td class="myerrors">{{ form.rationale.errors }}</td>{% endif %}
+                </tr>
+            </table>
+            <div id="errors" class="myerrors">
+                {{ form.errors }}
+            </div>
+            {{ form.user }}
+            <br>
+            <input class="btn" type="button" value="Submit" onclick="check_request()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Cancel" onclick="self.close()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+        </form>
+    </div>
+{% endblock %}
+

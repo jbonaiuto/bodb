@@ -1,0 +1,9 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Workspace Invitation Decline</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        You have declined the invitation to the workspace: {{ invitation.workspace.title }}
+    </div>
+{% endblock %}

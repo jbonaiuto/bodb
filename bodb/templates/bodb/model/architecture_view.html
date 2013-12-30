@@ -1,0 +1,80 @@
+<div id="architectureData">
+    <table style="width:100%">
+        <tr class="section_subheader">
+            <td colspan=2>Architecture</td>
+        </tr>
+        {% if inputs %}
+            <tr valign=top>
+                <td colspan=2><strong>Inputs</strong></td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>
+                    <ul>
+                        {% for input in inputs %}
+                            <li>{{ input.name }} ({{ input.data_type }}) - {{ input.description }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endif %}
+        {% if outputs %}
+            <tr valign=top>
+                <td colspan=2><strong>Outputs</strong></td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>
+                    <ul>
+                        {% for output in outputs %}
+                            <li>{{ output.name }} ({{ output.data_type }}) - {{ output.description }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endif %}
+        {% if states %}
+            <tr valign=top>
+                <td colspan=2><strong>States</strong></td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>
+                    <ul>
+                        {% for state in states %}
+                            <li>{{ state.name }} ({{ state.data_type }}) - {{ state.description }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endif %}
+        {% if figures %}
+            <tr class="section_subheader">
+                <td colspan=2>
+                    Diagrams (<a href="javascript:animatedcollapse.toggle('figureData')"><span id="figureDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    {% include "bodb/document_figure_list.html" %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>&nbsp;</td>
+            </tr>
+        {% endif %}
+        {% if modules %}
+            <tr valign=top>
+                <td colspan=2>
+                    <strong>Submodules</strong> (click to view and edit)
+                </td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>
+                    <ul>
+                        {% for module in modules %}
+                            <li><a href="/bodb/module/{{ module.module.id }}/">{{ module.module.title }}</a> - {{ module.module.brief_description }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+</div>

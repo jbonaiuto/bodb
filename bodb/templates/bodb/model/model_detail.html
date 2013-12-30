@@ -1,0 +1,400 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - {% if form.instance.id%}Edit {{ form.instance.title }}{% else %}Add{% endif %} Model</title>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('modelAuthors', 'fade=1');
+        animatedcollapse.addDiv('architectureData', 'fade=1');
+        animatedcollapse.addDiv('summaryData', 'fade=1');
+        animatedcollapse.addDiv('buildSEDData', 'fade=1');
+        animatedcollapse.addDiv('testSEDData', 'fade=1');
+        animatedcollapse.addDiv('predictionData', 'fade=1');
+        animatedcollapse.addDiv('urlData', 'fade=1');
+        animatedcollapse.addDiv('modelData', 'fade=1');
+        animatedcollapse.addDiv('bopData', 'fade=1');
+        animatedcollapse.addDiv('brainRegionData', 'fade=1');
+        animatedcollapse.addDiv('referenceData', 'fade=1');
+
+        var checkSimilar=true;
+        {% if form.instance.id %}
+            checkSimilar=false;
+        {% endif %}
+
+        var isDraft=0;
+
+        function validateForm()
+        {
+            var errors=0;
+
+            clearSpan(document, 'span_errors');
+            errors+=validateField('title', 'Title', 'span_errors');
+            errors+=validateField('brief_description', 'Brief description', 'span_errors');
+            errors+=validateField('narrative', 'Narrative', 'span_errors');
+            errors+=validateInlineForm('model_author', ['author_first_name', 'author_last_name', 'order'], ['First name', 'Last name', 'Order']);
+            errors+=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
+            errors+=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
+            errors+=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            errors+=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            errors+=validateInlineForm('related_model', ['relationship'], ['Relationship']);
+            errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+            errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+
+            return errors==0;
+        }
+
+        /**
+         * Validate and save the form
+         * @param isDraft - 1 if draft, 0 if not
+         */
+        function save()
+        {
+            document.getElementById('id_draft').value=isDraft;
+            document.getElementById('modelForm').submit();
+        }
+
+        function checkSimilarModels()
+        {
+            if(validateForm())
+            {
+                var title=document.getElementById('id_title').value;
+                var brief_desc=document.getElementById('id_brief_description').value
+                var data={'title': title, 'brief_description': brief_desc};
+                var args={type:"GET", url:"/bodb/model/similar/", data: data, complete: doneCheckSimilarModels };
+                $.ajax(args)
+            }
+            return false;
+        }
+
+        function doneCheckSimilarModels(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                if(checkSimilar && data.similar_model_ids.length>0)
+                {
+                    var dispTxt='The model you entered is similar to the following existing models:';
+                    dispTxt+='<table>';
+                    for(var i=0; i<data.similar_model_ids.length; i++)
+                    {
+                        if(i<10)
+                            dispTxt+='<tr><td><a href="#" onclick="parent.window.open(\'/bodb/model/'+data.similar_model_ids[i]+'/\');">'+data.similar_model_titles[i]+'</a></td></tr>';
+                    }
+                    dispTxt+='</table>';
+                    dispTxt+='Do you want to continue adding this model?<br>'
+                    dispTxt+='<input class="btn" type="button" value="Yes" onclick="save();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
+                    dispTxt+='<input class="btn" type="button" value="No" onclick="disablePopup();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
+                    //saveModel=confirm(dispTxt);
+                    document.getElementById('popup_content').innerHTML=dispTxt;
+                    loadPopup();
+                }
+                else
+                    save();
+            }
+            return false;
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>{% if form.instance.id%}Edit{% else %}Add{% endif %} Model</h2>
+        <form id="modelForm" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=20%>{{ form.title.label_tag }}*</td>
+                    <td>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
+                    {% if form.title.errors %}<td class="myerrors">{{ form.title.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Authors (<a href="javascript:animatedcollapse.toggle('authors')"><span id="authorsLabel">Hide</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        {% with model_author_formset as author_formset %}
+                            {% with "model" as groupName %}
+                                {% include "bodb/literature/author_list_detail.html" %}
+                            {% endwith %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.brief_description.label_tag }}*</td>
+                    <td>{{ form.brief_description }}</td>
+                    {% if form.brief_description.errors %}<td class="myerrors">{{ form.brief_description.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.narrative.label_tag }}*</td>
+                    <td>{{ form.narrative }}</td>
+                    {% if form.narrative %}<td class="myerrors">{{ form.narrative.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.tags.label_tag }}</td>
+                    <td>{{ form.tags }}</td>
+                    {% if form.tags.errors %}<td class="myerrors">{{ form.tags.errors }}</td>{% endif %}
+                </tr>
+                {% if perms.bodb.public_model or user.is_superuser %}
+                    <tr valign=top>
+                        <td>{{ form.public.label_tag }}</td>
+                        <td>{{ form.public }}</td>
+                        {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="3">
+                        <span id="span_errors" class="myerrors"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Architecture (<a href="javascript:animatedcollapse.toggle('architectureData')"><span id="architectureDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        {% include "bodb/model/architecture_detail.html" %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Summaries of Experimental Data (SEDs) and Simulation Results (SSRs) (<a href="javascript:animatedcollapse.toggle('summaryData')"><span id="summaryDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <div id="summaryData" style="display:none">
+                            <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr>
+                                    <td>
+                                        <table class="tab_panel" style="background:#e6e8ed;">
+                                            <tr class="section_subheader">
+                                                <td colspan=6>
+                                                    SEDs used to build the model (<a href="javascript:animatedcollapse.toggle('buildSEDData')"><span id="buildSEDDataLabel">Hide</span></a>)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6">
+                                                    {% include "bodb/sed/build_sed_list_detail.html" %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="tab_panel" style="background:#e6e8ed;">
+                                            <tr class="section_subheader">
+                                                <td colspan=4>
+                                                    SEDs used to test the model (<a href="javascript:animatedcollapse.toggle('testSEDData')"><span id="testSEDDataLabel">Hide</span></a>)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6">
+                                                    {% include "bodb/sed/test_sed_list_detail.html" %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="tab_panel" style="background:#e6e8ed;">
+                                            <tr class="section_subheader">
+                                                <td colspan=3>
+                                                    Predictions (<a href="javascript:animatedcollapse.toggle('predictionData')"><span id="predictionDataLabel">Hide</span></a>)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    {% include "bodb/prediction/prediction_selection_list_detail.html" %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        URLs (<a href="javascript:animatedcollapse.toggle('urlData')"><span id="urlDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <div id="urlData" style="display:none">
+                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr class="even_row" valign=top>
+                                    <td>Execution URL</td>
+                                    <td>{{ form.execution_url }}</td>
+                                    {% if form.execution_url.errors %}<td class="myerrors">{{ form.execution_url.errors }}</td>{% endif %}
+                                </tr>
+                                <tr class="odd_row" valign=top>
+                                    <td>Documentation URL</td>
+                                    <td>{{ form.documentation_url }}</td>
+                                    {% if form.documentation_url.errors %}<td class="myerrors">{{ form.documentation_url.errors }}</td>{% endif %}
+                                </tr>
+                                <tr class="even_row" valign=top>
+                                    <td>Description URL</td>
+                                    <td>{{ form.description_url }}</td>
+                                    {% if form.description_url.errors %}<td class="myerrors">{{ form.description_url.errors }}</td>{% endif %}
+                                </tr>
+                                <tr class="odd_row" valign=top>
+                                    <td>Simulation URL</td>
+                                    <td>{{ form.simulation_url }}</td>
+                                    {% if form.simulation_url.errors %}<td class="myerrors">{{ form.simulation_url.errors }}</td>{% endif %}
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Related Models (<a href="javascript:animatedcollapse.toggle('modelData')"><span id="modelDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        {% include "bodb/model/related_model_list_detail.html" %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Related BOPs (<a href="javascript:animatedcollapse.toggle('bopData')"><span id="bopDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        {% include "bodb/bop/related_bop_list_detail.html" %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Related Brain Regions (<a href="javascript:animatedcollapse.toggle('brainRegionData')"><span id="brainRegionDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        {% include "bodb/brainRegion/related_brain_region_list_detail.html" %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        References (<a href="javascript:animatedcollapse.toggle('referenceData')"><span id="referenceDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        {% include "bodb/literature/reference_list_detail.html" %}
+                    </td>
+                </tr>
+            </table>
+            <div class="myerrors">
+                {{ form.errors }}
+            </div>
+            {{ form.draft }}
+            {{ form.collator }}
+            <br>
+            <input class="btn" type="button" value="Save Draft" onclick="isDraft=1; checkSimilarModels();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if perms.bodb.save_model or user.is_superuser %}
+                <input class="btn" type="button" value="Save" onclick="isDraft=0; checkSimilarModels();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if ispopup %}
+                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if form.instance.id %}
+                {% if not ispopup %}
+                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/model/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

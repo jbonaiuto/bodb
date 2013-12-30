@@ -1,0 +1,40 @@
+<div id="relatedBrainRegionData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td>Name</td>
+            <td>Type</td>
+            <td>Nomenclature</td>
+            <td>Species</td>
+            <td>Relationship</tD>
+        </tr>
+        {% regroup related_brain_region_list by brain_region as brain_region_list %}
+        {% for brain_region in brain_region_list %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>
+                    <a href="/bodb/brain_region/{{ brain_region.grouper.id }}/">{{ brain_region.grouper }}</a>
+                </td>
+                <td>
+                    {{ brain_region.grouper.brain_region_type }}
+                </td>
+                <td>
+                    {{ brain_region.grouper.nomenclature }}
+                </td>
+                <td>
+                    {{ brain_region.grouper.nomenclature.species.all|join:", " }}
+                </td>
+                <td>
+                    <table class="tab_panel">
+                        {% for item in brain_region.list %}
+                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                <td>
+                                    {{ item.relationship }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T10:46:18+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('WSMSPT52') [LITID]&amp;Details=</HttpString>
+<SearchString>('WSMSPT52') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='WSMSPT52') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>WSMSPT52</ID>
+<Authors>
+<Author>
+<Initials>CN</Initials>
+<LastName>Woolsey</LastName>
+</Author>
+<Author>
+<Initials>PH</Initials>
+<LastName>Settlage</LastName>
+</Author>
+<Author>
+<Initials>DR</Initials>
+<LastName>Meyer</LastName>
+</Author>
+<Author>
+<Initials>W</Initials>
+<LastName>Sencer</LastName>
+</Author>
+<Author>
+<Initials>T</Initials>
+<LastName>Pinto Hamuy</LastName>
+</Author>
+<Author>
+<Initials>AM</Initials>
+<LastName>Travis</LastName>
+</Author>
+</Authors>
+<Title>Patterns of localization in precentral and supplementary motor areas and their relation to the concept of a premotor area</Title>
+<Year>1952</Year>
+<Journal>
+<JournalName>Res. Publ. Assoc. Nerv. Ment. Dis.</JournalName>
+<Volume>30</Volume>
+<Pages>238-264</Pages>
+<PubMedID>0</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>WSMSPT52</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>WSMSPT52-MI</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MI</Acronym>
+<FullName>Massa intermedia</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>WSMSPT52-MII</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MII</Acronym>
+<FullName>Supplementary motor area</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>WSMSPT52-SMA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA</Acronym>
+<FullName>Supplementary motor area</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

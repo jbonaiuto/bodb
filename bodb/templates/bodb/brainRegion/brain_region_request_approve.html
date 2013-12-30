@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Brain Region Request Approve</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <H2>New Brain Region Request - Approval</H2>
+        <form id="requestForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=200px>{{ form.name.label_tag }}*</td>
+                    <td>{{ form.name }}</td>
+                    {% if form.name.errors %}<td class="myerrors">{{ form.name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.abbreviation.label_tag }}</td>
+                    <td>{{ form.abbreviation }}</td>
+                    {% if form.abbreviation.errors %}<td class="myerrors">{{ form.abbreviation.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.brain_region_type.label_tag }}</td>
+                    <td>{{ form.brain_region_type }}</td>
+                    {% if form.brain_region_type.errors %}<td class="myerrors">{{ form.brain_region_type.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.parent_region.label_tag }}</td>
+                    <td>{{ form.parent_region }}</td>
+                    {% if form.parent_region.errors %}<td class="myerrors">{{ form.parent_region.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.nomenclature.label_tag }}*</td>
+                    <td>{{ form.nomenclature }}</td>
+                    {% if form.nomenclature.errors %}<td class="myerrors">{{ form.nomenclature.errors }}</td>{% endif %}
+                </tr>
+            </table>
+            <div id="errors" class="myerrors">
+                {{ form.errors }}
+            </div>
+            {{ form.user }}
+            <br>
+            <input class="btn" type="submit" value="Submit" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        </form>
+    </div>
+{% endblock %}
+

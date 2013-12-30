@@ -1,0 +1,84 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Edit Workspace</title>
+    <script type="text/javascript" src="/static/scripts/workspaceFunctions.js"></script>
+    <script type="text/javascript">
+        var titleErr=0;
+
+        function doneTitle(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                if(data.available>0)
+                {
+                    clearSpan(document, "title_errors");
+                    titleErr=0;
+                }
+                else
+                {
+                    document.getElementById("title_errors").innerHTML='<font style="color: red">A workspace already exists with this name</font>';
+                    titleErr=1;
+                }
+            }
+        }
+
+        function checkWorkspaceTitle(title)
+        {
+            var data = { 'title': title, 'csrfmiddlewaretoken': '{{ csrf_token }}' };
+            var args = { type: "POST", url: "/bodb/workspace/title_available/", data: data, complete : doneTitle };
+            $.ajax(args)
+        }
+
+        function save(editing)
+        {
+            clearSpan(document, 'span_errors');
+
+            var errors=titleErr;
+            errors+=validateField('title', 'Title', 'span_errors');
+            errors+=validateField('description', 'Description', 'span_errors');
+            if(errors==0)
+            {
+                document.getElementById('workspaceForm').submit();
+            }
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Workspace</h2>
+        <form id="workspaceForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=20%>{{ form.title.label_tag }}*</td>
+                    <td>{{ form.title }}</td>
+                    <td class="myerrors"><span id="title_errors">{% if form.title.errors %}{{ form.title.errors }}{% endif %}</span></td>
+                </tr>
+                {% if form.instance.id %}
+                    <tr valign="top">
+                        <td valign="top">Created by</td>
+                        <td>{{ form.instance.get_created_by_str }}</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                {% endif %}
+                <tr valign=top>
+                    <td valign=top>{{ form.description.label_tag }}*</td>
+                    <td>{{ form.description }}</td>
+                    <td class="myerrors"><span id="description_errors">{% if form.description.errors %}{{ form.description.errors }}{% endif %}</span></td>
+                </tr>
+            </table>
+            {{ form.active }}
+            <span class="myerrors" id="span_errors">{{ form.errors }}</span>
+            <br>
+            <input class="btn" type="button" value="Save" onclick="save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if form.instance.id %}
+                <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% else %}
+                <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/workspaces/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            <br><br>
+        </form>
+    </div>
+{% endblock %}

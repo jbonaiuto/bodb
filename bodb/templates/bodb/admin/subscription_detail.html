@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Add Subscription</title>
+    <script type="text/javascript">
+        function submitForm()
+        {
+            var frm = $('#subscriptionForm');
+            $.ajax({
+                type: frm.attr('method'),
+                url: frm.attr('action'),
+                data: frm.serialize(),
+                success: function (data) {
+                    self.close();
+                },
+                error: function(data) {
+                    $("#errors").html("Something went wrong! Subscription not saved");
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Add Subscription</h2>
+        <form id="subscriptionForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=30%>Model Type</td>
+                    <td>{{ form.model_type }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>Keywords</td>
+                    <td>{{ form.keywords }}</td>
+                </tr>
+            </table>
+            <div id="errors" class="myerrors">
+                {{ form.non_field_errors }}
+            </div>
+            <br>
+            {{ form.user }}
+            <input class="btn" type="button" value="Save" onclick="submitForm();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        </form>
+    </div>
+{% endblock %}

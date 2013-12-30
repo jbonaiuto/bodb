@@ -1,0 +1,262 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - User Profile</title>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('subscriptionData', 'fade=1');
+        animatedcollapse.addDiv('userSubscriptionData', 'fade=1');
+
+        function checkPasswords()
+        {
+            if(document.getElementById('id_password1').value!=document.getElementById('id_password2').value)
+            {
+                document.getElementById('password_match').innerHTML='Passwords must match';
+                return false;
+            }
+            else
+            {
+                document.getElementById('password_match').innerHTML='&nbsp;';
+                return true;
+            }
+        }
+
+        function save()
+        {
+            clearSpan(document, 'msg');
+            if(checkPasswords())
+                document.getElementById('profileForm').submit();
+        }
+
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Edit User Profile: {{ form.instance.user }}</h2>
+        <form id="profileForm" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td width=160px>{{ form.first_name.label_tag }} {% if form.first_name.field.required %}*{% endif %}</td>
+                    <td width=320px><input type="text" name="first_name" id="id_first_name" value="{{ form.instance.user.first_name }}"/></td>
+                    <td class="myerrors">{% if form.first_name.errors %}{{ form.first_name.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.last_name.label_tag }} {% if form.last_name.field.required %}*{% endif %}</td>
+                    <td><input type="text" name="last_name" id="id_last_name" value="{{ form.instance.user.last_name }}"/></td>
+                    <td class="myerrors">{% if form.last_name.errors %}{{ form.last_name.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.email.label_tag }} {% if form.email.field.required %}*{% endif %}</td>
+                    <td><input type="text" name="email" id="id_email" value="{{ form.instance.user.email }}"/></td>
+                    <td class="myerrors">{% if form.email.errors %}{{ form.email.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>Email new message notifications</td>
+                    <td colspan="2">{{ form.new_message_notify }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.affiliation.label_tag }} {% if form.affiliation.field.required %}*{% endif %}</td>
+                    <td>{{ form.affiliation }}</td>
+                    <td class="myerrors">{% if form.affiliation.errors %}{{ form.affiliation.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>Preferred notification method</td>
+                    <td colspan="2">{{ form.notification_preference }}</td>
+                </tr>
+                <tr>
+                    <td>New password *</td>
+                    <td><input type="password" name="password1" id="id_password1" onkeyup="checkPasswords()"/></td>
+                    <td class="myerrors">{% if form.password1.errors %}{{ form.password1.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>New password (again) *</td>
+                    <td><input type="password" name="password2" id="id_password2" onkeyup="checkPasswords()"/></td>
+                    <td class="myerrors">{% if form.password2.errors %}{{ form.password2.errors }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <span id="password_match" style="color:red">&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ form.avatar.label_tag }} {% if form.avatar.field.required %}*{% endif %}</td>
+                    <td colspan="2">{{ form.avatar }}</td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        User Subscriptions (<a href="javascript:animatedcollapse.toggle('userSubscriptionData')"><span id="userSubscriptionDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <div id="userSubscriptionData" style="display:none;">
+                            <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr class="col_header">
+                                    <td width=60px>&nbsp;</td>
+                                    <td width=150px>User</td>
+                                    <td width=120px>Entry Type</td>
+                                    <td>Keywords</td>
+                                </tr>
+                                <tr>
+                                    <td colspan=4>
+                                        <div id="user_subscriptions">
+                                            {{ user_subscription_formset.management_form }}
+                                            <div class="myerrors">
+                                                {{ user_subscription_formset.management_form.errors }}
+                                            </div>
+                                            {% if form.instance.id %}
+                                                {% for user_subscription_form in user_subscription_formset.forms %}
+                                                    <div id="user_subscription-{{ forloop.counter0 }}" name="user_subscription">
+                                                        <input type=hidden id="id_user_subscription-{{ forloop.counter0 }}-DELETE" name="user_subscription-{{ forloop.counter0 }}-DELETE"/>
+                                                        {{ user_subscription_form.id }}
+                                                        {{ user_subscription_form.user }}
+                                                        {{ user_subscription_form.subscription_ptr }}
+                                                        <table class="tab_panel">
+                                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                <td width=60px>
+                                                                    <a href="" onclick="return deleteInlineForm('user_subscription', {{ forloop.counter0 }});">Delete</a>
+                                                                </td>
+                                                                <td style="width:150px">
+                                                                    {{ user_subscription_form.subscribed_to_user }}
+                                                                </td>
+                                                                <td style="width:120px">
+                                                                    {{ user_subscription_form.model_type }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ user_subscription_form.keywords }}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <div class="myerrors">
+                                                            {{ user_subscription_form.errors }}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:0px" colspan=3>
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Subscriptions (<a href="javascript:animatedcollapse.toggle('subscriptionData')"><span id="subscriptionDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0px" colspan=3>
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <div id="subscriptionData" style="display:none;">
+                            <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr>
+                                    <td colspan=4 class="table_header">
+                                        <a href="#" class="add-subscription" onclick="return addInlineForm('subscriptions','subscription','subscription');">Add new</a>
+                                    </td>
+                                </tr>
+                                <tr class="col_header">
+                                    <td width=60px>&nbsp;</td>
+                                    <td width=120px>Entry Type</td>
+                                    <td>Keywords</td>
+                                </tr>
+                                <tr>
+                                    <td colspan=4>
+                                        {{ subscription_formset.management_form }}
+                                        <div class="myerrors">
+                                            {{ subscription_formset.management_form.errors }}
+                                        </div>
+                                        <div id="subscriptions">
+                                            {% if form.instance.id %}
+                                                {% for subscription_form in subscription_formset.forms %}
+                                                    <div id="subscription-{{ forloop.counter0 }}" name="subscription">
+                                                        <input type=hidden id="id_subscription-{{ forloop.counter0 }}-DELETE" name="subscription-{{ forloop.counter0 }}-DELETE"/>
+                                                        {{ subscription_form.id }}
+                                                        {{ subscription_form.user }}
+                                                        <table class="tab_panel">
+                                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                <td style="width:60px">
+                                                                    <a href="" onclick="return deleteInlineForm('subscription', {{ forloop.counter0 }});">Delete</a>
+                                                                </td>
+                                                                <td style="width:120px">
+                                                                    {{ subscription_form.model_type }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ subscription_form.keywords }}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <div class="myerrors">
+                                                            {{ subscription_form.errors }}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            {{ form.user }}
+            <input class="btn" type="button" value="Save" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'" onclick="save()"/>
+        </form>
+        <div id="profile_errors" class="myerrors">{{ form.errors }}</div>
+        <div id="msg">{% if msg %}<span style="color: red; ">Profile saved.</span>{% endif %}</div>
+    </div>
+    <script type="text/html" id="subscription-template">
+        <div id="subscription-<%= id %>" name="subscription">
+            <input type=hidden id="id_subscription-<%= id %>-DELETE" name="subscription-<%= id %>-DELETE"/>
+            <input id="id_subscription-<%= id %>-id" name="subscription-<%= id %>-id" type="hidden" />
+            <input id="id_subscription-<%= id %>-user" name="subscription-<%= id %>-user" type="hidden" value="{{ user.id }}" />
+            <table class="tab_panel">
+                <tr class="even_row" valign=top>
+                    <td style="width:60px">
+                        <a href="" onclick="return deleteSubscription(<%= id %>);">Delete</a>
+                    </td>
+                    <td style="width:120px">
+                        <select id="id_subscription-<%= id %>-model_type" name="subscription-<%= id %>-model_type">
+                            <option value="" selected="selected">---------</option>
+                            <option value="All">All</option>
+                            <option value="Model">Model</option>
+                            <option value="BOP">BOP</option>
+                            <option value="SED">SED</option>
+                            <option value="Prediction">Prediction</option>
+                            <option value="SSR">SSR</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input id="id_subscription-<%= id %>-keywords" maxlength="500" name="subscription-<%= id %>-keywords" type="text" />
+                    </td>
+                </tr>
+            </table>
+            <div class="myerrors">
+            </div>
+        </div>
+    </script>
+{% endblock %}
+

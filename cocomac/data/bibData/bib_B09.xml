@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T11:50:47+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('B09') [LITID]&amp;Details=</HttpString>
+<SearchString>('B09') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='B09') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>B09</ID>
+<Authors>
+<Author>
+<Initials>K</Initials>
+<LastName>Brodmann</LastName>
+</Author>
+</Authors>
+<Title>Vergleichende Lokalisationslehre der Grosshirnrinde</Title>
+<Year>1909</Year>
+<Book>
+<Publisher>Barth</Publisher>
+<Place>Leipzig</Place>
+</Book>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>B09</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>B09-1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>1</Acronym>
+<FullName>Area 1</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-10</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>10</Acronym>
+<FullName>Area 10</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-11</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>11</Acronym>
+<FullName>Area 11</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-12</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>12</Acronym>
+<FullName>Area 12</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-13</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>13</Acronym>
+<FullName>Orbitofrontal area 13</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-14</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>14</Acronym>
+<FullName>Orbitofrontal area 14</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-15</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>15</Acronym>
+<FullName>Area 15</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-16</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>16</Acronym>
+<FullName>Area 16</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-17</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>17</Acronym>
+<FullName>Area 17</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-18</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>18</Acronym>
+<FullName>Area 18</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-19</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>19</Acronym>
+<FullName>Area 19</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>2</Acronym>
+<FullName>Area 2</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-20</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>20</Acronym>
+<FullName>Area 20</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-21</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>21</Acronym>
+<FullName>Area 21</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-22</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>22</Acronym>
+<FullName>Area 22</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-23</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23</Acronym>
+<FullName>Area 23</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-24</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24</Acronym>
+<FullName>Anterior cingulate area 24</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-25</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>25</Acronym>
+<FullName>Area 25</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-26</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>26</Acronym>
+<FullName>Area 26</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-27</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>27</Acronym>
+<FullName>Area 27 (Presubiculum)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>28</Acronym>
+<FullName>Area 28</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28-I</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>28-I</Acronym>
+<FullName>Entorhinal cortex, lamina I</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28-II</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>28-II</Acronym>
+<FullName>Entorhinal cortex, lamina II</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28-III</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>28-III</Acronym>
+<FullName>Entorhinal cortex, lamina III</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28-V</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>28-V</Acronym>
+<FullName>Entorhinal cortex, lamina V</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-28-VI</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>28-VI</Acronym>
+<FullName>Entorhinal cortex, lamina VI</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-3</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>3</Acronym>
+<FullName>Area 3</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-32</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>32</Acronym>
+<FullName>Area 32</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>35</Acronym>
+<FullName>Area 35</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35-I</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>35-I</Acronym>
+<FullName>Perirhinal area 35, lamina I</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35-II</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>35-II</Acronym>
+<FullName>Perirhinal area 35, lamina II</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35-III</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>35-III</Acronym>
+<FullName>Perirhinal area 35, lamina III</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35-V</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>35-V</Acronym>
+<FullName>Perirhinal area 35, lamina V</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-35-VI</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>35-VI</Acronym>
+<FullName>Perirhinal area 35, lamina VI</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>36</Acronym>
+<FullName>Area 36</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-I</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-I</Acronym>
+<FullName>Perirhinal area 36, lamina I</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-II</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-II</Acronym>
+<FullName>Perirhinal area 36, lamina II</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-III</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-III</Acronym>
+<FullName>Perirhinal area 36, lamina III</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-IV</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-IV</Acronym>
+<FullName>Perirhinal area 36, lamina IV</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-V</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-V</Acronym>
+<FullName>Peirhinal area 36, lamina V</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-36-VI</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>36-VI</Acronym>
+<FullName>Peirhinal area 36, lamina VI</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-4</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>4</Acronym>
+<FullName>Area 4</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-43</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>43</Acronym>
+<FullName>Cortical area 43</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-5</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>5</Acronym>
+<FullName>Area 5</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>6</Acronym>
+<FullName>Area 6</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-7</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7</Acronym>
+<FullName>Area 7</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-8</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8</Acronym>
+<FullName>Area 8</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>B09-9</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>9</Acronym>
+<FullName>Area 9</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

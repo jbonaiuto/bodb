@@ -1,0 +1,62 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Favorite Entries</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('modelData', 'fade=1');
+        animatedcollapse.addDiv('bopData', 'fade=1');
+        animatedcollapse.addDiv('sedData', 'fade=1');
+        animatedcollapse.addDiv('ssrData', 'fade=1');
+        animatedcollapse.addDiv('coordData', 'fade=1');
+
+        function saveCoordinateSelection()
+        {
+            selectionName=document.getElementById('id_selectionName').value;
+            if(selectionName!=null && selectionName.length>0)
+            {
+                selectionDesc=document.getElementById('id_selectionDescription').value;
+                selectionId=document.getElementById('id_selectionId').value;
+                var data = { 'name': selectionName, 'description': selectionDesc, 'id': selectionId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args = { type: "POST", url: "/bodb/coord_selection/save/", data: data,
+                    complete: doneSaveCoordinateSelection };
+                $.ajax(args)
+            }
+            else
+                alert('Please enter a coordinate selection name');
+            return false;
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Favorite Entries</h2>
+        {% include 'bodb/entry_list_view.html' %}
+        <table class="tab_panel">
+            <tr>
+                <td style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td>
+                    Saved Coordinate Selections (<a href="javascript:animatedcollapse.toggle('coordData')"><span id="coordDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="coordData" style="display:none">
+                        {% include 'bodb/sed/coord_selection_list_detail.html' %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

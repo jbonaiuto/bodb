@@ -1,0 +1,103 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Messages</title>
+    <script type="text/javascript">
+        function checboxSelectAllRead(r)
+        {
+            checkboxes=document.getElementsByName('message');
+            read=document.getElementsByName('message_read');
+            for(var i=0; i<checkboxes.length; i++)
+            {
+                if(read[i].value==r)
+                    checkboxes[i].checked=true;
+                else
+                    checkboxes[i].checked=false;
+            }
+            return false;
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list" width=100%>
+        <h2>Messages</h2>
+        <table class="tab_panel">
+            <tr class="table_header">
+                <td colspan=3><a href="/bodb/message/new/">Compose Mail</a></td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <span id="inboxHeader">
+                        <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="sentHeader">                        
+                    </span>
+                </td>
+                <td style="padding:0px"></td>
+            </tr>
+            <tr class="tab_header">
+                <td id="inboxTab" width=100 class="selectedTab" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('inbox',['sent']);"><a>Inbox</a></td>
+                <td id="sentTab" width=100 class="unselectedTab" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('sent',['inbox']);"><a>Sent</a></td>
+                <td style="background:white">&nbsp;</td>
+            </tr>
+            <tr style="background:#0d3f74"><td colspan=3>&nbsp;</td></tr>
+            <tr>
+                <td colspan=3>
+                    <div id="inboxDiv" style="display:block">
+                        <form id="messageForm" method="post" action="">
+                            {% csrf_token %}
+                            <table class="tab_panel">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                            <td style="width:25px"><input type="checkbox" name="message" id="id_message" value="{{ message.id }}"/></td>
+                                            <td style="width:50px" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="document.location.href='/bodb/message/{{ message.id }}/'">{% if message.sender.get_profile.get_icon_url %}<img src="{{ message.sender.get_profile.get_icon_url }}">{% endif %}</td>
+                                            <td style="width:75px" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="document.location.href='/bodb/message/{{ message.id }}/'">{% ifequal message.read 0 %}<strong>{% endifequal %}{{ message.sender.username }}{% ifequal message.read 0 %}</strong>{% endifequal %}</td>
+                                            <td onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="document.location.href='/bodb/message/{{ message.id }}/'"><div class=msg>{% ifequal message.read 0 %}<strong>{% endifequal %}{{ message.subject|safe }}{% ifequal message.read 0 %}</strong>{% endifequal %} - {% if message.sender.id %}{{ message.text|safe|truncatewords:"16" }}{% else %}{{ message.text|truncatewords:"16"|safe }}{% endif %}</div></td>
+                                            <td onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="document.location.href='/bodb/message/{{ message.id }}/'">{% ifequal message.read 0 %}<strong>{% endifequal %}{{ message.sent }}{% ifequal message.read 0 %}</strong>{% endifequal %}<input type="hidden" name="message_read" value="{{ message.read }}"/></td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr class="table_header">
+                                        <td colspan=5>
+                                            Select: <a href="" onclick="return checkboxSetAll('message',true);">All</a>, <a href="" onclick="return checkboxSetAll('message',false);">None</a>, <a href="" onclick="return checboxSelectAllRead(1);">Read</a>, <a href="" onclick="return checboxSelectAllRead(0);">Unread</a>
+                                        </td>
+                                    </tr>
+                                    <tr class="section_header">
+                                        <td colspan=5><input class=btn type=button value="Delete" onclick="document.getElementById('id_delete').value='1'; document.getElementById('messageForm').submit();"/>&nbsp;<input class=btn type=button value="Mark as Read" onclick="document.getElementById('id_mark_read').value='1'; document.getElementById('messageForm').submit();"/>&nbsp;<input class=btn type=button value="Mark as Unread" onclick="document.getElementById('id_mark_unread').value='1'; document.getElementById('messageForm').submit();"/></td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan=5 align=center>(None)</td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                            <input type="hidden" id="id_delete" name="delete" value="0"/>
+                            <input type="hidden" id="id_mark_read" name="mark_read" value="0"/>
+                            <input type="hidden" id="id_mark_unread" name="mark_unread" value="0"/>
+                        </form>
+                    </div>
+                    <div id="sentDiv" style="display:none">
+                        <table class="tab_panel">
+                            {% if sent %}
+                                {% for message in sent %}
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="document.location.href='/bodb/message/{{ message.id }}/'">
+                                        <td style="width:25px">&nbsp;</td>
+                                        <td style="width:50px">{% if message.recipient.get_profile.get_icon_url %}<img src="{{ message.recipient.get_profile.get_icon_url }}">{% endif %}</td>
+                                        <td style="width:75px">{{ message.recipient.username }}</td>
+                                        <td>{{ message.subject|safe }} - {{ message.text|safe|truncatewords:"16" }}</td>
+                                        <td>{{ message.sent }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan=4 align=center>(None)</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

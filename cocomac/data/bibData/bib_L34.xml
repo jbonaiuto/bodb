@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-11-07T16:29:34+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('L34') [LITID]&amp;Details=</HttpString>
+<SearchString>('L34') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='L34') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>L34</ID>
+<Authors>
+<Author>
+<Initials>R</Initials>
+<LastName>Lorente de Nó</LastName>
+</Author>
+</Authors>
+<Title>Studies on the structure of the cerebral cortex. II. Continuation of the study of the ammonic system</Title>
+<Year>1934</Year>
+<Journal>
+<JournalName>J. Psychol. Neurol.</JournalName>
+<Volume>46</Volume>
+<Pages>113-177</Pages>
+<PubMedID>0</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>L34</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>L34-A.par.</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>A.par.</Acronym>
+<FullName>parasubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-A.pres.</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>A.pres.</Acronym>
+<FullName>presubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA1</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA1</Acronym>
+<FullName>CA1 subfield of Ammon`s horn</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA1a</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA1a</Acronym>
+<FullName>subfield a of CA1</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA1b</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA1b</Acronym>
+<FullName>subfield b of CA1</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA1c</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA1b</Acronym>
+<FullName>subfield b of CA1</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA2</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA2</Acronym>
+<FullName>CA2 subfield of Ammons horn</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA3</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA3</Acronym>
+<FullName>CA3 subfield of Ammons horn</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA3a</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA3a</Acronym>
+<FullName>subfield a of CA3</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA3b</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA3b</Acronym>
+<FullName>subfield b of CA3</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA3c</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA3c</Acronym>
+<FullName>subfield c of CA3</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-CA4</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA4</Acronym>
+<FullName>CA4 subfield of Ammons horn</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-FD</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>FD</Acronym>
+<FullName>fascia dentata</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Pros.</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Pros.</Acronym>
+<FullName>prosubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Pros.a</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Pros.a</Acronym>
+<FullName>subfield a of prosubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Pros.b</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Pros.b</Acronym>
+<FullName>subfield b of prosubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Pros.c</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Pros.c</Acronym>
+<FullName>subfield c of prosubiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Sub.</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Sub.</Acronym>
+<FullName>Subiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Sub.a</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Sub.a</Acronym>
+<FullName>subfield a of subiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>L34-Sub.b</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>Sub.b</Acronym>
+<FullName>subfield b of subiculum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

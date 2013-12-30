@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-11-27T12:38:42+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('VPR87') [LITID]&amp;Details=</HttpString>
+<SearchString>('VPR87') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='VPR87') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>VPR87</ID>
+<Authors>
+<Author>
+<Initials>BA</Initials>
+<LastName>Vogt</LastName>
+</Author>
+<Author>
+<Initials>DN</Initials>
+<LastName>Pandya</LastName>
+</Author>
+<Author>
+<Initials>DL</Initials>
+<LastName>Rosene</LastName>
+</Author>
+</Authors>
+<Title>Cingulate cortex of the rhesus monkey: I. Cytoarchitecture and thalamic afferents</Title>
+<Year>1987</Year>
+<Journal>
+<JournalName>J. Comp. Neurol.</JournalName>
+<Volume>262</Volume>
+<Pages>256-270</Pages>
+<PubMedID>3624554</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>VPR87</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>VPR87-23</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23</Acronym>
+<FullName>Area 23</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-23a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23a</Acronym>
+<FullName>Area 23a</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-23b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23b</Acronym>
+<FullName>Area 23b</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-23c</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>23c</Acronym>
+<FullName>Area 23c</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-24</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24</Acronym>
+<FullName>Anterior cingulate area 24</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-24a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24a</Acronym>
+<FullName>Area 24a</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-24b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24b</Acronym>
+<FullName>Area 24b</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-24c</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24c</Acronym>
+<FullName>Area 24c (rostral part of the cingulate sulcus)</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-25</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>25</Acronym>
+<FullName>Area 25</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-29</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>29</Acronym>
+<FullName>Area 29</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-29a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>29a</Acronym>
+<FullName>Area 29a</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-29b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>29b</Acronym>
+<FullName>Area 29b</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-29c</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>29c</Acronym>
+<FullName>Area 29c</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-29d</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>29d</Acronym>
+<FullName>Area 29d</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-30</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>30</Acronym>
+<FullName>Retrosplenial area 30</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-31</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>31</Acronym>
+<FullName>Area 31</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-32</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>32</Acronym>
+<FullName>Area 32</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-4</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>4</Acronym>
+<FullName>Area 4</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>VPR87-6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>6</Acronym>
+<FullName>Area 6</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

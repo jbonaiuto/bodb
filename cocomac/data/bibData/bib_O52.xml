@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-31T11:51:25+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('O52') [LITID]&amp;Details=</HttpString>
+<SearchString>('O52') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='O52') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>O52</ID>
+<Authors>
+<Author>
+<Initials>J</Initials>
+<LastName>Olszewski</LastName>
+</Author>
+</Authors>
+<Title>The Thalamus of the Macaca Mulatta</Title>
+<Year>1952</Year>
+<Book>
+<Publisher>Karger</Publisher>
+<Place>Basel</Place>
+</Book>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>O52</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>O52-AD</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>AD</Acronym>
+<FullName>Nucleus anterior dorsalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Al</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Al</Acronym>
+<FullName>Nucleus alaris thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-AM</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>AM</Acronym>
+<FullName>Nucleus anterior medialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-AN</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>AN</Acronym>
+<FullName>Anterior nuclei of the thalamus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-AV</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>AV</Acronym>
+<FullName>Nucleus anterior ventralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-B</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>B</Acronym>
+<FullName>Nucleus basalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Caud</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Caud</Acronym>
+<FullName>Nucleus caudatus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cdc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cdc</Acronym>
+<FullName>Nucleus centralis densocellularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cif</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cif</Acronym>
+<FullName>Nucleus centralis inferior thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cim</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cim</Acronym>
+<FullName>Nucleus centralis intermedialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cl</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cl</Acronym>
+<FullName>Nucleus centralis lateralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Clau</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Clau</Acronym>
+<FullName>Claustrum</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Clc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Clc</Acronym>
+<FullName>Nucleus centralis latocellularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cld</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cld</Acronym>
+<FullName>Capsule of the nucleus lateralis dorsalis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cn.Md</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>CnMd</Acronym>
+<FullName>Nucleus centrum medianum thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Cs</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cs</Acronym>
+<FullName>Nucleus centralis superior thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Csl</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Csl</Acronym>
+<FullName>Nucleus centralis superior lateralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Fil</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Fil</Acronym>
+<FullName>Nucleus filiformis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GL</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GL</Acronym>
+<FullName>Nucleus geniculatus lateralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GLd</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GLd</Acronym>
+<FullName>Nucleus geniculatus lateralis dorsalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GLv</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GLv</Acronym>
+<FullName>Nucleus geniculatus lateralis ventralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GLvc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GLvc</Acronym>
+<FullName>Nucleus geniculatus lateralis ventralis, pars caudalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GLvo</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GLvo</Acronym>
+<FullName>Nucleus geniculatus lateralis ventralis, pars oralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GM</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GM</Acronym>
+<FullName>Nucleus geniculatus medialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GMmc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GMmc</Acronym>
+<FullName>Nucleus geniculatus medialis thalami, pars magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GMpc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GMpc</Acronym>
+<FullName>Nucleus geniculatus medialis thalami, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-GR.cn</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>GR.cn</Acronym>
+<FullName>Griseum centrale</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-H</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>H</Acronym>
+<FullName>Nucleus habenularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-H1</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>H1</Acronym>
+<FullName>Forels Field H1</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-H2</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>H2</Acronym>
+<FullName>Forels Field H2</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Hl</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Hl</Acronym>
+<FullName>Nucleus habenularis lateralis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Hlmc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Hlmc</Acronym>
+<FullName>Nucleus habenularis lateralis, pars magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Hlpc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Hlpc</Acronym>
+<FullName>Nucleus habenularis lateralis, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Hm</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Hm</Acronym>
+<FullName>Nucleus habenularis medialis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Hyp</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Hyp</Acronym>
+<FullName>Hypothalamus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-IL</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>IL</Acronym>
+<FullName>Intralaminar nuclei of the thalamus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-In</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>In</Acronym>
+<FullName>Nucleus interstitialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-In.p.c</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>In.p.c</Acronym>
+<FullName>Nucleus interstitialis of the posterior commissure</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Inc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Inc</Acronym>
+<FullName>Nucleus intercalatus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-LD</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>LD</Acronym>
+<FullName>Laterodorsal nucleus (thalamus)</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Li</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Li</Acronym>
+<FullName>Nucleus limitans thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-LP</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>LP</Acronym>
+<FullName>Nucleus lateralis posterior thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-MD</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>MD</Acronym>
+<FullName>Nucleus medialis dorsalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-MDdc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>MDdc</Acronym>
+<FullName>Nucleus medialis dorsalis thalami, pars densocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-MDmc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>MDmc</Acronym>
+<FullName>Nucleus medialis dorsalis thalami, pars magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-MDmf</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>MDmf</Acronym>
+<FullName>Nucleus medialis dorsalis thalami, pars multiformis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-MDpc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>MDpc</Acronym>
+<FullName>Nucleus medialis dorsalis thalami, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-ML</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>ML</Acronym>
+<FullName>Midline nuclei of the thalamus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Mm</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Mm</Acronym>
+<FullName>Nucleus mamillaris</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-N.com</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>SN.com</Acronym>
+<FullName>Substantia nigra, pars compacta</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-N.dif</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>N.dif</Acronym>
+<FullName>Substantia nigra, pars diffusa</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pa</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pa</Acronym>
+<FullName>Nucleus paraventricularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pac</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pac</Acronym>
+<FullName>Nucleus paraventricularis caudalis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pall</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pall</Acronym>
+<FullName>Nucleus pallidus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pcn</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pcn</Acronym>
+<FullName>Nucleus paracentralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Per</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Per</Acronym>
+<FullName>Nucleus peripeduncularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pf</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pf</Acronym>
+<FullName>Nucleus parafascicularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Prt.a</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Prt.a</Acronym>
+<FullName>Nucleus praetectalis anterior</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pt</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PT</Acronym>
+<FullName>Nucleus parataenialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pul</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul</Acronym>
+<FullName>Nucleus pulvinaris thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pul.i</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul.i</Acronym>
+<FullName>Nucleus pulvinaris inferior thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pul.l</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul.l</Acronym>
+<FullName>Nucleus pulvinaris lateralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pul.m</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul.m</Acronym>
+<FullName>Nucleus pulvinaris medialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Pul.o</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Pul.o</Acronym>
+<FullName>Nucleus pulvinaris oralis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Put</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Put</Acronym>
+<FullName>Nucleus putamen</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-PvH</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>PvH</Acronym>
+<FullName>Nucleus paraventricularis hypothalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-R</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>R</Acronym>
+<FullName>Nucleus reticularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Re</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Re</Acronym>
+<FullName>Nucleus reuniens thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Reg.prt</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Reg.prt</Acronym>
+<FullName>Regio praetectalis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Ro</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Ro</Acronym>
+<FullName>Nucleus rotundus thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Ru.mc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Ru.mc</Acronym>
+<FullName>Nucleus ruber magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Ru.pc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Ru.pc</Acronym>
+<FullName>Nucleus ruber parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-S.Ret.mes</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>S.Ret.mes</Acronym>
+<FullName>Substantia reticularis mesencephali</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Sf</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Sf</Acronym>
+<FullName>Nucleus subfascicularis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Sf.mc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Sf.mc</Acronym>
+<FullName>Nucleus subfascicularis, pars magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Sf.pc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Sf.pc</Acronym>
+<FullName>Nucleus subfascicularis, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-SG</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>SG</Acronym>
+<FullName>Nucleus suprageniculatus thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-SO</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>SO</Acronym>
+<FullName>Nucleus supraopticus hypothalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Sub.Th</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Sub.Th</Acronym>
+<FullName>Nucleus subthalamicus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Teg.a</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Teg.a</Acronym>
+<FullName>Nucleus tegmentalis anterior</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Tub</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Tub</Acronym>
+<FullName>Nucleus tuberis hypothalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Tub.ol</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Tub.ol</Acronym>
+<FullName>Tuberculum olfactorium</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VA</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VA</Acronym>
+<FullName>ventral anterior nucleus (thalamus)</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VAmc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VAmc</Acronym>
+<FullName>Nucleus ventralis anterior thalami, pars magnocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VApc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VApc</Acronym>
+<FullName>Nucleus ventralis anterior thalami, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VL</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VL</Acronym>
+<FullName>ventral lateral nucleus (thalamus)</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VLc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VLc</Acronym>
+<FullName>Nucleus ventralis lateralis thalami, pars caudalis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VLm</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VLm</Acronym>
+<FullName>Nucleus ventralis lateralis thalami, pars medialis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VLo</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VLo</Acronym>
+<FullName>Nucleus ventralis lateralis thalami, pars oralis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VLps</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VLps</Acronym>
+<FullName>Nucleus ventralis lateralis thalami, pars postrema</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VP</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VP</Acronym>
+<FullName>Nucleus ventralis posterior</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPI</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPI</Acronym>
+<FullName>Nucleus ventralis posterior inferior thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPL</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPL</Acronym>
+<FullName>Aentral posterior lateral nucleus (thalamus)</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPLc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPLc</Acronym>
+<FullName>Nucleus ventralis posterior lateralis thalami, pars caudalis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPLo</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPLo</Acronym>
+<FullName>Nucleus ventralis posterior lateralis thalami, pars oralis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPM</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPM</Acronym>
+<FullName>Nucleus ventralis posterior medialis thalami</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-VPMpc</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>VPMpc</Acronym>
+<FullName>Nucleus ventralis posterior medialis, pars parvocellularis</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-X</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>X</Acronym>
+<FullName>Area X (thalamus)</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Zi</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>ZI</Acronym>
+<FullName>Zona incerta</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>O52-Zic</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Zic</Acronym>
+<FullName>Zona incerta</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

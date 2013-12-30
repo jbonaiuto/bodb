@@ -1,0 +1,42 @@
+<div id="ssrData" style="display:none">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:150px;">Title</td>
+            <td>Brief Description</td>
+        </tr>
+        <tr>
+            <td colspan=3>
+                {{ predictionssr_formset.management_form }}
+                <div class="myerrors">
+                    {{ predictionssr_formset.management_form.errors }}
+                </div>
+                <div id="ssrs">
+                    {% for predictionssr_form in predictionssr_formset.forms %}
+                        <div id="ssr-{{ forloop.counter0 }}" name="ssr">
+                            {{ predictionssr_form.id }}
+                            {{ predictionssr_form.prediction }}
+                            {{ predictionssr_form.ssr }}
+                            {{ predictionssr_form.ssr_collator }}
+                            {{ predictionssr_form.ssr_draft }}
+                            {{ predictionssr_form.ssr_public }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:150px">
+                                        {{ predictionssr_form.ssr_title }}
+                                    </td>
+                                    <td>
+                                        {{ predictionssr_form.ssr_brief_description }}
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="myerrors">
+                                {{ predictionssr_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,127 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - View {{ module.title }} Module</title>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('figureData', 'fade=1');
+        animatedcollapse.addDiv('discussionData', 'fade=1');
+
+        function deleteModule()
+        {
+            if(confirm('Do you really want to delete the current Module?'))
+            {
+            {% if ispopup and idx %}
+                opener.removeSubmodule({{ idx }});
+            {% endif %}
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/bodb/module/{{ module.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/bodb/';
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    {% include "bodb/model/hierarchy_browser.html" %}
+    <div id="detail">
+        <h2>Module: {{ module }} {%if module.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Collator:</strong> {{ module.get_collator_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Created:</strong> {{ module.get_created_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified by:</strong> {{ module.get_modified_by_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified:</strong> {{ module.get_modified_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Tags:</strong> {{ module.tags.all|join:', ' }}</td>
+            </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>{{ module.brief_description }}</td>
+            </tr>
+            {% if input_ports or output_ports or states or figures or modules %}
+                <tr>
+                    <td colspan="2">
+                        {% include "bodb/model/architecture_view.html" %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if module.narrative %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Narrative (<a href="javascript:animatedcollapse.toggle('narrativeData')"><span id="narrativeDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <div id="narrativeData" style="display:none">
+                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr valign=top>
+                                    <td>{{ module.narrative }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=2>
+                    Discussion (<a href="javascript:animatedcollapse.toggle('discussionData')"><span id="discussionDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="discussionData" style="display:none">
+                        {% with module.forum as forum %}
+                            {% include "bodb/discussion/forum_view.html" %}
+                        {% endwith %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        {% if perms.bodb.change_module and canEdit %}
+            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/module/{{module.id}}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if canManage %}
+            <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{module.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if perms.bodb.delete_module and canDelete %}
+            {% if not ispopup %}
+                <input class="btn" type="button" value="Delete" onclick="deleteModule()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

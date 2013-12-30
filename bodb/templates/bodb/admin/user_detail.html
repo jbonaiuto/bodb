@@ -1,0 +1,105 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - {% if form.instance.id%}Edit {{ form.instance.username }}{% else %}Add{% endif %} User</title>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('permissionsData', 'fade=1');
+
+        function save()
+        {
+            document.getElementById('userForm').submit();
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>{% if form.instance.id%}Edit{% else %}Add{% endif %} User</h2>
+        <form id="userForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td colspan=2>
+                        <div id="user_info">
+                            [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
+                        </div>
+                    </td>
+                </tr>
+                <tr valign=top>
+                    <td width=40%>{{ form.username.label_tag }}*</td>
+                    <td>{{ form.username }}</td>
+                    {% if form.username.errors %}<td class="myerrors">{{ form.username.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.first_name.label_tag }}*</td>
+                    <td>{{ form.first_name }}</td>
+                    {% if form.first_name.errors %}<td class="myerrors">{{ form.first_name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.last_name.label_tag }}*</td>
+                    <td>{{ form.last_name }}</td>
+                    {% if form.last_name.errors %}<td class="myerrors">{{ form.last_name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.email.label_tag }}*</td>
+                    <td>{{ form.email }}</td>
+                    {% if form.email.errors %}<td class="myerrors">{{ form.email.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.is_active.label_tag }}*</td>
+                    <td>{{ form.is_active }}</td>
+                    {% if form.is_active.errors %}<td class="myerrors">{{ form.is_active.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.is_staff.label_tag }}*</td>
+                    <td>{{ form.is_staff }}</td>
+                    {% if form.is_staff.errors %}<td class="myerrors">{{ form.is_staff.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>Admin status*</td>
+                    <td>{{ form.is_superuser }}</td>
+                    {% if form.is_superuser.errors %}<td class="myerrors">{{ form.is_superuser.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.groups.label_tag }}*</td>
+                    <td>
+                        {{ form.groups }} <a href="/bodb/group/new/" onclick="return showPopup('add_group_{{ form.instance.id }}',450,400,'/bodb/group/new/');"><img src="/static/img/icon_addlink.gif" width="16" height="16" border=0 alt="Add Another"/></a>
+                        {% if form.groups.help_text %}<br>{{ form.groups.help_text }}{% endif %}
+                        {% if form.groups.errors %}<br><div class="myerrors">{{ form.groups.errors }}</div>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=3>
+                        Permissions (<a href="javascript:animatedcollapse.toggle('permissionsData')"><span id="permissionsDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        {% include "bodb/admin/permissions_detail.html" %}
+                    </td>
+                </tr>
+            </table>
+            <div class="myerrors">
+                {{ form.errors }}
+            </div>
+            <br>
+            <input class="btn" type="button" value="Save" onclick="save()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if ispopup %}
+                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if form.instance.id %}
+                {% if not ispopup %}
+                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/user/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

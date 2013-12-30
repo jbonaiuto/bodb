@@ -1,0 +1,2100 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T16:18:52+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('TTNI97') [LITID]&amp;Details=</HttpString>
+<SearchString>('TTNI97') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='TTNI97') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>TTNI97</ID>
+<Authors>
+<Author>
+<Initials>H</Initials>
+<LastName>Tokuno</LastName>
+</Author>
+<Author>
+<Initials>M</Initials>
+<LastName>Takada</LastName>
+</Author>
+<Author>
+<Initials>A</Initials>
+<LastName>Nambu</LastName>
+</Author>
+<Author>
+<Initials>M</Initials>
+<LastName>Inase</LastName>
+</Author>
+</Authors>
+<Title>Reevaluation of ipsilateral corticocortical inputs to the orofacial region of the primary motor cortex in the macaque monkey</Title>
+<Year>1997</Year>
+<Journal>
+<JournalName>J. Comp. Neurol.</JournalName>
+<Volume>389</Volume>
+<Pages>34-48</Pages>
+<PubMedID>9390758</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>TTNI97</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>TTNI97-1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>1</Acronym>
+<FullName>Area 1</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-12</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>12</Acronym>
+<FullName>Area 12</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-13</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>13</Acronym>
+<FullName>Orbitofrontal area 13</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>2</Acronym>
+<FullName>Area 2</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-3a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>3a</Acronym>
+<FullName>Postcentral area 3a</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-3b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>3b</Acronym>
+<FullName>Postcentral area 3b</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-5</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>5</Acronym>
+<FullName>Area 5</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-7</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7</Acronym>
+<FullName>Area 7</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-7b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7b</Acronym>
+<FullName>Area 7b</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAaAd</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAaAd</Acronym>
+<FullName>cortical masticatory area, deep part</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAd</Acronym>
+<FullName>Caudal cingulate motor area, dorsal bank</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAr</Acronym>
+<FullName>Rostral cingulate motor area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAv</Acronym>
+<FullName>Caudal cingulate motor area, ventral bank</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MI</Acronym>
+<FullName>Primary motor cortex</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI-forelimb</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MI-forelimb</Acronym>
+<FullName>Forelimb region of the primary motor cortex</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI-of</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MI-of</Acronym>
+<FullName>orofacial representation in MI</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PM</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PM</Acronym>
+<FullName>Premotor cortex</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PMd</Acronym>
+<FullName>Premotor cortex, dorsal aspect</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PMv</Acronym>
+<FullName>Premotor cortex, ventral aspect</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-Poa</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>POa</Acronym>
+<FullName>Lower bank of the intraparietal sulcus</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SI</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SI</Acronym>
+<FullName>Primary sensory cortex</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SII</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SII</Acronym>
+<FullName>Secondary sensory cortex</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA</Acronym>
+<FullName>Supplementary motor area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA-fl</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA-fl</Acronym>
+<FullName>forelimb representation in SMA as defined by TTNI97</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA-hl</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA-hl</Acronym>
+<FullName>hind limb representation in SMA as defined by TTNI97</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA-of</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA-of</Acronym>
+<FullName>orofacial representation in SMA as defined by TTNI97</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA-t</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA-t</Acronym>
+<FullName>trunk representation in SMA as defined by TTNI97</FullName>
+<DefType>D</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>TTNI97</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>WGA-HRP</ID_Tracer>
+<FullName>Horseradish peroxidase, conjugated to wheat germ agglutinin</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>3-4 d</SurvivalTime>
+<Thickness_Sections>60</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>3</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>3</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>4.2-6.0 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fuscata</MacaqueSpecies>
+<Sex>F</Sex>
+<Number>3</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>TTNI97-MI-of</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0,2-0,3</Volume>
+<Concentration>4%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p.35</TextPageNumber>
+<FigureNumber>Fig.1b</FigureNumber>
+<Quotation>&amp;quot;The electrode was then removed, and two or three sites were selected for injection of WGA-HRP into the orofacial region of the MI..&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-1</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-12</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-13</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-2</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-3a</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-7b</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAaAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SII</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA-of</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp. 36-45</TextPageNumber>
+<FigureNumber>Figs. 3-6</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>DY</ID_Tracer>
+<FullName>Diamidino Yellow</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>21d</SurvivalTime>
+<Thickness_Sections>60</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>2</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>4.2-6.0 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fuscata</MacaqueSpecies>
+<Sex>F</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>TTNI97-MI-forelimb</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>2</Volume>
+<Concentration>3%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 36; table 1</TextPageNumber>
+<FigureNumber>Fig. 1c</FigureNumber>
+<Quotation>&amp;quot;In case 546B (Table 1), Fast blue (...) was injected into the orofacial region of the MI. ...In cases 4869 and 536172 (Table 1), combined injection of the two fluoerscent dyes, FB and Diamidino yellow (DY, ...), was made separately into the orofacial and forlimb regions of the MI.&amp;quot; (pp. 35-36)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-12</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-5</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>M</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>M</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>M</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-Poa</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SII</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>TTNI97-MI-of</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>2</Volume>
+<Concentration>3%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p.36</TextPageNumber>
+<FigureNumber>Fig.1d</FigureNumber>
+<Quotation>&amp;quot;In cases 4869 and 536172 (Table 1), combined injection of the two fluorescent dyes, FB and Diamidino Yellow (DY, Illing), was made separatly into the orofacial and forelimb regions of the MI.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-1</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-2</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-3a</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-7b</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>D</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.8</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>FB</ID_Tracer>
+<FullName>Fast Blue</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>3 w</SurvivalTime>
+<Thickness_Sections>60</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>3</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>3</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>4.2-6.0 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fuscata</MacaqueSpecies>
+<Sex>F</Sex>
+<Number>3</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>TTNI97-MI-of</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>2</Volume>
+<Concentration>5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p.35</TextPageNumber>
+<FigureNumber>Fig.1c</FigureNumber>
+<Quotation>&amp;quot;&amp;quot;In cases 4869 and 536172 (Table 1), combined injection of the two fluorescent dyes, FB and Diamidino Yellow (DY, Illing), was made separatly into the orofacial and forelimb regions of the MI.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-1</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-2</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-3a</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>G</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>pp.36-45</TextPageNumber>
+<FigureNumber>Fig.7</FigureNumber>
+<Quotation>&amp;quot;After tracer injection into the orofacial region of the MI,a large number of retrogradely labeled neurons were foundin the orbital cortex, which corresponds to area 12 (Fig. 3,sections 30 and 66).&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>TTNI97-MI-forelimb</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>2</Volume>
+<Concentration>5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 36; table 1</TextPageNumber>
+<FigureNumber>Figs. 1d, 8</FigureNumber>
+<Quotation>&amp;quot;In case 546B (Table 1), Fast blue (...) was injected into the orofacial region of the MI. ...In cases 4869 and 536172 (Table 1), combined injection of the two fluoerscent dyes, FB and Diamidino yellow (DY, ...), was made separately into the orofacial and forlimb regions of the MI.&amp;quot; (pp. 35-36)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-12</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-5</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>K</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAr</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>E</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-MI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMd</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-PMv</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-Poa</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SI</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SII</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>TTNI97-SMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+<Laminae>
+<Pattern>??212?</Pattern>
+<PDC_Laminae>J</PDC_Laminae>
+</Laminae>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>TTNI97</ID_Literature>
+<TextPageNumber>p. 45</TextPageNumber>
+<FigureNumber>Fig. 8</FigureNumber>
+<Quotation>Around the cingulate sulcus, small patches of labeled neurons were found after tracer injection into the orofacial region of the MI (Figs. 4-7, 8). The patches were located in an area corresponding probably to the CMAr (area 24c) and the CMAv (area 23c). The pattern of distribution of patches differed from case to case (see Figs. 5, 8), especially in the caudal part. In some cases, labeled neurons were distributed in the CMAv (area 23c). Our retrograde double-labeling experiments revealed that, in the CMAr, the neurons labeled from the orofacial region of the MI were located rostral to an area containing the neurons labeled from the forelimb region of the MI (Fig. 8). More caudally, however, neurons labeled from the orofacial region of the MI were located caudal to an area containing the neurons labeled from the forelimb region of the MI. There was no overlap of distribution between the two neuronal populations in the CMA. No neurons that projected to the orofacial region of the MI were seen in area 6c, which corresponds the CMAd.&amp;quot; (p. 45)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

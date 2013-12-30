@@ -1,0 +1,74 @@
+<script type="text/javascript">
+    function addLiteratureMultiple(lit_id, data){
+        var count = $('#references').children().length;
+        var tmplMarkup = $('#reference-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count, lit: lit_id, authors: data[0], year: data[1], title: data[2]});
+        $('#references').append(compiledTmpl);
+        return false;
+    }
+
+    function removeReference(idx){
+        $('#reference-'+idx).remove();
+        return false;
+    }
+</script>
+<div id="referenceData" style="display:none">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="table_header">
+            <td colspan=4>
+                <a href="/bodb/literature/search/?_multiple=1" onclick="return showPopup('search_reference_{{ form.instance.id }}',500,550,'/bodb/literature/search/?_multiple=1');">Search</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:150px">Authors</td>
+            <td style="width:120px">Year</td>
+            <td>Title</td>
+        </tr>
+        <tr>
+            <td colspan=4>
+                <div id="references">
+                    {% for reference in references %}
+                        <div id="reference-{{ forloop.counter0 }}">
+                            <input type=hidden name="literature" id="id_literature-{{ forloop.counter0 }}" value="{{ reference.id }}"/>
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:120px">
+                                        <a href="" onclick="return removeReference({{ forloop.counter0 }});">Remove</a>
+                                    </td>
+                                    <td style="width:150px">{{ reference.author_names }}</td>
+                                    <td style="width:120px">{{ reference.year }}</td>
+                                    <td>{{ reference.title }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/html" id="reference-template">
+    <div id="reference-<%= id %>" name="reference">
+        <input id="id_literature-<%= id %>" name="literature" type="hidden" value="<%= lit %>"/>
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:120px">
+                    <a href="" onclick="return removeReference(<%= id %>);">Remove</a>&nbsp;
+                </td>
+                <td style="width:150px">
+                    <%= authors %>
+                </td>
+                <td style="width:120px">
+                    <%= year %>
+                </td>
+                <td>
+                    <%= title %>
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+        </div>
+    </div>
+</script>

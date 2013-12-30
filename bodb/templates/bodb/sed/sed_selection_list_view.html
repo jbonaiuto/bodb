@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<form id="reverseModelBenchmarkForm" method="post" action="/bodb/model/reverse_benchmark/">
+    {% csrf_token %}
+    <table class="tab_panel">
+        {% if not ispopup %}
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=6>
+                        Workspace Select: {% if can_add_entry %}<a href="../" onclick="toggleAllSEDSelect('Generic',true,'{{ csrf_token }}');toggleAllSEDSelect('Imaging',true,'{{ csrf_token }}');toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">Select All</a>{% endif %}
+                        {% if can_remove_entry %}/<a href="../" onclick="toggleAllSEDSelect('Generic',false,'{{ csrf_token }}');toggleAllSEDSelect('Imaging',false,'{{ csrf_token }}');toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">Unselect All</a>{% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endif %}
+        {% if generic_seds|length %}
+            <tr>
+                <td colspan="6">
+                    {% include "bodb/sed/generic/generic_sed_selection_list_view.html" %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if connectivity_seds|length %}
+            <tr>
+                <td colspan="6">
+                    {% include "bodb/sed/connectivity/connectivity_sed_selection_list_view.html" %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if imaging_seds|length %}
+            <tr>
+                <td colspan="6">
+                    {% include "bodb/sed/brain_imaging/brain_imaging_sed_selection_list_view.html" %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if erp_seds|length %}
+            <tr>
+                <td colspan="6">
+                    {% include "bodb/sed/erp/erp_sed_selection_list_view.html" %}
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td colspan=6>
+                <br>
+                <input class="btn" type="submit" value="Model Benchmark" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            </td>
+        </tr>
+    </table>
+</form>

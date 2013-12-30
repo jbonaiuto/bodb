@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - About</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <table class="tab_panel">
+            <tr class="section_header">
+                <td align=center>The Brain Operation Database v3.0</td>
+            </tr>
+            <tr>
+                <td>
+                    <h2>Acknowledgements</h2>
+                    The Brain Operation Database (BODB) is part of the University of Southern California Brain Project
+                    (USCBP) and has been designed and implemented by many people under the leadership of Michael A. Arbib.
+                    Mihail Bota designed the related NeuroHomology Database (NHDB). Salvador Marmol designed ARDB (the
+                    Action Recognition Database), the precursor of BODB, and Rishabh Tandon updated it and released ARDB
+                    version 2.0. The name BODB was chosen to replace ARDB to better indicate the wide applicability of the
+                    system’s functionalities. We also appreciate the generosity of Peter Fox and Jack Lancaster from the
+                    Research Imaging Center, The University of Texas Health Science Center at San Antonio, for making
+                    available the brain templates and database of regional Talairach coordinates from their Talairach Demon
+                    which was developed  as part of <a href="http://brainmap.org/">BrainMap</a> an online database of
+                    published functional neuroimaging experiments with coordinate-based (Talairach) activation locations.
+                    Anon Plangprasopchok took the lead in implementing version 2.0 of BODB while Nantana Tinroongroj
+                    developed the first version of the Talairach Demon now integrated with BODB. Implementation of version
+                    3.0 of BODB was primarily the work of James Bonaiuto.
+                    <br><br>
+                    Current work on this Website is based in part upon work supported by the National Science Foundation
+                    under Grant No. 0924674 (Michael A. Arbib, Principal Investigator). Any opinions, findings, and
+                    conclusions or recommendations expressed on this Website are those of the developers and do not
+                    necessarily reflect the views of the National Science Foundation.
+                    <br><br>
+                    For more information, please see the <a href="http://neuroinformatics.usc.edu/resources/brain-operation-database-bodb/">BODB Manual</a>.
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

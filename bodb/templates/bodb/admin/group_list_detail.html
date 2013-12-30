@@ -1,0 +1,88 @@
+<script type="text/javascript">
+    function addGroup(group_id, name){
+        var tmplMarkup = $('#group-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
+        $('#groups').append(compiledTmpl);
+        return false;
+    }
+
+    function updateGroup(group_id, name){
+        var tmplMarkup = $('#group-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
+        $('#group-'+group_id).replaceWith(compiledTmpl);
+    }
+
+    function deleteGroup(id)
+    {
+        if(confirm('Do you really want to delete this group?'))
+        {
+            var data = { 'id': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+            var args = { type: "POST", url: "/bodb/group/"+id+"/delete/", data: data, complete: doneDeleteGroup };
+            $.ajax(args)
+            return false;
+        }
+        return false;
+    }
+
+    function doneDeleteGroup(res, status)
+    {
+        var txt = res.responseText;
+        if (status=="success")
+        {
+            var data = eval('('+txt+')');
+            document.getElementById('group-'+data.id).style.display='none';
+        }
+        else
+            alert(txt);
+    }
+</script>
+<div id="groupDiv" style="display:none">
+    <table class="tab_panel">
+        <tr class="table_header">
+            <td colspan=7>
+                <a href="/bodb/group/new/" onclick="return showPopup('add_group',700,550,'/bodb/group/new/');">Add new</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:100px">&nbsp;</td>
+            <td>Name</td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                <div id="groups">
+                    {% for group in groups %}
+                        <div id="group-{{ group.id }}">
+                             <table class="tab_panel">
+                                 <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                     <td style="width:100px">
+                                         <a href="/bodb/group/{{ group.id }}/edit/" onclick="return showPopup('edit_group_{{ group.id }}', 700, 550, '/bodb/group/{{ group.id }}/edit/');">Edit</a>&nbsp;&nbsp;
+                                         <a href="" onclick="return deleteGroup('{{ group.id }}')">Delete</a>
+                                     </td>
+                                     <td>
+                                         <a href="/bodb/group/{{ group.id }}/" onclick="return showPopup('view_group_{{ group.id }}', 700, 550, '/bodb/group/{{ group.id }}/');">{{ group.name }}</a>
+                                     </td>
+                                 </tr>
+                             </table>
+                         </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="group-template">
+    <div id="group-<%= id %>">
+        <table class="tab_panel">
+            <tr class="even_row" valign=top>
+                <td style="width:100px">
+                    <a href="/bodb/group/<%= id %>/edit/" onclick="return showPopup('edit_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/edit/');">Edit</a>&nbsp;&nbsp;
+                    <a href="" onclick="return deleteGroup('<%= id %>')">Delete</a>
+                </td>
+                <td>
+                    <a href="/bodb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/');"><%= name %></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>

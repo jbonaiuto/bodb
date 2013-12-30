@@ -1,0 +1,60 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Compose Message</title>
+    <script type="text/javascript">
+        function selectRecipient(userId)
+        {
+            var data = { 'id': userId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+            var args = { type: "POST", url: "/bodb/user/"+userId+"/icon/", data: data, complete: doneSelectRecipient };
+            $.ajax(args)
+            return false;
+        }
+
+        function doneSelectRecipient(res, status)
+        {
+            var txt = res.responseText;
+            if (status=="success")
+            {
+                var data = eval('('+txt+')');
+                var innerHTML='';
+                if(data.url!=null && data.url.length>0)
+                    innerHTML='<img height=55 src="'+data.url+'">';
+                document.getElementById('spanRecipientAvatar').innerHTML=innerHTML;
+            }
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list" width=100%>
+        <form id="messageForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr class="table_header">
+                    <td colspan=2><a href="/bodb/messages/">Back to Inbox</a></td>
+                </tr>
+                <tr height=60px>
+                    <td style="width:100px"><strong>To:</strong></td>
+                    <td width=100px>{{ form.recipient }}</td>
+                    <td><span id="spanRecipientAvatar"></span></td>
+                    {% if form.recipient.errors %}<td class="myerrors">{{ form.recipient.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td><strong>Subject:</strong></td>
+                    <td colspan=2>{{ form.subject }}</td>
+                    {% if form.subject.errors %}<td class="myerrors">{{ form.subject.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td colspan=3><strong>Body:</strong></td>
+                </tr>
+                <tr>
+                    <td colspan=3>{{ form.text }}</td>
+                </tr>
+                {% if form.text.errors %}<tr><td colspan=3 class="myerrors">{{ form.text.errors }}</td></tr>{% endif %}
+            </table>
+            <div class="myerrors">
+                {{ form.non_field_errors }}
+            </div>
+            <input class=btn type=submit value="Send"/>&nbsp;<input class=btn type=button value="Cancel" onclick="document.location.href='/bodb/messages/'";/>
+        </form>
+    </div>
+{% endblock %}

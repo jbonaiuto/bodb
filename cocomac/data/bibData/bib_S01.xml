@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:22:38+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('S01') [LITID]&amp;Details=</HttpString>
+<SearchString>('S01') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='S01') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>S01</ID>
+<Authors>
+<Author>
+<Initials>S</Initials>
+<LastName>Shipp</LastName>
+</Author>
+</Authors>
+<Title>Corticopulvinar connections of areas V5, V4, and V3 in the macaque monkey: a dual model of retinal and cortical topographies</Title>
+<Year>2001</Year>
+<Journal>
+<JournalName>J. Comp. Neurol.</JournalName>
+<Volume>439</Volume>
+<Pages>469-490</Pages>
+<PubMedID>11596067</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>S01</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>S01-DP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>DP</Acronym>
+<FullName>Dorsal prelunate gyrus</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-MST</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MST</Acronym>
+<FullName>Medial superior temporal area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V1</Acronym>
+<FullName>Visual area 1</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V1/V2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V1/V2</Acronym>
+<FullName>Visual area 1 and visual area 2</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V2</Acronym>
+<FullName>Visual area 2</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V3</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V3</Acronym>
+<FullName>Visual area 3</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V4</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V4</Acronym>
+<FullName>Visual area 4</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V4t</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V4t</Acronym>
+<FullName>V4 transitional area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V5</Acronym>
+<FullName>Visual area 5</FullName>
+<DefType>A</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>S01</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>WGA-HRP</ID_Tracer>
+<FullName>Horseradish peroxidase, conjugated to wheat germ agglutinin</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>?</InjectionMethod>
+<SurvivalTime>36-60 h</SurvivalTime>
+<Thickness_Sections>50, 60, 30</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>?</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fascicularis</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>?</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 477</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V1/V2</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 475</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 477</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V3</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 473</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 477</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V3</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>S01-MST</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 477</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V4</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>S01-DP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>0.5</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Figs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V4</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.5</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Fifs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V4</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.06</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Figs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V3</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.12</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Figs. 3, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V3</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.05-0.1</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 473</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+</Reference>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>TAA</ID_Tracer>
+<FullName>Tritiated Amino Acids</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>false</Retrograde>
+<RadioactiveTracer>
+<TracerSubstance>[3H]-leucine</TracerSubstance>
+<Activity>186</Activity>
+<SpecificActivity>300</SpecificActivity>
+<Ratio>-</Ratio>
+</RadioactiveTracer>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>?</InjectionMethod>
+<SurvivalTime>36-60 h</SurvivalTime>
+<Thickness_Sections>50, 60, 30</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>?</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fascicularis</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>?</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>S01-MST</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>S01-V4t</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>0.8</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Figs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.8</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Figs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.8</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Fifs. 2, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>S01-V4</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.8</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>S01</ID_Literature>
+<TextPageNumber>p. 471</TextPageNumber>
+<FigureNumber>Fifs. 3, 4</FigureNumber>
+<Quotation>&amp;quot;Four brains were dual-injection cases, being additionally injected with tritiated amino acids (TAA) in the same hemisphere; three of these (cases SP40, SP42, and SP43) had WGA-HRP placed in V4 and TAA placed in V5. The fourth (case SP44) received TAA in V4 and HRP-Wga in area V3.&amp;quot; p. 471</Quotation>
+</Reference>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

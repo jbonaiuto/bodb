@@ -1,0 +1,86 @@
+<div id="figureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr>
+            <td colspan=5 class="table_header">
+                <a href="#" class="add-figure" onclick="return addInlineForm('figures','figure','figure');">Add new</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td width=60px>&nbsp;</td>
+            <td width=60px>Order*</td>
+            <td width=300px>File*</td>
+            <td width=175px>Title*</td>
+            <td>Caption*</td>
+        </tr>
+        <tr>
+            <td colspan=5>
+                {{ figure_formset.management_form }}
+                <div class="myerrors">
+                    {{ figure_formset.management_form.errors }}
+                </div>
+                <div id="figures">
+                    {% for figure_form in figure_formset.forms %}
+                        <div id="figure-{{ forloop.counter0 }}" name="figure">
+                            <input type=hidden id="id_figure-{{ forloop.counter0 }}-DELETE" name="figure-{{ forloop.counter0 }}-DELETE"/>
+                            {{ figure_form.id }}
+                            {{ figure_form.document }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=60px>
+                                        <a href="" onclick="return deleteInlineForm('figure', {{ forloop.counter0 }});">Delete</a>
+                                    </td>
+                                    <td width=60px>
+                                        {{ figure_form.order }}
+                                    </td>
+                                    <td style="width:300px">
+                                        {{ figure_form.figure }}
+                                    </td>
+                                    <td style="width:175px">
+                                        {{ figure_form.title }}
+                                    </td>
+                                    <td>
+                                        {{ figure_form.caption }}
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="myerrors">
+                                {{ figure_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="figure-template">
+    <div id="figure-<%= id %>" name="figure">
+        <input type=hidden id="id_figure-<%= id %>-DELETE" name="figure-<%= id %>-DELETE"/>
+        <input id="id_figure-<%= id %>-id" name="figure-<%= id %>-id" type="hidden" />
+        <input id="id_figure-<%= id %>-document" name="figure-<%= id %>-document" type="hidden" />
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td width=60px>
+                    <a href="" onclick="return deleteInlineForm('figure', <%= id %>);">Delete</a>
+                </td>
+                <td width=60px>
+                    <input id="id_figure-<%= id %>-order" name="figure-<%= id %>-order" size="3" type="text" value="<%= id %>"/>
+                </td>
+                <td style="width:300px">
+                    <input id="id_figure-<%= id %>-figure" name="figure-<%= id %>-figure" type="file" />
+                </td>
+                <td style="width:175px">
+                    <input id="id_figure-<%= id %>-title" maxlength="100" name="figure-<%= id %>-title" type="text" />
+                </td>
+                <td>
+                    <textarea cols="40" id="id_figure-<%= id %>-caption" name="figure-<%= id %>-caption" rows="10">
+                    </textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+        </div>
+    </div>
+</script>

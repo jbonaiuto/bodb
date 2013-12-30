@@ -1,0 +1,48 @@
+{% if brain_regions|length %}
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            {% if ispopup %}
+                <td style="width:120px">&nbsp;</td>
+            {% endif %}
+            <td>Name</td>
+            <td>Abbreviation</td>
+            <td>Type</td>
+            <td>Parent region</td>
+            <td>Nomenclature</td>
+            <td>Species</td>
+        </tr>
+        {% for brain_region in brain_regions %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                {% if ispopup %}
+                    <td>
+                        {% if multiple %}
+                            <a href="../" onclick="return opener.addBrainRegionMultiple({{ brain_region.id }}, ['{{ brain_region|escapejs }}', '{{ brain_region.nomenclature|escapejs }}', '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}']);">Select</a></td>
+                        {% else %}
+                            <a href="../" onclick="opener.addBrainRegionSingle({{ brain_region.id }}, ['{{ brain_region|escapejs }}', '{{ brain_region.nomenclature|escapejs }}', '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}'], '{{ fieldName }}');self.close();">Select</a></td>
+                        {% endif %}
+                    </td>
+                {% endif %}
+                <td>
+                    <a href="/bodb/brain_region/{{ brain_region.id }}/">{{ brain_region }}</a>
+                </td>
+                <td>
+                    {{ brain_region.abbreviation }}
+                </td>
+                <td>
+                    {{ brain_region.brain_region_type }}
+                </td>
+                <td>
+                    {% if brain_region.parent_region %}
+                        {{ brain_region.parent_region.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ brain_region.nomenclature }}
+                </td>
+                <td>
+                    {{ brain_region.nomenclature.species.all|join:", " }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

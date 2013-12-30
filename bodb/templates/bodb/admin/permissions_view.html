@@ -1,0 +1,77 @@
+<div id="permissionsData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:100px">&nbsp;</td>
+            <td style="width:100px">Insert</td>
+            <td style="width:100px">Save</td>
+            <td style="width:100px">Make Public</td>
+            <td style="width:100px">Edit</td>
+            <td>Delete</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Literature</td>
+            <td>{% if add_literature %}&nbsp;&nbsp;x{% endif %}</td>
+            <td></td>
+            <td></td>
+            <td>{% if change_literature %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_literature %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Models</td>
+            <td>{% if add_model %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if save_model %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if public_model %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_model %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_model %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Modules</td>
+            <td>{% if add_module %}&nbsp;&nbsp;x{% endif %}</td>
+            <td></td>
+            <td></td>
+            <td>{% if change_module %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_module %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>BOPs</td>
+            <td>{% if add_bop %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if save_bop %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if public_bop %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_bop %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_bop %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>SEDs</td>
+            <td>{% if add_sed %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if save_sed %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if public_sed %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_sed %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_sed %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>SSRs</td>
+            <td>{% if add_ssr %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if save_ssr %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if public_ssr %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_ssr %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_ssr %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Predictions</td>
+            <td>{% if add_prediction %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if save_prediction %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if public_prediction %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_prediction %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_prediction %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Nomenclatures</td>
+            <td>{% if add_nomenclature %}&nbsp;&nbsp;x{% endif %}</td>
+            <td></td>
+            <td></td>
+            <td>{% if change_nomenclature %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_nomenclature %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,162 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View Workspace</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        function deleteWorkspace()
+        {
+            if(confirm('This will delete this Workspace. Do you really want to delete the current Workspace?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/bodb/workspace/{{ workspace.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/bodb/workspaces/';
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Workspace: {{ workspace.title }}</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td valign="top" width=10%><strong>Creator</strong></td>
+                <td>{{ workspace.get_created_by_str }}</td>
+            </tr>
+            <tr valign=top>
+                <td valign=top><strong>Description</strong></td>
+                <td>{{ workspace.description }}</td>
+            </tr>
+        </table>
+        {% if admin %}
+            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Delete" onclick="deleteWorkspace()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+
+        <table class="tab_panel">
+            <tr>
+                <td style="padding:0px">
+                    <span id="activityHeader">
+                        {% ifequal selected 'activity' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="entryHeader">
+                        {% ifequal selected 'entries' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="coordHeader">
+                        {% ifequal selected 'coords' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="discussionHeader">
+                        {% ifequal selected 'discussion' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="adminHeader">
+                        {% ifequal selected 'admin' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
+                </td>
+            </tr>
+            <tr class="tab_header">
+                <td id="activityTab" width=150 class="{% ifequal selected 'activity' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('activity',['entry','coord','discussion','admin']);">
+                    <a>Activity</a>
+                </td>
+                <td id="entryTab" width=150 class="{% ifequal selected 'entries' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('entry',['activity','coord','discussion','admin']);">
+                    <a>Entries</a>
+                </td>
+                <td id="coordTab" width=190 class="{% ifequal selected 'coords' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('coord',['activity','entry','discussion','admin']);">
+                    <a>Coordinates</a></td>
+                <td id="discussionTab" width=150 class="{% ifequal selected 'discussion' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('discussion',['activity','entry','coord','admin']);">
+                    <a>Discussion</a>
+                </td>
+                <td id="adminTab" width=150 class="{% ifequal selected 'admin' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('admin',['activity','entry','coord','discussion']);">
+                    {% if admin %}
+                        <a>Admin</a>
+                    {% else %}
+                        <a>Members</a>
+                    {% endif %}
+                </td>
+                <td class="unselectedTab">&nbsp;</td>
+            </tr>
+            <tr style="background:#0d3f74"><td colspan=8>&nbsp;</td></tr>
+            <tr>
+                <td colspan=8 style="padding:0px">
+                    <div id="activityDiv" style="display:{% ifequal selected 'activity' %}block{% else %}none{% endifequal %}">
+                        {% include "bodb/workspace/workspace_activity.html" %}
+                    </div>
+                    <div id="entryDiv" style="display:{% ifequal selected 'entries' %}block{% else %}none{% endifequal %}">
+                        {% include 'bodb/entry_list_view.html' %}
+                    </div>
+                    <div id="coordDiv" style="display:{% ifequal selected 'coords' %}block{% else %}none{% endifequal %}">
+                        <script type="text/javascript">
+                            function saveCoordinateSelection()
+                            {
+                                selectionName=document.getElementById('id_selectionName').value;
+                                if(selectionName!=null && selectionName.length>0)
+                                {
+                                    selectionDesc=document.getElementById('id_selectionDescription').value;
+                                    selectionId=document.getElementById('id_selectionId').value;
+                                    var data = { 'name': selectionName, 'description': selectionDesc, 'id': selectionId,
+                                        'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                                    var args = { type: "POST", url: "/bodb/workspace/coord_selection/save/", data: data,
+                                        complete: doneSaveCoordinateSelection };
+                                    $.ajax(args)
+                                }
+                                else
+                                    alert('Please enter a coordinate selection name');
+                                return false;
+                            }
+                        </script>
+                        {% include 'bodb/sed/coord_selection_list_detail.html' %}
+                    </div>
+                    <div id="discussionDiv" style="display:{% ifequal selected 'discussion' %}block{% else %}none{% endifequal %}">
+                        {% with workspace.forum as forum %}
+                            {% include "bodb/discussion/forum_view.html" %}
+                        {% endwith %}
+                    </div>
+                    <div id="adminDiv" style="display:{% ifequal selected 'admin' %}block{% else %}none{% endifequal %}">
+                        {% if admin %}
+                            {% include "bodb/workspace/workspace_admin.html" %}
+                        {% else %}
+                            {% include "bodb/workspace/workspace_member_list.html" %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <form id="reportForm" name="reportForm" action="/bodb/workspace/{{ workspace.id }}/model/report/rtf/" method="post">
+        </form>
+    </div>
+{% endblock %}

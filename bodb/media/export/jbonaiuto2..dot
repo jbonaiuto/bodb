@@ -1,0 +1,333 @@
+digraph "connectivity-sed-map" {
+	graph [_gxl_hypergraph=false];
+	subgraph VLm_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VLm (CCHR)"		 [URL="/bodb/brain_region/2012/"];
+	}
+	subgraph MDl_subgraph {
+		graph [_gxl_hypergraph=false];
+		"MDl (CCHR)"		 [URL="/bodb/brain_region/1991/"];
+	}
+	subgraph VLc_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VLc (CCHR)"		 [URL="/bodb/brain_region/2011/"];
+	}
+	subgraph GMpc_subgraph {
+		graph [_gxl_hypergraph=false];
+		"GMpc (CCHR)"		 [URL="/bodb/brain_region/1986/"];
+	}
+	subgraph Pv_subgraph {
+		graph [_gxl_hypergraph=false];
+		"Pv (CCHR)"		 [URL="/bodb/brain_region/2003/"];
+	}
+	subgraph Po_subgraph {
+		graph [_gxl_hypergraph=false];
+		"Po (CCHR)"		 [URL="/bodb/brain_region/1997/"];
+	}
+	subgraph VPLo_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VPLo (CCHR)"		 [URL="/bodb/brain_region/2017/"];
+	}
+	subgraph LD_subgraph {
+		graph [_gxl_hypergraph=false];
+		"LD (CCHR)"		 [URL="/bodb/brain_region/1988/"];
+	}
+	subgraph VLo_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VLo (CCHR)"		 [URL="/bodb/brain_region/2013/"];
+	}
+	subgraph LP_subgraph {
+		graph [_gxl_hypergraph=false];
+		"LP (CCHR)"		 [URL="/bodb/brain_region/1990/"];
+	}
+	subgraph VPM_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VPM (CCHR)"		 [URL="/bodb/brain_region/2018/"];
+	}
+	subgraph VLps_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VLps (CCHR)"		 [URL="/bodb/brain_region/2014/"];
+	}
+	subgraph VPI_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VPI (CCHR)"		 [URL="/bodb/brain_region/2015/"];
+	}
+	subgraph "Pul.i_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"Pul.i (CCHR)"		 [URL="/bodb/brain_region/1999/"];
+	}
+	subgraph "Pul.o_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"Pul.o (CCHR)"		 [URL="/bodb/brain_region/2002/"];
+	}
+	subgraph ZI_subgraph {
+		graph [_gxl_hypergraph=false];
+		"ZI (CCHR)"		 [URL="/bodb/brain_region/2021/"];
+	}
+	subgraph AD_subgraph {
+		graph [_gxl_hypergraph=false];
+		"AD (CCHR)"		 [URL="/bodb/brain_region/1972/"];
+	}
+	subgraph VPLc_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VPLc (CCHR)"		 [URL="/bodb/brain_region/2016/"];
+	}
+	subgraph R_subgraph {
+		graph [_gxl_hypergraph=false];
+		"R (CCHR)"		 [URL="/bodb/brain_region/2005/"];
+	}
+	subgraph AV_subgraph {
+		graph [_gxl_hypergraph=false];
+		"AV (CCHR)"		 [URL="/bodb/brain_region/1975/"];
+	}
+	subgraph VPMpc_subgraph {
+		graph [_gxl_hypergraph=false];
+		"VPMpc (CCHR)"		 [URL="/bodb/brain_region/2019/"];
+	}
+	subgraph "11_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"11 (CCTCR)"		 [URL="/bodb/brain_region/774/"];
+	}
+	subgraph "10_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"10 (CCTCR)"		 [URL="/bodb/brain_region/773/"];
+	}
+	subgraph "13_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"13 (CCTCR)"		 [URL="/bodb/brain_region/776/"];
+	}
+	subgraph "12_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"12 (CCTCR)"		 [URL="/bodb/brain_region/775/"];
+	}
+	subgraph "14_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"14 (CCTCR)"		 [URL="/bodb/brain_region/777/"];
+	}
+	subgraph Cl_subgraph {
+		graph [_gxl_hypergraph=false];
+		"Cl (CCHR)"		 [URL="/bodb/brain_region/1980/"];
+	}
+	subgraph "Pul.l_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"Pul.l (CCHR)"		 [URL="/bodb/brain_region/2000/"];
+	}
+	"11 (CCTCR)" -> "VLm (CCHR)"	 [_gxl_id=386,
+		URL="/bodb/sed/386/"];
+	"11 (CCTCR)" -> "MDl (CCHR)"	 [_gxl_id=274,
+		URL="/bodb/sed/274/"];
+	"11 (CCTCR)" -> "VLc (CCHR)"	 [_gxl_id=343,
+		URL="/bodb/sed/343/"];
+	"11 (CCTCR)" -> "GMpc (CCHR)"	 [_gxl_id=354,
+		URL="/bodb/sed/354/"];
+	"11 (CCTCR)" -> "Pv (CCHR)"	 [_gxl_id=332,
+		URL="/bodb/sed/332/"];
+	"11 (CCTCR)" -> "Po (CCHR)"	 [_gxl_id=394,
+		URL="/bodb/sed/394/"];
+	"11 (CCTCR)" -> "VPLo (CCHR)"	 [_gxl_id=326,
+		URL="/bodb/sed/326/"];
+	"11 (CCTCR)" -> "LD (CCHR)"	 [_gxl_id=321,
+		URL="/bodb/sed/321/"];
+	"11 (CCTCR)" -> "VLo (CCHR)"	 [_gxl_id=458,
+		URL="/bodb/sed/458/"];
+	"11 (CCTCR)" -> "LP (CCHR)"	 [_gxl_id=311,
+		URL="/bodb/sed/311/"];
+	"11 (CCTCR)" -> "VPM (CCHR)"	 [_gxl_id=423,
+		URL="/bodb/sed/423/"];
+	"11 (CCTCR)" -> "VLps (CCHR)"	 [_gxl_id=436,
+		URL="/bodb/sed/436/"];
+	"11 (CCTCR)" -> "VPI (CCHR)"	 [_gxl_id=273,
+		URL="/bodb/sed/273/"];
+	"11 (CCTCR)" -> "Pul.i (CCHR)"	 [_gxl_id=317,
+		URL="/bodb/sed/317/"];
+	"11 (CCTCR)" -> "Pul.o (CCHR)"	 [_gxl_id=312,
+		URL="/bodb/sed/312/"];
+	"11 (CCTCR)" -> "ZI (CCHR)"	 [_gxl_id=385,
+		URL="/bodb/sed/385/"];
+	"11 (CCTCR)" -> "AD (CCHR)"	 [_gxl_id=437,
+		URL="/bodb/sed/437/"];
+	"11 (CCTCR)" -> "VPLc (CCHR)"	 [_gxl_id=430,
+		URL="/bodb/sed/430/"];
+	"11 (CCTCR)" -> "R (CCHR)"	 [_gxl_id=271,
+		URL="/bodb/sed/271/"];
+	"11 (CCTCR)" -> "AV (CCHR)"	 [_gxl_id=301,
+		URL="/bodb/sed/301/"];
+	"11 (CCTCR)" -> "VPMpc (CCHR)"	 [_gxl_id=329,
+		URL="/bodb/sed/329/"];
+	"11 (CCTCR)" -> "Cl (CCHR)"	 [_gxl_id=449,
+		URL="/bodb/sed/449/"];
+	"11 (CCTCR)" -> "Pul.l (CCHR)"	 [_gxl_id=466,
+		URL="/bodb/sed/466/"];
+	"10 (CCTCR)" -> "VLm (CCHR)"	 [_gxl_id=297,
+		URL="/bodb/sed/297/"];
+	"10 (CCTCR)" -> "MDl (CCHR)"	 [_gxl_id=308,
+		URL="/bodb/sed/308/"];
+	"10 (CCTCR)" -> "VLc (CCHR)"	 [_gxl_id=300,
+		URL="/bodb/sed/300/"];
+	"10 (CCTCR)" -> "GMpc (CCHR)"	 [_gxl_id=291,
+		URL="/bodb/sed/291/"];
+	"10 (CCTCR)" -> "Pv (CCHR)"	 [_gxl_id=420,
+		URL="/bodb/sed/420/"];
+	"10 (CCTCR)" -> "Po (CCHR)"	 [_gxl_id=365,
+		URL="/bodb/sed/365/"];
+	"10 (CCTCR)" -> "VPLo (CCHR)"	 [_gxl_id=357,
+		URL="/bodb/sed/357/"];
+	"10 (CCTCR)" -> "LD (CCHR)"	 [_gxl_id=346,
+		URL="/bodb/sed/346/"];
+	"10 (CCTCR)" -> "VLo (CCHR)"	 [_gxl_id=457,
+		URL="/bodb/sed/457/"];
+	"10 (CCTCR)" -> "LP (CCHR)"	 [_gxl_id=411,
+		URL="/bodb/sed/411/"];
+	"10 (CCTCR)" -> "VPM (CCHR)"	 [_gxl_id=341,
+		URL="/bodb/sed/341/"];
+	"10 (CCTCR)" -> "VLps (CCHR)"	 [_gxl_id=441,
+		URL="/bodb/sed/441/"];
+	"10 (CCTCR)" -> "VPI (CCHR)"	 [_gxl_id=325,
+		URL="/bodb/sed/325/"];
+	"10 (CCTCR)" -> "Pul.i (CCHR)"	 [_gxl_id=355,
+		URL="/bodb/sed/355/"];
+	"10 (CCTCR)" -> "Pul.o (CCHR)"	 [_gxl_id=465,
+		URL="/bodb/sed/465/"];
+	"10 (CCTCR)" -> "ZI (CCHR)"	 [_gxl_id=340,
+		URL="/bodb/sed/340/"];
+	"10 (CCTCR)" -> "AD (CCHR)"	 [_gxl_id=443,
+		URL="/bodb/sed/443/"];
+	"10 (CCTCR)" -> "VPLc (CCHR)"	 [_gxl_id=371,
+		URL="/bodb/sed/371/"];
+	"10 (CCTCR)" -> "R (CCHR)"	 [_gxl_id=281,
+		URL="/bodb/sed/281/"];
+	"10 (CCTCR)" -> "AV (CCHR)"	 [_gxl_id=352,
+		URL="/bodb/sed/352/"];
+	"10 (CCTCR)" -> "VPMpc (CCHR)"	 [_gxl_id=390,
+		URL="/bodb/sed/390/"];
+	"10 (CCTCR)" -> "Cl (CCHR)"	 [_gxl_id=461,
+		URL="/bodb/sed/461/"];
+	"10 (CCTCR)" -> "Pul.l (CCHR)"	 [_gxl_id=349,
+		URL="/bodb/sed/349/"];
+	"13 (CCTCR)" -> "VLm (CCHR)"	 [_gxl_id=324,
+		URL="/bodb/sed/324/"];
+	"13 (CCTCR)" -> "MDl (CCHR)"	 [_gxl_id=296,
+		URL="/bodb/sed/296/"];
+	"13 (CCTCR)" -> "VLc (CCHR)"	 [_gxl_id=393,
+		URL="/bodb/sed/393/"];
+	"13 (CCTCR)" -> "GMpc (CCHR)"	 [_gxl_id=373,
+		URL="/bodb/sed/373/"];
+	"13 (CCTCR)" -> "Pv (CCHR)"	 [_gxl_id=333,
+		URL="/bodb/sed/333/"];
+	"13 (CCTCR)" -> "Po (CCHR)"	 [_gxl_id=277,
+		URL="/bodb/sed/277/"];
+	"13 (CCTCR)" -> "VPLo (CCHR)"	 [_gxl_id=416,
+		URL="/bodb/sed/416/"];
+	"13 (CCTCR)" -> "LD (CCHR)"	 [_gxl_id=302,
+		URL="/bodb/sed/302/"];
+	"13 (CCTCR)" -> "VLo (CCHR)"	 [_gxl_id=370,
+		URL="/bodb/sed/370/"];
+	"13 (CCTCR)" -> "LP (CCHR)"	 [_gxl_id=460,
+		URL="/bodb/sed/460/"];
+	"13 (CCTCR)" -> "VPM (CCHR)"	 [_gxl_id=309,
+		URL="/bodb/sed/309/"];
+	"13 (CCTCR)" -> "VLps (CCHR)"	 [_gxl_id=292,
+		URL="/bodb/sed/292/"];
+	"13 (CCTCR)" -> "VPI (CCHR)"	 [_gxl_id=368,
+		URL="/bodb/sed/368/"];
+	"13 (CCTCR)" -> "Pul.i (CCHR)"	 [_gxl_id=348,
+		URL="/bodb/sed/348/"];
+	"13 (CCTCR)" -> "Pul.o (CCHR)"	 [_gxl_id=378,
+		URL="/bodb/sed/378/"];
+	"13 (CCTCR)" -> "ZI (CCHR)"	 [_gxl_id=404,
+		URL="/bodb/sed/404/"];
+	"13 (CCTCR)" -> "AD (CCHR)"	 [_gxl_id=282,
+		URL="/bodb/sed/282/"];
+	"13 (CCTCR)" -> "VPLc (CCHR)"	 [_gxl_id=361,
+		URL="/bodb/sed/361/"];
+	"13 (CCTCR)" -> "R (CCHR)"	 [_gxl_id=288,
+		URL="/bodb/sed/288/"];
+	"13 (CCTCR)" -> "AV (CCHR)"	 [_gxl_id=422,
+		URL="/bodb/sed/422/"];
+	"13 (CCTCR)" -> "VPMpc (CCHR)"	 [_gxl_id=400,
+		URL="/bodb/sed/400/"];
+	"13 (CCTCR)" -> "Cl (CCHR)"	 [_gxl_id=399,
+		URL="/bodb/sed/399/"];
+	"13 (CCTCR)" -> "Pul.l (CCHR)"	 [_gxl_id=412,
+		URL="/bodb/sed/412/"];
+	"12 (CCTCR)" -> "VLm (CCHR)"	 [_gxl_id=464,
+		URL="/bodb/sed/464/"];
+	"12 (CCTCR)" -> "MDl (CCHR)"	 [_gxl_id=286,
+		URL="/bodb/sed/286/"];
+	"12 (CCTCR)" -> "VLc (CCHR)"	 [_gxl_id=384,
+		URL="/bodb/sed/384/"];
+	"12 (CCTCR)" -> "GMpc (CCHR)"	 [_gxl_id=363,
+		URL="/bodb/sed/363/"];
+	"12 (CCTCR)" -> "Pv (CCHR)"	 [_gxl_id=305,
+		URL="/bodb/sed/305/"];
+	"12 (CCTCR)" -> "Po (CCHR)"	 [_gxl_id=316,
+		URL="/bodb/sed/316/"];
+	"12 (CCTCR)" -> "VPLo (CCHR)"	 [_gxl_id=417,
+		URL="/bodb/sed/417/"];
+	"12 (CCTCR)" -> "LD (CCHR)"	 [_gxl_id=456,
+		URL="/bodb/sed/456/"];
+	"12 (CCTCR)" -> "VLo (CCHR)"	 [_gxl_id=445,
+		URL="/bodb/sed/445/"];
+	"12 (CCTCR)" -> "LP (CCHR)"	 [_gxl_id=290,
+		URL="/bodb/sed/290/"];
+	"12 (CCTCR)" -> "VPM (CCHR)"	 [_gxl_id=347,
+		URL="/bodb/sed/347/"];
+	"12 (CCTCR)" -> "VLps (CCHR)"	 [_gxl_id=448,
+		URL="/bodb/sed/448/"];
+	"12 (CCTCR)" -> "VPI (CCHR)"	 [_gxl_id=327,
+		URL="/bodb/sed/327/"];
+	"12 (CCTCR)" -> "Pul.i (CCHR)"	 [_gxl_id=413,
+		URL="/bodb/sed/413/"];
+	"12 (CCTCR)" -> "Pul.o (CCHR)"	 [_gxl_id=459,
+		URL="/bodb/sed/459/"];
+	"12 (CCTCR)" -> "ZI (CCHR)"	 [_gxl_id=389,
+		URL="/bodb/sed/389/"];
+	"12 (CCTCR)" -> "AD (CCHR)"	 [_gxl_id=331,
+		URL="/bodb/sed/331/"];
+	"12 (CCTCR)" -> "VPLc (CCHR)"	 [_gxl_id=377,
+		URL="/bodb/sed/377/"];
+	"12 (CCTCR)" -> "R (CCHR)"	 [_gxl_id=397,
+		URL="/bodb/sed/397/"];
+	"12 (CCTCR)" -> "AV (CCHR)"	 [_gxl_id=438,
+		URL="/bodb/sed/438/"];
+	"12 (CCTCR)" -> "VPMpc (CCHR)"	 [_gxl_id=379,
+		URL="/bodb/sed/379/"];
+	"12 (CCTCR)" -> "Cl (CCHR)"	 [_gxl_id=409,
+		URL="/bodb/sed/409/"];
+	"12 (CCTCR)" -> "Pul.l (CCHR)"	 [_gxl_id=293,
+		URL="/bodb/sed/293/"];
+	"14 (CCTCR)" -> "VLm (CCHR)"	 [_gxl_id=446,
+		URL="/bodb/sed/446/"];
+	"14 (CCTCR)" -> "MDl (CCHR)"	 [_gxl_id=462,
+		URL="/bodb/sed/462/"];
+	"14 (CCTCR)" -> "VLc (CCHR)"	 [_gxl_id=289,
+		URL="/bodb/sed/289/"];
+	"14 (CCTCR)" -> "GMpc (CCHR)"	 [_gxl_id=306,
+		URL="/bodb/sed/306/"];
+	"14 (CCTCR)" -> "Pv (CCHR)"	 [_gxl_id=408,
+		URL="/bodb/sed/408/"];
+	"14 (CCTCR)" -> "Po (CCHR)"	 [_gxl_id=294,
+		URL="/bodb/sed/294/"];
+	"14 (CCTCR)" -> "LD (CCHR)"	 [_gxl_id=432,
+		URL="/bodb/sed/432/"];
+	"14 (CCTCR)" -> "VLo (CCHR)"	 [_gxl_id=334,
+		URL="/bodb/sed/334/"];
+	"14 (CCTCR)" -> "LP (CCHR)"	 [_gxl_id=425,
+		URL="/bodb/sed/425/"];
+	"14 (CCTCR)" -> "VLps (CCHR)"	 [_gxl_id=419,
+		URL="/bodb/sed/419/"];
+	"14 (CCTCR)" -> "Pul.i (CCHR)"	 [_gxl_id=280,
+		URL="/bodb/sed/280/"];
+	"14 (CCTCR)" -> "Pul.o (CCHR)"	 [_gxl_id=391,
+		URL="/bodb/sed/391/"];
+	"14 (CCTCR)" -> "AD (CCHR)"	 [_gxl_id=376,
+		URL="/bodb/sed/376/"];
+	"14 (CCTCR)" -> "R (CCHR)"	 [_gxl_id=342,
+		URL="/bodb/sed/342/"];
+	"14 (CCTCR)" -> "AV (CCHR)"	 [_gxl_id=407,
+		URL="/bodb/sed/407/"];
+	"14 (CCTCR)" -> "Cl (CCHR)"	 [_gxl_id=396,
+		URL="/bodb/sed/396/"];
+	"14 (CCTCR)" -> "Pul.l (CCHR)"	 [_gxl_id=463,
+		URL="/bodb/sed/463/"];
+}

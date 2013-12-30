@@ -1,0 +1,66 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Workspaces</title>
+    <script type="text/javascript">
+        function selectActiveWorkspace(id)
+        {
+            var data = { 'id': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+            var args = { type: "POST", url: "/bodb/workspace/"+id+"/activate/", data: data,
+                complete: doneSelectActiveWorkspace };
+            $.ajax(args)
+            return false;
+        }
+
+        function doneSelectActiveWorkspace(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status!="success")
+                alert(res.responseText);
+            else
+            {
+                document.getElementById('active_workspace_title').innerHTML=data.title;
+                document.getElementById('workspace_'+data.id+'_message').innerHTML='Workspace active';
+                document.getElementById('workspace_'+data.id+'_message').style.display='block';
+                $('#workspace_'+data.id+'_message').fadeOut(5000, function(){});
+            }
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Workspaces</h2>
+        <table class="tab_panel">
+            <tr class="section_subheader">
+                <td colspan="5">
+                    Select a workspace to make it active
+                </td>
+            </tr>
+            <tr class="col_header">
+                <td width="25px">&nbsp;</td>
+                <td width="150px">Created by</td>
+                <td width="200px">Title</td>
+                <td width="400px">Description</td>
+                <td>&nbsp;</td>
+            </tr>
+            {% for workspace in object_list %}
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign="top">
+                    <td>
+                        <input type="radio" name="activeWorkspace" id="activeWorkspace{{ workspace.id }}" value="{{ workspace.id }}" {% ifequal workspace.id active_workspace.id %}checked{% endifequal %} onclick="selectActiveWorkspace({{ workspace.id }});"/>
+                    </td>
+                    <td>{{ workspace.get_created_by_str }}</td>
+                    <td>
+                        <a href="/bodb/workspace/{{ workspace.id }}/">{{ workspace.title }}</a>
+                    </td>
+                    <td>{{ workspace.description }}</td>
+                    <td><span id="workspace_{{ workspace.id }}_message" class="messages"></span></td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5">
+                    <input class="btn" type="button" value="New" onclick="document.location.href='/bodb/workspace/new/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

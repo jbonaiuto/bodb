@@ -1,0 +1,93 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB</title>
+{% endblock %}
+{% block content %}
+    <div id="rightsidebar">
+        <h2><a href="/bodb/feeds/latestModels/"><img border=0 src="{% static 'bodb/images/badge_rss.png' %}"/></a> Recently Added Models</h2>
+        <ul>
+            {% for item in models %}
+                <li><a href='/bodb/model/{{ item.id }}/'>{{ item }}</a></li>
+            {% endfor %}
+        </ul>
+        <h2><a href="/bodb/feeds/latestBOPs/"><img border=0 src="{% static 'bodb/images/badge_rss.png' %}"/></a> Recently Added Brain Operating Principles</h2>
+        <ul>
+            {% for item in bops %}
+                <li><a href='/bodb/bop/{{ item.id }}/'>{{ item }}</a></li>
+            {% endfor %}
+        </ul>
+        <h2><a href="/bodb/feeds/latestSEDs/"><img border=0 src="{% static 'bodb/images/badge_rss.png' %}"/></a> Recently Added Summaries of Experimental Data</h2>
+        <ul>
+            {% for item in seds %}
+                <li><a href='/bodb/sed/{{ item.id }}/'>{{ item }}</a></li>
+            {% endfor %}
+        </ul>
+        <h2><a href="/bodb/feeds/latestSSRs/"><img border=0 src="{% static 'bodb/images/badge_rss.png' %}"/></a> Recently Added Summaries of Simulation Results</h2>
+        <ul>
+            {% for item in ssrs %}
+                <li><a href='/bodb/ssr/{{ item.id }}/'>{{ item }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="section">
+        <div style="width:75%" align="justify">
+            <br>
+            Welcome to the Brain Operation Database System (BODB "Beau-D-B"). BODB offers an environment in which an
+            overview of how a model for cognitive or systems neuroscience is linked to relevant Brain Operating Principles,
+            the brain regions modeled, summaries of the experimental data used to design the model, and comparisons between
+            summaries of simulation results against and summaries of the experimental data used to test the model.
+
+            <br>
+            <br>
+            Searches can be conducted on all the above entries. A particularly valuable feature is to use one model to
+            anchor a search for other models which address related empirical data. BODB can then generate a table to compare
+            the explanatory reach of these models. This feature provides one of the facilities available in Workspaces that
+            can be used by individuals or groups to develop new models and/or sets of empirical data relevant to exploration
+            of a focused area of research.
+
+            <br>
+            <br>
+            BODB also offers tools for storing tables of imaging data and displaying data from different experiments for
+            comparison within 2D slices or 3D volumes representing the human brain. A related system for viewing data on the
+            macaque brain is now under development.
+
+            <br>
+            <br>
+            BODB is designed as a development environment for computational and experimental neuroscientists, and we welcome
+            active data entry as well as feedback on system design.
+            <br><br>
+            For a quick guide to entering a model and entering or linking to experimental data, please see the <a href="{% static 'bodb/BODB_Tutorial.pdf' %}">BODB Tutorial</a>
+            <br>
+            For more detailed documentation on all of BODB's features, please see the <a href="http://neuroinformatics.usc.edu/resources/brain-operation-database-bodb/">BODB Manual</a>.
+            <br><br><br>
+            <hr width="100%">
+            <strong>Usage Statistics</strong>
+            <table border="0" cellspacing="10">
+                <thead>
+                <th>&nbsp;</th>
+                <th>Model</th>
+                <th>BOP</th>
+                <th>SED</th>
+                <th>SSR</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Total entries</td>
+                    <td>{{ model_count }}</td>
+                    <td>{{ bop_count }}</td>
+                    <td>{{ sed_count }}</td>
+                    <td>{{ ssr_count }}</td>
+                </tr>
+                <tr>
+                    <td>Last entered</td>
+                    <td>{{ model_date }}</td>
+                    <td>{{ bop_date }}</td>
+                    <td>{{ sed_date }}</td>
+                    <td>{{ ssr_date }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

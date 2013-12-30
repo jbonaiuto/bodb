@@ -1,0 +1,30 @@
+<script type="text/javascript">
+    function toggleFloatingMenu()
+    {
+        var menu=document.getElementById('floating-menu-inner');
+        if(menu.style.display=='inline')
+        {
+            menu.style.display='none';
+            document.getElementById('floating-menu').style.height='20px';
+            document.getElementById('menu-show').innerHTML='Show';
+        }
+        else
+        {
+            menu.style.display='inline';
+            document.getElementById('floating-menu').style.height='30%';
+            document.getElementById('menu-show').innerHTML='Hide';
+        }
+        return false;
+    }
+</script>
+<style>
+    div.floating-menu {position:fixed;background:#e6e8ed;;border:1px solid #0d3f74;width:300px;height:30%;z-index:100;right:5%;overflow-y:auto;overflow-x:auto;}
+</style>
+<div id="floating-menu" class="floating-menu">
+    <div style="font-weight: bold; font-size: 15px;color: #0d3f74; position:relative; left:10px; width: 250px;">Hierarchy Browser (<a href="#" onclick="return toggleFloatingMenu();"><span id="menu-show">Hide</span></a>)</div>
+    <div id="floating-menu-inner" style="display:inline;">
+        {% autoescape off %}
+            {{ hierarchy_html }}
+        {% endautoescape %}
+    </div>
+</div>

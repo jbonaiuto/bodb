@@ -1,0 +1,189 @@
+<script type="text/javascript">
+    function addUser(user_id, username, active, staff, admin, groups, name, email){
+        var tmplMarkup = $('#user-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
+            admin: admin, groups: groups, name: name, email: email });
+        $('#users').append(compiledTmpl);
+        return false;
+    }
+
+    function updateUser(user_id, username, active, staff, admin, groups, name, email){
+        var tmplMarkup = $('#user-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
+            admin: admin, groups: groups, name: name, email: email });
+        $('#user-'+user_id).replaceWith(compiledTmpl);
+    }
+
+    function toggleActive(userId, active)
+    {
+        var data = { 'id': userId, 'active': active, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/user/"+userId+"/toggle_active/", data: data, complete: doneToggleActive };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneToggleActive(res, status)
+    {
+        var txt = res.responseText;
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            var data = eval('('+txt+')');
+            if(data.active)
+                document.getElementById('user_'+data.id+'_message').innerHTML='User activated';
+            else
+                document.getElementById('user_'+data.id+'_message').innerHTML='User deactivated';
+            document.getElementById('user_'+data.id+'_message').style.display='block';
+            $('#user_'+data.id+'_message').fadeOut(5000, function(){});
+        }
+
+    }
+
+    function toggleStaff(userId, staff)
+    {
+        var data = { 'id': userId, 'staff': staff, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/user/"+userId+"/toggle_staff/", data: data, complete: doneToggleStaff };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneToggleStaff(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            if(data.staff)
+                document.getElementById('user_'+data.id+'_message').innerHTML='User is now staff';
+            else
+                document.getElementById('user_'+data.id+'_message').innerHTML='User no longer staff';
+            document.getElementById('user_'+data.id+'_message').style.display='block';
+            $('#user_'+data.id+'_message').fadeOut(5000, function(){});
+        }
+    }
+
+    function toggleAdmin(userId, admin)
+    {
+        var data = { 'id': userId, 'admin': admin, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+        var args = { type: "POST", url: "/bodb/user/"+userId+"/toggle_admin/", data: data, complete: doneToggleAdmin };
+        $.ajax(args)
+        return false;
+    }
+
+    function doneToggleAdmin(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            if(data.admin)
+                document.getElementById('user_'+data.id+'_message').innerHTML='User is now admin';
+            else
+                document.getElementById('user_'+data.id+'_message').innerHTML='User no longer admin';
+            document.getElementById('user_'+data.id+'_message').style.display='block';
+            $('#user_'+data.id+'_message').fadeOut(5000, function(){});
+        }
+    }
+</script>
+<div id="userDiv" style="display:block">
+    <table class="tab_panel">
+        <tr class="table_header">
+            <td colspan=8>
+                <a href="/bodb/user/new/" onclick="return showPopup('add_user',700,550,'/bodb/user/new/');">Add new</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td style="width:40px">&nbsp;</td>
+            <td style="width:120px">Username</td>
+            <td style="width:40px">Active</td>
+            <td style="width:40px">Staff</td>
+            <td style="width:40px">Admin</td>
+            <td style="width:150px">Groups</td>
+            <td style="width:150px">Real Name</td>
+            <td style="width:150px">Email</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan=9>
+                <div id="users">
+                    {% for u in users %}
+                        <div id="user-{{ u.id }}">
+                             <table class="tab_panel">
+                                 <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                     <td style="width:40px">
+                                         <a href="/bodb/user/{{ u.id }}/edit/" onclick="return showPopup('edit_user_{{ u.id }}', 700, 550, '/bodb/user/{{ u.id }}/edit/');">Edit</a>
+                                     </td>
+                                     <td style="width:120px">
+                                         <a href="/bodb/user/{{ u.id }}/" onclick="return showPopup('view_user_{{ u.id }}', 700, 550, '/bodb/user/{{ u.id }}/');">{{ u.username }}</a>
+                                     </td>
+                                     <td style="width:40px" align=center>
+                                         <input type=checkbox name="activeCheckbox" id="activeCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_active %}checked=True{% endif %} onclick="toggleActive(this.value, this.checked);"/>
+                                     </td>
+                                     <td style="width:40px" align=center>
+                                         <input type=checkbox name="staffCheckbox" id="staffCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_staff %}checked=True{% endif %} onclick="toggleStaff(this.value, this.checked);"/>
+                                     </td>
+                                     <td style="width:40px" align=center>
+                                         <input type=checkbox name="adminCheckbox" id="adminCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_superuser %}checked=True{% endif %} onclick="toggleAdmin(this.value, this.checked);"/>
+                                     </td>
+                                     <td style="width:150px">
+                                         {% for group in u.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                     </td>
+                                     <td style="width:150px">
+                                         {{ u.first_name }} {{ u.last_name }}
+                                     </td>
+                                     <td style="width:150px">
+                                         {{ u.email }}
+                                     </td>
+                                     <td>
+                                         <span id="user_{{ u.id }}_message" class="messages"></span>
+                                     </td>
+                                 </tr>
+                             </table>
+                         </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="user-template">
+    <div id="user-<%= id %>">
+        <table class="tab_panel">
+            <tr class="odd_row" valign=top>
+                <td style="width:40px">
+                    <a href="/bodb/user/<%= id %>/edit/" onclick="return showPopup('edit_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/edit/');">Edit</a>
+                </td>
+                <td style="width:120px">
+                    <a href="/bodb/user/<%= id %>/" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/');"><%= username %></a>
+                </td>
+                <td style="width:40px" align=center>
+                    <input type=checkbox name="activeCheckbox" id="activeCheckbox_<%= id %>" value="<%= id %>" <% if(active) { %>checked=True<% } %> onclick="toggleActive(this.value, this.checked);"/>
+                </td>
+                <td style="width:40px" align=center>
+                    <input type=checkbox name="staffCheckbox" id="staffCheckbox_<%= id %>" value="<%= id %>" <% if(staff) { %>checked=True<% } %> onclick="toggleStaff(this.value, this.checked);"/>
+                </td>
+                <td style="width:40px" align=center>
+                    <input type=checkbox name="adminCheckbox" id="adminCheckbox_<%= id %>" value="<%= id %>" <% if(admin) { %>checked=True<% } %> onclick="toggleAdmin(this.value, this.checked);"/>
+                </td>
+                <td style="width:150px">
+                    <%= groups %>
+                </td>
+                <td style="width:150px">
+                    <%= name %>
+                </td>
+                <td style="width:150px">
+                    <%= email %>
+                </td>
+                <td>
+                    <span id="user_<%= id %>_message" class="messages"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>

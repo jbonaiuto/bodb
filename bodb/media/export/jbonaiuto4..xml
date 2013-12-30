@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">
+<graph id="connectivity-sed-map" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="LAT">
+<graph id="LAT_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="LAT (A)">
+<type xlink:href="/bodb/brain_region/19/" xlink:type="simple"/>
+</node>
+<node id="LAT (A)">
+<type xlink:href="/bodb/brain_region/19/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="28a">
+<graph id="28a_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+<node id="28a (A)">
+<type xlink:href="/bodb/brain_region/6/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="AB">
+<graph id="AB_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="AB (A)">
+<type xlink:href="/bodb/brain_region/10/" xlink:type="simple"/>
+</node>
+<node id="AB (A)">
+<type xlink:href="/bodb/brain_region/10/" xlink:type="simple"/>
+</node>
+<node id="AB (A)">
+<type xlink:href="/bodb/brain_region/10/" xlink:type="simple"/>
+</node>
+<node id="AB (A)">
+<type xlink:href="/bodb/brain_region/10/" xlink:type="simple"/>
+</node>
+<node id="AB (A)">
+<type xlink:href="/bodb/brain_region/10/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="LB">
+<graph id="LB_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="LB (A)">
+<type xlink:href="/bodb/brain_region/20/" xlink:type="simple"/>
+</node>
+<node id="LB (A)">
+<type xlink:href="/bodb/brain_region/20/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<node id="MB">
+<graph id="MB_subgraph" edgeids="true" edgemode="directed" hypergraph="false">
+<node id="MB (A)">
+<type xlink:href="/bodb/brain_region/21/" xlink:type="simple"/>
+</node>
+<node id="MB (A)">
+<type xlink:href="/bodb/brain_region/21/" xlink:type="simple"/>
+</node>
+</graph>
+</node>
+<edge id="1500" to="28a (A)" from="LAT (A)">
+<type xlink:href="/bodb/sed/1500/" xlink:type="simple"/>
+</edge>
+<edge id="1516" to="28a (A)" from="LB (A)">
+<type xlink:href="/bodb/sed/1516/" xlink:type="simple"/>
+</edge>
+<edge id="1519" to="28a (A)" from="AB (A)">
+<type xlink:href="/bodb/sed/1519/" xlink:type="simple"/>
+</edge>
+<edge id="1516" to="28a (A)" from="LB (A)">
+<type xlink:href="/bodb/sed/1516/" xlink:type="simple"/>
+</edge>
+<edge id="1518" to="28a (A)" from="MB (A)">
+<type xlink:href="/bodb/sed/1518/" xlink:type="simple"/>
+</edge>
+<edge id="1519" to="28a (A)" from="AB (A)">
+<type xlink:href="/bodb/sed/1519/" xlink:type="simple"/>
+</edge>
+<edge id="1519" to="28a (A)" from="AB (A)">
+<type xlink:href="/bodb/sed/1519/" xlink:type="simple"/>
+</edge>
+<edge id="1519" to="28a (A)" from="AB (A)">
+<type xlink:href="/bodb/sed/1519/" xlink:type="simple"/>
+</edge>
+<edge id="1518" to="28a (A)" from="MB (A)">
+<type xlink:href="/bodb/sed/1518/" xlink:type="simple"/>
+</edge>
+<edge id="1519" to="28a (A)" from="AB (A)">
+<type xlink:href="/bodb/sed/1519/" xlink:type="simple"/>
+</edge>
+<edge id="1500" to="28a (A)" from="LAT (A)">
+<type xlink:href="/bodb/sed/1500/" xlink:type="simple"/>
+</edge>
+</graph>
+</gxl>

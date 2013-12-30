@@ -1,0 +1,1102 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:47:25+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('CGMBOFAL99') [LITID]&amp;Details=</HttpString>
+<SearchString>('CGMBOFAL99') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='CGMBOFAL99') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>CGMBOFal99</ID>
+<Authors>
+<Author>
+<Initials>R</Initials>
+<LastName>Caminiti</LastName>
+</Author>
+<Author>
+<Initials>A</Initials>
+<LastName>Genuvesio</LastName>
+</Author>
+<Author>
+<Initials>B</Initials>
+<LastName>Marconi</LastName>
+</Author>
+<Author>
+<Initials>A</Initials>
+<LastName>Battaglia-Mayer</LastName>
+</Author>
+<Author>
+<Initials>P</Initials>
+<LastName>Onorati</LastName>
+</Author>
+<Author>
+<Initials>S</Initials>
+<LastName>Ferraina</LastName>
+</Author>
+</Authors>
+<Title>Early coding of reaching: frontal and parietal association connections of parieto-occipital cortex</Title>
+<Year>1999</Year>
+<Journal>
+<JournalName>Eur. J. Neurosci.</JournalName>
+<Volume>11</Volume>
+<Pages>3339-3345</Pages>
+<PubMedID>10510199</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>CGMBOFal99</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-24c</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24c</Acronym>
+<FullName>Area 24c (rostral part of the cingulate sulcus)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7a</Acronym>
+<FullName>Area 7a</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7b</Acronym>
+<FullName>Area 7b</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7m</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7m</Acronym>
+<FullName>Area 7m</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-CMAd</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAd</Acronym>
+<FullName>Caudal cingulate motor area, dorsal bank</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-CMAv</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>CMAv</Acronym>
+<FullName>Caudal cingulate motor area, ventral bank</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F2</Acronym>
+<FullName>Agranular frontal area 2 (= caudal dorsolateral premotor area)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F4</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F4</Acronym>
+<FullName>Agranular frontal area 4 (= caudal ventrolateral premotor area)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F5</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F5</Acronym>
+<FullName>Agranular frontal area 5 (= rostral ventrolateral premotor area)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F7</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>F7</Acronym>
+<FullName>Agranular frontal area 7 (= rostral dorsolateral premotor area)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-LIP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>LIP</Acronym>
+<FullName>Lateral intraparietal area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-M1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>M1</Acronym>
+<FullName>Primary motor area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-MIP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MIP</Acronym>
+<FullName>Medial intraparietal area</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PCD</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PCD</Acronym>
+<FullName>precentral dimple</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEa</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PEa</Acronym>
+<FullName>Upper bank of the intraparietal sulcus</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEc</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PEc</Acronym>
+<FullName>Caudal and medial superior parietal lobule</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdc</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PMdc</Acronym>
+<FullName>Premotor cortex, dorsal aspect (caudal zone)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdr</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PMdr</Acronym>
+<FullName>Premotor cortex, dorsal aspect (rostral zone)</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-preSMA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>preSMA</Acronym>
+<FullName>Pre-supplementary motor area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-SMA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>SMA</Acronym>
+<FullName>Supplementary motor area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-V6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V6</Acronym>
+<FullName>Visual area 6</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-V6A</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>V6A</Acronym>
+<FullName>Visual area V6A</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-VIP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>VIP</Acronym>
+<FullName>Ventral intraparietal area</FullName>
+<DefType>A</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>FR</ID_Tracer>
+<FullName>Fluoro-Ruby</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>20 d</SurvivalTime>
+<Thickness_Sections>40, 80</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>3.5 and 3.7 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>CGMBOFal99-V6A</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.6</Volume>
+<Concentration>10%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;Four injections (0,15 µl each) of FluoroRuby (FR, 10% in saline; Molecular Probe, Eugene, OR, USA), were made in V6A, in the dorsal part of the rostral bank of the parieto-occipital sulcus (Fig. 2, brain figurines), at 2 and 4 mm depth.&amp;quot; p. 3342</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7m</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-MIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEa</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdr</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-preSMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-VIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3344</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>FB</ID_Tracer>
+<FullName>Fast Blue</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>26 d</SurvivalTime>
+<Thickness_Sections>40, 80</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>3.5 and 3.7 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>CGMBOFal99-PMdc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.6</Volume>
+<Concentration>2%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;Four injections (0,15 µL each) of Fast blue (FB, 2% in saline; Sigma, St Louis, MO, USA) and Diamidino yellow (DY, 2% in saline; Sigma) were made in PMdr (F7) and PMdc (F2) (Fig. 2, brain figurines), respectively.&amp;quot; p. 3342</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7b</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7m</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-CMAd</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-M1</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-MIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEa</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-SMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>DY</ID_Tracer>
+<FullName>Diamidino Yellow</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>26 d</SurvivalTime>
+<Thickness_Sections>40, 80</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>2</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>3.5 and 3.7 kg</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca mulatta</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>2</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>CGMBOFal99-PMdr</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.6</Volume>
+<Concentration>2%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Fig. 2</FigureNumber>
+<Quotation>&amp;quot;Four injections (0,15 µL each) of Fast blue (FB, 2% in saline; Sigma, St Louis, MO, USA) and Diamidino yellow (DY, 2% in saline; Sigma) were made in PMdr (F7) and PMdc (F2) (Fig. 2, brain figurines), respectively.&amp;quot; p. 3342</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-7m</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-CMAv</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-F5</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-MIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PEc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdc</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-PMdr</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-preSMA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>CGMBOFal99-V6A</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>J</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>CGMBOFal99</ID_Literature>
+<TextPageNumber>p. 3342</TextPageNumber>
+<FigureNumber>Figs. 2, 3</FigureNumber>
+<Quotation>&amp;quot;Because both the diffusion of tracers at the injection sites and the retrograde labelling were qualitatively similar in the two animals, results from only one of them are illustrated.&amp;quot; p. 3342</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

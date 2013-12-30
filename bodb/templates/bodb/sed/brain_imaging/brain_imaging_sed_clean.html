@@ -1,0 +1,49 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Clean SED</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Clean SED</h2>
+        <form id="cleanSEDForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr class="col_header">
+                    <td>Coordinate</td>
+                    <td>Hemisphere Errors</td>
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        {{ sedCoordCleanFormSet.management_form }}
+                        <div class="myerrors">
+                            {{ sedCoordCleanFormSet.management_form.errors }}
+                        </div>
+                    </td>
+                </tr>
+                {% for sedCoordCleanForm in sedCoordCleanFormSet.forms %}
+                    {{ sedCoordCleanForm.sed_coord_id }}
+                    {{ sedCoordCleanForm.hemisphere_error }}
+                    <tr class={% cycle 'even_row' 'odd_row' %}>
+                        <td>({{ sedCoordCleanForm.coord.coord.x }}, {{ sedCoordCleanForm.coord.coord.y }}, {{ sedCoordCleanForm.coord.coord.z }})</td>
+                        <td>
+                            {% if sedCoordCleanForm.hemiErr %}
+                                The x coordinate ({{ sedCoordCleanForm.coord.coord.x }}) does not match the hemisphere ({{ sedCoordCleanForm.coord.hemisphere }})<br>
+                                {{ sedCoordCleanForm.hemisphere_options }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="myerrors">
+                            {{ sedCoordCleanForm.errors }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan=3>
+                        <input class="btn" type="button" value="Submit" onclick="document.getElementById('cleanSEDForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Manage Document Permissions</title>
+    <script type="text/javascript">
+        function save()
+        {
+            data=$('#permForm').serialize();
+            var args = { type: "POST", url: '/bodb/document/{{ document.id }}/permissions/', data: data, complete: doneSave };
+            $.ajax(args)
+            return false;
+        }
+
+    function doneSave(res, status)
+    {
+        var txt = res.responseText;
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            alert('Permissions saved');
+            window.close();
+        }
+    }
+    </script>
+{% endblock %}
+{% block content %}
+    {% load bodb_extras %}
+    <div id="detail">
+        <h2>{{ document }} Permissions</h2>
+        <form id="permForm" method="post" action="">
+            {% csrf_token %}
+            <h3>Groups</h3>
+            <div id="groupDiv" style="display:block">
+                <table class="tab_panel">
+                    <tr class="col_header">
+                        <td style="width:250px">Group</td>
+                        <td style="width:50px">Edit</td>
+                        <td style="width:50px">Delete</td>
+                        <td style="width:50px">Manage</td>
+                    </tr>
+                    <tr>
+                        <td colspan=4>
+                            <div id="groups">
+                                {% for group in groups %}
+                                    <div id="group-{{ group.id }}">
+                                        <table class="tab_panel">
+                                            <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                                <td style="width:250px">
+                                                    {{ group }}
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="group-{{ group.id }}_edit" id="group-{{ group.id }}_edit" value="{{ group.id }}" {% if group_edit_permissions|lookup:group %}checked=True{% endif %}/>
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="group-{{ group.id }}_delete" id="group-{{ group.id }}_delete" value="{{ group.id }}" {% if group_delete_permissions|lookup:group %}checked=True{% endif %}/>
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %}/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h3>Users</h3>
+            <div id="userDiv" style="display:block">
+                <table class="tab_panel">
+                    <tr class="col_header">
+                        <td style="width:250px">Username</td>
+                        <td style="width:50px">Edit</td>
+                        <td style="width:50px">Delete</td>
+                        <td style="width:50px">Manage</td>
+                    </tr>
+                    <tr>
+                        <td colspan=4>
+                            <div id="users">
+                                {% for u in users %}
+                                    <div id="user-{{ u.id }}">
+                                        <table class="tab_panel">
+                                            <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                                <td style="width:250px">
+                                                    {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="user-{{ u.id }}_edit" id="user-{{ u.id }}_edit" value="{{ u.id }}" {% if user_edit_permissions|lookup:u %}checked=True{% endif %}/>
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="user-{{ u.id }}_delete" id="user-{{ u.id }}_delete" value="{{ u.id }}" {% if user_delete_permissions|lookup:u %}checked=True{% endif %}/>
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="user-{{ u.id }}_manage" id="user-{{ u.id }}_manage" value="{{ u.id }}" {% if user_manage_permissions|lookup:u %}checked=True{% endif %}/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input class="btn" type="button" value="Save" onclick="return save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Cancel" onclick="window.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        </form>
+    </div>
+{% endblock %}

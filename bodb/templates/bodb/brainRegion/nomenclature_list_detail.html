@@ -1,0 +1,41 @@
+<tr class="table_header">
+    <td colspan=7>
+        <a href="/bodb/nomenclature/new/?_multiple=1" onclick="return showPopup('add_nomenclature',700,550,'/bodb/nomenclature/new/?_multiple=1');">Add new</a>
+    </td>
+</tr>
+<tr class="col_header">
+    <td style="width:100px">&nbsp;</td>
+    <td style="width:150px">Name</td>
+    <td style="width:50px">Version</td>
+    <td>Reference</td>
+</tr>
+<tr>
+    <td colspan=4>
+        <span id="span_nomenclatures">
+            {% for nomenclature in nomenclatures %}
+                <span id="span_nomenclature_{{ nomenclature.id }}">
+                     <table class="tab_panel">
+                         <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                             <td style="width:100px">
+                                 <a href="/bodb/nomenclature/{{ nomenclature.id }}/edit/?_multiple=1" onclick="return showPopup('edit_nomenclature_{{ nomenclature.id }}', 700, 550, '/bodb/nomenclature/{{ nomenclature.id }}/edit/?_multiple=1');">Edit</a>&nbsp;&nbsp;<a href="" onclick="return deleteNomenclature('{{ nomenclature.id }}')">Delete</a>
+                             </td>
+                             <td style="width:150px">
+                                 <a href="/bodb/nomenclature/{{ nomenclature.id }}/?_multiple=1" onclick="return showPopup('view_nomenclature_{{ nomenclature.id }}', 700, 550, '/bodb/nomenclature/{{ nomenclature.id }}/?_multiple=1');">{{ nomenclature.name }}</a>
+                             </td>
+                             <td style="width:50px">
+                                 {{ nomenclature.version }}
+                             </td>
+                             <td>
+                                 {% if nomenclature.lit %}
+                                     <a href="/bodb/literature/{{nomenclature.lit.id }}/" onclick="return showPopup('view_literature_{{ nomenclature.lit.id }}', 700, 550, '/bodb/literature/{{nomenclature.lit.id }}/');">{{ nomenclature.lit.author_names }} ({{ nomenclature.lit.year }}) {{ nomenclature.lit.title }}</a>
+                                 {% else %}
+                                     &nbsp;
+                                 {% endif %}
+                             </td>
+                         </tr>
+                     </table>
+                 </span>
+            {% endfor %}
+        </span>
+    </td>
+</tr>

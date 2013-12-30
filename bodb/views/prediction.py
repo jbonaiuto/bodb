@@ -1,0 +1,91 @@
+from django.shortcuts import redirect, render
+from django.views.generic import UpdateView, DeleteView, View
+from bodb.forms import PredictionSSRFormSet, PredictionForm
+from bodb.models import Prediction, SSR, PredictionSSR
+from bodb.views.document import DocumentDetailView
+from bodb.views.main import BODBView
+
+class UpdatePredictionView(BODBView,UpdateView):
+    model = Prediction
+    form_class = PredictionForm
+    template_name = 'bodb/prediction/prediction_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdatePredictionView,self).get_context_data(**kwargs)
+        context['predictionssr_formset']=PredictionSSRFormSet(self.request.POST or None, instance=self.object,
+            queryset=PredictionSSR.objects.filter(prediction=self.object), prefix='predictionssr')
+        context['ispopup']=('_popup' in self.request.GET)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        predictionssr_formset = context['predictionssr_formset']
+
+        if predictionssr_formset.is_valid():
+
+            self.object = form.save()
+
+            # save SSRs
+            for predictionssr_form in predictionssr_formset.forms:
+                if not predictionssr_form in predictionssr_formset.deleted_forms:
+                    predictionssr=predictionssr_form.save(commit=False)
+                    predictionssr.prediction=self.object
+                    ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
+                        brief_description=predictionssr_form.cleaned_data['ssr_brief_description'])
+                    # Update ssr if editing existing one
+                    if 'ssr' in predictionssr_form.cleaned_data and\
+                       predictionssr_form.cleaned_data['ssr'] is not None:
+                        ssr=predictionssr_form.cleaned_data['ssr']
+                        ssr.title=predictionssr_form.cleaned_data['ssr_title']
+                        ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
+                    # Set collator if this is a new SSR
+                    else:
+                        ssr.collator=self.object.collator
+                    ssr.last_modified_by=self.request.user
+                    ssr.draft=self.object.draft
+                    ssr.public=self.object.public
+                    ssr.save()
+                    predictionssr.ssr=ssr
+                    predictionssr.save()
+
+            # remove prediction SSRs
+            for predictionssr_form in predictionssr_formset.deleted_forms:
+                if predictionssr_form.instance.id:
+                    predictionssr_form.instance.delete()
+
+            url=self.get_success_url()
+            if context['ispopup']:
+                url+='?_popup=1'
+            return redirect(url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+
+class DeletePredictionView(DeleteView):
+    model=Prediction
+    success_url = '/bodb/index.html'
+
+
+class PredictionDetailView(DocumentDetailView):
+    model = Prediction
+    template_name = 'bodb/prediction/prediction_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PredictionDetailView, self).get_context_data(**kwargs)
+        user=self.request.user
+        context['ssrs']=SSR.get_ssr_list(Prediction.get_ssrs(self.object, user), user)
+        return context
+
+
+class PredictionTaggedView(BODBView):
+    template_name='bodb/prediction/prediction_tagged.html'
+
+    def get_context_data(self, **kwargs):
+        context=super(PredictionTaggedView,self).get_context_data(**kwargs)
+        name = self.kwargs.get('name', None)
+        user=self.request.user
+
+        context['helpPage']='BODB-Tags'
+        context['tag']=name
+        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user)
+        return context

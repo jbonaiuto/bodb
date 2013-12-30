@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-12-13T21:55:27+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('PS73') [LITID]&amp;Details=</HttpString>
+<SearchString>('PS73') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='PS73') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>PS73</ID>
+<Authors>
+<Author>
+<Initials>DN</Initials>
+<LastName>Pandya</LastName>
+</Author>
+<Author>
+<Initials>F</Initials>
+<LastName>Sanides</LastName>
+</Author>
+</Authors>
+<Title>Architectonic parcellation of the temporal operculum in rhesus monkey and its projection pattern</Title>
+<Year>1973</Year>
+<Journal>
+<JournalName>Z. Anat. Entwickl.-Gesch.</JournalName>
+<Volume>139</Volume>
+<Pages>127-161</Pages>
+<PubMedID>4197942</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>PS73</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>PS73-Kalt</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Kalt</Acronym>
+<FullName>Auditory konicortex lateral</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Kam</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Kam</Acronym>
+<FullName>Medial auditory koniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-paAc</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>paAc</Acronym>
+<FullName>Caudal auditory parakoniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-paAlt</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>paAlt</Acronym>
+<FullName>Lateral auditory parakoniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-paAr</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>paAr</Acronym>
+<FullName>Rostral auditory parakoniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-paI</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>paI</Acronym>
+<FullName>Parinsular cortex</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Pro</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Pro</Acronym>
+<FullName>Proisocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-proA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>proA</Acronym>
+<FullName>Auditory prokoniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-proS</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>proS</Acronym>
+<FullName>Somatic prokoniocortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-reIpt</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>reIpt</Acronym>
+<FullName>Retroinsular parietal cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-reIt</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>reIt</Acronym>
+<FullName>Retroinsular temporal cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Tpt</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Tpt</Acronym>
+<FullName>Temporoparietal cortex</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Ts1</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Ts1</Acronym>
+<FullName>Area temporalis superior 1</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Ts2</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Ts2</Acronym>
+<FullName>Area temporalis superior 2</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PS73-Ts3</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>Ts3</Acronym>
+<FullName>Area temporalis superior 3</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

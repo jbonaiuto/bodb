@@ -1,0 +1,105 @@
+<script type="text/javascript">
+    animatedcollapse.addDiv('modelData', 'fade=1');
+    animatedcollapse.addDiv('bopData', 'fade=1');
+    animatedcollapse.addDiv('sedData', 'fade=1');
+    animatedcollapse.addDiv('ssrData', 'fade=1');
+</script>
+
+<table class="tab_panel">
+    {% if models|length %}
+        <tr>
+            <td style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td>
+                Models (<a href="javascript:animatedcollapse.toggle('modelData')"><span id="modelDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="modelData" style="display:none">
+                    {% include 'bodb/model/model_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% if bops|length %}
+        <tr>
+            <td style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td>
+                BOPs (<a href="javascript:animatedcollapse.toggle('bopData')"><span id="bopDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="bopData" style="display:none">
+                    {% include 'bodb/bop/bop_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% if generic_seds|length or connectivity_seds|length or imaging_seds|length or erp_seds|length %}
+        <tr>
+            <td style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td>
+                SEDs (<a href="javascript:animatedcollapse.toggle('sedData')"><span id="sedDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="sedData" style="display:none;">
+                    {% include 'bodb/sed/sed_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% if ssrs|length %}
+        <tr>
+            <td style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td>
+                SSRs (<a href="javascript:animatedcollapse.toggle('ssrData')"><span id="ssrDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="ssrData" style="display:none">
+                    {% include 'bodb/ssr/ssr_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+</table>

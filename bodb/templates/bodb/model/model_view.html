@@ -1,0 +1,424 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View {{ model.title }} Model</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('figureData', 'fade=1');
+        animatedcollapse.addDiv('narrativeData', 'fade=1');
+        animatedcollapse.addDiv('summaryData', 'fade=1');
+        animatedcollapse.addDiv('urlData', 'fade=1');
+        animatedcollapse.addDiv('relatedModelData', 'fade=1');
+        animatedcollapse.addDiv('relatedBopData', 'fade=1');
+        animatedcollapse.addDiv('relatedBrainRegionData', 'fade=1');
+        animatedcollapse.addDiv('referenceData', 'fade=1');
+        animatedcollapse.addDiv('discussionData', 'fade=1');
+
+        function toggleSingleModelSelect(modelId, csrf_token)
+        {
+            var data = { 'modelId': modelId, 'csrfmiddlewaretoken': csrf_token };
+            var args = { type: "POST", url: "/bodb/model/"+modelId+"/toggle_select/", data: data, complete: doneToggleSingleModelSelect };
+            $.ajax(args)
+            return false;
+        }
+
+        function doneToggleSingleModelSelect(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                if(data.selected)
+                {
+                    document.getElementById('selectButton').value='Workspace Unselect';
+                    document.getElementById('model_message').innerHTML='Model added to the '+data['workspace']+' workspace.';
+                }
+                else
+                {
+                    document.getElementById('selectButton').value='Workspace Select';
+                    document.getElementById('model_message').innerHTML='Model removed from the '+data['workspace']+' workspace.';
+                }
+                document.getElementById('model_message').style.display='block';
+                $('#model_message').fadeOut(5000, function(){});
+            }
+            else
+                alert(res.responseText);
+        }
+
+        function updateSectionDisplaySettings()
+        {
+            var sectionIds=['figureData', 'narrativeData', 'summaryData', 'urlData', 'relatedModelData', 'relatedBopData',
+                'relatedBrainRegionData', 'referenceData']
+            var displayIds=['figureDisplay', 'narrativeDisplay', 'summaryDisplay', 'urlDisplay', 'relatedModelDisplay',
+                'relatedBopDisplay', 'relatedBrainRegionDisplay', 'referenceDisplay']
+            for(var i=0; i<sectionIds.length; i++)
+            {
+                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
+                    document.getElementById(displayIds[i]).value=1;
+                else
+                    document.getElementById(displayIds[i]).value=0;
+            }
+        }
+
+        function deleteModel()
+        {
+            if(confirm('This will delete this Model as well as all links to it from other entries. Do you really want to delete the current Model?'))
+            {
+            {% if ispopup %}
+                clearSpan(opener.document, 'span_related_model_{{ model.id }}');
+            {% endif %}
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/bodb/model/{{ model.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/bodb/';
+        }
+
+        function exportModel(type)
+        {
+            updateSectionDisplaySettings();
+            document.getElementById('reportForm').action='/bodb/model/{{model.id}}/report/'+type+'/';
+            document.getElementById('reportForm').submit();
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    {% include "bodb/model/hierarchy_browser.html" %}
+    <div id="detail">
+        <h2>
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <a id="favLink" href="" onclick="return toggleFavorite({{ model.id }},'favIcon','{{ csrf_token }}');">
+                    <img id="favIcon" name="favIcon" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                </a>
+            {% endif %}
+            Model: {{ model }}
+            {%if model.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}
+        </h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Collator:</strong> {{ model.get_collator_str }} {% if not model.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.collator.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Created:</strong> {{ model.get_created_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified by:</strong> {{ model.get_modified_by_str }} {% if not model.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.last_modified_by.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified:</strong> {{ model.get_modified_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Tags:</strong> {{ model.tags.all|join:', ' }}</td>
+            </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr valign=top>
+                <td colspan=2>{{ model.brief_description }}</td>
+            </tr>
+            <tr>
+                <td colspan=2 valign=top>
+                    <strong>Public:</strong>&nbsp;
+                    {% if model.public %}
+                        YES
+                    {% else %}
+                        NO
+                        {% if not model.draft and not perms.bodb.public_model and not user.is_superuser and model.collator == user %}
+                            <br>
+                            <span id="public_request">
+                                {% if public_request_sent %}
+                                    Public request sent.
+                                {% else %}
+                                    <a href="" onclick="return publicRequest({{ model.id }},'{{ csrf_token }}');">Request that this entry be made public</a>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% if inputs or outputs or states or figures or modules %}
+                <tr>
+                    <td colspan="2">
+                        {% include "bodb/model/architecture_view.html" %}
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=2>
+                    Narrative (<a href="javascript:animatedcollapse.toggle('narrativeData')"><span id="narrativeDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    <div id="narrativeData" style="display:none">
+                        <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                        <table class="tab_panel" style="background:#e6e8ed;">
+                            <tr valign=top>
+                                <td>{{ model.narrative }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            {% if generic_build_seds or connectivity_build_seds or imaging_build_seds or erp_build_seds or generic_test_seds or connectivity_test_seds or imaging_test_seds or erp_test_seds or predictions %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Summaries of Experimental Data (SEDs) and Simulation Results (SSRs) (<a href="javascript:animatedcollapse.toggle('summaryData')"><span id="summaryDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <div id="summaryData" style="display:none">
+                            <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                            {% if generic_build_seds or connectivity_build_seds or imaging_build_seds or erp_build_seds %}
+                                {% include "bodb/sed/build_sed_list_view.html" %}
+                            {% endif %}
+                            {% if generic_test_seds or connectivity_test_seds or imaging_test_seds or erp_test_seds %}
+                                {% include "bodb/sed/test_sed_list_view.html" %}
+                            {% endif %}
+                            {% if predictions %}
+                                {% include "bodb/prediction/prediction_selection_list_view.html" %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if model.execution_url or model.documentation_url or model.description_url or model.simulation_url %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        URLs (<a href="javascript:animatedcollapse.toggle('urlData')"><span id="urlDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <div id="urlData" style="display:none">
+                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                            <table class="tab_panel" style="background:#e6e8ed;">
+                                {% if model.execution_url %}
+                                    <tr valign=top>
+                                        <td width=150px><strong>Execution URL:</strong></td>
+                                        <td><a href="" onclick="window.open('{{ model.execution_url }}');return false;">{{ model.execution_url }}</a></td>
+                                    </tr>
+                                {% endif %}
+                                {% if model.documentation_url %}
+                                    <tr valign=top>
+                                        <td><strong>Documentation URL:</strong></td>
+                                        <td><a href="" onclick="window.open('{{ model.documentation_url }}');return false;">{{ model.documentation_url }}</a></td>
+                                    </tr>
+                                {% endif %}
+                                {% if model.description_url %}
+                                    <tr valign=top>
+                                        <td><strong>Description URL:</strong></td>
+                                        <td><a href="" onclick="window.open('{{ model.description_url }}');return false;">{{ model.description_url }}</a></td>
+                                    </tr>
+                                {% endif %}
+                                {% if model.simulation_url %}
+                                    <tr valign=top>
+                                        <td><strong>Simulation URL:</strong></td>
+                                        <td><a href="" onclick="window.open('{{ model.simulation_url }}');return false;">{{ model.simulation_url }}</a></td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if related_models or reverse_related_models %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Related Models (<a href="javascript:animatedcollapse.toggle('relatedModelData')"><span id="relatedModelDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {% with related_models as related_model_list %}
+                            {% with reverse_related_models as reverse_related_model_list %}
+                                {% include "bodb/model/related_model_list_view.html" %}
+                            {% endwith %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if related_bops or reverse_related_bops %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Related BOPs (<a href="javascript:animatedcollapse.toggle('relatedBopData')"><span id="relatedBopDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {% with related_bops as related_bop_list %}
+                            {% with reverse_related_bops as reverse_related_bop_list %}
+                                {% include "bodb/bop/related_bop_list_view.html" %}
+                            {% endwith %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if related_brain_regions %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        Related Brain Regions (<a href="javascript:animatedcollapse.toggle('relatedBrainRegionData')"><span id="relatedBrainRegionDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {% with related_brain_regions as related_brain_region_list %}
+                            {% include "bodb/brainRegion/related_brain_region_list_view.html" %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if references %}
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=2>
+                        References (<a href="javascript:animatedcollapse.toggle('referenceData')"><span id="referenceDataLabel">Show</span></a>)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="referenceData" style="display:none">
+                            {% with references as literatures %}
+                                {% include "bodb/literature/reference_list_view.html" %}
+                            {% endwith %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=2>
+                    Discussion (<a href="javascript:animatedcollapse.toggle('discussionData')"><span id="discussionDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="discussionData" style="display:none">
+                        {% with model.forum as forum %}
+                            {% include "bodb/discussion/forum_view.html" %}
+                        {% endwith %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <span id="model_message" class="messages"></span>
+        {% if perms.bodb.change_model and canEdit%}
+            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/model/{{model.id}}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if perms.bodb.delete_model and canDelete %}
+            {% if not ispopup  %}
+                <input class="btn" type="button" value="Delete" onclick="deleteModel()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+        {% endif %}
+        {% if user.is_authenticated and not user.is_anonymous  %}
+            {% if not selected and can_add_entry or selected and can_remove_entry %}
+                <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="return toggleSingleModelSelect('{{model.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if canManage %}
+                <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{model.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+        {% endif %}
+        <input class="btn" type="button" value="Export" onclick="exportModel(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        Format:&nbsp;
+        <select id="exportType">
+            <option value="pdf">PDF</option>
+            <option value="rtf">RTF</option>
+        </select>
+        <br>
+    </div>
+    <form id="fileForm" action=""></form>
+    <form id="reportForm" name="reportForm" action="/bodb/model/{{model.id}}/report/rtf/" method="post">
+        {% csrf_token %}
+        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
+        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
+        <input id="summaryDisplay" type="hidden" name="summaryDisplay" value=0>
+        <input id="urlDisplay" type="hidden" name="urlDisplay" value=0>
+        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
+        <input id="relatedBopDisplay" type="hidden" name="relatedBopDisplay" value=0>
+        <input id="relatedBrainRegionDisplay" type="hidden" name="relatedBrainRegionDisplay" value=0>
+        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
+    </form>
+{% endblock %}

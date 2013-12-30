@@ -1,0 +1,49 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - View Brain Region Requests</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Your Brain Region Requests</h2>
+        <table class="tab_panel" style="background:#e6e8ed;">
+            <tr class="col_header">
+                <td>Name</td>
+                <td>Abbreviation</td>
+                <td>Parent</td>
+                <td>Children</td>
+                <td>Nomenclature</td>
+                <td>Version</td>
+                <td>Rationale</td>
+                <td>Status</td>
+            </tr>
+            {% for brain_region_request in object_list %}
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td>
+                        {{ brain_region_request.name }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.abbreviation }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.parent }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.children }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.nomenclature }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.nomenclature_version }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.rationale }}
+                    </td>
+                    <td>
+                        {{ brain_region_request.status }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

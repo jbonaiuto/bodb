@@ -1,0 +1,198 @@
+{% load staticfiles %}
+<div id="modelDiv" style="display:{%ifequal searchType 'models'%}block{% else %}none{% endifequal %}">
+    <form id="model_search_form" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" id="searchType" name="searchType" value="models"/>
+        <table class="tab_panel">
+            <tr>
+                <td colspan=8><strong>Any field:</strong>&nbsp;{{ model_search_form.keywords }}
+            </tr>
+            <tr>
+                <td colspan=8 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=8>
+                    Advanced Options (<a href="javascript:animatedcollapse.toggle('modelAdvancedOptions')"><span id="modelAdvancedOptionsLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_body">
+                <td colspan=8 style="padding:0px">
+                    <div id="modelAdvancedOptions" style="display:none">
+                        <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                        <table class="tab_panel" style="background:#e6e8ed;">
+                            <tr>
+                                <td width=20%><strong>Title</strong></td>
+                                <td>{{ model_search_form.title }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Author</strong></td>
+                                <td>{{ model_search_form.author }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Description</strong></td>
+                                <td>{{ model_search_form.description }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Narrative</strong></td>
+                                <td>{{ model_search_form.narrative }}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Tags</strong>
+                                </td>
+                                <td>{{ model_search_form.tags }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Public</strong></td>
+                                <td>{{ model_search_form.public }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Building SEDs</strong></td>
+                                <td>{{ model_search_form.building_sed }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Testing SEDs</strong></td>
+                                <td>{{ model_search_form.testing_sed }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Predictions</strong></td>
+                                <td>{{ model_search_form.prediction }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SSRs</strong></td>
+                                <td>{{ model_search_form.ssr }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related Brain Regions</strong></td>
+                                <td>{{ model_search_form.related_brain_region }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related BOPs</strong></td>
+                                <td>{{ model_search_form.related_bop }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related Models</strong></td>
+                                <td>{{ model_search_form.related_model }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Created</strong></td>
+                                <td>{{ model_search_form.created_from }} - {{ model_search_form.created_to }}</td>
+                            </tr>
+                            <tr class="col_header">
+                                <td colspan=2>Collator</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Username</strong>
+                                </td>
+                                <td>
+                                    {{ model_search_form.username }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>First name</strong>
+                                </td>
+                                <td>
+                                    {{ model_search_form.first_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Last name</strong>
+                                </td>
+                                <td>
+                                    {{ model_search_form.last_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Only my entries</strong>
+                                </td>
+                                <td>{{ model_search_form.collator }}</td>
+                            </tr>
+                            <tr class="col_header">
+                                <td colspan=2>Related Literature</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Title</strong>
+                                </td>
+                                <td>{{ model_search_form.related_literature_title }}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Author</strong>
+                                </td>
+                                <td>{{ model_search_form.related_literature_author }}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Year</strong>
+                                </td>
+                                <td>{{ model_search_form.related_literature_year_min }} - {{ model_search_form.related_literature_year_max }}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Annotation</strong>
+                                </td>
+                                <td>{{ model_search_form.related_literature_annotation }}</td>
+                            </tr>
+                        </table>
+                        <b class="d4f"></b><b class="d3f"></b><b class="d2f"></b><b class="d1f"></b></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    <div class="myerrors">
+                        {{ model_search_form.errors }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    <input class="btn" type="button" value="Search" onclick="document.getElementById('model_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/></form>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table class="tab_panel">
+        <tr>
+            <td colspan=8>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan=8 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=8>Results</td>
+        </tr>
+        <tr class="table_header">
+            <td colspan=8>
+                <a href="/bodb/model/new/{% if ispopup %}?_popup=1{% endif %}">Add new</a>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8">
+                <div id="modelData" style="display:block">
+                    {% include 'bodb/model/model_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan=8 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,1888 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-11-27T12:39:15+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('AAC85') [LITID]&amp;Details=</HttpString>
+<SearchString>('AAC85') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='AAC85') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>AAC85</ID>
+<Authors>
+<Author>
+<Initials>RA</Initials>
+<LastName>Andersen</LastName>
+</Author>
+<Author>
+<Initials>C</Initials>
+<LastName>Asanuma</LastName>
+</Author>
+<Author>
+<Initials>WM</Initials>
+<LastName>Cowan</LastName>
+</Author>
+</Authors>
+<Title>Callosal and prefrontal associational projecting cell populations in area 7A of the macaque monkey: a study using retrogradely transported fluorescent dyes.</Title>
+<Year>1985</Year>
+<Journal>
+<JournalName>J. Comp. Neurol.</JournalName>
+<Volume>232</Volume>
+<Pages>443-455</Pages>
+<PubMedID>3980763</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>AAC85</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>AAC85-10</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>10</Acronym>
+<FullName>Area 10</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-12</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>12</Acronym>
+<FullName>Area 12</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-13</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>13</Acronym>
+<FullName>Orbitofrontal area 13</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-14</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>14</Acronym>
+<FullName>Orbitofrontal area 14</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-17</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>17</Acronym>
+<FullName>Area 17</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-24</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24</Acronym>
+<FullName>Anterior cingulate area 24</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>45</Acronym>
+<FullName>Cortical area 45</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>46</Acronym>
+<FullName>Cortical area 46</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-6</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>6</Acronym>
+<FullName>Area 6</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7a</Acronym>
+<FullName>Area 7a</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7b</Acronym>
+<FullName>Area 7b</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8A</Acronym>
+<FullName>Area 8A</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8B</Acronym>
+<FullName>Area 8B</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-9</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>9</Acronym>
+<FullName>Area 9</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-DP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>DP</Acronym>
+<FullName>Dorsal prelunate gyrus</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>LIP</Acronym>
+<FullName>Lateral intraparietal area</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>MT</Acronym>
+<FullName>Middle temporal area</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>OA</Acronym>
+<FullName>Extrastriate area OA</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OB</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>OB</Acronym>
+<FullName>Extrastriate area OB</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PE</Acronym>
+<FullName>Superior parietal lobule</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PG</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>PG</Acronym>
+<FullName>Caudal inferior parietal lobule</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TA</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TA</Acronym>
+<FullName>Temporal area TA</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TE</Acronym>
+<FullName>Inferotemporal area TE</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>GP85-Cif</ID_BrainSite>
+<SiteClass>Nucl_SubCtx</SiteClass>
+<Acronym>Cif</Acronym>
+<FullName>Nucleus centralis inferior thalami</FullName>
+<DefType>A</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>AAC85</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>FB</ID_Tracer>
+<FullName>Fast Blue</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>14 d</SurvivalTime>
+<Thickness_Sections>30</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>3</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fascicularis</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>3</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.5</Volume>
+<Concentration>5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...In case 83A-4 a single dye injection was made into area 7a...In 83A-8 the injection site also included parts of areas 7b and LIP, but in the other two cases the injections were strictly confined to area 7a.&amp;quot;</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>3 x 0.5</Volume>
+<Concentration>5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...in case 83A-5 three tightly spaced injections were made near the center of area 7a...In 83A-8 the injection site also included parts of areas 7b and LIP, but in the other two cases the injections were strictly confined to area 7a.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-12</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-13</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-14</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-17</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-24</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the left shows the distribution of the neurons that project to area 7a of the ipsilateral side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>C</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the left shows the distribution of the neurons that project to area 7a of the ipsilateral side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-6</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 449</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of callosally projecting posterior parietal cells (left)...in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>C</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the left shows the distribution of the neurons that project to area 7a of the ipsilateral side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8b</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections...each filled triangle represents several fast-blue-labeled neurons that projected to area 7a of the same side.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 449</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of callosally projecting posterior parietal cells (left)...in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 449</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of callosally projecting posterior parietal cells (left)...in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OB</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PE</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PG</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TE</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections the filled triangles represent fast-blue-labeled neurons that project callosally to 7a...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>AAC85-7b</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>B</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>B</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>20 x 0.5</Volume>
+<Concentration>5%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...in case 83A-8 20 injections were made so as to label almost half of area 7a. In 83A-8 the injection site also included parts of areas 7b and LIP, but in the other two cases the injections were strictly confined to area 7a.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>NY</ID_Tracer>
+<FullName>Nuclear Yellow</FullName>
+<Anterograde>false</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>3-5 d</SurvivalTime>
+<Thickness_Sections>30</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>3</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fascicularis</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>3</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>AAC85-6</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>?</Volume>
+<Concentration>2%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...In each case the prefrontal injections included parts of areas 8a, 45, and 46.&amp;quot;</Quotation>
+</Reference>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>?</Volume>
+<Concentration>2%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...In each case the prefrontal injections included parts of areas 8a, 45, and 46.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-12</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-13</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-14</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-17</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>N</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>0</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-24</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>I</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 450-451</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the right... is of cells that projected through the corpus callosum to areas 8a, 45, and 46 of the opposite side...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>C</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>I</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 450-451</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the right... is of cells that projected through the corpus callosum to areas 8a, 45, and 46 of the opposite side...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-6</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 449-450</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of...prefrontal associationally projecting neurons (right) in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>I</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 450-451</TextPageNumber>
+<FigureNumber>Fig. 7</FigureNumber>
+<Quotation>&amp;quot;Figure 7...The reconstruction on the right... is of cells that projected through the corpus callosum to areas 8a, 45, and 46 of the opposite side...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-8b</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>L</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447-449</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;For the prefrontal sections, each hollow triangle represents several nuclear-yellow-labeled neurons that projected to the contralateral prefrontal cortex...&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>C</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>C</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 449-450</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of...prefrontal associationally projecting neurons (right) in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 449-450</TextPageNumber>
+<FigureNumber>Fig. 5</FigureNumber>
+<Quotation>Fig. 5: &amp;quot;The spatial distribution of...prefrontal associationally projecting neurons (right) in the caudal inferior parietal lobule...Case 83A-5.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-OB</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PE</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-PG</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TA</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-TE</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>L</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>L</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 447, 449, 451-452; Table 1</TextPageNumber>
+<FigureNumber>Fig. 4</FigureNumber>
+<Quotation>Fig. 4: &amp;quot;In the drawings of the posterior parietal sections...the open triangels indicate nuclear-yellow-labeled neurons that project to the ipsilateral prefrontal cortex.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-8a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<AffectedSites>
+<ID_BrainSite>AAC85-45</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<AffectedSites>
+<ID_BrainSite>AAC85-46</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>A</PDC_EC>
+</Extent>
+</AffectedSites>
+<Volume>?</Volume>
+<Concentration>2%</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>pp. 444-446</TextPageNumber>
+<FigureNumber>Fig. 3</FigureNumber>
+<Quotation>&amp;quot;Fast blue or true blue (5% solution) was injected into area 7a; nuclear yellow (2% solution) was injected into the prefrontal cortex...In each animal, two sets of dye injections were made; one dye was injected into the posterior parietal cortex and a second dye was injected into the contralateral prefrontal cortex...In each case the prefrontal injections included parts of areas 8a, 45, and 46.&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-LIP</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>C</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>3</Degree>
+<PDC_Density>I</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-MT</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>R</Hemisphere>
+<PDC_Site>H</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>H</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>S</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 450</TextPageNumber>
+<FigureNumber>Fig. 6</FigureNumber>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>TAA</ID_Tracer>
+<FullName>Tritiated Amino Acids</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>false</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>?</InjectionMethod>
+<SurvivalTime>?</SurvivalTime>
+<Thickness_Sections>30</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>7</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>Macaca fascicularis</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>7</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>?</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 449</TextPageNumber>
+<Quotation>&amp;quot;In other experiments, we made single injections of...labeled amino acids (nine cases) in different parts of area 7a...&amp;quot;</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>AAC85-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>C</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>AAC85</ID_Literature>
+<TextPageNumber>p. 449</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;In other experiments, in which we made single injections of...labeled amino acids (nine cases) in different parts of area 7a, we always found that the heaviest labeling on the opposite site was in a region corresponding to the principal focus of the injection.&amp;quot;</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

@@ -1,0 +1,101 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - User Registration</title>
+    <script type="text/javascript">
+        function checkPasswords()
+        {
+            if(document.getElementById('id_password1').value!=document.getElementById('id_password2').value)
+            {
+                document.getElementById('password_match').innerHTML='Passwords must match';
+                return false;
+            }
+            else
+            {
+                document.getElementById('password_match').innerHTML='&nbsp;';
+                return true;
+            }
+        }
+
+        function doneUsername(res, status)
+        {
+            if (status=="success")
+                clearSpan(document,"username_errors");
+            else
+                document.getElementById("username_errors").innerHTML='<font style="color: red">The username must be unique.</font>';
+        }
+
+        function checkUsername(username)
+        {
+            var data = { 'username': username, 'csrfmiddlewaretoken': '{{ csrf_token }}' };
+            var args = { type: "POST", url: "/accounts/username_available/", data: data, complete : doneUsername };
+            $.ajax(args)
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <form id="userForm" method="post" action="">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td width=20%>Username *</td>
+                    <td><input type="text" name="username" id="id_username" onkeyup="checkUsername(this.value);"></td>
+                    <td class="myerrors"><span id="username_errors">{% if form.username.errors %}{{ form.username.errors }}{% endif %}</span></td>
+                </tr>
+                <tr>
+                    <td>Email Address *</td>
+                    <td>{{ form.email }}</td>
+                    {% if form.email.errors %}<td class="myerrors">{{ form.email.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td>Password *</td>
+                    <td><input type="password" name="password1" id="id_password1" onkeyup="checkPasswords()"/></td>
+                    {% if form.password1.errors %}<td class="myerrors">{{ form.password1.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td>Password (again) *</td>
+                    <td><input type="password" name="password2" id="id_password2" onkeyup="checkPasswords()"/></td>
+                    {% if form.password2.errors %}<td class="myerrors">{{ form.password2.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td colspan=3>
+                        <span id="password_match" style="color:red">&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>First Name *</td>
+                    <td>{{ form.first_name }}</td>
+                    {% if form.first_name.errors %}<td class="myerrors">{{ form.first_name.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td>Last Name *</td>
+                    <td>{{ form.last_name }}</td>
+                    {% if form.last_name.errors %}<td class="myerrors">{{ form.last_name.errors }}</td>{% endif %}
+                </tr>
+                <tr>
+                    <td>Affiliation *</td>
+                    <td>{{ form.affiliation }}</td>
+                    {% if form.affiliation.errors %}<td class="myerrors">{{ form.affiliation.errors }}</td>{% endif %}
+                </tr>
+            </table>
+            <p>Prove you're not a robot:</p>
+            <script type="text/javascript"
+                    src="http://www.google.com/recaptcha/api/challenge?k=6LcsfdgSAAAAALpxjEXY3U7uSwkyIxzNRxPGhVBW">
+            </script>
+            <noscript>
+                <iframe src="http://www.google.com/recaptcha/api/noscript?k=6LcsfdgSAAAAALpxjEXY3U7uSwkyIxzNRxPGhVBW{{ captcha_error }}"
+                        height="300" width="500" frameborder="0"></iframe><br>
+                <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+                </textarea>
+                <input type="hidden" name="recaptcha_response_field"
+                       value="manual_challenge">
+            </noscript>
+            <div class="myerrors">
+                {{ form.non_field_errors }}
+            </div>
+            <br>
+            <input class="btn" type="button" value="Register" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'" onclick="if(checkPasswords() && document.getElementById('username_errors').innerHTML==''){ document.getElementById('userForm').submit(); }"/>
+        </form>
+    </div>
+{% endblock %}
+

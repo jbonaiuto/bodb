@@ -1,0 +1,113 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Search</title>
+    <script type="text/javascript">
+    animatedcollapse.addDiv('allAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('literatureResults', 'fade=1');
+    animatedcollapse.addDiv('bopResults', 'fade=1');
+    animatedcollapse.addDiv('modelResults', 'fade=1');
+    animatedcollapse.addDiv('sedResults', 'fade=1');
+    animatedcollapse.addDiv('ssrResults', 'fade=1');
+    animatedcollapse.addDiv('brainRegionResults', 'fade=1');
+    animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('ssrAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('brainRegionAdvancedOptions', 'fade=1');
+    </script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Search {{ searchLabel }}</h2>
+        <table class="tab_panel">
+            {% if showTabs %}
+                <tr>
+                    <td style="padding:0px">
+                        <span id="allHeader">
+                            {%ifequal searchType 'all'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="literatureHeader">
+                            {%ifequal searchType 'literature'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="bopHeader">
+                            {%ifequal searchType 'bops'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="modelHeader">
+                            {%ifequal searchType 'models'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="sedHeader">
+                            {%ifequal searchType 'seds'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="ssrHeader">
+                            {%ifequal searchType 'ssrs'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                        <span id="brainRegionHeader">
+                            {%ifequal searchType 'brain_regions'%}
+                                <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                            {%endifequal%}
+                        </span>
+                    </td>
+                    <td style="padding:0px">
+                    </td>
+                </tr>
+                <tr class="tab_header">
+                    <td id="allTab" width=100 class="{%ifequal searchType 'all'%}selectedTab{% else %}unselectedTab{% endifequal %}"  onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('all',['literature','bop','model','sed','ssr','brainRegion']);"><a>All</a></td>
+                    <td id="literatureTab" width=100 class="{%ifequal searchType 'literature'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('literature',['all','bop','model','sed','ssr','brainRegion']);"><a>Literature</a></td>
+                    <td id="bopTab" width=100 class="{%ifequal searchType 'bops'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('bop',['all','literature','model','sed','ssr','brainRegion']);"><a>BOPs</a></td>
+                    <td id="modelTab" width=100 class="{%ifequal searchType 'models'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="return switchTab('model',['all','literature','bop','sed','ssr','brainRegion']);"><a>Models</a></td>
+                    <td id="sedTab" width=250 class="{%ifequal searchType 'seds'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="return switchTab('sed',['all','literature','bop','model','ssr','brainRegion']);"><a>Summary of Experimental Data</a></td>
+                    <td id="ssrTab" width=250 class="{%ifequal searchType 'ssrs'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="return switchTab('ssr',['all','literature','bop','model','sed','brainRegion']);"><a>Summary of Simulation Results</a></td>
+                    <td id="brainRegionTab" width=125 class="{%ifequal searchType 'brain_regions'%}selectedTab{% else %}unselectedTab{% endifequal %}" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="return switchTab('brainRegion',['all','literature','bop','model','sed','ssr']);"><a>Brain Regions</a></td>
+                    <td class="unselectedTab">&nbsp;</td>
+                </tr>
+                <tr style="background:#0d3f74"><td colspan=8>&nbsp;</td></tr>
+            {% endif %}
+            <tr>
+                <td {% if showTabs %}colspan=8{% endif %}>
+                    {% with allConnectionGraphId as connectionGraphId %}
+                        {% with allBopGraphId as bopGraphId %}
+                            {% include "bodb/search/search_all.html" %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% include "bodb/search/search_literature.html" %}
+                    {% with bopBOPGraphId as bopGraphId %}
+                        {% include "bodb/search/search_bops.html" %}
+                    {% endwith %}
+                    {% include "bodb/search/search_models.html" %}
+                    {% with sedConnectionGraphId as connectionGraphId %}
+                        {% include "bodb/search/search_seds.html" %}
+                    {% endwith %}
+                    {% include "bodb/search/search_ssrs.html" %}
+                    {% include "bodb/search/search_brain_regions.html" %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

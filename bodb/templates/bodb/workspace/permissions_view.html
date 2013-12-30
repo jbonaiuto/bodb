@@ -1,0 +1,29 @@
+<div id="permissionsData" style="display:none">
+    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:100px">&nbsp;</td>
+            <td style="width:100px">Insert</td>
+            <td style="width:100px">Edit</td>
+            <td>Delete</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Discussion Posts</td>
+            <td>{% if add_post %}&nbsp;&nbsp;x{% endif %}</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="odd_row" valign=top>
+            <td>Entries</td>
+            <td>{% if add_entry %}&nbsp;&nbsp;x{% endif %}</td>
+            <td></td>
+            <td>{% if remove_entry %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+        <tr class="even_row" valign=top>
+            <td>Coordinate Selections</td>
+            <td>{% if add_coordinate_selection %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if change_coordinate_selection %}&nbsp;&nbsp;x{% endif %}</td>
+            <td>{% if delete_coordinate_selection %}&nbsp;&nbsp;x{% endif %}</td>
+        </tr>
+    </table>
+</div>

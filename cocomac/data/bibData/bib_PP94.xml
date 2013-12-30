@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-11-27T16:10:03+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('PP94') [LITID]&amp;Details=</HttpString>
+<SearchString>('PP94') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='PP94') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>PP94</ID>
+<Authors>
+<Author>
+<Initials>M</Initials>
+<LastName>Petrides</LastName>
+</Author>
+<Author>
+<Initials>DN</Initials>
+<LastName>Pandya</LastName>
+</Author>
+</Authors>
+<Title>Comparative architectonic analysis of the human and the macaque frontal cortex</Title>
+<Year>1994</Year>
+<Chapter>
+<Pages>17-58</Pages>
+<Editors>Boller F, Grafman J</Editors>
+<BookTitle>Handbook of Neuropsychology, Vol. 9</BookTitle>
+<Publisher>Elsevier</Publisher>
+<Place>Amsterdam</Place>
+</Chapter>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>PP94</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>PP94-10</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>10</Acronym>
+<FullName>Area 10</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-11</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>11</Acronym>
+<FullName>Area 11</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-13</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>13</Acronym>
+<FullName>Orbitofrontal area 13</FullName>
+<DefType>D</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-14</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>14</Acronym>
+<FullName>Orbitofrontal area 14</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-24</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>24</Acronym>
+<FullName>Anterior cingulate area 24</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-25</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>25</Acronym>
+<FullName>Area 25</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-32</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>32</Acronym>
+<FullName>Area 32</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-44</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>44</Acronym>
+<FullName>Cortical area 44</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-45</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>45</Acronym>
+<FullName>Cortical area 45</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-45A</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>45A</Acronym>
+<FullName>Cortical area 45A</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-45B</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>45B</Acronym>
+<FullName>Cortical area 45B</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-46</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>46</Acronym>
+<FullName>Cortical area 46</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-47/12</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>47/12</Acronym>
+<FullName>Prefrontal area 47/12</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-47/12(L)</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>47/12(L)</Acronym>
+<FullName>Prefrontal area 47/12, lateral part</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-47/12(O)</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>47/12(O)</Acronym>
+<FullName>Prefrontal area 47/12, orbital part</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-8</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8</Acronym>
+<FullName>Area 8</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-8A</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8A</Acronym>
+<FullName>Area 8A</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-8Ad</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8Ad</Acronym>
+<FullName>Dorsal portion of area 8A</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-8Av</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8Av</Acronym>
+<FullName>Ventral portion of area 8A</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-8B</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>8B</Acronym>
+<FullName>Area 8B</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-9</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>9</Acronym>
+<FullName>Area 9</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-9/46d</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>9/46d</Acronym>
+<FullName>Cortical area 9/46d</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-9/46v</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>9/46v</Acronym>
+<FullName>Cortical area 9/46v</FullName>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>PP94-G</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>G</Acronym>
+<FullName>Second gustatory area</FullName>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+</CoCoMacExport>

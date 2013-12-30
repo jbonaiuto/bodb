@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Tagged Predictions</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Predictions Tagged with: <a href="/bodb/tag/{{ tag }}/">{{ tag }}</a></h2>
+        <table class="tab_panel">
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <tr>
+                    <td>
+                        <a href="#" onclick="return showPopup('new_prediction_subscription', 400, 200, '/bodb/subscription/new/?_popup=1&type=Prediction&keywords={{ tag }}');"><strong>Add subscription</strong></a> - be notified when predictions containing this tag are entered
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>
+                    {% with tagged_items as predictions %}
+                        {% include "bodb/prediction/prediction_selection_list_view.html" %}
+                    {% endwith %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

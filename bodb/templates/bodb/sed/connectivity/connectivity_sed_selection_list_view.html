@@ -1,0 +1,76 @@
+{% load staticfiles %}
+<div id="connectivitySEDData">
+    <table class="tab_panel">
+        <tr class="section_subheader">
+            <td colspan=6>Connectivity SEDs</td>
+        </tr>
+        {% if not ispopup %}
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan=10>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+        {% endif %}
+        <tr class="col_header">
+            <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            <td width=200px>Title</td>
+            <td width=200px>Collator</td>
+            <td width=500px>Description</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td align=center>
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        {% if ispopup %}
+                            {% if multiple %}
+                                <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);">Select</a>
+                            {% endif %}
+                        {% else %}
+                            <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
+                                <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                            </a>
+                            <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedConnectivitySEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                            <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/bodb/sed/{{ sed.id }}/">{{ sed }}</a>
+                    {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                </td>
+                <td>{{ sed.get_collator_str }} {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td>{{sed.brief_description }}</td>
+                <td>
+                    {{ sed.html_url_string|safe }}
+                </td>
+                <td><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
+            </tr>
+        {% endfor %}
+        <tr class="col_header">
+            <td colspan="6">
+                Graph Generation Tool:&nbsp;
+                <select id="{{ connectionGraphId }}Graphtool">
+                    <option value="dot">dot</option>
+                    <option value="neato">neato</option>
+                    <option value="fdp">fdp</option>
+                    <option value="sfdp">sfdp</option>
+                    <option value="twopi">twopi</option>
+                    <option value="circo">circo</option>
+                </select>&nbsp;
+                <a href="" onclick="return generateConnDiagram([{% for selected,is_favorite,subscribed,sed in connectivity_seds %}{% if forloop.counter0 > 0 %},{% endif %}{{ sed.id }}{% endfor %}],document.getElementById('{{ connectionGraphId }}Graphtool').value,'{{ connectionGraphId }}','{{ csrf_token }}');">Generate Connectivity Graph</a>
+            </td>
+        </tr>
+        <tr class="col_header">
+            <td colspan="6">
+                <img id="{{ connectionGraphId }}" src="" usemap="#{{ connectionGraphId }}Map"/>
+                <map id="{{ connectionGraphId }}Map" name="{{ connectionGraphId }}Map">
+                </map>
+                <br><span id="{{ connectionGraphId }}Msg"></span>
+            </td>
+        </tr>
+    </table>
+</div>

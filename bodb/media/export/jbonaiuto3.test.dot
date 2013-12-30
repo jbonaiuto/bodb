@@ -1,0 +1,13 @@
+digraph "connectivity-sed-map" {
+	graph [_gxl_hypergraph=false];
+	subgraph "24a_subgraph" {
+		graph [_gxl_hypergraph=false];
+		"24a (MLR)"		 [URL="/bodb/brain_region/398/"];
+	}
+	subgraph F5_subgraph {
+		graph [_gxl_hypergraph=false];
+		"F5 (MLR)"		 [URL="/bodb/brain_region/5/"];
+	}
+	"24a (MLR)" -> "F5 (MLR)"	 [_gxl_id=89,
+		URL="/bodb/sed/89/"];
+}

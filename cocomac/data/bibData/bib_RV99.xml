@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="iso-8859-1"?><CoCoMacExport xmlns="http://www.cocomac.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cocomac.org http://www.cocomac.org/cocomac.xsd">
+<Header>
+<Creator>CoCoMac-Online</Creator>
+<CoCoMacVersion>20</CoCoMacVersion>
+<ExportDate>2013-10-30T15:51:46+01:00</ExportDate>
+<DataType>BibliographicData</DataType>
+<DataType>BrainMapData</DataType>
+<Feedback>
+<Query>
+<HttpString>Search=LITERATURE&amp;OutputType=XML_BROWSER&amp;SearchString=('RV99') [LITID]&amp;Details=</HttpString>
+<SearchString>('RV99') [LITID]</SearchString>
+<SqlString>SELECT  Top 32767  ID,Literature FROM Literature WHERE  (Literature ='RV99') </SqlString>
+</Query>
+<Results>1</Results>
+</Feedback>
+<Comments>CocoMac XML Output</Comments>
+</Header>
+<BibliographicData>
+<ID>RV99</ID>
+<Authors>
+<Author>
+<Initials>KS</Initials>
+<LastName>Rockland</LastName>
+</Author>
+<Author>
+<Initials>GW</Initials>
+<LastName>Van Hoesen</LastName>
+</Author>
+</Authors>
+<Title>Some temporal and parietal cortical connections converge in CA1 of the primate hippocampus</Title>
+<Year>1999</Year>
+<Journal>
+<JournalName>Cereb. Cortex</JournalName>
+<Volume>9</Volume>
+<Pages>233-237</Pages>
+<PubMedID>10355903</PubMedID>
+</Journal>
+</BibliographicData>
+<MapData>
+<BrainMap>
+<IDBrainMap>RV99</IDBrainMap>
+<BrainSiteList>
+<BrainSite>
+<ID_BrainSite>RV99-7a</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7a</Acronym>
+<FullName>Area 7a</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-7b</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>7b</Acronym>
+<FullName>Area 7b</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteClass>Area_AlloCtx</SiteClass>
+<Acronym>CA1</Acronym>
+<FullName>CA1 subfield of Ammon`s horn</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-ALV</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>CA1-SA</Acronym>
+<FullName>CA1 subfield, (stratum) alveus</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>CA1-SLM</Acronym>
+<FullName>CA1 subfield, stratum lacunosum et moleculare</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SM</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>CA1-SM</Acronym>
+<FullName>CA1 subfield, stratum moleculare</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SP</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>CA1-SP</Acronym>
+<FullName>CA1 subfield, stratum pyramidale</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SR</ID_BrainSite>
+<SiteClass>Lamina_Ctx</SiteClass>
+<Acronym>CA1-SR</Acronym>
+<FullName>CA1 subfield, stratum radiatum</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-TE</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TE</Acronym>
+<FullName>Inferotemporal area TE</FullName>
+<DefType>A</DefType>
+</BrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-TF</ID_BrainSite>
+<SiteClass>Area_IsoCtx</SiteClass>
+<Acronym>TF</Acronym>
+<FullName>Temporal area TF</FullName>
+<DefType>A</DefType>
+</BrainSite>
+</BrainSiteList>
+</BrainMap>
+</MapData>
+<ExperimentalData>
+<ID_Literature>RV99</ID_Literature>
+<Method>
+<TracerSubstance>
+<ID_Tracer>BDA</ID_Tracer>
+<FullName>Biotinylated dextran amine</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>true</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>P</InjectionMethod>
+<SurvivalTime>14-21 d</SurvivalTime>
+<Thickness_Sections>50</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>5</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>?</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>5</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>RV99-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.25-0.75</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>p. 233</TextPageNumber>
+<FigureNumber>Fig. 1</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.&amp;quot; (p. 233)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteType>Area_AlloCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>C</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4, 5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>E</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4, 5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>M</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4, 5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>RV99-7a</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.25-0.75</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>p. 233</TextPageNumber>
+<FigureNumber>Fig. 1</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.&amp;quot; (p. 233)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteType>Area_AlloCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>F</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>F</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>G</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>-</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>RV99-7b</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>0.25-0.75</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>p. 233</TextPageNumber>
+<FigureNumber>Fig. 1</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.&amp;quot; (p. 233)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteType>Area_AlloCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>C</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 3-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>E</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 3-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 3-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+<Method>
+<TracerSubstance>
+<ID_Tracer>PHA-L</ID_Tracer>
+<FullName>Phaseolus vulgaris leucoagglutinin</FullName>
+<Anterograde>true</Anterograde>
+<Retrograde>false</Retrograde>
+</TracerSubstance>
+<BilateralUse>false</BilateralUse>
+<InjectionMethod>I</InjectionMethod>
+<SurvivalTime>14-21 d</SurvivalTime>
+<Thickness_Sections>50</Thickness_Sections>
+<Animals>
+<Nbr_AllAnimals>6</Nbr_AllAnimals>
+<Nbr_AllFemaleAnimals>?</Nbr_AllFemaleAnimals>
+<AgeRange>?</AgeRange>
+<WeightRange>?</WeightRange>
+<Details>
+<MacaqueSpecies>?</MacaqueSpecies>
+<Sex>?</Sex>
+<Number>6</Number>
+</Details>
+</Animals>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>RV99-TF</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>?</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>p. 233</TextPageNumber>
+<FigureNumber>Fig. 1</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.&amp;quot; (p. 233)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteType>Area_AlloCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>C</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 2, 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>E</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 2, 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 2, 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+<Injection>
+<InjectedBrainsite>
+<ID_BrainSite>RV99-TE</ID_BrainSite>
+<SiteType>Area_IsoCtx_2D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>C</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</InjectedBrainsite>
+<Volume>?</Volume>
+<Concentration>?</Concentration>
+<MethodicalProblems>false</MethodicalProblems>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>p. 233</TextPageNumber>
+<FigureNumber>Fig. 1</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.&amp;quot; (p. 233)</Quotation>
+</Reference>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1</ID_BrainSite>
+<SiteType>Area_AlloCtx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>C</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SLM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>A</PDC_Site>
+<Extent>
+<EC>P</EC>
+<PDC_EC>E</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+<LabelledBrainSite>
+<BrainSite>
+<ID_BrainSite>RV99-CA1-SM</ID_BrainSite>
+<SiteType>Lamina_Ctx_3D</SiteType>
+<Hemisphere>?</Hemisphere>
+<PDC_Site>M</PDC_Site>
+<Extent>
+<EC>X</EC>
+<PDC_EC>-</PDC_EC>
+</Extent>
+</BrainSite>
+<Course>I</Course>
+<Location>T</Location>
+<Density>
+<Degree>X</Degree>
+<PDC_Density>-</PDC_Density>
+</Density>
+<Reference>
+<ID_Literature>RV99</ID_Literature>
+<TextPageNumber>pp. 233-234</TextPageNumber>
+<FigureNumber>Figs. 4-5</FigureNumber>
+<Quotation>&amp;quot;Of six brains with injections in various sectors of temporal cortex, direct projection to CA1 were found in the two with ventromedially placed injections: in areas TF (injection T7) and ventromedial TE (injection T5): see Material and Methods and Figure 1. Injections confined to more lateral or more posterior temporal cortices did not result in projections to CA1 (Fig. 1). Injections placed in araes 7a (cases P5 and P6) or 7b (case P7) also resulted in direct projections, but two other projections, in the lower bank of the intraparietal sulcus and in artea 5, did not (Fig. 1). In demonstrating these connections, the use of high-resolution tracers was important., Their superior sensitivity and resolution successfully demonstrated even relatively fine-caliber axons and structural features, which would be ambiguous at best with autoradiography or anterograde WGA-HRP.The organization of temporal and parietal connections was similar in several respects. First, both terminated mainly in a superficial location near the hippocampal fissure in the stratum lacunosum-moleculare (Figs. 2-4). This is the same termination zone that receives connections from the EC, and may partially coincide with subcortical afferents. Postsynaptic targets in this superficial position are most probably the distal apical dendrites of underlying pyramidal cells.Second, the projection foci were of light to moderate density. Terminations in case T5 were densest, those in P5 and P7 intermediate in density, and those in T7 and P6 least dense. Terminations were sampled through the densest region and counted per 60 micro-m2 field at 1000x magification. Resulting counts were 50-60 boutons per fieldf for T5, -30 boutons per field for P5 and P7, and &lt;20 boutons per field for T7 and P6.…Third, both temporal and parietal terminations targeted the posterior portion of CA1, and appeared to converge in a similar location. The temporal foci were most extensive and continued over 10.0 mm through much of the anteroposterior axis of the hippocampal body (Fig. 5). Parietal projections remained within the posterior 2.0 mm, despite the larger size of the injections in these cases (see Material and Methods).&amp;quot; (p. 233)</Quotation>
+</Reference>
+</LabelledBrainSite>
+</Injection>
+</Method>
+</ExperimentalData>
+</CoCoMacExport>

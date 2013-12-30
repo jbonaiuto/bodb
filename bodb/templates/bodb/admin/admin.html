@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Administration</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Administration</h2>
+        <table class="tab_panel">
+            <tr>
+                <td style="padding:0px">
+                    <span id="userHeader">
+                        <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                    </span>
+                </td>
+                <td style="padding:0px">
+                    <span id="groupHeader">
+                    </span>
+                </td>
+                <td style="padding:0px">
+                </td>
+            </tr>
+            <tr class="tab_header">
+                <td id="userTab" width=100 class="selectedTab"  onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('user',['group','nomenclature']);"><a>Users</a></td>
+                <td id="groupTab" width=100 class="unselectedTab" onmouseover="this.style.cursor='pointer';this.style.cursor='hand'" onclick="switchTab('group',['user','nomenclature']);"><a>Groups</a></td>
+                <td class="unselectedTab">&nbsp;</td>
+            </tr>
+            <tr style="background:#0d3f74"><td colspan=4>&nbsp;</td></tr>
+            <tr>
+                <td colspan=3>
+                    {% include "bodb/admin/user_list_detail.html" %}
+                    {% include "bodb/admin/group_list_detail.html" %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
