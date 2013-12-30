@@ -141,10 +141,6 @@ class BrainRegionView(BODBView,DetailView):
         context = super(BrainRegionView,self).get_context_data(**kwargs)
 
         user = self.request.user
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-
         context['connectionGraphId']='connectivitySEDDiagram'
         context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
