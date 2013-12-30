@@ -1,1 +1,8 @@
+.idea
+bodb/.idea
+cocomac/data/*.xml
+cocomac/data/bibData/*.xml
+bodb/media/avatars/*
+bodb/media/figures/*
+bodb/media/export/*
 *.pyc
