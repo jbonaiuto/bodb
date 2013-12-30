@@ -1,5 +1,0 @@
-<map id="connectivity&#45;sed&#45;map" name="connectivity&#45;sed&#45;map">
-<area shape="poly" id="node2" href="/bodb/brain_region/398/" title="24a (MLR)" alt="" coords="171,31 167,23 155,16 137,11 114,7 88,6 62,7 39,11 21,16 9,23 5,31 9,38 21,45 39,50 62,54 88,55 114,54 137,50 155,45 167,38"/>
-<area shape="poly" id="node4" href="/bodb/brain_region/5/" title="F5 (MLR)" alt="" coords="162,129 159,122 148,115 132,110 111,106 88,105 65,106 44,110 28,115 17,122 14,129 17,137 28,144 44,149 65,153 88,154 111,153 132,149 148,144 159,137"/>
-<area shape="poly" id="edge4" href="/bodb/sed/89/" alt="" coords="91,56 91,91 85,91 85,56"/>
-</map>
