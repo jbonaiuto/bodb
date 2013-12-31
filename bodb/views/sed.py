@@ -1002,6 +1002,8 @@ class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
 
             context['selected_coords']=[]
             for coord in selected_coord_objs:
+                coord.selected=True
+                coord.save()
                 coord_array={'sed_name':coord.sed_coordinate.sed.title,
                              'sed_id':coord.sed_coordinate.sed.id,
                              'id':coord.id,
