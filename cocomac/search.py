@@ -12,72 +12,75 @@ def runCoCoMacSearch(search_data, userId):
     searcher=CoCoMacSearcher(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'type') and searcher.type=='connectivity':
-        # construct search query
-        for key in search_data.iterkeys():
-            # if the searcher can search by this field
-            if hasattr(searcher, 'search_%s' % key):
-                # add field to query
-                dispatch=getattr(searcher, 'search_%s' % key)
-                searchString=dispatch(searchString)
-        cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=XML_Browser&SearchString="
-        if len(searchString):
-            cocomac_url+=searchString+" AND"
-        cocomac_url+=" NOT ('0') [Density]"
-        cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage=32767"
+    if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='connectivity'):
+        if hasattr(searcher,'search_cocomac') and searcher.search_cocomac:
+            print('Trying to search CoCoMac')
+            # construct search query
+            for key in search_data.iterkeys():
+                # if the searcher can search by this field
+                if hasattr(searcher, 'search_%s' % key):
+                    # add field to query
+                    dispatch=getattr(searcher, 'search_%s' % key)
+                    searchString=dispatch(searchString)
+            cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=XML_Browser&SearchString="
+            if len(searchString):
+                cocomac_url+=searchString+" AND"
+            cocomac_url+=" NOT ('0') [Density]"
+            cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage=32767"
 
-        # Parse cocomac results
-        try:
-            data=download(cocomac_url)
-            doc = minidom.parseString(data)
-            processed_nodes=doc.getElementsByTagName('ProcessedConnectivityData')
+            # Parse cocomac results
+            try:
+                data=download(cocomac_url)
+                doc = minidom.parseString(data)
+                processed_nodes=doc.getElementsByTagName('ProcessedConnectivityData')
 
-            for processed_node in processed_nodes:
-                projection_nodes=processed_node.getElementsByTagName('PrimaryProjection')
+                for processed_node in processed_nodes:
+                    projection_nodes=processed_node.getElementsByTagName('PrimaryProjection')
 
-                for projection_node in projection_nodes:
+                    for projection_node in projection_nodes:
 
-                    # Get target region - import nomenclature if not found
-                    targetSiteNode=projection_node.getElementsByTagName('TargetSite')[0]
-                    target_id=targetSiteNode.getElementsByTagName('ID_BrainSite')[0].firstChild.data
-                    if not CoCoMacBrainRegion.objects.filter(cocomac_id=target_id):
-                        addNomenclature(target_id.split('-',1)[0])
+                        # Get target region - import nomenclature if not found
+                        targetSiteNode=projection_node.getElementsByTagName('TargetSite')[0]
+                        target_id=targetSiteNode.getElementsByTagName('ID_BrainSite')[0].firstChild.data
+                        if not CoCoMacBrainRegion.objects.filter(cocomac_id=target_id):
+                            addNomenclature(target_id.split('-',1)[0])
 
-                    # Get source region - import nomenclature if not found
-                    sourceSiteNode=projection_node.getElementsByTagName('SourceSite')[0]
-                    source_id=sourceSiteNode.getElementsByTagName('ID_BrainSite')[0].firstChild.data
-                    if not CoCoMacBrainRegion.objects.filter(cocomac_id=source_id):
-                        addNomenclature(source_id.split('-',1)[0])
+                        # Get source region - import nomenclature if not found
+                        sourceSiteNode=projection_node.getElementsByTagName('SourceSite')[0]
+                        source_id=sourceSiteNode.getElementsByTagName('ID_BrainSite')[0].firstChild.data
+                        if not CoCoMacBrainRegion.objects.filter(cocomac_id=source_id):
+                            addNomenclature(source_id.split('-',1)[0])
 
-                    if CoCoMacBrainRegion.objects.filter(cocomac_id=target_id).count() and\
-                       CoCoMacBrainRegion.objects.filter(cocomac_id=source_id).count():
-                        target_region=CoCoMacBrainRegion.objects.get(cocomac_id=target_id).brain_region
-                        source_region=CoCoMacBrainRegion.objects.get(cocomac_id=source_id).brain_region
+                        if CoCoMacBrainRegion.objects.filter(cocomac_id=target_id).count() and\
+                           CoCoMacBrainRegion.objects.filter(cocomac_id=source_id).count():
+                            target_region=CoCoMacBrainRegion.objects.get(cocomac_id=target_id).brain_region
+                            source_region=CoCoMacBrainRegion.objects.get(cocomac_id=source_id).brain_region
 
-                        # Look for connectivity SEDs that are already imported
-                        already_imported_seds=CoCoMacConnectivitySED.objects.filter(source_region=source_region,
-                            target_region=target_region).distinct()
+                            # Look for connectivity SEDs that are already imported
+                            already_imported_seds=CoCoMacConnectivitySED.objects.filter(source_region=source_region,
+                                target_region=target_region).distinct()
 
-                        # Import connectivity SEDs
-                        if not already_imported_seds.count() :
-                            sed=importConnectivitySED(source_region, target_region)
-                            results.append(sed)
-                        else:
-                            for sed in already_imported_seds:
+                            # Import connectivity SEDs
+                            if not already_imported_seds.count() :
+                                sed=importConnectivitySED(source_region, target_region)
                                 results.append(sed)
+                            else:
+                                for sed in already_imported_seds:
+                                    results.append(sed)
 
-        except ExpatError as inst:
-            print type(inst)     # the exception instance
-            print inst.args      # arguments stored in .args
-            print inst           # __str__ allows args to printed directly:
+            except ExpatError as inst:
+                print type(inst)     # the exception instance
+                print inst.args      # arguments stored in .args
+                print inst           # __str__ allows args to printed directly:
+                search_local=True
+            except IOError:
+                print('Error connecting to cocomac')
+                search_local=True
+        else:
             search_local=True
-        except IOError:
-            print('Error connecting to cocomac')
-            search_local=True
-    elif not hasattr(searcher,'type') or searcher.type=='':
-        search_local=True
 
     if search_local:
+        print('Searching locally')
         q=Q()
 
         # create SED search
@@ -230,7 +233,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_source_region(self, q, userId):
-        if self.type=='connectivity' and self.source_region:
+        if self.source_region:
             words=self.source_region.split()
             keyword_q=Q()
             for word in words:
@@ -240,7 +243,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_source_region_nomenclature(self, q, userId):
-        if self.type=='connectivity' and self.source_region_nomenclature:
+        if self.source_region_nomenclature:
             words=self.source_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
@@ -249,7 +252,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_target_region(self, q, userId):
-        if self.type=='connectivity' and self.target_region:
+        if self.target_region:
             words=self.target_region.split()
             keyword_q=Q()
             for word in words:
@@ -259,7 +262,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_target_region_nomenclature(self, q, userId):
-        if self.type=='connectivity' and self.target_region_nomenclature:
+        if self.target_region_nomenclature:
             words=self.target_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
@@ -268,7 +271,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_connection_region(self, q, userId):
-        if self.type=='connectivity' and self.connection_region:
+        if self.connection_region:
             words=self.connection_region.split()
             keyword_q=Q()
             for word in words:
@@ -279,7 +282,7 @@ class LocalCoCoMacSearcher():
         return q
 
     def search_connection_region_nomenclature(self, q, userId):
-        if self.type=='connectivity' and self.connection_region_nomenclature:
+        if self.connection_region_nomenclature:
             words=self.connection_region_nomenclature.split()
             keyword_q=Q()
             for word in words:

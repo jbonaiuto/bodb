@@ -960,6 +960,65 @@ class SEDSearch(object):
             q = q & keyword_q
         return q
 
+    def search_source_region(self, q, userId):
+        if self.type=='connectivity' and self.source_region:
+            words=self.source_region.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__source_region__name__icontains=word) |\
+                            Q(connectivitysed__source_region__abbreviation__icontains=word)
+            q &= keyword_q
+        return q
+
+    def search_source_region_nomenclature(self, q, userId):
+        if self.type=='connectivity' and self.source_region_nomenclature:
+            words=self.source_region_nomenclature.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__source_region__nomenclature__name__icontains=word)
+            q &= keyword_q
+        return q
+
+    def search_target_region(self, q, userId):
+        if self.type=='connectivity' and self.target_region:
+            words=self.target_region.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__target_region__name__icontains=word) |\
+                            Q(connectivitysed__target_region__abbreviation__icontains=word)
+            q = q & keyword_q
+        return q
+
+    def search_target_region_nomenclature(self, q, userId):
+        if self.type=='connectivity' and self.target_region_nomenclature:
+            words=self.target_region_nomenclature.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__target_region__nomenclature__name__icontains=word)
+            q = q & keyword_q
+        return q
+
+    def search_connection_region(self, q, userId):
+        if self.type=='connectivity' and self.connection_region:
+            words=self.connection_region.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__source_region__name__icontains=word) |\
+                            Q(connectivitysed__source_region__abbreviation__icontains=word) | Q(connectivitysed__target_region__name__icontains=word) |\
+                            Q(connectivitysed__target_region__abbreviation__icontains=word)
+            q = q & keyword_q
+        return q
+
+    def search_connection_region_nomenclature(self, q, userId):
+        if self.type=='connectivity' and self.connection_region_nomenclature:
+            words=self.connection_region_nomenclature.split()
+            keyword_q=Q()
+            for word in words:
+                keyword_q = keyword_q | Q(connectivitysed__source_region__nomenclature__name__icontains=word) |\
+                            Q(connectivitysed__target_region__nomenclature__name__icontains=word)
+            q &= keyword_q
+        return q
+
     # search by control condition
     def search_control_condition(self, q, userId):
         if self.type=='brain imaging' and self.control_condition:

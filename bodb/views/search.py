@@ -1,16 +1,14 @@
 import datetime
 from Bio import Entrez
-from bodb.views.main import BODBView
-
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.views.generic.edit import FormView
 from brede.search import runBredeSearch
 from cocomac.search import runCoCoMacSearch
 from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, SelectedSEDCoord
+from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, SelectedSEDCoord, ConnectivitySED
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 
-class SearchView(BODBView,FormView):
+class SearchView(FormView):
     form_class = AllSearchForm
     template_name='bodb/search/search.html'
 
@@ -63,9 +61,11 @@ class SearchView(BODBView,FormView):
             sedObjs=runSEDSearch(sed_form.cleaned_data, user.id)
             for idx,sedObj in enumerate(sedObjs):
                 if sedObj.type=='event related potential':
-                    erpObjs.append(sedObj)
+                    erpObjs.append(ERPSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingObjs.append(sedObj)
+                    imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                elif sedObj.type=='connectivity':
+                    connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericObjs.append(sedObj)
             connSEDs=runCoCoMacSearch(sed_form.cleaned_data, user.id)
@@ -88,9 +88,11 @@ class SearchView(BODBView,FormView):
             sedObjs=runSEDSearch(form.cleaned_data, user.id)
             for idx,sedObj in enumerate(sedObjs):
                 if sedObj.type=='event related potential':
-                    erpObjs.append(sedObj)
+                    erpObjs.append(ERPSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingObjs.append(sedObj)
+                    imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                elif sedObj.type=='connectivity':
+                    connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericObjs.append(sedObj)
             connSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
@@ -122,7 +124,7 @@ class SearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class BOPSearchView(BODBView,FormView):
+class BOPSearchView(FormView):
     form_class=BOPSearchForm
     template_name='bodb/search/search.html'
 
@@ -154,7 +156,7 @@ class BOPSearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class BrainRegionSearchView(BODBView,FormView):
+class BrainRegionSearchView(FormView):
     form_class=BrainRegionSearchForm
     template_name='bodb/search/search.html'
 
@@ -178,7 +180,7 @@ class BrainRegionSearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class LiteratureSearchView(BODBView,FormView):
+class LiteratureSearchView(FormView):
     form_class=LiteratureSearchForm
     template_name='bodb/search/search.html'
 
@@ -215,7 +217,7 @@ class LiteratureSearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class ModelSearchView(BODBView,FormView):
+class ModelSearchView(FormView):
     form_class=ModelSearchForm
     template_name='bodb/search/search.html'
 
@@ -238,7 +240,7 @@ class ModelSearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class SEDSearchView(BODBView,FormView):
+class SEDSearchView(FormView):
     form_class=SEDSearchForm
     template_name='bodb/search/search.html'
 
@@ -265,9 +267,11 @@ class SEDSearchView(BODBView,FormView):
         sedObjs=runSEDSearch(form.cleaned_data, user.id)
         for idx,sedObj in enumerate(sedObjs):
             if sedObj.type=='event related potential':
-                erpObjs.append(sedObj)
+                erpObjs.append(ERPSED.objects.get(id=sedObj.id))
             elif sedObj.type=='brain imaging':
-                imagingObjs.append(sedObj)
+                imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+            elif sedObj.type=='connectivity':
+                connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
             elif sedObj.type=='generic':
                 genericObjs.append(sedObj)
         connSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
@@ -289,7 +293,7 @@ class SEDSearchView(BODBView,FormView):
         return self.render_to_response(context)
 
 
-class PubmedSearchView(BODBView,FormView):
+class PubmedSearchView(FormView):
     form_class=PubmedSearchForm
     template_name='bodb/search/search_pubmed.html'
     initial = {'start':0}

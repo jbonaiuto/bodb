@@ -198,6 +198,8 @@ class AllSearchForm(forms.Form):
     username = forms.CharField(help_text='Username of the collator',required=False)
     first_name = forms.CharField(help_text='First name of the collator',required=False)
     last_name = forms.CharField(help_text='First name of the collator',required=False)
+    search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
+    search_brede = forms.BooleanField(help_text='Search Brede', required=False)
 
 
 class BOPSearchForm(forms.Form):
@@ -379,6 +381,8 @@ class SEDSearchForm(forms.Form):
     electrode_cap=forms.CharField(help_text='Electrode cap', required=False)
     electrode_name=forms.CharField(help_text='Electrode name', required=False)
     source=forms.CharField(help_text='Source', required=False)
+    search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
+    search_brede = forms.BooleanField(help_text='Search Brede', required=False)
 
 
 class SSRSearchForm(forms.Form):

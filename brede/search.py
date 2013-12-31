@@ -13,44 +13,47 @@ def runBredeSearch(search_data, userId):
     searcher=BredeSearcher(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'type') and searcher.type=='brain imaging':
-        woBibsDoc=None
-        try:
-            woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
-        except etree.XMLSyntaxError as e:
-            print ("PARSING ERROR", e)
+    if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='brain imaging'):
+        if hasattr(searcher,'search_brede') and searcher.search_brede:
+            print('Trying to search Brede')
+            woBibsDoc=None
+            try:
+                woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
+            except etree.XMLSyntaxError as e:
+                print ("PARSING ERROR", e)
 
-        if not woBibsDoc is None:
-            # construct search query
-            for key in search_data.iterkeys():
-                # if the searcher can search by this field
-                if hasattr(searcher, 'search_%s' % key):
-                    # add field to query
-                    dispatch=getattr(searcher, 'search_%s' % key)
-                    xpathString=dispatch(xpathString, userId)
+            if not woBibsDoc is None:
+                # construct search query
+                for key in search_data.iterkeys():
+                    # if the searcher can search by this field
+                    if hasattr(searcher, 'search_%s' % key):
+                        # add field to query
+                        dispatch=getattr(searcher, 'search_%s' % key)
+                        xpathString=dispatch(xpathString, userId)
 
-            if not len(xpathString):
-                xpathString='//Exp'
+                if not len(xpathString):
+                    xpathString='//Exp'
 
-            exp_nodes=woBibsDoc.xpath(xpathString)
-            for exp_node in exp_nodes:
-                wo_exp=int(exp_node.xpath('./woexp')[0].text)
-                if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
-                    bib_node=exp_node.getparent()
-                    try:
-                        lit=importLiterature(bib_node)
-                        sed=importSED(exp_node, lit, wo_exp)
-                        results.append(sed)
-                    except:
-                        pass
-                else:
-                    results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
+                exp_nodes=woBibsDoc.xpath(xpathString)
+                for exp_node in exp_nodes:
+                    wo_exp=int(exp_node.xpath('./woexp')[0].text)
+                    if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
+                        bib_node=exp_node.getparent()
+                        try:
+                            lit=importLiterature(bib_node)
+                            sed=importSED(exp_node, lit, wo_exp)
+                            results.append(sed)
+                        except:
+                            pass
+                    else:
+                        results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
+            else:
+                search_local=True
         else:
             search_local=True
-    elif not hasattr(searcher,'type') or searcher.type=='':
-        search_local=True
 
     if search_local:
+        print('Searching locally')
         q=Q()
         searcher=SEDSearch(search_data)
         # construct search query
@@ -232,7 +235,7 @@ class BredeSearcher:
         self.__dict__.update(search_data)
     
     def search_keywords(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.keywords:
+        if self.keywords:
             search_nodes=['capsuleDescription','freeFormDescription','specificTask','behavioralDomain']
             for search_node in search_nodes:
                 words=self.keywords.split()
@@ -243,7 +246,7 @@ class BredeSearcher:
         return xpath_string
 
     def search_title(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.title:
+        if self.title:
             words=self.title.split()
             for word in words:
                 if len(xpath_string):
@@ -253,7 +256,7 @@ class BredeSearcher:
 
     # search by description
     def search_description(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.description:
+        if self.description:
             words=self.description.split()
             for word in words:
                 if len(xpath_string):
@@ -262,7 +265,7 @@ class BredeSearcher:
         return xpath_string
 
     def search_related_brain_region(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.related_brain_region:
+        if self.related_brain_region:
             words=self.related_brain_region.split()
             for word in words:
                 if len(xpath_string):
@@ -272,7 +275,7 @@ class BredeSearcher:
 
     # search by related Literature title
     def search_related_literature_title(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.related_literature_title:
+        if self.related_literature_title:
             words=self.related_literature_title.split()
             for word in words:
                 if len(xpath_string):
@@ -282,7 +285,7 @@ class BredeSearcher:
 
     # search by related Literature author name
     def search_related_literature_author(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.related_literature_author:
+        if self.related_literature_author:
             words=self.related_literature_author.split()
             for word in words:
                 if len(xpath_string):
@@ -292,7 +295,7 @@ class BredeSearcher:
 
     # search by related Literature minimum year
     def search_related_literature_year_min(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.related_literature_year_min:
+        if self.related_literature_year_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[../year>=%d)]' % (xpath_string,self.related_literature_year_min)
@@ -300,21 +303,21 @@ class BredeSearcher:
 
     # search by related Literature maximum year
     def search_related_literature_year_max(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.related_literature_year_max:
+        if self.related_literature_year_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[../year<=%d)]' % (xpath_string,self.related_literature_year_min)
         return xpath_string
 
     def search_method(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.method:
+        if self.method:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[modality="%s")]' % (xpath_string,self.method)
         return xpath_string
 
     def search_coordinate_brain_region(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.coordinate_brain_region:
+        if self.coordinate_brain_region:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/functionalArea="%s"]' % (xpath_string,self.coordinate_brain_region)
@@ -322,7 +325,7 @@ class BredeSearcher:
 
     # search by coordinate x
     def search_x_min(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.x_min:
+        if self.x_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/xReported>=%.4f)]' % (xpath_string,self.x_min)
@@ -330,7 +333,7 @@ class BredeSearcher:
 
     # search by coordinate x
     def search_x_max(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.x_max:
+        if self.x_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/xReported<=%.4f)]' % (xpath_string,self.x_max)
@@ -338,7 +341,7 @@ class BredeSearcher:
 
     # search by coordinate y
     def search_y_min(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.y_min:
+        if self.y_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/yReported>=%.4f)]' % (xpath_string,self.y_min)
@@ -346,7 +349,7 @@ class BredeSearcher:
 
     # search by coordinate y
     def search_y_max(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.y_max:
+        if self.y_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/yReported<=%.4f)]' % (xpath_string,self.y_max)
@@ -354,7 +357,7 @@ class BredeSearcher:
 
     # search by coordinate z
     def search_z_min(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.z_min:
+        if self.z_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/zReported>=%.4f)]' % (xpath_string,self.z_min)
@@ -362,7 +365,7 @@ class BredeSearcher:
 
     # search by coordinate z
     def search_z_max(self, xpath_string, userId):
-        if self.type=='brain imaging' and self.z_max:
+        if self.z_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/zReported<=%.4f)]' % (xpath_string,self.z_max)
