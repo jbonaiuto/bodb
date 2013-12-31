@@ -18,7 +18,7 @@
         {
             var data = { 'modelId': modelId, 'csrfmiddlewaretoken': csrf_token };
             var args = { type: "POST", url: "/bodb/model/"+modelId+"/toggle_select/", data: data, complete: doneToggleSingleModelSelect };
-            $.ajax(args)
+            $.ajax(args);
             return false;
         }
 
@@ -113,6 +113,9 @@
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Tags:</strong> {{ model.tags.all|join:', ' }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2">{{ model.get_modeldb_url|safe }}</td>
             </tr>
             <tr class="section_subheader">
                 <td colspan=2>Brief Description</td>

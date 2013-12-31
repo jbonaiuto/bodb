@@ -790,6 +790,7 @@ class ModelForm(forms.ModelForm):
     documentation_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
     description_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
     simulation_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    modeldb_accession_number = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
     collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
     literature = forms.ModelMultipleChoiceField(queryset=Literature.objects.order_by('title'),

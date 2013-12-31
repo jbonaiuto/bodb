@@ -272,6 +272,11 @@
                         <div id="urlData" style="display:none">
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
+                                <tr class="odd_row" valign=top>
+                                    <td>ModelDB Accession Numer</td>
+                                    <td>{{ form.modeldb_accession_number }}</td>
+                                    {% if form.modeldb_accession_number.errors %}<td class="myerrors">{{ form.modeldb_accession_number.errors }}</td>{% endif %}
+                                </tr>
                                 <tr class="even_row" valign=top>
                                     <td>Execution URL</td>
                                     <td>{{ form.execution_url }}</td>

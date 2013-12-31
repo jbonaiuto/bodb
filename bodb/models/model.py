@@ -61,6 +61,7 @@ class Model(Module):
     documentation_url = models.CharField(max_length=200,blank=True,null=True)
     description_url = models.CharField(max_length=200,blank=True,null=True)
     simulation_url = models.CharField(max_length=200,blank=True,null=True)
+    modeldb_accession_number = models.IntegerField(blank=True,null=True)
     # related literature entries
     literature = models.ManyToManyField(Literature)
 
@@ -130,6 +131,10 @@ class Model(Module):
             html+='</ul>'
         html+='</li></ul>'
         return html
+
+    def get_modeldb_url(self):
+        url='http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model='+self.modeldb_accession_number
+        return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in ModelDB</a>' % (url,url)
 
     @staticmethod
     def get_literature_models(literature, user):
