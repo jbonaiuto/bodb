@@ -74,6 +74,8 @@ class SED(Document):
         for sed in seds:
             if CoCoMacConnectivitySED.objects.filter(id=sed.id).count():
                 sed=CoCoMacConnectivitySED.objects.get(id=sed.id)
+            if BredeBrainImagingSED.objects.filter(id=sed.id).count():
+                sed=BredeBrainImagingSED.objects.get(id=sed.id)
             selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).count()>0
             is_favorite=profile is not None and profile.favorites.filter(id=sed.id).count()>0
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
