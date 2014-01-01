@@ -5,6 +5,7 @@
 {% load taggit_extras %}
 <head>
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
+    <script src="http://java.com/js/deployJava.js"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery-1.2.6.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/underscore-min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/animatedcollapse.js' %}"></script>
@@ -15,6 +16,7 @@
         {
             animatedcollapse.init();
         });
+
         animatedcollapse.ontoggle=function($, divobj, state)
         {
             if(divobj!=null && document.getElementById(divobj.id+"Label")!=null)
@@ -24,6 +26,29 @@
                 else
                     document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Hide" : "Show";
             }
+        }
+
+        function createWebStartLink(jnlp, text, minimumVersion)
+        {
+
+            if (deployJava.returnPage == null) {
+                // if there is an install, come back and run the jnlp file
+                deployJava.returnPage = jnlp;
+            }
+
+            var url = 'javascript:' +
+                    'if (!deployJava.isWebStartInstalled(&quot;' +
+                    minimumVersion + '&quot;)) {' +
+                    'if (deployJava.installLatestJRE()) {' +
+                    'if (deployJava.launch(&quot;' + jnlp + '&quot;)) {}' +
+                    '}' +
+                    '} else {' +
+                    'if (deployJava.launch(&quot;' + jnlp + '&quot;)) {}' +
+                    '}';
+
+            document.write('<' + 'a href="' + url +
+                    '" onMouseOver="window.status=\'\'; ' +
+                    'return true;">'+text+'<' + '/' + 'a' + '>');
         }
     </script>
     {% block extrahead %}{% endblock %}
@@ -72,6 +97,7 @@
                 <li><a href="/bodb/insert/">Insert</a></li>
             {% endif %}
             <li><a href="/bodb/search/">Search</a></li>
+            <li><script>createWebStartLink('/bodb/brainSurfer/','Visualization',1.6)</script></li>
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li><a href="/bodb/drafts/">Drafts</a></li>
                 <li><a href="/bodb/favorites/">Favorites</a></li>

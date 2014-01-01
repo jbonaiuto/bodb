@@ -6,7 +6,7 @@ from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegio
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
-from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView
+from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     (r'^feeds/latestModels/$', LatestModels()),
     url(r'^about/$', AboutView.as_view(), {}, 'about'),
     url(r'^insert/$', InsertView.as_view(), {}, 'insert'),
+    url(r'^brainSurfer/$', BrainSurferView.as_view(), {}, name='brain_surfer'),
 
     url(r'^bopDiagram/$', BOPDiagramView.as_view(), {}, 'bop_graph'),
     url(r'^bop/(?P<pk>\d+)/$', BOPDetailView.as_view(), {}, 'bop_view'),

@@ -1,6 +1,10 @@
-from django.views.generic import TemplateView
+from django.template.context import RequestContext
+from django.template.loader import render_to_string
+from django.http.response import HttpResponse
+from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
 from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction
+from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 class BODBView(TemplateView):
@@ -194,3 +198,16 @@ class TagView(BODBView):
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         return context
+
+
+class BrainSurferView(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/x-java-jnlp-file')
+        response['Content-Disposition'] = 'attachment; filename="brainSurfer.jnlp"'
+        jnlp_str=render_to_string("jws/brainSurferLaunch.jnlp",{'web_url': settings.URL_BASE,
+                                                                'server': settings.SERVER},
+            context_instance=RequestContext(request))
+        response.write(jnlp_str)
+
+        return response
