@@ -4,15 +4,14 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, DeleteView
 from bodb.forms import MessageForm
 from bodb.models import Message
-from bodb.views.main import BODBView
 
-class UserMessageListView(BODBView):
+class UserMessageListView(View):
     template_name = 'bodb/messaging/message_list.html'
 
-    def get_context_data(self, **kwargs):
-        context=super(UserMessageListView,self).get_context_data(**kwargs)
-        context['messages']=self.request.user.message_recipient_set.all()
-        context['sent']=self.request.user.message_sender_set.all()
+    def get_context(self, request):
+        context={}
+        context['messages']=request.user.message_recipient_set.all()
+        context['sent']=request.user.message_sender_set.all()
         context['helpPage']='BODB-Messaging'
         context['ispopup']=('_popup' in request.GET)
         return context
