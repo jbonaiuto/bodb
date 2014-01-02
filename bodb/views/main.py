@@ -203,11 +203,10 @@ class TagView(BODBView):
 class BrainSurferView(View):
 
     def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='application/x-java-jnlp-file')
-        response['Content-Disposition'] = 'attachment; filename="brainSurfer.jnlp"'
         jnlp_str=render_to_string("jws/brainSurferLaunch.jnlp",{'web_url': settings.URL_BASE,
-                                                                'server': settings.SERVER},
+                                                                'server': settings.SERVER,
+                                                                'database': settings.DATABASES['default']['NAME']},
             context_instance=RequestContext(request))
-        response.write(jnlp_str)
-
+        response = HttpResponse(jnlp_str, content_type='application/x-java-jnlp-file')
+        response['Content-Disposition'] = 'attachment; filename="brainSurfer.jnlp"'
         return response
