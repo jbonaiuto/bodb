@@ -9,6 +9,12 @@ from bodb.models.workspace import BodbProfile
 from bodb.models.messaging import Message
 from bodb.models.literature import Literature
 
+class Atlas(models.Model):
+    file=models.CharField(max_length=200)
+    class Meta:
+        app_label='bodb'
+
+
 # Animal species
 class Species(models.Model):
     genus_name = models.CharField(max_length=200)
@@ -28,7 +34,7 @@ class Species(models.Model):
 # Brain nomenclature
 class Nomenclature(models.Model):
     # literature record the nomenclature is published in
-    lit = models.ForeignKey(Literature)
+    lit = models.ForeignKey(Literature,null=True)
     name = models.CharField(max_length=200)
     version = models.CharField(max_length=100)
     # species the nomenclature is based on
