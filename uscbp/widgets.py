@@ -28,7 +28,7 @@ class ImageWidget(AdminFileWidget):
                 os.unlink(miniature_filename)
 
             # if the image wasn't already resized, resize it
-            if not os.path.exists(miniature_filename):
+            if not os.path.exists(miniature_filename) and os.path.exists(filename):
                 image = Image.open(filename)
                 image.thumbnail([x, y], Image.ANTIALIAS)
                 try:
