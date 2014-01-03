@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
 from bodb.models.messaging import Message
-from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted
+from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_changed
 from guardian.shortcuts import assign_perm
 from registration.models import User
 
@@ -35,7 +35,10 @@ class Workspace(models.Model):
             ('remove_entry','Remove workspace entry'),
             ('add_coordinate_selection','Add coordinate selection'),
             ('change_coordinate_selection','Modify coordinate selection'),
-            ('delete_coordinate_selection','Delete coordinate selection')
+            ('delete_coordinate_selection','Delete coordinate selection'),
+            ('add_bookmark', 'Add bookmark'),
+            ('delete_bookmark', 'Delete bookmark'),
+            ('change_bookmark', 'Modify bookmark')
         )
 
     # override Workspace.save()
@@ -154,6 +157,32 @@ class WorkspaceInvitation(models.Model):
         super(WorkspaceInvitation,self).save(**kwargs)
 
 
+class WorkspaceBookmark(models.Model):
+    workspace=models.ForeignKey(Workspace)
+    url = models.CharField(max_length=200)
+    # bookmark title
+    title = models.CharField(max_length=200)
+    # description of the bookmark
+    description=models.TextField(blank=True)
+    # user who created the bookmark
+    collator=models.ForeignKey(User,null=True)
+    # date and time this entry was created
+    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    # date and time this entry as last modified
+    last_modified_time = models.DateTimeField(auto_now=True,blank=True)
+    # user who last modified the entry
+    last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='bookmark_last_modified_by')
+    class Meta:
+        app_label='bodb'
+
+    def save(self, **kwargs):
+        if self.id is None:
+            bookmark_added.send(sender=self)
+        else:
+            bookmark_changed.send(sender=self)
+        super(WorkspaceBookmark,self).save(**kwargs)
+
+
 class WorkspaceActivityItem(models.Model):
     workspace=models.ForeignKey(Workspace)
     user=models.ForeignKey(User)
@@ -237,6 +266,21 @@ def workspace_coord_selection_deleted(sender, **kwargs):
         activity=WorkspaceActivityItem(workspace=workspace, user=sender.user)
         activity.text='%s deleted the coordinate selection: %s' % (sender.user.username, sender.name)
         activity.save()
+
+
+@receiver(bookmark_added)
+def workspace_bookmark_added(sender, **kwargs):
+    activity=WorkspaceActivityItem(workspace=sender.workspace, user=sender.collator)
+    activity.text='%s added a bookmark: <a href="%s">%s</a>' % (sender.collator.username, sender.url, sender.title)
+    activity.save()
+
+
+@receiver(bookmark_changed)
+def workspace_bookmark_changed(sender, **kwargs):
+    activity=WorkspaceActivityItem(workspace=sender.workspace, user=sender.last_modified_by)
+    activity.text='%s modified the bookmark: <a href="%s">%s</a>' % (sender.last_modified_by.username, sender.url,
+                                                                     sender.title)
+    activity.save()
 
 
 class AllocatedUserAccount(models.Model):

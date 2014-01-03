@@ -6,7 +6,7 @@ from bodb.models.discussion import Post, Forum
 from bodb.models.messaging import Subscription, UserSubscription, Message
 from bodb.models.sed import SED, BuildSED, TestSED, TestSEDSSR, ERPComponent, ConnectivitySED
 from bodb.models.ssr import Prediction, SSR, PredictionSSR
-from bodb.models.workspace import BodbProfile, Workspace
+from bodb.models.workspace import BodbProfile, Workspace, WorkspaceBookmark
 from registration.forms import RegistrationForm
 from registration.models import User
 from taggit.forms import TagField
@@ -786,10 +786,10 @@ class ModelForm(forms.ModelForm):
         widget=forms.MultipleHiddenInput, required=False)
     brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
     narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
-    execution_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    documentation_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    description_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    simulation_url = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    execution_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    documentation_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    description_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    simulation_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
     modeldb_accession_number = forms.IntegerField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
     collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
@@ -1039,7 +1039,8 @@ class SSRForm(forms.ModelForm):
 
 
 class WorkspaceInvitationForm(forms.Form):
-    invited_users=forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=forms.SelectMultiple(attrs={'width':'250px'}))
+    invited_users=forms.ModelMultipleChoiceField(queryset=User.objects.all(),
+        widget=forms.SelectMultiple(attrs={'width':'250px'}))
     invitation_body=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
 
 
@@ -1051,4 +1052,19 @@ class WorkspaceForm(forms.ModelForm):
 
     class Meta:
         model=Workspace
-        exclude=('created_by', 'admin_users','group','related_models','related_bops','related_seds', 'related_ssrs', 'forum', 'saved_coordinate_selections')
+        exclude=('created_by', 'admin_users','group','related_models','related_bops','related_seds', 'related_ssrs',
+                 'forum', 'saved_coordinate_selections')
+
+
+class WorkspaceBookmarkForm(forms.ModelForm):
+    workspace = forms.ModelChoiceField(queryset=Workspace.objects.all(),widget=forms.HiddenInput,required=False)
+    collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
+    url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    title = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
+
+    class Meta:
+        model=WorkspaceBookmark
+
+WorkspaceBookmarkFormSet = inlineformset_factory(Workspace,WorkspaceBookmark,form=WorkspaceBookmarkForm,
+    fk_name='workspace',can_delete=True,extra=1)

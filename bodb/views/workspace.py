@@ -5,8 +5,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, View, TemplateView, UpdateView, DetailView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import BaseUpdateView, FormView, CreateView, BaseCreateView, DeleteView, ProcessFormView
-from bodb.forms import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm
-from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document
+from bodb.forms import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm, WorkspaceBookmarkForm
+from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import BODBView
@@ -15,8 +15,9 @@ from guardian.models import User
 from guardian.shortcuts import assign_perm, remove_perm
 from uscbp.views import JSONResponseMixin
 
-workspace_permissions=['add_post','add_entry','remove_entry','add_coordinate_selection',
-                       'change_coordinate_selection','delete_coordinate_selection']
+workspace_permissions=['add_post','add_entry','remove_entry',
+                       'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
+                       'add_bookmark','change_bookmark','delete_bookmark']
 
 class WorkspaceListView(ListView):
     template_name = 'bodb/workspace/workspace_list_view.html'
@@ -209,6 +210,7 @@ class WorkspaceInvitationView(JSONResponseMixin, BaseUpdateView):
                 print(form.errors)
         return context
 
+
 class WorkspaceInvitationResendView(JSONResponseMixin, BaseUpdateView):
     model=WorkspaceInvitation
     def get_context_data(self, **kwargs):
@@ -232,16 +234,19 @@ class WorkspaceDetailView(BODBView,FormView):
         context=super(WorkspaceDetailView,self).get_context_data(**kwargs)
         context['helpPage']='BODB-View-Workspace'
         context['workspace']=self.object
+
+        context['connectionGraphId']='connectivitySEDDiagram'
+        context['bopGraphId']='bopRelationshipDiagram'
+
         context['form']=WorkspaceInvitationForm(initial={
             'invited_by':self.request.user,
             'workspace':self.object
         })
-        context['connectionGraphId']='connectivitySEDDiagram'
-        context['bopGraphId']='bopRelationshipDiagram'
         invited_user_ids=[]
         for invite in WorkspaceInvitation.objects.filter(workspace=self.object).exclude(status='declined'):
             invited_user_ids.append(invite.invited_user.id)
         context['form'].fields['invited_users'].queryset=User.objects.all().exclude(id=self.request.user.id).exclude(id__in=invited_user_ids)
+
         context['selected']=self.request.GET.get('selected','activity')
         context['admin']=(self.request.user in self.object.admin_users.all()) or self.request.user.is_superuser
         context['can_delete_coord_selection']=self.request.user.has_perm('delete_coordinate_selection',self.object)
@@ -250,6 +255,9 @@ class WorkspaceDetailView(BODBView,FormView):
         context['can_add_post']=self.request.user.has_perm('add_post',self.object)
         context['can_add_entry']=self.request.user.has_perm('add_entry',self.object)
         context['can_remove_entry']=self.request.user.has_perm('remove_entry',self.object)
+        context['can_add_bookmark']=self.request.user.has_perm('add_bookmark',self.object)
+        context['can_change_bookmark']=self.request.user.has_perm('change_bookmark',self.object)
+        context['can_delete_bookmark']=self.request.user.has_perm('delete_bookmark',self.object)
         members=[]
         for usr in self.object.group.user_set.all():
             subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=self.request.user).count()>0
@@ -259,6 +267,7 @@ class WorkspaceDetailView(BODBView,FormView):
         if context['admin']:
             context['invitations']=WorkspaceInvitation.objects.filter(workspace=self.object)
         context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted'))
+        context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object)
 
         # Visibility query filter
         user=self.request.user
@@ -412,3 +421,30 @@ class UpdateWorkspaceUserView(SingleObjectTemplateResponseMixin, ProcessFormView
         if context['ispopup']:
             redirect_url+='?_popup=1'
         return redirect(redirect_url)
+
+
+class CreateWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
+    model=Workspace
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            form=WorkspaceBookmarkForm(self.request.POST,prefix='bookmark')
+            if form.is_valid():
+                bookmark=form.save(commit=False)
+                if bookmark.id is None:
+                    bookmark.collator=self.request.user
+                bookmark.last_modified_by=self.request.user
+                bookmark.save()
+                context={
+                    'bookmark_id': bookmark.id,
+                    'collator_id': bookmark.collator.id,
+                    'collator_username': bookmark.collator.username,
+                    'url': bookmark.url,
+                    'urltrunc': (bookmark.url[:15]+'...') if len(bookmark.url)>15 else bookmark.url,
+                    'title': bookmark.title,
+                    'description': bookmark.description
+                }
+            else:
+                print(form.errors)
+        return context
