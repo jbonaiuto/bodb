@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
 from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, SelectedSEDCoord
-from bodb.views.main import BODBView
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
 from uscbp.views import JSONResponseMixin
