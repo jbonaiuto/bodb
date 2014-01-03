@@ -47,8 +47,6 @@
                 <form id="postForm" name="postForm" action="" method="post">
                     {% csrf_token %}
                     <input id="id_post-forum" name="post-forum" type="hidden" value="{{ forum.id }}"/>
-                    {{ postForm.parent }}
-                    {{ postForm.author }}
                     <textarea cols="57" id="id_post-body" name="post-body" rows="5"></textarea>
                 </form>
             </td>
