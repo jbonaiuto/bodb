@@ -137,7 +137,7 @@ function toggleSEDSelect(sedId, csrf_token)
 {
     var data = { 'sedId': sedId, 'csrfmiddlewaretoken': csrf_token };
     var args = { type: "POST", url: "/bodb/sed/"+sedId+"/toggle_select/", data: data, complete: doneToggleSEDSelect };
-    $.ajax(args)
+    $.ajax(args);
     return false;
 }
 
@@ -145,7 +145,7 @@ function toggleSSRSelect(ssrId, csrf_token)
 {
     var data = { 'ssrId': ssrId, 'csrfmiddlewaretoken': csrf_token };
     var args = { type: "POST", url: "/bodb/ssr/"+ssrId+"/toggle_select/", data: data, complete: doneToggleSSRSelect };
-    $.ajax(args)
+    $.ajax(args);
     return false;
 }
 
@@ -153,7 +153,7 @@ function toggleFavorite(id, iconId, csrf_token)
 {
     var data = { 'id': id, 'icon_id': iconId, 'csrfmiddlewaretoken': csrf_token };
     var args = { type: "POST", url: "/bodb/favorite/toggle/", data: data, complete: doneToggleFavorite };
-    $.ajax(args)
+    $.ajax(args);
     return false;
 }
 
@@ -257,7 +257,7 @@ function exportReferences(csrf_token)
     {
         var data = { 'format': format, 'ids': ids, 'csrfmiddlewaretoken': csrf_token };
         var args = { type: "POST", url: "/bodb/literature/export/", data: data, complete : doneReferenceExport };
-        $.ajax(args)
+        $.ajax(args);
     }
     return false;
 }
