@@ -1,9 +1,10 @@
 uscbp/settings.py
 .idea
 bodb/.idea
-cocomac/data/*.xml
-cocomac/data/bibData/*.xml
+federation/cocomac/data/*.xml
+federation/cocomac/data/bibData/*.xml
 bodb/media/avatars/*
 bodb/media/figures/*
 bodb/media/export/*
 *.pyc
+bodb/static/bodb/jws/BrainSurfer/lib/.svn
