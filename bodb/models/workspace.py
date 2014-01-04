@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
 from bodb.models.messaging import Message
-from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_changed
+from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
 
@@ -178,9 +178,11 @@ class WorkspaceBookmark(models.Model):
     def save(self, **kwargs):
         if self.id is None:
             bookmark_added.send(sender=self)
-        else:
-            bookmark_changed.send(sender=self)
         super(WorkspaceBookmark,self).save(**kwargs)
+
+    def delete(self, using=None):
+        bookmark_deleted.send(sender=self)
+        super(WorkspaceBookmark,self).delete(using=using)
 
 
 class WorkspaceActivityItem(models.Model):
@@ -282,6 +284,13 @@ def workspace_bookmark_changed(sender, **kwargs):
                                                                      sender.title)
     activity.save()
 
+
+@receiver(bookmark_deleted)
+def workspace_bookmark_deleted(sender, **kwargs):
+    activity=WorkspaceActivityItem(workspace=sender.workspace, user=sender.last_modified_by)
+    activity.text='%s deleted the bookmark: <a href="%s">%s</a>' % (sender.last_modified_by.username, sender.url,
+                                                                     sender.title)
+    activity.save()
 
 class AllocatedUserAccount(models.Model):
     username = models.CharField(max_length=30, blank=True, null=True)

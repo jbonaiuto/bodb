@@ -17,7 +17,7 @@ from uscbp.views import JSONResponseMixin
 
 workspace_permissions=['add_post','add_entry','remove_entry',
                        'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
-                       'add_bookmark','change_bookmark','delete_bookmark']
+                       'add_bookmark','delete_bookmark']
 
 class WorkspaceListView(ListView):
     template_name = 'bodb/workspace/workspace_list_view.html'
@@ -447,4 +447,18 @@ class CreateWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
                 }
             else:
                 print(form.errors)
+        return context
+
+
+class DeleteWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
+    model=Workspace
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            bookmark=WorkspaceBookmark.objects.get(id=kwargs.get('pk2'))
+            bookmark.delete()
+            context={
+                'bookmark_id': kwargs.get('pk2')
+            }
         return context

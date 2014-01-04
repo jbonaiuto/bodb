@@ -3,7 +3,7 @@
     {
         data=$('#'+formId).serialize();
         var args = { type: "POST", url: '/bodb/workspace/{{ workspace.id }}/bookmark/new/', data: data, complete: doneCreateBookmark };
-        $.ajax(args)
+        $.ajax(args);
         return false;
     }
 
@@ -35,6 +35,28 @@
                 $('#bookmarks').append(compiledTmpl);
             }
         }
+        return false;
+    }
+
+    function deleteBookmark(bookmarkId)
+    {
+        var data = { 'bookmarkId': bookmarkId, 'csrfmiddlewaretoken': '{{ csrf_token }}' };
+        var args = { type: "POST", url: "/bodb/workspace/{{ workspace.id }}/bookmark/"+bookmarkId+"/delete/", data: data, complete: doneBookmarkDelete };
+        $.ajax(args);
+        return false;
+    }
+
+    function doneBookmarkDelete(res, status)
+    {
+        var txt = res.responseText;
+        if (status!="success")
+            alert(res.responseText);
+        else
+        {
+            var data = eval('('+txt+')');
+            $('#bookmark-'+data.bookmark_id).remove();
+        }
+        return false;
     }
 </script>
 {% if can_add_bookmark %}
@@ -83,7 +105,7 @@
                         <div id="bookmark-{{ bookmark.id }}">
                             <table class="tab_panel">
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=120px></td>
+                                    <td width=120px><a href="" onclick="return deleteBookmark({{ bookmark.id }});">Delete</a></td>
                                     <td width=100px>{{ bookmark.collator.username }}</td>
                                     <td width=150px>{{ bookmark.title }}</td>
                                     <td width=200px>{{ bookmark.url|urlizetrunc:15 }}</td>
@@ -101,7 +123,7 @@
     <div id="bookmark-<%= id %>">
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>" valign=top>
-                <td width=120px></td>
+                <td width=120px><a href="" onclick="return deleteBookmark(<%= id %>);">Delete</a></td>
                 <td width=100px><%= collator_username %></td>
                 <td width=150px><%= title %></td>
                 <td width=200px><a href="<%= url %>"><%= urltrunc %></a></td>
