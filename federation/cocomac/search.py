@@ -4,7 +4,7 @@ from xml.dom import minidom
 from pyexpat import ExpatError
 from django.db.models import Q
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
-from cocomac.import_data import addNomenclature
+from federation.cocomac.import_data import addNomenclature
 from registration.models import User
 
 def runCoCoMacSearch(search_data, userId):

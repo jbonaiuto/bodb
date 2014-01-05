@@ -2,10 +2,10 @@ import datetime
 from Bio import Entrez
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.views.generic.edit import FormView
-from brede.search import runBredeSearch
-from cocomac.search import runCoCoMacSearch
+from federation.brede.search import runBredeSearch
+from federation.cocomac.search import runCoCoMacSearch
 from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, SelectedSEDCoord, ConnectivitySED
+from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 
 class SearchView(FormView):
