@@ -14,18 +14,18 @@
     </security>
     <resources>
         <j2se version="1.5+"/>
-        <jar href="BrainSurfer.jar" main="true"/>
-        <jar href="lib/assets.jar"/>
-        <jar href="lib/eventbus.jar"/>
-        <jar href="lib/jME3-lwjgl-natives.jar"/>
-        <jar href="lib/jMonkeyEngine3.jar"/>
-        <jar href="lib/lablib-checkboxtree-3.3-20110114.141734-3.jar"/>
-        <jar href="lib/lwjgl.jar"/>
-        <jar href="lib/mysql-connector-java-3.1.12-bin.jar"/>
-        <jar href="lib/nifty.jar"/>
-        <jar href="lib/nifty-default-controls.jar"/>
-        <jar href="lib/nifty-style-black.jar"/>
-        <jar href="lib/xmlpull-xpp3.jar"/>
+        <jar href="BrainSurfer.jar" main="true" download="eager"/>
+        <jar href="lib/assets.jar" download="eager"/>
+        <jar href="lib/eventbus.jar" download="lazy"/>
+        <jar href="lib/jME3-lwjgl-natives.jar" download="lazy"/>
+        <jar href="lib/jMonkeyEngine3.jar" download="lazy"/>
+        <jar href="lib/lablib-checkboxtree-3.3-20110114.141734-3.jar" download="lazy"/>
+        <jar href="lib/lwjgl.jar" download="lazy"/>
+        <jar href="lib/mysql-connector-java-3.1.12-bin.jar" download="lazy"/>
+        <jar href="lib/nifty.jar" download="lazy"/>
+        <jar href="lib/nifty-default-controls.jar" download="lazy"/>
+        <jar href="lib/nifty-style-black.jar" download="lazy"/>
+        <jar href="lib/xmlpull-xpp3.jar" download="lazy"/>
     </resources>
     <application-desc main-class="uscbp.brainApplet.Main">
         <argument>{{ user.id }}</argument>
