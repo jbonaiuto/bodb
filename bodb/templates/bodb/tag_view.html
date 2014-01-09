@@ -36,9 +36,11 @@
                 </tr>
                 <tr>
                     <td style="padding:0px">
-                        {% with tagged_models as models %}
-                            {% include "bodb/model/model_selection_list_view.html" %}
-                        {% endwith %}
+                        <div id="taggedModels" style="display:none;">
+                            {% with tagged_models as models %}
+                                {% include "bodb/model/model_selection_list_view.html" %}
+                            {% endwith %}
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -61,9 +63,11 @@
                 </tr>
                 <tr>
                     <td style="padding:0px">
-                        {% with tagged_bops as bops %}
-                            {% include "bodb/bop/bop_selection_list_view.html" %}
-                        {% endwith %}
+                        <div id="taggedBOPs" style="display:none;">
+                            {% with tagged_bops as bops %}
+                                {% include "bodb/bop/bop_selection_list_view.html" %}
+                            {% endwith %}
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -86,7 +90,9 @@
                 </tr>
                 <tr>
                     <td style="padding:0px">
-                        {% include "bodb/sed/sed_selection_list_view.html" %}
+                        <div id="taggedSEDs" style="display:none;">
+                            {% include "bodb/sed/sed_selection_list_view.html" %}
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -109,9 +115,11 @@
                 </tr>
                 <tr>
                     <td style="padding:0px">
-                        {% with tagged_predictions as predictions %}
-                            {% include "bodb/prediction/prediction_selection_list_view.html" %}
-                        {% endwith %}
+                        <div id="taggedPredictions" style="display:none;">
+                            {% with tagged_predictions as predictions %}
+                                {% include "bodb/prediction/prediction_selection_list_view.html" %}
+                            {% endwith %}
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -134,9 +142,11 @@
                 </tr>
                 <tr>
                     <td style="padding:0px">
-                        {% with tagged_ssrs as ssrs %}
-                            {% include "bodb/ssr/ssr_selection_list_view.html" %}
-                        {% endwith %}
+                        <div id="taggedSSRs" style="display:none;">
+                            {% with tagged_ssrs as ssrs %}
+                                {% include "bodb/ssr/ssr_selection_list_view.html" %}
+                            {% endwith %}
+                        </div>
                     </td>
                 </tr>
                 <tr>
