@@ -6,12 +6,15 @@
 			//2) Ability to expand a DIV via a URL parameter string, ie: index.htm?expanddiv=jason or index.htm?expanddiv=jason,kelly
 
 //** March 9th, 09'- Version 2.2.1: Optimized ontoggle event handler slightly.
+//** July 3rd, 09'- Version 2.4, which adds the following:
+			//1) You can now insert rel="expand[divid] | collapse[divid] | toggle[divid]" inside arbitrary links to act as DIV togglers
+			//2) For image toggler links, you can insert the attributes "data-openimage" and "data-closedimage" to update its image based on the DIV state
 
 var animatedcollapse={
-divholders: {}, //structure: {div.id, div.attrs, div.$divref}
+divholders: {}, //structure: {div.id, div.attrs, div.$divref, div.$togglerimage}
 divgroups: {}, //structure: {groupname.count, groupname.lastactivedivid}
-statusholders: {}, //structure: {[statuselement.id, stype, [opensrc, closedsrc]], $target}
 lastactiveingroup: {}, //structure: {lastactivediv.id}
+preloadimages: [],
 
 show:function(divids){ //public method
 	if (typeof divids=="object"){
@@ -65,11 +68,15 @@ showhide:function(divid, action){
 
 slideengine:function(divid, action){
 	var $divref=this.divholders[divid].$divref
+	var $togglerimage=this.divholders[divid].$togglerimage
 	if (this.divholders[divid] && $divref.length==1){ //if this DIV exists
 		var animateSetting={height: action}
 		if ($divref.attr('fade'))
 			animateSetting.opacity=action
 		$divref.animate(animateSetting, $divref.attr('speed')? parseInt($divref.attr('speed')) : 500, function(){
+			if ($togglerimage){
+				$togglerimage.attr('src', ($divref.css('display')=="none")? $togglerimage.data('srcs').closed : $togglerimage.data('srcs').open)
+			}
 			if (animatedcollapse.ontoggle){
 				try{
 					animatedcollapse.ontoggle(jQuery, $divref.get(0), $divref.css('display'))
@@ -140,10 +147,16 @@ init:function(){
 				animatedcollapse.ontoggle(jQuery, this.$divref.get(0), this.$divref.css('display'))
 			})
 		}
-/* //reserved for future implementation
-		var $allcontrols=$('a[rel]').filter('[@rel^="collapse["], [@rel^="expand["], [@rel^="toggle["]') //get all elements on page with rel="collapse[]", "expand[]" and "toggle[]"
+ 		//Parse page for links containing rel attribute
+		var $allcontrols=$('a[rel]').filter('[rel^="collapse["], [rel^="expand["], [rel^="toggle["]') //get all elements on page with rel="collapse[]", "expand[]" and "toggle[]"
 		$allcontrols.each(function(){ //loop though each control link
 			this._divids=this.getAttribute('rel').replace(/(^\w+)|(\s+)/g, "").replace(/[\[\]']/g, "") //cache value 'div1,div2,etc' within identifier[div1,div2,etc]
+			if (this.getElementsByTagName('img').length==1 && ac.divholders[this._divids]){ //if control is an image link that toggles a single DIV (must be one to one to update status image)
+				animatedcollapse.preloadimage(this.getAttribute('data-openimage'), this.getAttribute('data-closedimage')) //preload control images (if defined)
+				$togglerimage=$(this).find('img').eq(0).data('srcs', {open:this.getAttribute('data-openimage'), closed:this.getAttribute('data-closedimage')}) //remember open and closed images' paths
+				ac.divholders[this._divids].$togglerimage=$(this).find('img').eq(0) //save reference to toggler image (to be updated inside slideengine()
+				ac.divholders[this._divids].$togglerimage.attr('src', (ac.divholders[this._divids].$divref.css('display')=="none")? $togglerimage.data('srcs').closed : $togglerimage.data('srcs').open)
+			}
 			$(this).click(function(){ //assign click behavior to each control link
 				var relattr=this.getAttribute('rel')
 				var divids=(this._divids=="")? [] : this._divids.split(',') //convert 'div1,div2,etc' to array 
@@ -153,7 +166,7 @@ init:function(){
 				}
 			}) //end control.click
 		})// end control.each
-*/
+
 		$(window).bind('unload', function(){
 			ac.uninit()
 		})
@@ -195,6 +208,16 @@ setCookie:function(name, value, days){
 urlparamselect:function(){
 	window.location.search.match(/expanddiv=([\w\-_,]+)/i) //search for expanddiv=divid or divid1,divid2,etc
 	return (RegExp.$1!="")? RegExp.$1.split(",") : []
+},
+
+preloadimage:function(){
+	var preloadimages=this.preloadimages
+	for (var i=0; i<arguments.length; i++){
+		if (arguments[i] && arguments[i].length>0){
+			preloadimages[preloadimages.length]=new Image()
+			preloadimages[preloadimages.length-1].src=arguments[i]
+		}
+	}
 }
 
 }
