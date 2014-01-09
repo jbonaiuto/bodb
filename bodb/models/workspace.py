@@ -277,14 +277,6 @@ def workspace_bookmark_added(sender, **kwargs):
     activity.save()
 
 
-@receiver(bookmark_changed)
-def workspace_bookmark_changed(sender, **kwargs):
-    activity=WorkspaceActivityItem(workspace=sender.workspace, user=sender.last_modified_by)
-    activity.text='%s modified the bookmark: <a href="%s">%s</a>' % (sender.last_modified_by.username, sender.url,
-                                                                     sender.title)
-    activity.save()
-
-
 @receiver(bookmark_deleted)
 def workspace_bookmark_deleted(sender, **kwargs):
     activity=WorkspaceActivityItem(workspace=sender.workspace, user=sender.last_modified_by)

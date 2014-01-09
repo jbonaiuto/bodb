@@ -2,11 +2,11 @@ from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import View, TemplateView
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
 from bodb.forms import ModelForm, DocumentFigureFormSet, RelatedBOPFormSet, RelatedBrainRegionFormSet, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, BuildSEDFormSet, PredictionFormSet, TestSEDFormSet, ModuleForm
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, Post, ConnectivitySED, generate_connectivity_diagram, SED, WorkspaceActivityItem, UserSubscription, reference_export, Document
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl
 from bodb.models.ssr import SSR, Prediction
-from bodb.views.document import DocumentDetailView
+from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
@@ -380,6 +380,8 @@ class ModelDetailView(DocumentDetailView):
         if user.is_authenticated() and not user.is_anonymous():
             context['selected']=user.get_profile().active_workspace.related_models.filter(id=self.object.id).count()>0
         context['bop_relationship']=False
+        context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
         context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(RelatedModel.get_reverse_related_models(self.object,user),user)
         return context
 
@@ -427,6 +429,7 @@ class ModelTaggedView(BODBView):
         user=self.request.user
         context['helpPage']= 'BODB-Tags'
         context['tag']= name
+        context['modelGraphId']='modelRelationshipDiagram'
         context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),user)
         return context
 
@@ -773,3 +776,16 @@ def compareBenchmarkSEDs(a, b):
         return cmp(SED.objects.get(id=a[0]).title.lower(),SED.objects.get(id=b[0]).title.lower())
     else:
         return -1*cmp(a[1],b[1])
+
+
+class ModelDiagramView(JSONResponseMixin,BaseCreateView):
+    model = Model
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            graphTool=self.request.POST['graphTool']
+            models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds[]'))
+            dot_xml=model_gxl(models, self.request.user)
+            context['modelDiagram'], context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
+            context['graphId']=self.request.POST['graphID']
+        return context

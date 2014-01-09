@@ -323,3 +323,31 @@ function doneBOPDiagram(res, status)
     else
         alert(txt);
 }
+
+function generateModelDiagram(graphTool, graphId, csrf_token)
+{
+    var modelIds=[];
+    var modelCheckboxes=$('.selectedModelCheckbox');
+    for(var i=0; i<modelCheckboxes.length; i++)
+        modelIds.push(modelCheckboxes[i].value);
+    var data={'graphTool': graphTool, 'modelIds': modelIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
+    var args={type:"POST", url:"/bodb/modelDiagram/", data: data, complete: doneModelDiagram };
+    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+    $.ajax(args);
+    return false;
+}
+
+function doneModelDiagram(res, status)
+{
+    var txt = res.responseText;
+    var data = eval('('+txt+')');
+    if (status=="success")
+    {
+        var date = new Date();
+        document.getElementById(data.graphId).src='/media/'+data.modelDiagram;
+        document.getElementById(data.graphId+'Map').innerHTML=data.modelMap;
+        document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view Model or SED details.";
+    }
+    else
+        alert(txt);
+}

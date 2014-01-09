@@ -28,6 +28,8 @@ class SearchView(FormView):
         context['sedConnectionGraphId']='sedConnectivitySEDDiagram'
         context['allBopGraphId']='allBOPRelationshipDiagram'
         context['bopBOPGraphId']='bopRelationshipDiagram'
+        context['allModelGraphId']='allModelRelationshipDiagram'
+        context['modelModelGraphId']='modelRelationshipDiagram'
         return context
 
     def form_valid(self, form):
@@ -228,6 +230,7 @@ class ModelSearchView(FormView):
         context['searchLabel']='Models'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
+        context['modelGraphId']='modelRelationshipDiagram'
         return context
 
     def form_valid(self, form):

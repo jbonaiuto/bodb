@@ -90,6 +90,7 @@ class DraftListView(BODBView):
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
 
         return context
 
@@ -102,6 +103,7 @@ class FavoriteListView(BODBView):
         user=self.request.user
         context['connectionGraphId']='connectionSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
         context['models']=[]
         context['bops']=[]
         context['generic_seds']=[]
@@ -197,6 +199,7 @@ class TagView(BODBView):
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
         return context
 
 

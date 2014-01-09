@@ -293,3 +293,149 @@ def find_similar_models(user, title, brief_description):
         similar.append((model,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
+
+
+def model_gxl(models, user):
+    glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
+    glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
+    glx+='<graph id="model-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
+    for model in models:
+        glx+='<node id="%d">\n' % model.id
+        glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % model.id
+        glx+='<node id="%s">\n' % model.title
+        glx+='<type xlink:href="/bodb/model/%d/" xlink:type="simple"/>\n' % model.id
+        glx+='</node>\n'
+        glx+='</graph>\n'
+        glx+='</node>\n'
+
+        conn_build_seds=BuildSED.get_connectivity_building_seds(model,user)
+        for bsed in conn_build_seds:
+            glx+='<node id="%d">\n' % bsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bsed.sed.id
+            glx+='<node id="%s">\n' % bsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % bsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        img_build_seds=BuildSED.get_imaging_building_seds(model,user)
+        for bsed in img_build_seds:
+            glx+='<node id="%d">\n' % bsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bsed.sed.id
+            glx+='<node id="%s">\n' % bsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % bsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        erp_build_seds=BuildSED.get_erp_building_seds(model,user)
+        for bsed in erp_build_seds:
+            glx+='<node id="%d">\n' % bsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bsed.sed.id
+            glx+='<node id="%s">\n' % bsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % bsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        gen_build_seds=BuildSED.get_generic_building_seds(model,user)
+        for bsed in gen_build_seds:
+            glx+='<node id="%d">\n' % bsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bsed.sed.id
+            glx+='<node id="%s">\n' % bsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % bsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        conn_test_seds=TestSED.get_connectivity_testing_seds(model,user)
+        for tsed in conn_test_seds:
+            glx+='<node id="%d">\n' % tsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % tsed.sed.id
+            glx+='<node id="%s">\n' % tsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % tsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        img_test_seds=TestSED.get_imaging_testing_seds(model,user)
+        for tsed in img_test_seds:
+            glx+='<node id="%d">\n' % tsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % tsed.sed.id
+            glx+='<node id="%s">\n' % tsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % tsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        erp_test_seds=TestSED.get_erp_testing_seds(model,user)
+        for tsed in erp_test_seds:
+            glx+='<node id="%d">\n' % tsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % tsed.sed.id
+            glx+='<node id="%s">\n' % tsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % tsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+        gen_test_seds=TestSED.get_generic_testing_seds(model,user)
+        for tsed in gen_test_seds:
+            glx+='<node id="%d">\n' % tsed.sed.id
+            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % tsed.sed.id
+            glx+='<node id="%s">\n' % tsed.sed.title
+            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % tsed.sed.id
+            glx+='</node>\n'
+            glx+='</graph>\n'
+            glx+='</node>\n'
+
+    for model in models:
+        conn_build_seds=BuildSED.get_connectivity_building_seds(model,user)
+        for bsed in conn_build_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,bsed.sed.id,model.title,bsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % bsed.relationship
+            glx+='</edge>\n'
+
+        img_build_seds=BuildSED.get_imaging_building_seds(model,user)
+        for bsed in img_build_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,bsed.sed.id,model.title,bsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % bsed.relationship
+            glx+='</edge>\n'
+
+        erp_build_seds=BuildSED.get_erp_building_seds(model,user)
+        for bsed in erp_build_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,bsed.sed.id,model.title,bsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % bsed.relationship
+            glx+='</edge>\n'
+
+        gen_build_seds=BuildSED.get_generic_building_seds(model,user)
+        for bsed in gen_build_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,bsed.sed.id,model.title,bsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % bsed.relationship
+            glx+='</edge>\n'
+
+        conn_test_seds=TestSED.get_connectivity_testing_seds(model,user)
+        for tsed in conn_test_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,tsed.sed.id,model.title,tsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % tsed.relationship
+            glx+='</edge>\n'
+
+        img_test_seds=TestSED.get_imaging_testing_seds(model,user)
+        for tsed in img_test_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,tsed.sed.id,model.title,tsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % tsed.relationship
+            glx+='</edge>\n'
+
+        erp_test_seds=TestSED.get_erp_testing_seds(model,user)
+        for tsed in erp_test_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,tsed.sed.id,model.title,tsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % tsed.relationship
+            glx+='</edge>\n'
+
+        gen_test_seds=TestSED.get_generic_testing_seds(model,user)
+        for tsed in gen_test_seds:
+            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,tsed.sed.id,model.title,tsed.sed.title)
+            glx+='<attr name="name"><string>%s</string></attr>\n' % tsed.relationship
+            glx+='</edge>\n'
+    glx+='</graph>\n'
+    glx+='</gxl>\n'
+    return glx

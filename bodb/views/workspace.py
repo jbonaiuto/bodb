@@ -237,6 +237,7 @@ class WorkspaceDetailView(BODBView,FormView):
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
 
         context['form']=WorkspaceInvitationForm(initial={
             'invited_by':self.request.user,

@@ -29,7 +29,7 @@
                                 <a id="favLink" href="" onclick="return toggleFavorite({{ model.id }},'favIcon-{{ model.id }}','{{ csrf_token }}');">
                                     <img id="favIcon-{{ model.id }}" name="favIcon-{{ model.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                 </a>
-                                <input type=checkbox name="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
+                                <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
                                 <input type=hidden name="selectedModel" id="selectedModel_{{ model.id }}" value="{{ model.id }}"/>
                             {% endif %}
                         {% endif %}
@@ -43,9 +43,30 @@
                     <td><span id="model_{{ model.id }}_message" name="model_{{ model.id }}_message" class="messages"></span> </td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan=5>&nbsp;</td>
-            </tr>
+            {% if not ispopup %}
+                <tr class="col_header">
+                    <td colspan="6">
+                        Graph Generation Tool:&nbsp;
+                        <select id="graphtool">
+                            <option value="dot">dot</option>
+                            <option value="neato">neato</option>
+                            <option value="fdp">fdp</option>
+                            <option value="sfdp">sfdp</option>
+                            <option value="twopi">twopi</option>
+                            <option value="circo">circo</option>
+                        </select>&nbsp;
+                        <a href="" onclick="return generateModelDiagram(document.getElementById('graphtool').value,'{{ modelGraphId }}','{{ csrf_token }}');">Generate Model Relationship Graph</a>
+                    </td>
+                </tr>
+                <tr class="col_header">
+                    <td colspan="6">
+                        <img id="{{ modelGraphId }}" src="" usemap="#{{ modelGraphId }}Map"/>
+                        <map id="{{ modelGraphId }}Map" name="{{ modelGraphId }}Map">
+                        </map>
+                        <br><span id="{{ modelGraphId }}Msg"></span>
+                    </td>
+                </tr>
+            {% endif %}
             <tr>
                 <td colspan=5>
                     <input class="btn" type="submit" value="Benchmark" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>

@@ -8,7 +8,7 @@ from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicReq
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
-from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView
+from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView
@@ -73,6 +73,7 @@ urlpatterns = patterns('',
     url(r'^literature/new/$', CreateLiteratureView.as_view(), {}, 'lit_add'),
     url(r'^literature/search/$', LiteratureSearchView.as_view(), {}, 'lit_search'),
 
+    url(r'^modelDiagram/$', ModelDiagramView.as_view(), {}, 'model_graph'),
     url(r'^model/(?P<pk>\d+)/$', ModelDetailView.as_view(), {}, 'model_view'),
     url(r'^model/(?P<pk>\d+)/delete/$', DeleteModelView.as_view(), {}, 'model_delete'),
     url(r'^model/(?P<pk>\d+)/edit/$', UpdateModelView.as_view(), {}, 'model_edit'),

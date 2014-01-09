@@ -252,6 +252,7 @@ class LiteratureDetailView(TemplateView):
         context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
         context['models']=Model.get_model_list(Model.get_literature_models(literature, user), user)
         context['bops']=BOP.get_bop_list(BOP.get_literature_bops(literature, user), user)
         context['generic_seds']=SED.get_sed_list(SED.get_literature_seds(literature, user), user)
@@ -289,7 +290,7 @@ class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             # get list of ids
-            ids=self.request.POST.getlist('ids')
+            ids=self.request.POST.getlist('ids[]')
             # get export format
             format = self.request.POST['format']
             # export references
