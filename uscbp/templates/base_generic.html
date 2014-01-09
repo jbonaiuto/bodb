@@ -6,7 +6,7 @@
 <head>
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
     <script src="http://java.com/js/deployJava.js"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery-1.2.6.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery-1.10.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/underscore-min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/animatedcollapse.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/commonFunctions.js' %}"></script>
@@ -68,12 +68,13 @@
                 <td style="width:700px" align=left>
                     <div id="user_info">
                         {% if user.is_authenticated and not user.is_anonymous  %}
-                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a href="/accounts/profile">My Profile</a>]&nbsp;
-                            <br>[<a href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;[<a href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
+                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;
+                            <br>[<a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;
+                            [<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
                             {% ifnotequal message_count 0 %}
-                                <br><div class="alert"><a href="/bodb/messages/">You have {{ message_count }} unread message{% ifnotequal message_count 1 %}s{% endifnotequal %}</a></div>
+                                <br><div class="alert"><a id="messagesLink" href="/bodb/messages/">You have {{ message_count }} unread message{% ifnotequal message_count 1 %}s{% endifnotequal %}</a></div>
                             {% else %}
-                                [<a href="/bodb/messages/">Messages</a>]
+                                [<a id="messagesLink" href="/bodb/messages/">Messages</a>]
                             {% endifnotequal %}
                             {% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                         {% else %}
