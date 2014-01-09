@@ -1,15 +1,14 @@
-import os
 from string import atof
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms import SEDForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedBOPFormSet, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, BrainRegion, ThreeDCoord, WorkspaceActivityItem, RelatedModel
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, generate_connectivity_diagram, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED
-from bodb.views.document import DocumentDetailView
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl
+from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
@@ -897,9 +896,9 @@ class ConnectivityDiagramView(JSONResponseMixin,BaseCreateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             graphTool=self.request.POST['graphTool']
-            connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds'))
-            context['connDiagram'], context['connMap'] = generate_connectivity_diagram(graphTool, connectionSEDs,
-                self.request.user)
+            connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds[]'))
+            dot_xml = conn_sed_gxl(connectionSEDs)
+            context['connDiagram'], context['connMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
             context['graphId']=self.request.POST['graphID']
         return context
 

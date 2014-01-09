@@ -181,30 +181,6 @@ def find_similar_bops(user, title, brief_description):
     return similar
 
 
-def generate_bop_diagram(graphTool, bops, user, ext=''):
-    dot_xml = bop_gxl(bops, user)
-    xml_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.xml' % (user.username,ext))
-    dot_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.dot' % (user.username,ext))
-    FILE = open(xml_path, 'w')
-    FILE.write(dot_xml)
-    FILE.close()
-    os.system('gxl2dot -o %s %s' % (dot_path, xml_path))
-    for line in fileinput.input(dot_path, inplace=1):
-        if '_gxl_type' in line:
-            line = line.replace('_gxl_type', 'URL')
-        if 'name' in line:
-            line = line.replace('name','label')
-        sys.stdout.write(line)
-    map_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.map' % (user.username,ext))
-    bopDiagram = os.path.join('export', '%s.%s.png' % (user.username,ext))
-    png_path = os.path.join(settings.MEDIA_ROOT, bopDiagram)
-    os.system('%s -Tcmapx -o%s -Tpng -o%s %s' % (graphTool, map_path, png_path, dot_path))
-    FILE = open(map_path, 'r')
-    map = FILE.read()
-    FILE.close()
-    return bopDiagram, map
-
-
 def bop_gxl(bops, user):
     glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
     glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'

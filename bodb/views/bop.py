@@ -1,10 +1,10 @@
-from django.shortcuts import redirect, render
-from django.views.generic import CreateView, UpdateView, DeleteView, View, TemplateView
+from django.shortcuts import redirect
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms import BOPForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedModelFormSet, BuildSEDFormSet, BOPRelatedBOPFormSet
-from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, generate_bop_diagram
-from bodb.views.document import DocumentDetailView
+from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl
+from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
@@ -238,7 +238,8 @@ class BOPDiagramView(JSONResponseMixin,BaseCreateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             graphTool=self.request.POST['graphTool']
-            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds'))
-            context['bopDiagram'], context['bopMap'] = generate_bop_diagram(graphTool, bops, self.request.user)
+            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds[]'))
+            dot_xml=bop_gxl(bops, self.request.user)
+            context['bopDiagram'], context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
             context['graphId']=self.request.POST['graphID']
         return context
