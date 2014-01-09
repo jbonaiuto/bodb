@@ -1,3 +1,6 @@
+<script type="text/javascript">
+    animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
+</script>
 <div id="literatureDiv" style="display:{%ifequal searchType 'literature'%}block{% else %}none{% endifequal %}">
     <form id="literature_search_form" method="post" action="">
         {% csrf_token %}

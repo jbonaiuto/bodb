@@ -1,4 +1,7 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    animatedcollapse.addDiv('ssrAdvancedOptions', 'fade=1');
+</script>
 <div id="ssrDiv" style="display:{%ifequal searchType 'ssrs'%}block{% else %}none{% endifequal %}">
     <form id="ssr_search_form" method="post" action="">
         {% csrf_token %}

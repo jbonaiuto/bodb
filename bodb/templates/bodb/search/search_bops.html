@@ -1,4 +1,7 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
+</script>
 <div id="bopDiv" style="display:{%ifequal searchType 'bops'%}block{% else %}none{% endifequal %}" class="tab_panel">
     <form id="bop_search_form" method="post" action="">
         {% csrf_token %}

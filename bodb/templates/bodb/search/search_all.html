@@ -1,4 +1,13 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    animatedcollapse.addDiv('allAdvancedOptions', 'fade=1');
+    animatedcollapse.addDiv('literatureResults', 'fade=1');
+    animatedcollapse.addDiv('bopResults', 'fade=1');
+    animatedcollapse.addDiv('modelResults', 'fade=1');
+    animatedcollapse.addDiv('sedResults', 'fade=1');
+    animatedcollapse.addDiv('ssrResults', 'fade=1');
+    animatedcollapse.addDiv('brainRegionResults', 'fade=1');
+</script>
 <div id="allDiv" style="display:{%ifequal searchType 'all'%}block{% else %}none{% endifequal %}">
     <form id="allSearchForm" method="post" action="">
         {% csrf_token %}

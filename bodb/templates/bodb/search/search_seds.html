@@ -1,27 +1,27 @@
 {% load staticfiles %}
 <script type="text/javascript">
+    function updateSEDSearchOptions(sedType)
+    {
+        if(sedType=='brain imaging')
+            animatedcollapse.show(['sedImagingTypeOptions']);
+        else
+            animatedcollapse.hide(['sedImagingTypeOptions']);
+        if(sedType=='connectivity')
+            animatedcollapse.show(['sedConnectivityTypeOptions']);
+        else
+            animatedcollapse.hide(['sedConnectivityTypeOptions']);
+        if(sedType=='event related potential')
+            animatedcollapse.show(['sedERPTypeOptions']);
+        else
+            animatedcollapse.hide(['sedERPTypeOptions']);
+    }
+
+    animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
     animatedcollapse.addDiv('sedImagingTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedConnectivityTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedERPTypeOptions', 'fade=1');
 
-    function updateSEDSearchOptions(sedType)
-    {
-        if(sedType=='brain imaging')
-            animatedcollapse.show('sedImagingTypeOptions');
-        else
-            animatedcollapse.hide('sedImagingTypeOptions');
-        if(sedType=='connectivity')
-            animatedcollapse.show('sedConnectivityTypeOptions');
-        else
-            animatedcollapse.hide('sedConnectivityTypeOptions');
-        if(sedType=='event related potential')
-            animatedcollapse.show('sedERPTypeOptions');
-        else
-            animatedcollapse.hide('sedERPTypeOptions');
-    }
-
     $( document ).ready(function() {
-        updateSEDSearchOptions('{{ sed_search_form.type.value }}');
         document.getElementById('sedData').style.display='inline';
     });
 </script>
@@ -77,7 +77,7 @@
                             </tr>
                             <tr>
                                 <td colspan=2>
-                                    <div id="sedImagingTypeOptions" style="display:none">
+                                    <div id="sedImagingTypeOptions" style="display:{% if sed_search_form.type.value == 'brain imaging' %}inline{% else %}none{% endif %}">
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width=20%><strong>Control Condition</strong></td>
@@ -101,7 +101,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <div id="sedConnectivityTypeOptions" style="display:none">
+                                    <div id="sedConnectivityTypeOptions" style="display:{% if sed_search_form.type.value == 'connectivity' %}inline{% else %}none{% endif %}">
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width="20%"><strong>Source Region</strong></td>
@@ -129,7 +129,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <div id="sedERPTypeOptions" style="display:none">
+                                    <div id="sedERPTypeOptions" style="display:{% if sed_search_form.type.value == 'event related potential' %}inline{% else %}none{% endif %}">
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width=20%><strong>Cognitive Paradigm</strong></td>

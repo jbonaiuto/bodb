@@ -1,4 +1,7 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
+</script>
 <div id="modelDiv" style="display:{%ifequal searchType 'models'%}block{% else %}none{% endifequal %}">
     <form id="model_search_form" method="post" action="">
         {% csrf_token %}

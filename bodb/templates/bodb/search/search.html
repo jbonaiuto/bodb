@@ -2,21 +2,6 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB - Search</title>
-    <script type="text/javascript">
-    animatedcollapse.addDiv('allAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('literatureResults', 'fade=1');
-    animatedcollapse.addDiv('bopResults', 'fade=1');
-    animatedcollapse.addDiv('modelResults', 'fade=1');
-    animatedcollapse.addDiv('sedResults', 'fade=1');
-    animatedcollapse.addDiv('ssrResults', 'fade=1');
-    animatedcollapse.addDiv('brainRegionResults', 'fade=1');
-    animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('ssrAdvancedOptions', 'fade=1');
-    animatedcollapse.addDiv('brainRegionAdvancedOptions', 'fade=1');
-    </script>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
 {% endblock %}
 {% block content %}
@@ -93,14 +78,18 @@
                 <td {% if showTabs %}colspan=8{% endif %}>
                     {% with allConnectionGraphId as connectionGraphId %}
                         {% with allBopGraphId as bopGraphId %}
-                            {% include "bodb/search/search_all.html" %}
+                            {% with allModelGraphId as modelGraphId %}
+                                {% include "bodb/search/search_all.html" %}
+                            {% endwith %}
                         {% endwith %}
                     {% endwith %}
                     {% include "bodb/search/search_literature.html" %}
                     {% with bopBOPGraphId as bopGraphId %}
                         {% include "bodb/search/search_bops.html" %}
                     {% endwith %}
-                    {% include "bodb/search/search_models.html" %}
+                    {% with modelModelGraphId as modelGraphId %}
+                        {% include "bodb/search/search_models.html" %}
+                    {% endwith %}
                     {% with sedConnectionGraphId as connectionGraphId %}
                         {% include "bodb/search/search_seds.html" %}
                     {% endwith %}
