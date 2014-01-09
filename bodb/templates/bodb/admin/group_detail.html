@@ -16,7 +16,7 @@
             {
                 var data = { 'id': {{ group.id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
                 var args = { type: "POST", url: "/bodb/group/{{ group.id }}/delete/", data: data, complete: doneDeleteGroup };
-                $.ajax(args)
+                $.ajax(args);
                 return false;
             }
             return false;
