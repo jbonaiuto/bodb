@@ -1,7 +1,7 @@
 from string import atof
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, View
+from django.views.generic import CreateView, UpdateView, DeleteView, View, TemplateView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
@@ -74,8 +74,13 @@ class EditSEDMixin():
                     related_brain_region_form.instance.delete()
 
             url=self.get_success_url()
+            params='?type='+context['type']+'&action='+context['action']
             if context['ispopup']:
-                url+='?_popup=1'
+                params+='&_popup=1'
+            if context['multiple']:
+                params+='&_multiple=1'
+            url+=params
+
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -91,8 +96,11 @@ class CreateSEDView(EditSEDMixin, CreateView):
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -109,8 +117,11 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['action']='edit'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -214,6 +225,10 @@ class SEDDetailView(DocumentDetailView):
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
         if user.is_authenticated() and not user.is_anonymous():
             context['selected']=user.get_profile().active_workspace.related_seds.filter(id=self.object.id).count()>0
+        context['type']=self.request.GET.get('type',None)
+        context['action']=self.request.GET.get('action',None)
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
         return context
 
 
@@ -416,14 +431,22 @@ class EditBrainImagingSEDMixin():
                 idx += 1
 
             if len(errorRows)>0:
-                href='/bodb/sed/imaging/%d/clean/' % self.object.id
+                url='/bodb/sed/imaging/%d/clean/' % self.object.id
+                params='?type='+context['type']+'&action='+context['action']
                 if context['ispopup']:
-                    href+='&_popup=1'
-                return HttpResponseRedirect(href)
+                    params+='&_popup=1'
+                if context['multiple']:
+                    params+='&_multiple=1'
+                url+=params
+                return redirect(url)
             else:
                 url=self.get_success_url()
+                params='?type='+context['type']+'&action='+context['action']
                 if context['ispopup']:
-                    url+='?_popup=1'
+                    params+='&_popup=1'
+                if context['multiple']:
+                    params+='&_multiple=1'
+                url+=params
                 return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -447,8 +470,11 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -511,12 +537,15 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['action']='edit'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
-class CleanBrainImagingSEDView(TemplateResponseMixin, View):
+class CleanBrainImagingSEDView(TemplateView):
     template_name = 'bodb/sed/brain_imaging/brain_imaging_sed_clean.html'
 
     def get_initial(self):
@@ -539,6 +568,7 @@ class CleanBrainImagingSEDView(TemplateResponseMixin, View):
         return init
 
     def get(self, request, *args, **kwargs):
+        print('cleaning - get')
         id=self.kwargs.get('pk', None)
         init=self.get_initial()
         # create formset with initial data and POST data
@@ -548,9 +578,17 @@ class CleanBrainImagingSEDView(TemplateResponseMixin, View):
             return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
                                             'ispopup': ('_popup' in request.GET)})
         else:
-            return redirect('/bodb/sed/%s/' % id)
+            url='/bodb/sed/%s/' % id
+            params='?type='+request.GET.get('type',None)+'&action='+request.GET.get('action',None)
+            if '_popup' in request.GET:
+                params+='&_popup=1'
+            if '_multiple' in request.GET:
+                params+='&_multiple=1'
+            url+=params
+            return redirect(url)
 
     def post(self, request, *args, **kwargs):
+        print('cleaning - post')
         id=self.kwargs.get('pk', None)
         # create formset with initial data and POST data
         sedCoordCleanFormSet=SEDCoordCleanFormSet(request.POST, initial=self.get_initial())
@@ -574,10 +612,14 @@ class CleanBrainImagingSEDView(TemplateResponseMixin, View):
                             coord.coord.x=0
                 coord.save()
             # forward to SED view
-            href='/bodb/sed/%s/' % id
+            url='/bodb/sed/%s/' % id
+            params='?type='+request.GET.get('type',None)+'&action='+request.GET.get('action',None)
             if '_popup' in request.GET:
-                href+='&_popup=1'
-            return HttpResponseRedirect(href)
+                params+='&_popup=1'
+            if '_multiple' in request.GET:
+                params+='&_multiple=1'
+            url+=params
+            return redirect(url)
         # forward to sed clean view
         return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
                                         'ispopup': ('_popup' in request.GET)})
@@ -649,8 +691,12 @@ class EditConnectivitySEDMixin():
                     related_brain_region_form.instance.delete()
 
             url=self.get_success_url()
+            params='?type='+context['type']+'&action='+context['action']
             if context['ispopup']:
-                url+='?_popup=1'
+                params+='&_popup=1'
+            if context['multiple']:
+                params+='&_multiple=1'
+            url+=params
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -666,8 +712,11 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -684,8 +733,11 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['action']='edit'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -771,8 +823,12 @@ class EditERPSEDMixin():
                     related_brain_region_form.instance.delete()
 
             url=self.get_success_url()
+            params='?type='+context['type']+'&action='+context['action']
             if context['ispopup']:
-                url+='?_popup=1'
+                params+='&_popup=1'
+            if context['multiple']:
+                params+='&_multiple=1'
+            url+=params
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -789,8 +845,11 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
@@ -809,8 +868,11 @@ class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='BODB-Insert-SED'
-        context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
+        context['action']='edit'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
         return context
 
 
