@@ -1,6 +1,6 @@
 from django.db.models import Q
-from django.shortcuts import redirect, render
-from django.views.generic import View, TemplateView
+from django.shortcuts import redirect
+from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
 from bodb.forms import ModelForm, DocumentFigureFormSet, RelatedBOPFormSet, RelatedBrainRegionFormSet, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, BuildSEDFormSet, PredictionFormSet, TestSEDFormSet, ModuleForm

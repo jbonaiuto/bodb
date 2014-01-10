@@ -1,5 +1,5 @@
-from django.shortcuts import redirect, render
-from django.views.generic import UpdateView, DeleteView, View
+from django.shortcuts import redirect
+from django.views.generic import UpdateView, DeleteView
 from bodb.forms import PredictionSSRFormSet, PredictionForm
 from bodb.models import Prediction, SSR, PredictionSSR
 from bodb.views.document import DocumentDetailView

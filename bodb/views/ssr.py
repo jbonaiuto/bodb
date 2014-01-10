@@ -1,6 +1,6 @@
 from django.db.models import Q
-from django.shortcuts import redirect, render
-from django.views.generic import UpdateView, DeleteView, View
+from django.shortcuts import redirect
+from django.views.generic import UpdateView, DeleteView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms import DocumentFigureFormSet, SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem

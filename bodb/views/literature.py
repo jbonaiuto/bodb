@@ -5,7 +5,6 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
 from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord
-from bodb.views.main import BODBView
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
