@@ -23,7 +23,13 @@ class UpdatePredictionView(UpdateView):
 
         if predictionssr_formset.is_valid():
 
-            self.object = form.save()
+            self.object = form.save(commit=False)
+            # Set the collator if this is a new BOP
+            if self.object.id is None:
+                self.object.collator=self.request.user
+            self.object.last_modified_by=self.request.user
+            self.object.save()
+            form.save_m2m()
 
             # save SSRs
             for predictionssr_form in predictionssr_formset.forms:
