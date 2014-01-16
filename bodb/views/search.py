@@ -225,7 +225,7 @@ class ModelSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ModelSearchView,self).get_context_data(**kwargs)
-        context['sed_search_form']=context.get('form')
+        context['model_search_form']=context.get('form')
         context['searchType']='models'
         context['searchLabel']='Models'
         context['ispopup']=('_popup' in self.request.GET)
