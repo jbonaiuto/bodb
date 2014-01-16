@@ -1,15 +1,11 @@
-import fileinput
-import os
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-import sys
 from bodb.models import RelatedBrainRegion, BuildSED
 from bodb.models.messaging import sendNotifications, UserSubscription
 from bodb.models.document import Document
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from uscbp import settings
 
 class BOP(MPTTModel,Document):
     """
