@@ -22,7 +22,7 @@
             <td style="width:150px">First name*</td>
             <td style="width:120px">Middle name</td>
             <td style="width:300px">Last name*</td>
-            <td>Order</td>
+            <td>Order*</td>
         </tr>
         <tr>
             <td colspan=5>
@@ -55,7 +55,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ author_form.errors }}
+                                <span id="{{ groupName }}_author_{{ forloop.counter0 }}_errors">
+                                    {{ author_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -90,6 +92,8 @@
             </tr>
         </table>
         <div class="myerrors">
+            <span id="{{ groupName }}_author_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>
@@ -118,6 +122,8 @@
             </tr>
         </table>
         <div class="myerrors">
+            <span id="{{ groupName }}_author_<%= idx %>_errors">
+            </span>
         </div>
     </div>
 </script>

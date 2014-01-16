@@ -64,7 +64,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ related_brain_region_form.errors }}
+                                <span id="related_brain_region_{{ forloop.counter0 }}_errors">
+                                    {{ related_brain_region_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -95,12 +97,13 @@
                     <%= species %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_brain_region-<%= id %>-relationship" name="related_brain_region-<%= id %>-relationship" rows="3">
-                    </textarea>
+                    <textarea cols="40" id="id_related_brain_region-<%= id %>-relationship" name="related_brain_region-<%= id %>-relationship" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="related_brain_region_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

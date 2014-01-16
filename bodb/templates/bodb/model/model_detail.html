@@ -26,17 +26,31 @@
             var errors=0;
 
             clearSpan(document, 'span_errors');
-            errors+=validateField('title', 'Title', 'span_errors');
-            errors+=validateField('brief_description', 'Brief description', 'span_errors');
-            errors+=validateField('narrative', 'Narrative', 'span_errors');
+            clearSpan(document, 'title_errors');
+            errors+=validateField('title', 'Title', 'title_errors');
+            clearSpan(document, 'description_errors');
+            errors+=validateField('brief_description', 'Brief description', 'description_errors');
+            clearSpan(document, 'narrative_errors');
+            errors+=validateField('narrative', 'Narrative', 'narrative_errors');
             errors+=validateInlineForm('model_author', ['author_first_name', 'author_last_name', 'order'], ['First name', 'Last name', 'Order']);
+            errors+=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
             errors+=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
-            errors+=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
             errors+=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
             errors+=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            var test_sed_count = $('#test_seds').children().length;
+            for(var i=0; i<test_sed_count; i++)
+                errors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            errors+=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
+            var prediction_count = $('#predictions').children().length;
+            for(var i=0; i<prediction_count; i++)
+                errors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            errors+=validateURLField('execution_url', 'Execution URL', 'execution_url_errors');
+            errors+=validateURLField('documentation_url', 'Documentation URL', 'documentation_url_errors');
+            errors+=validateURLField('description_url', 'Description URL', 'description_url_errors');
+            errors+=validateURLField('simulation_url', 'Simulation URL', 'simulation_url_errors');
             errors+=validateInlineForm('related_model', ['relationship'], ['Relationship']);
             errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
             errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
@@ -83,7 +97,7 @@
                             dispTxt+='<tr><td><a href="#" onclick="parent.window.open(\'/bodb/model/'+data.similar_model_ids[i]+'/\');">'+data.similar_model_titles[i]+'</a></td></tr>';
                     }
                     dispTxt+='</table>';
-                    dispTxt+='Do you want to continue adding this model?<br>'
+                    dispTxt+='Do you want to continue adding this model?<br>';
                     dispTxt+='<input class="btn" type="button" value="Yes" onclick="save();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
                     dispTxt+='<input class="btn" type="button" value="No" onclick="disablePopup();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
                     //saveModel=confirm(dispTxt);
@@ -106,8 +120,8 @@
             <table class="tab_panel">
                 <tr valign=top>
                     <td width=20%>{{ form.title.label_tag }}*</td>
-                    <td>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
-                    {% if form.title.errors %}<td class="myerrors">{{ form.title.errors }}</td>{% endif %}
+                    <td width=200px>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
+                    <td class="myerrors"><span id="title_errors">{{ form.title.errors }}</span></td>
                 </tr>
                 <tr>
                     <td colspan=3 style="padding:0px">
@@ -136,12 +150,12 @@
                 <tr valign=top>
                     <td valign=top>{{ form.brief_description.label_tag }}*</td>
                     <td>{{ form.brief_description }}</td>
-                    {% if form.brief_description.errors %}<td class="myerrors">{{ form.brief_description.errors }}</td>{% endif %}
+                    <td class="myerrors"><span id="description_errors">{{ form.brief_description.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.narrative.label_tag }}*</td>
                     <td>{{ form.narrative }}</td>
-                    {% if form.narrative %}<td class="myerrors">{{ form.narrative.errors }}</td>{% endif %}
+                    <td class="myerrors"><span id="narrative_errors">{{ form.narrative.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td>{{ form.tags.label_tag }}</td>
@@ -273,29 +287,29 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr class="odd_row" valign=top>
-                                    <td>ModelDB Accession Number</td>
+                                    <td width=200px>ModelDB Accession Number</td>
                                     <td>{{ form.modeldb_accession_number }}</td>
-                                    {% if form.modeldb_accession_number.errors %}<td class="myerrors">{{ form.modeldb_accession_number.errors }}</td>{% endif %}
+                                    <td class="myerrors"><span id="modeldb_accession_number_errors">{{ form.modeldb_accession_number.errors }}</span></td>
                                 </tr>
                                 <tr class="even_row" valign=top>
                                     <td>Execution URL</td>
                                     <td>{{ form.execution_url }}</td>
-                                    {% if form.execution_url.errors %}<td class="myerrors">{{ form.execution_url.errors }}</td>{% endif %}
+                                    <td class="myerrors"><span id="execution_url_errors">{{ form.execution_url.errors }}</span></td>
                                 </tr>
                                 <tr class="odd_row" valign=top>
                                     <td>Documentation URL</td>
                                     <td>{{ form.documentation_url }}</td>
-                                    {% if form.documentation_url.errors %}<td class="myerrors">{{ form.documentation_url.errors }}</td>{% endif %}
+                                    <td class="myerrors"><span id="documentation_url_errors">{{ form.documentation_url.errors }}</span></td>
                                 </tr>
                                 <tr class="even_row" valign=top>
                                     <td>Description URL</td>
                                     <td>{{ form.description_url }}</td>
-                                    {% if form.description_url.errors %}<td class="myerrors">{{ form.description_url.errors }}</td>{% endif %}
+                                    <td class="myerrors"><span id="description_url_errors">{{ form.description_url.errors }}</span></td>
                                 </tr>
                                 <tr class="odd_row" valign=top>
                                     <td>Simulation URL</td>
                                     <td>{{ form.simulation_url }}</td>
-                                    {% if form.simulation_url.errors %}<td class="myerrors">{{ form.simulation_url.errors }}</td>{% endif %}
+                                    <td class="myerrors"><span id="simulation_url_errors">{{ form.simulation_url.errors }}</span></td>
                                 </tr>
                             </table>
                         </div>

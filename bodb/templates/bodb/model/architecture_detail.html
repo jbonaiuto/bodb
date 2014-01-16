@@ -59,7 +59,9 @@
                                             </tr>
                                         </table>
                                         <div class="myerrors">
-                                            {{ input_form.errors }}
+                                            <span id="input_{{ forloop.counter0 }}_errors">
+                                                {{ input_form.errors }}
+                                            </span>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -113,7 +115,9 @@
                                             </tr>
                                         </table>
                                         <div class="myerrors">
-                                            {{ output_form.errors }}
+                                            <span id="output_{{ forloop.counter0 }}_errors">
+                                                {{ output_form.errors }}
+                                            </span>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -167,7 +171,9 @@
                                             </tr>
                                         </table>
                                         <div class="myerrors">
-                                            {{ state_form.errors }}
+                                            <span id="state_{{ forloop.counter0 }}_errors">
+                                                {{ state_form.errors }}
+                                            </span>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -219,7 +225,9 @@
                                             </tr>
                                         </table>
                                         <div class="myerrors">
-                                            {{ module_form.errors }}
+                                            <span id="module_{{ forloop.counter0 }}_errors">
+                                                {{ module_form.errors }}
+                                            </span>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -250,12 +258,13 @@
                     <input id="id_input-<%= id %>-data_type" name="input-<%= id %>-data_type" size="10" type="text" />
                 </td>
                 <td>
-                    <textarea cols="42" id="id_input-<%= id %>-description" name="input-<%= id %>-description" rows="3">
-                    </textarea>
+                    <textarea cols="42" id="id_input-<%= id %>-description" name="input-<%= id %>-description" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="input_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>
@@ -277,12 +286,13 @@
                     <input id="id_output-<%= id %>-data_type" name="output-<%= id %>-data_type" size="10" type="text" />
                 </td>
                 <td>
-                    <textarea cols="42" id="id_output-<%= id %>-description" name="output-<%= id %>-description" rows="3">
-                    </textarea>
+                    <textarea cols="42" id="id_output-<%= id %>-description" name="output-<%= id %>-description" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="output_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>
@@ -304,12 +314,13 @@
                     <input id="id_state-<%= id %>-data_type" name="state-<%= id %>-data_type" size="10" type="text" />
                 </td>
                 <td>
-                    <textarea cols="42" id="id_state-<%= id %>-description" name="state-<%= id %>-description" rows="3">
-                    </textarea>
+                    <textarea cols="42" id="id_state-<%= id %>-description" name="state-<%= id %>-description" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="state_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>
@@ -333,6 +344,8 @@
             </tr>
         </table>
         <div class="myerrors">
+            <span id="module_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

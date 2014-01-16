@@ -45,7 +45,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ figure_form.errors }}
+                                <span id="figure_{{ forloop.counter0 }}_errors">
+                                    {{ figure_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -75,12 +77,13 @@
                     <input id="id_figure-<%= id %>-title" maxlength="100" name="figure-<%= id %>-title" type="text" />
                 </td>
                 <td>
-                    <textarea cols="40" id="id_figure-<%= id %>-caption" name="figure-<%= id %>-caption" rows="10">
-                    </textarea>
+                    <textarea cols="40" id="id_figure-<%= id %>-caption" name="figure-<%= id %>-caption" rows="10"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="figure_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

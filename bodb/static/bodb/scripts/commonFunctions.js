@@ -71,6 +71,26 @@ function validateField(fieldName, label, errorSpanName)
     return 0;
 }
 
+function validateURLField(fieldName, label, errorSpanName)
+{
+    var fieldElem=document.getElementById('id_'+fieldName);
+    if(fieldElem!=null)
+    {
+        if(fieldElem.value!=null && fieldElem.value.length>0)
+        {
+            if(/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(fieldElem.value)){
+                return 0;
+            } else {
+                if(document.getElementById(errorSpanName).innerHTML.length>0)
+                    document.getElementById(errorSpanName).innerHTML+='<br>';
+                document.getElementById(errorSpanName).innerHTML+=label+': valid URL required';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 /**
  * Validates all the fields in an inline form. Returns number of errors
  * @param formName - name of the form
@@ -86,10 +106,12 @@ function validateInlineForm(formName, fields, labels)
         var deleteElem=document.getElementById('id_'+formName+'-'+i+'-DELETE');
         if(deleteElem==null || deleteElem.value!='on')
         {
-            clearSpan(document, 'span_'+formName+'_'+i+'_errors');
+            clearSpan(document, formName+'_'+i+'_errors');
 
             for(var j=0; j<fields.length; j++)
-                errors+=validateField(formName+'-'+i+'-'+fields[j], labels[j], 'span_'+formName+'_'+i+'_errors');
+            {
+                errors+=validateField(formName+'-'+i+'-'+fields[j], labels[j], formName+'_'+i+'_errors');
+            }
         }
     }
     return errors;

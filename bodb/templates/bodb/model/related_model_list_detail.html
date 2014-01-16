@@ -57,7 +57,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ related_model_form.errors }}
+                                <span id="related_model_{{ forloop.counter0 }}_errors">
+                                    {{ related_model_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -84,12 +86,13 @@
                     <%= brief_description %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_model-<%= id %>-relationship" name="related_model-<%= id %>-relationship" rows="3">
-                    </textarea>
+                    <textarea cols="40" id="id_related_model-<%= id %>-relationship" name="related_model-<%= id %>-relationship" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="related_model_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

@@ -57,10 +57,10 @@ class Model(Module):
     # model authors
     authors = models.ManyToManyField(ModelAuthor)
     # model URLs
-    execution_url = models.CharField(max_length=200,blank=True,null=True)
-    documentation_url = models.CharField(max_length=200,blank=True,null=True)
-    description_url = models.CharField(max_length=200,blank=True,null=True)
-    simulation_url = models.CharField(max_length=200,blank=True,null=True)
+    execution_url = models.URLField(max_length=200,blank=True,null=True)
+    documentation_url = models.URLField(max_length=200,blank=True,null=True)
+    description_url = models.URLField(max_length=200,blank=True,null=True)
+    simulation_url = models.URLField(max_length=200,blank=True,null=True)
     modeldb_accession_number = models.IntegerField(blank=True,null=True)
     # related literature entries
     literature = models.ManyToManyField(Literature)

@@ -19,8 +19,15 @@
             var errors=0;
 
             clearSpan(document, 'span_errors');
-            errors+=validateField('title', 'Title', 'span_errors');
-            errors+=validateField('brief_description', 'Brief description', 'span_errors');
+            clearSpan(document, 'title_errors');
+            errors+=validateField('title', 'Title', 'title_errors');
+            clearSpan(document, 'description_errors');
+            errors+=validateField('brief_description', 'Brief description', 'description_errors');
+            clearSpan(document, 'source_region_errors');
+            errors+=validateField('source_region', 'Source region', 'source_region_errors');
+            clearSpan(document, 'target_region_errors');
+            errors+=validateField('target_region', 'Target region', 'target_region_errors');
+            errors+=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
             errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
             errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
 
@@ -94,13 +101,13 @@
             <table class="tab_panel">
                 <tr valign=top>
                     <td width=20%>{{ form.title.label_tag }}*</td>
-                    <td>{{ form.title }} {%if form.instance.draft%}<font color=red>&lt;draft&gt;</font>{%endif%}</td>
-                    {% if form.title.errors %}<td class="myerrors">{{ form.title.errors }}</td>{% endif %}
+                    <td width=200px>{{ form.title }} {%if form.instance.draft%}<font color=red>&lt;draft&gt;</font>{%endif%}</td>
+                    <td class="myerrors"><span id="title_errors">{{ form.title.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.brief_description.label_tag }}*</td>
                     <td>{{ form.brief_description }}</td>
-                    {% if form.brief_description.errors %}<td class="myerrors">{{ form.brief_description.errors }}</td>{% endif %}
+                    <td class="myerrors"><span id="description_errors">{{ form.brief_description.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td>{{ form.narrative.label_tag }}</td>
@@ -130,7 +137,7 @@
                             {% endif %}
                         </div>
                     </td>
-                    {% if form.source_region.errors %}<td class="myerrors">{{ form.source_region.errors }}</td>{% endif %}
+                    <td class="myerrors"><span id="source_region_errors">{{ form.source_region.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td>Target region</td>
@@ -143,7 +150,7 @@
                             {% endif %}
                         </div>
                     </td>
-                    {% if form.target_region.errors %}<td class="myerrors">{{ form.target_region.errors }}</td>{% endif %}
+                    <td class="myerrors"><span id="target_region_errors">{{ form.target_region.errors }}</span></td>
                 </tr>
                 <tr>
                     <td colspan="3">

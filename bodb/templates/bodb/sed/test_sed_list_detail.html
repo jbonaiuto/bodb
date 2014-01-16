@@ -35,13 +35,18 @@
                                     <td>
                                         {{ test_sed_form.relevance_narrative }}
                                     </td>
+                                    <td class="myerrors">
+                                        <span id="test_sed_{{ forloop.counter0 }}_errors">
+                                            {{ test_sed_form.errors }}
+                                        </span>
+                                    </td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td style="width:120px">&nbsp;</td>
-                                    <td class="table_header" colspan=2>SED</td>
+                                    <td class="table_header" colspan=3>SED</td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                    <td colspan=3>
+                                    <td colspan=4>
                                         <table class="tab_panel">
                                             <tr>
                                                 <td style="width:120px">&nbsp;</td>
@@ -72,10 +77,10 @@
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td style="width:120px">&nbsp;</td>
-                                    <td class="table_header" colspan=2>SSR</td>
+                                    <td class="table_header" colspan=3>SSR</td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                    <td colspan=3>
+                                    <td colspan=4>
                                         <table class="tab_panel">
                                             <tr>
                                                 <td style="width:120px">&nbsp;</td>
@@ -103,14 +108,16 @@
                                                                         <td style="width:150px">
                                                                             {{ testsedssr_form.ssr_title }}
                                                                         </td>
-                                                                        <td>
+                                                                        <td width=200px>
                                                                             {{ testsedssr_form.ssr_brief_description }}
                                                                         </td>
                                                                     </tr>
+                                                                    <td class="myerrors">
+                                                                        <span id="test_sed-{{ forloop.parentloop.counter0 }}-testsedssr_set_{{ forloop.counter0 }}_errors">
+                                                                            {{ testsedssr_form.errors }}
+                                                                        </span>
+                                                                    </td>
                                                                 </table>
-                                                                <div class="myerrors">
-                                                                    {{ testsedssr_form.errors }}
-                                                                </div>
                                                             </div>
                                                         {% endfor %}
                                                     </div>
@@ -120,9 +127,6 @@
                                     </td>
                                 </tr>
                             </table>
-                            <div class="myerrors">
-                                {{ test_sed_form.errors }}
-                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -149,16 +153,19 @@
                     </select>
                 </td>
                 <td>
-                    <textarea cols="37" id="id_test_sed-<%= id %>-relevance_narrative" name="test_sed-<%= id %>-relevance_narrative" rows="3">
-                    </textarea>
+                    <textarea cols="37" id="id_test_sed-<%= id %>-relevance_narrative" name="test_sed-<%= id %>-relevance_narrative" rows="3"></textarea>
+                </td>
+                <td class="myerrors">
+                    <span id="test_sed_<%= id %>_errors">
+                    </span>
                 </td>
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
                 <td style="width:120px">&nbsp;</td>
-                <td class="table_header" colspan=2>SED</td>
+                <td class="table_header" colspan=3>SED</td>
             </tr>
             <tr class="<%= getTRTag(id) %>">
-                <td colspan=3>
+                <td colspan=4>
                     <table class="tab_panel">
                         <tr>
                             <td style="width:120px">&nbsp;</td>
@@ -183,10 +190,10 @@
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
                 <td style="width:120px">&nbsp;</td>
-                <td class="table_header" colspan=2>SSR</td>
+                <td class="table_header" colspan=3>SSR</td>
             </tr>
             <tr class="<%= getTRTag(id) %>">
-                <td colspan=3>
+                <td colspan=4>
                     <table class="tab_panel">
                         <tr>
                             <td style="width:120px">&nbsp;</td>
@@ -214,14 +221,16 @@
                                                 <td style="width:150px">
                                                     <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_title" name="test_sed-<%= id %>-testsedssr_set-0-ssr_title" size="13" type="text" />
                                                 </td>
-                                                <td>
-                                                    <textarea cols="50" id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" name="test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" rows="3">
-                                                    </textarea>
+                                                <td width=200px>
+                                                    <textarea cols="50" id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" name="test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" rows="3"></textarea>
+                                                </td>
+                                                <td class="myerrors">
+                                                    <span id="test_sed-<%= id %>-testsedssr_set_0_errors">
+                                                        {{ testsedssr_form.errors }}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </table>
-                                        <div class="myerrors">
-                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -230,7 +239,5 @@
                 </td>
             </tr>
         </table>
-        <div class="myerrors">
-        </div>
     </div>
 </script>

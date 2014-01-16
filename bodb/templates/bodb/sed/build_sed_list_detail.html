@@ -56,7 +56,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ build_sed_form.errors }}
+                                <span id="build_sed_{{ forloop.counter0 }}_errors">
+                                    {{ build_sed_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -93,12 +95,13 @@
                     </select>
                 </td>
                 <td>
-                    <textarea cols="37" id="id_build_sed-<%= id %>-relevance_narrative" name="build_sed-<%= id %>-relevance_narrative" rows="3">
-                    </textarea>
+                    <textarea cols="37" id="id_build_sed-<%= id %>-relevance_narrative" name="build_sed-<%= id %>-relevance_narrative" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="build_sed_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

@@ -49,7 +49,7 @@
                                             {{ related_bop_form.instance.bop.title }}
                                         {% endif %}
                                     </td>
-                                    <td style="width:350px">
+                                    <td style="width:250px">
                                         {% if related_bop_form.instance %}
                                             {{ related_bop_form.instance.bop.brief_description }}
                                         {% endif %}
@@ -65,7 +65,9 @@
                                 </tr>
                             </table>
                             <div class="myerrors">
-                                {{ related_bop_form.errors }}
+                                <span id="related_bop_{{ forloop.counter0 }}_errors">
+                                    {{ related_bop_form.errors }}
+                                </span>
                             </div>
                         </div>
                     {% endfor %}
@@ -100,12 +102,13 @@
                     </td>
                 {% endif %}
                 <td>
-                    <textarea cols="40" id="id_related_bop-<%= id %>-relevance_narrative" name="related_bop-<%= id %>-relevance_narrative" rows="3">
-                    </textarea>
+                    <textarea cols="40" id="id_related_bop-<%= id %>-relevance_narrative" name="related_bop-<%= id %>-relevance_narrative" rows="3"></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
+            <span id="related_bop_<%= id %>_errors">
+            </span>
         </div>
     </div>
 </script>

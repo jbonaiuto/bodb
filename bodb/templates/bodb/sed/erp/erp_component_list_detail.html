@@ -86,6 +86,11 @@
                                         {{ erp_component_form.interpretation }}
                                     </td>
                                 </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td colspan="7" class="myerrors">
+                                        <span id="erp_component_{{ forloop.counter0 }}_errors"></span>
+                                    </td>
+                                </tr>
                             </table>
                             <div class="myerrors">
                                 {{ erp_component_form.errors }}
@@ -174,6 +179,11 @@
                 <td colspan="5">
                     <textarea cols="57" id="id_erp_component-<%= id %>-interpretation" name="erp_component-<%= id %>-interpretation" rows="3">
                     </textarea>
+                </td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td colspan="7" class="myerrors">
+                    <span id="erp_component_<%= id %>_errors"></span>
                 </td>
             </tr>
         </table>
