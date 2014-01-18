@@ -13,7 +13,10 @@
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            errors+=validateInlineForm('predictionssr', ['ssr_title','ssr_brief_description'], ['Title','Brief description']);
+            var ssrErrors=validateInlineForm('predictionssr', ['ssr_title','ssr_brief_description'], ['Title','Brief description']);
+            if(ssrErrors>0)
+                animatedcollapse.show('ssrData');
+            errors+=ssrErrors;
 
             return errors==0;
         }

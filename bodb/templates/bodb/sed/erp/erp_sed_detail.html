@@ -26,10 +26,22 @@
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'experimental_condition_errors');
             errors+=validateField('experimental_condition', 'Experimental condition', 'experimental_condition_errors');
-            errors+=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','scalp_region','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Scalp region', 'Interpretation']);
-            errors+=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
-            errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
-            errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+            var componentErrors=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','scalp_region','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Scalp region', 'Interpretation']);
+            if(componentErrors>0)
+                animatedcollapse.show('erpComponentData');
+            errors+=componentErrors;
+            var figureErrors=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
+            if(figureErrors>0)
+                animatedcollapse.show('figureData');
+            errors+=figureErrors;
+            var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+            if(relatedBOPErrors>0)
+                animatedcollapse.show('bopData');
+            errors+=relatedBOPErrors;
+            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+            if(relatedBrainRegionErrors>0)
+                animatedcollapse.show('brainRegionData');
+            errors+=relatedBrainRegionErrors;
 
             return errors==0;
         }

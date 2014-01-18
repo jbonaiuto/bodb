@@ -32,28 +32,61 @@
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'narrative_errors');
             errors+=validateField('narrative', 'Narrative', 'narrative_errors');
-            errors+=validateInlineForm('model_author', ['author_first_name', 'author_last_name', 'order'], ['First name', 'Last name', 'Order']);
-            errors+=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
-            errors+=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            errors+=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            errors+=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            errors+=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
-            errors+=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            errors+=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            var authorErrors=validateInlineForm('model_author', ['author_first_name', 'author_last_name', 'order'], ['First name', 'Last name', 'Order']);
+            if(authorErrors>0)
+                animatedcollapse.show('modelAuthors');
+            errors+=authorErrors;
+            var figureErrors=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
+            errors+=figureErrors;
+            var inputErrors=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=inputErrors;
+            var outputErrors=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=outputErrors;
+            var stateErrors=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+            errors+=stateErrors;
+            var moduleErrors=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
+            errors+=moduleErrors;
+            if(figureErrors>0 || inputErrors>0 || outputErrors>0 || stateErrors>0 || moduleErrors>0)
+                animatedcollapse.show('architectureData');
+            var buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            errors+=buildSEDErrors;
+            if(buildSEDErrors>0)
+                animatedcollapse.show('buildSEDData');
+            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
             var test_sed_count = $('#test_seds').children().length;
             for(var i=0; i<test_sed_count; i++)
-                errors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
-            errors+=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
+                testSEDErrors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            errors+=testSEDErrors;
+            if(testSEDErrors>0)
+                animatedcollapse.show('testSEDData');
+            var predictionErrors=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
             var prediction_count = $('#predictions').children().length;
             for(var i=0; i<prediction_count; i++)
-                errors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
-            errors+=validateURLField('execution_url', 'Execution URL', 'execution_url_errors');
-            errors+=validateURLField('documentation_url', 'Documentation URL', 'documentation_url_errors');
-            errors+=validateURLField('description_url', 'Description URL', 'description_url_errors');
-            errors+=validateURLField('simulation_url', 'Simulation URL', 'simulation_url_errors');
-            errors+=validateInlineForm('related_model', ['relationship'], ['Relationship']);
-            errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
-            errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+                predictionErrors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            errors+=predictionErrors;
+            if(predictionErrors>0)
+                animatedcollapse.show('predictionData');
+            if(buildSEDErrors>0 || testSEDErrors>0 || predictionErrors>0)
+                animatedcollapse.show('summaryData');
+            var urlErrors=validateURLField('execution_url', 'Execution URL', 'execution_url_errors');
+            urlErrors+=validateURLField('documentation_url', 'Documentation URL', 'documentation_url_errors');
+            urlErrors+=validateURLField('description_url', 'Description URL', 'description_url_errors');
+            urlErrors+=validateURLField('simulation_url', 'Simulation URL', 'simulation_url_errors');
+            errors+=urlErrors;
+            if(urlErrors>0)
+                animatedcollapse.show('urlData');
+            var relatedModelErrors=validateInlineForm('related_model', ['relationship'], ['Relationship']);
+            if(relatedModelErrors>0)
+                animatedcollapse.show('modelData');
+            errors+=relatedModelErrors;
+            var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+            if(relatedBOPErrors>0)
+                animatedcollapse.show('bopData');
+            errors+=relatedBOPErrors;
+            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+            if(relatedBrainRegionErrors>0)
+                animatedcollapse.show('brainRegionData');
+            errors+=relatedBrainRegionErrors;
 
             return errors==0;
         }
@@ -130,7 +163,7 @@
                 </tr>
                 <tr class="section_header">
                     <td colspan=3>
-                        Authors (<a href="javascript:animatedcollapse.toggle('authors')"><span id="authorsLabel">Hide</span></a>)
+                        Authors (<a href="javascript:animatedcollapse.toggle('modelAuthors')"><span id="modelAuthorsLabel">Hide</span></a>)
                     </td>
                 </tr>
                 <tr>

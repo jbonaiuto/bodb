@@ -23,9 +23,18 @@
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            errors+=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
-            errors+=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
-            errors+=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+            var figureErrors=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
+            if(figureErrors>0)
+                animatedcollapse.show('figureData');
+            errors+=figureErrors;
+            var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+            if(relatedBOPErrors>0)
+                animatedcollapse.show('bopData');
+            errors+=relatedBOPErrors;
+            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+            if(relatedBrainRegionErrors>0)
+                animatedcollapse.show('brainRegionData');
+            errors+=relatedBrainRegionErrors;
 
             return errors==0;
         }
