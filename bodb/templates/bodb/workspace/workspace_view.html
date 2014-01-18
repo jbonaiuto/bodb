@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View Workspace</title>
+    <link rel="stylesheet" href="{% static 'bodb/css/joyride-2.1.css' %}">
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
         function deleteWorkspace()
@@ -34,8 +35,10 @@
             </tr>
         </table>
         {% if admin %}
-            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            <input class="btn" type="button" value="Delete" onclick="deleteWorkspace()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <div id="adminButtons">
+                <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                <input class="btn" type="button" value="Delete" onclick="deleteWorkspace()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            </div>
         {% endif %}
 
         <table class="tab_panel">
@@ -175,4 +178,67 @@
         <form id="reportForm" name="reportForm" action="/bodb/workspace/{{ workspace.id }}/model/report/rtf/" method="post">
         </form>
     </div>
+
+    <ol id="joyRideTipContent">
+        <li data-id="activityTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Activity timeline</h2>
+            <p>View recent events in this workspace.</p>
+        </li>
+        <li data-id="entryTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Workspace entries</h2>
+            <p>View the BOPS, models, SEDs, and SSRs saved to this workspace.</p>
+        </li>
+        <li data-id="coordTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Coordinates</h2>
+            <p>View and edit the currently selected SED coordinates and saved coordinate selections.</p>
+        </li>
+        <li data-id="bookmarkTab" data-button="Next" data-options="tipLocation:bottom">
+            <h2>Bookmarks</h2>
+            <p>View and add bookmarks to external websites.</p>
+        </li>
+        <li data-id="discussionTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Discussion</h2>
+            <p>View and post comments for discussion with other members of the workspace.</p>
+        </li>
+        <li data-id="adminTab" data-button="Close" data-options="tipLocation:top">
+            <h2>{% if admin %}Administration{% else %}Members{% endif %}</h2>
+            <p>{% if admin %}Manage workspace users and permissions. Invite users to the workspace.{% else %}View workspace members{% endif %}</p>
+        </li>
+    </ol>
+
+    <!-- Run the tour -->
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+    <script>
+        $(window).load(function() {
+            $('#joyRideTipContent').joyride({
+                autoStart : true,
+                preStepCallback : function (index, tip) {
+                    if (index==1) {
+                        switchTab('entry',['activity','coord','bookmark','discussion','admin']);
+                    }
+                    else if (index == 2) {
+                        switchTab('coord',['activity','entry','bookmark','discussion','admin']);
+                    }
+                    else if (index == 3) {
+                        switchTab('bookmark',['activity','entry','coord','discussion','admin']);
+                    }
+                    else if (index == 4) {
+                        switchTab('discussion',['activity','entry','coord','bookmark','admin']);
+                    }
+                    else if (index == 5) {
+                        switchTab('admin',['activity','entry','coord','bookmark','discussion']);
+                    }
+                },
+                postStepCallback: function(index, tip) {
+                    if(index == 5) {
+                        switchTab('activity',['entry','coord','bookmark','discussion','admin']);
+                    }
+                },
+                localStorage: true,
+                localStorageKey: 'workspace_tour'
+            });
+        });
+    </script>
 {% endblock %}

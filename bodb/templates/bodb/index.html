@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB</title>
+    <link rel="stylesheet" href="{% static 'bodb/css/joyride-2.1.css' %}">
 {% endblock %}
 {% block content %}
     <div id="rightsidebar">
@@ -90,4 +91,49 @@
             </table>
         </div>
     </div>
+    <!-- Tip Content -->
+    <ol id="joyRideTipContent">
+        <li data-id="navbar" data-text="Next" class="custom">
+            <h2>Navigation bar</h2>
+            <p>Use the links here to navigate to different parts of BODB.</p>
+        </li>
+        <li data-id="myProfileLink" data-button="Next" data-options="tipLocation:left">
+            <h2>Edit your profile</h2>
+            <p>Update your contact preferences, manage subscriptions, and add an avatar image.</p>
+        </li>
+        <li data-id="regionRequestLink" data-button="Next" data-options="tipLocation:right">
+            <h2>Brain region requests</h2>
+            <p>View your currently requested brain regions along with the status of each request.</p>
+        </li>
+        <li data-id="activeWorkspaceLink" data-button="Next">
+            <h2>Active Workspace</h2>
+            <p>View your currently active workspace.</p>
+        </li>
+        <li data-id="messagesLink" data-button="Next" data-options="tipLocation:right">
+            <h2>Messaging</h2>
+            <p>View your messages and send messages to other users.</p>
+        </li>
+        <li data-id="sidebar" data-button="Next" data-options="tipLocation:right">
+            <h2>Entry tag could</h2>
+            <p>Browse BOPS, Models, SEDs, Predictions, and SSRs tagged with keywords.</p>
+        </li>
+        <li data-id="rightsidebar" data-button="Close" data-options="tipLocation:left">
+            <h2>Recently added entries</h2>
+            <p>Browse recently added BOPS, Models, SEDs, and SSRs.</p>
+        </li>
+    </ol>
+
+    <!-- Run the tour -->
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+    <script>
+        $(window).load(function() {
+            $('#joyRideTipContent').joyride({
+                autoStart : true,
+                localStorage: true,
+                localStorageKey: 'index_tour'
+            });
+        });
+    </script>
 {% endblock %}
