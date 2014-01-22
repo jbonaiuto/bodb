@@ -116,15 +116,15 @@ class FavoriteListView(BODBView):
             profile=user.get_profile()
             active_workspace=profile.active_workspace
 
-            context['models']=Model.get_model_list(Model.objects.filter(module_ptr__in=profile.favorites.all()),user)
+            context['models']=Model.get_model_list(Model.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['bops']=BOP.get_bop_list(BOP.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',document_ptr__in=profile.favorites.all()),user)
-            context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(sed_ptr__in=profile.favorites.all()),user)
-            imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=profile.favorites.all())
+            context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(document_ptr__in=profile.favorites.all()),user)
+            imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=profile.favorites.all())
             coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
             context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-            context['erp_seds']=SED.get_sed_list(ERPSED.objects.filter(sed_ptr__in=profile.favorites.all()),user)
+            context['erp_seds']=SED.get_sed_list(ERPSED.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(document_ptr__in=profile.favorites.all()),user)
 
             context['loaded_coord_selection']=profile.loaded_coordinate_selection
