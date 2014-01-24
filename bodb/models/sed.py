@@ -403,9 +403,9 @@ def conn_sed_gxl(conn_seds):
         if not str(sed.target_region.__unicode__()) in nodes:
             nodes[str(sed.target_region.__unicode__())]=[]
         nodes[str(sed.target_region.__unicode__())].append((targetname, sed.target_region.id))
-    for node_name, children in nodes.iteritems():
+    for i,(node_name, children) in enumerate(nodes.iteritems()):
         glx+='<node id="'+node_name+'">\n'
-        glx+='<graph id="'+node_name+'_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n'
+        glx+='<graph id="cluster_%d" edgeids="true" edgemode="directed" hypergraph="false">\n' % i
         for (name,id) in children:
             glx+='<node id="'+name+'">\n'
             glx+='<type xlink:href="/bodb/brain_region/'+str(id)+'/" xlink:type="simple"/>\n'
