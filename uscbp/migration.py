@@ -803,6 +803,12 @@ def import_models(legacy_img_dir, new_media_dir):
                 new_predictionssr.save()
             import_tags(new_prediction, old_prediction)
 
+        cursor=connection.cursor()
+        cursor.execute('UPDATE %s.bodb_variable SET var_type="Input" WHERE var_type="input"' % settings.DATABASES['default']['NAME'])
+        cursor.execute('UPDATE %s.bodb_variable SET var_type="Output" WHERE var_type="output"' % settings.DATABASES['default']['NAME'])
+        cursor.execute('UPDATE %s.bodb_variable SET var_type="State" WHERE var_type="state"' % settings.DATABASES['default']['NAME'])
+        cursor.close()
+
         # related brain regions
         import_related_brain_regions(new_mod, old_model)
 
