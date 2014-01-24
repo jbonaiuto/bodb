@@ -181,6 +181,7 @@ def bop_gxl(bops, user):
     glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
     glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
     glx+='<graph id="bop-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
+    glx+='<attr name="overlap"><string>scale</string></attr>\n'
     for bop in bops:
         glx+='<node id="%d">\n' % bop.id
         glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bop.id

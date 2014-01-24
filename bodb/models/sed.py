@@ -393,6 +393,7 @@ def conn_sed_gxl(conn_seds):
     glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
     glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
     glx+='<graph id="connectivity-sed-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
+    glx+='<attr name="overlap"><string>scale</string></attr>\n'
     nodes={}
     for sed in conn_seds:
         sourcename=str(sed.source_region.__unicode__())+' ('+sed.source_region.nomenclature.name+')'

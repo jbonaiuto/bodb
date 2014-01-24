@@ -299,10 +299,12 @@ def model_gxl(models, user):
     glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
     glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
     glx+='<graph id="model-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
+    glx+='<attr name="overlap"><string>scale</string></attr>\n'
     for model in models:
         glx+='<node id="%d">\n' % model.id
         glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % model.id
         glx+='<node id="%s">\n' % model.title
+        glx+='<attr name="shape"><string>square</string></attr>\n'
         glx+='<type xlink:href="/bodb/model/%d/" xlink:type="simple"/>\n' % model.id
         glx+='</node>\n'
         glx+='</graph>\n'
