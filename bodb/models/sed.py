@@ -369,21 +369,25 @@ class CoCoMacConnectivitySED(ConnectivitySED):
     def html_url_string(self):
         if CoCoMacBrainRegion.objects.filter(brain_region__id=self.source_region.id) and \
            CoCoMacBrainRegion.objects.filter(brain_region__id=self.target_region.id):
-            cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
+            cocomac_url='http://cocomac.g-node.org/cocomac2/services/axonal_projections.php?axonOriginList='
+            #cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
 
             cocomac_source=CoCoMacBrainRegion.objects.get(brain_region__id=self.source_region.id)
             source_id=cocomac_source.cocomac_id.split('-',1)
-            cocomac_url+="(\\'"+source_id[0]+"\\')[SourceMap]"
-            cocomac_url+=" AND "
-            cocomac_url+="(\\'"+source_id[1]+"\\') [SourceSite]"
-            cocomac_url+=" AND "
+            cocomac_url+='%s-%s' % (source_id[0],source_id[1])
+#            cocomac_url+="(\\'"+source_id[0]+"\\')[SourceMap]"
+#            cocomac_url+=" AND "
+#            cocomac_url+="(\\'"+source_id[1]+"\\') [SourceSite]"
+#            cocomac_url+=" AND "
 
             cocomac_target=CoCoMacBrainRegion.objects.get(brain_region__id=self.target_region.id)
             target_id=cocomac_target.cocomac_id.split('-',1)
-            cocomac_url+="(\\'"+target_id[0]+"\\')[TargetMap]"
-            cocomac_url+=" AND "
-            cocomac_url+="(\\'"+target_id[1]+"\\') [TargetSite]"
-            cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage= 20"
+            cocomac_url+='&axonTerminalList=%s-%s' % (target_id[0],target_id[1])
+#            cocomac_url+="(\\'"+target_id[0]+"\\')[TargetMap]"
+#            cocomac_url+=" AND "
+#            cocomac_url+="(\\'"+target_id[1]+"\\') [TargetSite]"
+            #cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage= 20"
+            cocomac_url+='&includeLargeInjections=0&useAM=1&useSORT=0&output=dhtml&undefined=undefined'
             return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in CoCoMac</a>' % (cocomac_url,
                                                                                                       cocomac_url)
         return ''
