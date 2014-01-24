@@ -1076,10 +1076,12 @@ class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
                              'z':coord.sed_coordinate.coord.z,
                              'rCBF':None,
                              'statistic':coord.sed_coordinate.statistic,
-                             'statistic_value':coord.sed_coordinate.statistic_value.__float__(),
+                             'statistic_value':None,
                              'extra_data':coord.sed_coordinate.extra_data}
                 if coord.sed_coordinate.rcbf is not None:
                     coord_array['rCBF']=coord.sed_coordinate.rcbf.__float__()
+                if coord.sed_coordinate.statistic_value is not None:
+                    coord_array['statistic_value']=coord.sed_coordinate.statistic_value.__float__()
                 context['selected_coords'].append(coord_array)
         return context
 

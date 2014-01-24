@@ -41,7 +41,7 @@ class SED(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        else:
+        elif SED.objects.filter(id=self.id).count():
             made_public=not SED.objects.get(id=self.id).public and self.public
             made_not_draft=SED.objects.get(id=self.id).draft and not int(self.draft)
             if made_public or made_not_draft:
@@ -343,23 +343,6 @@ class ConnectivitySED(SED):
     target_region = models.ForeignKey('BrainRegion', related_name='target_region')
     class Meta:
         app_label='bodb'
-
-    def save(self, force_insert=False, force_update=False):
-        notify=False
-        # creating a new object
-        if self.id is None:
-            notify=True
-        else:
-            made_public=not ConnectivitySED.objects.get(id=self.id).public and self.public
-            made_not_draft=ConnectivitySED.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
-
-        super(ConnectivitySED, self).save()
-
-        if notify:
-            # send notifications to subscribed users
-            sendNotifications(self, 'SED')
 
     def html_url_string(self):
         return ''

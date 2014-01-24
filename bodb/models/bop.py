@@ -31,7 +31,7 @@ class BOP(MPTTModel,Document):
         # creating a new object
         if self.id is None:
             notify=True
-        else:
+        elif BOP.objects.filter(id=self.id).count():
             made_public=not BOP.objects.get(id=self.id).public and self.public
             made_not_draft=BOP.objects.get(id=self.id).draft and not int(self.draft)
             if made_public or made_not_draft:

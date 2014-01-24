@@ -38,6 +38,7 @@ class Author(models.Model):
     homepage = models.URLField(blank=True)
     alias = models.CharField(max_length=30, blank=True)
     creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    #creation_time = models.DateTimeField(blank=True)
     class Meta:
         app_label='bodb'
 
@@ -75,6 +76,7 @@ class Literature(models.Model):
     language = models.CharField(max_length=100, default='English')
     annotation = models.TextField(blank=True)
     creation_time = models.DateTimeField(auto_now_add=True, blank=True)
+    #creation_time = models.DateTimeField(blank=True)
     # user who added this record
     collator = models.ForeignKey(User,null=True)
     # when listing instances of this class, order by year
@@ -134,7 +136,7 @@ class Literature(models.Model):
 # Journal article - inherits from Literature
 class Journal(Literature):
     journal_name = models.CharField('journal', max_length=200)
-    volume = models.CharField(max_length=20, blank=True)
+    volume = models.CharField(max_length=20, blank=True, null=True)
     issue = models.CharField(max_length=20, blank=True)
     pages = models.CharField(max_length=20, blank=True)
     class Meta:
@@ -268,7 +270,6 @@ class Book(Literature):
 # Chapter - inherits from Literature
 class Chapter(Literature):
     location = models.CharField(max_length=200)
-    publisher = models.CharField(max_length=200)
     publisher = models.CharField(max_length=200)
     volume = models.IntegerField(blank=True, null=True)
     series = models.CharField(max_length=100, blank=True)

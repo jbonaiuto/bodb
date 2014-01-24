@@ -28,7 +28,7 @@ class SSR(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        else:
+        elif SSR.objects.filter(id=self.id).count():
             made_public=not SSR.objects.get(id=self.id).public and self.public
             made_not_draft=SSR.objects.get(id=self.id).draft and not int(self.draft)
             if made_public or made_not_draft:
@@ -115,7 +115,7 @@ class Prediction(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        else:
+        elif Prediction.objects.filter(id=self.id).count():
             made_public=not Prediction.objects.get(id=self.id).public and self.public
             made_not_draft=Prediction.objects.get(id=self.id).draft and not int(self.draft)
             if made_public or made_not_draft:

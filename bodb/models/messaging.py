@@ -19,6 +19,7 @@ class Message(models.Model):
     read = models.BooleanField(default=False)
     # when the message was sent
     sent = models.DateTimeField(auto_now_add=True,blank=True)
+    #sent = models.DateTimeField(blank=True)
     # when listing instances of this class, order by sent date in descending order
     class Meta:
         app_label='bodb'

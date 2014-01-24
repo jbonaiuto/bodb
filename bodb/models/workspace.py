@@ -26,7 +26,9 @@ class Workspace(models.Model):
     related_seds = models.ManyToManyField('SED')
     related_ssrs = models.ManyToManyField('SSR')
     saved_coordinate_selections = models.ManyToManyField('SavedSEDCoordSelection')
-    created_date = models.DateTimeField(auto_now_add=True,blank=True)
+    #created_date = models.DateTimeField(auto_now_add=True,blank=True)
+    created_date = models.DateTimeField(blank=True)
+
     class Meta:
         app_label='bodb'
         permissions=(
@@ -304,7 +306,7 @@ class BodbProfile(models.Model):
     # whether or not to email the user when new messages are received
     new_message_notify = models.BooleanField(default=True)
     # User's active workspace
-    active_workspace = models.ForeignKey(Workspace)
+    active_workspace = models.ForeignKey(Workspace,null=True)
     # User's loaded coordinate selection
     loaded_coordinate_selection=models.ForeignKey('SavedSEDCoordSelection',null=True)
     # User's affiliation
@@ -393,4 +395,5 @@ def user_post_save_handler(sender, instance, created, **kwargs):
 
 
 # Register the User.post_save signal handler
+#post_save.connect(user_post_save_handler, sender=User)
 post_save.connect(user_post_save_handler, sender=User)

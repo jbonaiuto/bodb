@@ -23,8 +23,10 @@ class Document(models.Model):
     public = models.IntegerField(default=False)
     # date and time this entry was created
     creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    #creation_time = models.DateTimeField(blank=True)
     # date and time this entry as last modified
     last_modified_time = models.DateTimeField(auto_now=True,blank=True)
+    #last_modified_time = models.DateTimeField(blank=True)
     # user who last modified the entry
     last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
     # tags
