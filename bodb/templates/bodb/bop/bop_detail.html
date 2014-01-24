@@ -25,7 +25,7 @@
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            var figureErrors=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
+            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
             errors+=figureErrors;

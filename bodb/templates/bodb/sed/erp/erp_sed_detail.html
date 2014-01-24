@@ -30,7 +30,7 @@
             if(componentErrors>0)
                 animatedcollapse.show('erpComponentData');
             errors+=componentErrors;
-            var figureErrors=validateInlineForm('figure', ['order', 'figure', 'title', 'caption'], ['Order','File','Title','Caption']);
+            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
             errors+=figureErrors;
