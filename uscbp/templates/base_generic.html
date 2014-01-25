@@ -21,7 +21,14 @@
         {
             if(divobj!=null && document.getElementById(divobj.id+"Label")!=null)
             {
-                if(divobj.id.substr(0,9)=="expansion")
+                if(divobj.id=="tagBar")
+                {
+                    document.getElementById("tagBarLabel").innerHTML=(state=="none")?"&gt;" : "&lt;";
+                    document.getElementById('sidebar').style.width=(state=="none")?"10px" : "250px";
+                    document.getElementById('content').style.marginLeft=(state=="none")?"15px" : "255px";
+                    document.getElementById('controlCell').style.background=(state=="none")?"#c5cbd4" : "#ffffff";
+                }
+                else if(divobj.id.substr(0,9)=="expansion")
                     document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Collapse" : "Expand";
                 else
                     document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Hide" : "Show";
@@ -50,10 +57,18 @@
                     '" onMouseOver="window.status=\'\'; ' +
                     'return true;">'+text+'<' + '/' + 'a' + '>');
         }
+
+        function onLoad()
+        {
+            if(document.getElementById("tagBar").style.display=="none")
+                document.getElementById('content').style.marginLeft='15px';
+        }
+
+        animatedcollapse.addDiv('tagBar', 'persist=1');
     </script>
     {% block extrahead %}{% endblock %}
 </head>
-<body {% if not ispopup %}class="tundra"{% endif %}>
+<body {% if not ispopup %}class="tundra" onLoad="onLoad()"{% endif %}>
     <div id="toPopup">
         <div class="close"></div>
         <span class="ecs_tooltip">Press Esc to close <span class="arrow"></span></span>
