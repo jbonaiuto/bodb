@@ -100,7 +100,7 @@ class CreateSEDView(EditSEDMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -121,7 +121,7 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -474,7 +474,7 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -541,7 +541,7 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -613,7 +613,7 @@ class CleanBrainImagingSEDView(TemplateView):
                 coord.save()
             # forward to SED view
             url='/bodb/sed/%s/' % id
-            params='?type='+request.GET.get('type',None)+'&action='+request.GET.get('action',None)
+            params='?type='+request.GET.get('type','')+'&action='+request.GET.get('action','')
             if '_popup' in request.GET:
                 params+='&_popup=1'
             if '_multiple' in request.GET:
@@ -716,7 +716,7 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -737,7 +737,7 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -849,7 +849,7 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
@@ -872,7 +872,7 @@ class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type',None)
+        context['type']=self.request.GET.get('type','')
         return context
 
 
