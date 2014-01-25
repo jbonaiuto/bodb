@@ -15,7 +15,7 @@
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
             <td>Description</td>
-            <td width=200px>&nbsp;</td>
+            <td width=100px>&nbsp;</td>
         </tr>
         {% for selected,is_favorite,subscribed,ssr in ssrs %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -35,11 +35,11 @@
                         {% endif %}
                     {% endif %}
                 </td>
-                <td width=200px>
+                <td>
                     <a href="/bodb/ssr/{{ ssr.id }}/">{{ ssr.title }}</a>
                     {% if ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                 </td>
-                <td width=200px>{{ ssr.get_collator_str }} {% if not ssr.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ ssr.collator.id }}&type=SSR');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td>{{ ssr.get_collator_str }} {% if not ssr.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ ssr.collator.id }}&type=SSR');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
                 <td>{{ssr.brief_description }}</td>
                 <td><span id="ssr_{{ ssr.id }}_message" name="ssr_{{ ssr.id }}_message" class="messages"></span></td>
             </tr>

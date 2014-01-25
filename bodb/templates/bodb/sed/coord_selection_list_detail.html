@@ -165,6 +165,16 @@
     {
         return false;
     }
+
+    function setAllSEDCoordinatesSelected(sedName, selected)
+    {
+        var elems=document.getElementsByName(sedName);
+        for(var i=0; i<elems.length; i++)
+        {
+            selectedCoordSelect(selected, elems[i].value);
+        }
+        return false;
+    }
 </script>
 <table class="tab_panel">
     <tr>
@@ -269,7 +279,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <a href="../" onclick="return setAllCoordinatesSelected('sed_{{ sed.grouper|slugify }}_coord_select',false);">Unselect All</a>
+                                                <a href="../" onclick="return setAllSEDCoordinatesSelected('sed_{{ sed.grouper|slugify }}_coord_select',false);">Unselect All</a>
                                             </td>
                                         </tr>
                                     </table>
