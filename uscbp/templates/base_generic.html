@@ -136,7 +136,7 @@
                             </div>
                             <h2>Model tag cloud</h2>
                             <div style="background:#e6e8ed;">
-                                {% get_tagcloud as model_tags for 'bodb.Model' %}
+                                {% get_tagcloud as model_tags user for 'bodb.Model' %}
                                 {% for tag in model_tags %}
                                     <a href="/bodb/model/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
                                 {% endfor %}
@@ -144,7 +144,7 @@
                             </div>
                             <h2>Brain Operating Principle tag cloud</h2>
                             <div style="background:#e6e8ed;">
-                                {% get_tagcloud as bop_tags for 'bodb.BOP' %}
+                                {% get_tagcloud as bop_tags user for 'bodb.BOP' %}
                                 {% for tag in bop_tags %}
                                     <a href="/bodb/bop/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
                                 {% endfor %}
@@ -152,7 +152,7 @@
                             </div>
                             <h2>Summary of Experimental Data tag cloud</h2>
                             <div style="background:#e6e8ed;">
-                                {% get_tagcloud as sed_tags for 'bodb.SED' %}
+                                {% get_tagcloud as sed_tags user for 'bodb.SED' %}
                                 {% for tag in sed_tags %}
                                     <a href="/bodb/sed/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
                                 {% endfor %}
@@ -160,7 +160,7 @@
                             </div>
                             <h2>Prediction tag cloud</h2>
                             <div style="background:#e6e8ed;">
-                                {% get_tagcloud as prediction_tags for 'bodb.Prediction' %}
+                                {% get_tagcloud as prediction_tags user for 'bodb.Prediction' %}
                                 {% for tag in prediction_tags %}
                                     <a href="/bodb/prediction/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
                                 {% endfor %}
@@ -168,7 +168,7 @@
                             </div>
                             <h2>Summary of Simulation Results tag cloud</h2>
                             <div style="background:#e6e8ed;">
-                                {% get_tagcloud as ssr_tags for 'bodb.SSR' %}
+                                {% get_tagcloud as ssr_tags user for 'bodb.SSR' %}
                                 {% for tag in ssr_tags %}
                                     <a href="/bodb/ssr/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
                                 {% endfor %}

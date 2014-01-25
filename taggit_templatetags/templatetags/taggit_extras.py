@@ -1,6 +1,6 @@
 from django import template
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core.exceptions import FieldError
 
 from templatetag_sugar.register import tag
@@ -16,7 +16,7 @@ T_MIN = getattr(settings, 'TAGCLOUD_MIN', 1.0)
 
 register = template.Library()
 
-def get_queryset(forvar=None):
+def get_queryset(user, forvar=None):
     if None == forvar:
         # get all tags
         queryset = Tag.objects.all()
@@ -30,10 +30,20 @@ def get_queryset(forvar=None):
                 applabel, model = forvar.rsplit('.', 1)
             except ValueError:
                 applabel = forvar
-        
+
+        q=Q()
+        if user.is_authenticated() and not user.is_anonymous():
+            if not user.is_superuser:
+                own_entry_q=Q(document__collator__id=user.id)
+                public_q=Q(document__public=1)
+                group_q=Q(Q(document__draft=0) & Q(document__collator__groups__in=list(user.groups.all())))
+                q=own_entry_q | public_q | group_q
+        else:
+            q=Q(document__public=1)
+
         # filter tagged items        
         if applabel:
-            queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower())
+            queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower()).filter(q)
         if model:
             queryset = queryset.filter(content_type__model=model.lower())
             
@@ -68,9 +78,9 @@ def get_taglist(context, asvar, forvar=None):
     context[asvar] = queryset
     return ''
 
-@tag(register, [Constant('as'), Name(), Optional([Constant('for'), Variable()])])
-def get_tagcloud(context, asvar, forvar=None):
-    queryset = get_queryset(forvar)
+@tag(register, [Constant('as'), Name(), Variable(), Optional([Constant('for'), Variable()])])
+def get_tagcloud(context, asvar, user, forvar=None):
+    queryset = get_queryset(user, forvar)
     num_times = queryset.values_list('num_times', flat=True)
     if(len(num_times) == 0):
         context[asvar] = queryset
