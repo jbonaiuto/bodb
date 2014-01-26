@@ -2,6 +2,7 @@ from django import template
 from django.db import models
 from django.db.models import Count, Q
 from django.core.exceptions import FieldError
+from registration.models import User
 
 from templatetag_sugar.register import tag
 from templatetag_sugar.parser import Name, Variable, Constant, Optional, Model
@@ -32,7 +33,7 @@ def get_queryset(user, forvar=None):
                 applabel = forvar
 
         q=Q()
-        if user.is_authenticated() and not user.is_anonymous():
+        if isinstance(user,User) and user.is_authenticated() and not user.is_anonymous():
             if not user.is_superuser:
                 own_entry_q=Q(document__collator__id=user.id)
                 public_q=Q(document__public=1)
