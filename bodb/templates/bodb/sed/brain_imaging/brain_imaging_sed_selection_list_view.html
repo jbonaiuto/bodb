@@ -1,4 +1,18 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    function setAllSEDSelectedCoords(coord_ids, selected)
+    {
+        for(var i=0; i<coord_ids.length; i++)
+        {
+            alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
+            document.getElementById('sed_coord_select_'+coord_ids[i]).checked=selected;
+            alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
+            //alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
+            //sedCoordSelect(selected, coord_ids[i], '{{ csrf_token }}');
+        }
+        return false;
+    }
+</script>
 <div id="imagingSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
@@ -85,8 +99,8 @@
                             {% if user.is_authenticated and not user.is_anonymous %}
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td colspan="7">
-                                        <a href="../../" onclick="{% for coord in coords %}document.getElementById('sed_coord_select_{{ coord.id }}').checked=true;sedCoordSelect(true, {{ coord.id }}, '{{ csrf_token }}');{% endfor %}return false;">Select all</a> /&nbsp;
-                                        <a href="../../" onclick="{% for coord in coords %}document.getElementById('sed_coord_select_{{ coord.id }}').checked=false;sedCoordSelect(false, {{ coord.id }}, '{{ csrf_token }}');{% endfor %}return false;">Unselect all</a>
+                                        <a href="" onclick="return setAllSEDSelectedCoords([{% for coord in coords %}{% if forloop.counter0 > 0 %}, {% endif %}{{ coord.id }}{% endfor %}], true);">Select all</a> /&nbsp;
+                                        <a href="" onclick="return setAllSEDSelectedCoords([{% for coord in coords %}{% if forloop.counter0 > 0 %}, {% endif %}{{ coord.id }}{% endfor %}], false);">Unselect all</a>
                                     </td>
                                 </tr>
                             {% endif %}

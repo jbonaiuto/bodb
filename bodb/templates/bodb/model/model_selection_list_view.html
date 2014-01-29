@@ -60,9 +60,19 @@
                 </tr>
                 <tr class="col_header">
                     <td colspan="5">
-                        <img id="{{ modelGraphId }}" src="" usemap="#{{ modelGraphId }}Map"/>
-                        <map id="{{ modelGraphId }}Map" name="{{ modelGraphId }}Map">
-                        </map>
+                        <div id="{{ modelGraphId }}Div" style="display:none">
+                            <p>
+                                Zoom:
+                                <input type="button" value="+" onclick="$('#{{ modelGraphId }}').zoomable('zoomIn')" title="Zoom in" />
+                                <input type="button" value="-" onclick="$('#{{ modelGraphId }}').zoomable('zoomOut')" title="Zoom out" />
+                                <input type="button" value="Reset" onclick="$('#{{ modelGraphId }}').zoomable('reset')" />
+                            </p>
+                            <div style="overflow:hidden;position:relative;max-width:1000px;max-height:1000px;">
+                                <img id="{{ modelGraphId }}" width=100% src="" data-zoom-image="" usemap="#{{ modelGraphId }}Map"/>
+                                <map id="{{ modelGraphId }}Map" name="{{ modelGraphId }}Map">
+                                </map>
+                            </div>
+                        </div>
                         <br><span id="{{ modelGraphId }}Msg"></span>
                     </td>
                 </tr>

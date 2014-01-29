@@ -220,8 +220,9 @@ function doneCoordSelect(res, status)
         else
             document.getElementById('coord_'+data.id+'_message').innerHTML='Coordinated unselected';
         document.getElementById('coord_'+data.id+'_message').style.display='block';
-        $('#coord_'+data.id+'_message').fadeOut(5000, function(){});
+        //$('#coord_'+data.id+'_message').fadeOut(5000, function(){});
     }
+    return false;
 
 }
 
@@ -313,6 +314,9 @@ function doneConnDiagram(res, status)
         document.getElementById(data.graphId).src='/media/'+data.connDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
+        document.getElementById(data.graphId+'Div').style.display='block';
+        $('input:button').button();
+        $('#'+data.graphId).zoomable();
     }
     else
         alert(txt);
@@ -341,6 +345,9 @@ function doneBOPDiagram(res, status)
         document.getElementById(data.graphId).src='/media/'+data.bopDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.bopMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view BOP details.";
+        document.getElementById(data.graphId+'Div').style.display='block';
+        $('input:button').button();
+        $('#'+data.graphId).zoomable();
     }
     else
         alert(txt);
@@ -369,6 +376,9 @@ function doneModelDiagram(res, status)
         document.getElementById(data.graphId).src='/media/'+data.modelDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.modelMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view Model or SED details.";
+        document.getElementById(data.graphId+'Div').style.display='block';
+        $('input:button').button();
+        $('#'+data.graphId).zoomable();
     }
     else
         alert(txt);

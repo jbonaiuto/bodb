@@ -61,9 +61,19 @@
             </tr>
             <tr class="col_header">
                 <td colspan="5">
-                    <img id="{{ bopGraphId }}" src="" usemap="#{{ bopGraphId }}Map"/>
-                    <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
-                    </map>
+                    <div id="{{ bopGraphId }}Div" style="display:none">
+                        <p>
+                            Zoom:
+                            <input type="button" value="+" onclick="$('#{{ bopGraphId }}').zoomable('zoomIn')" title="Zoom in" />
+                            <input type="button" value="-" onclick="$('#{{ bopGraphId }}').zoomable('zoomOut')" title="Zoom out" />
+                            <input type="button" value="Reset" onclick="$('#{{ bopGraphId }}').zoomable('reset')" />
+                        </p>
+                        <div style="overflow:hidden;position:relative;max-width:1000px;max-height:1000px;">
+                            <img id="{{ bopGraphId }}" src="" usemap="#{{ bopGraphId }}Map"/>
+                            <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
+                            </map>
+                        </div>
+                    </div>
                     <br><span id="{{ bopGraphId }}Msg"></span>
                 </td>
             </tr>
