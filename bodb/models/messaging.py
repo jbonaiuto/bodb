@@ -42,7 +42,7 @@ class Subscription(models.Model):
     model_type = models.CharField(max_length=100, choices=MODEL_TYPE_CHOICES)
     # keywords in the entry title, description, narrative. If blank, notifications
     # will be sent for all new entries of model_type
-    keywords = models.CharField(max_length=500)
+    keywords = models.CharField(max_length=500, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('subscription_view', kwargs={'pk': self.pk})
