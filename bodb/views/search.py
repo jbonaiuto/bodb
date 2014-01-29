@@ -120,8 +120,14 @@ class SearchView(FormView):
         context['ssrs']=SSR.get_ssr_list(ssrObjs, user)
         context['literatures']=literatures
         context['brain_regions']=brain_regions
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
         context['selected_coord_ids']=[]
         if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
@@ -158,6 +164,14 @@ class BOPSearchView(FormView):
                 bops_to_return.append(bop)
         context['bops']=BOP.get_bop_list(bops_to_return, user)
 
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
         return self.render_to_response(context)
 
 
@@ -182,6 +196,13 @@ class BrainRegionSearchView(FormView):
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
         context['brain_regions']=brain_regions
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return self.render_to_response(context)
 
 
@@ -219,6 +240,13 @@ class LiteratureSearchView(FormView):
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
         context['literatures']=literatures
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return self.render_to_response(context)
 
 
@@ -242,6 +270,14 @@ class ModelSearchView(FormView):
 
         modelObjs=runModelSearch(form.cleaned_data, user.id)
         context['models']=Model.get_model_list(modelObjs, user)
+
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
 
         return self.render_to_response(context)
 
@@ -295,8 +331,14 @@ class SEDSearchView(FormView):
         coords=[sedCoords[sed.id] for sed in imagingObjs]
         context['imaging_seds']=SED.get_sed_list(imagingObjs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
         context['selected_coord_ids']=[]
         if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
