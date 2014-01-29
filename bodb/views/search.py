@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
 from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED
+from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 
 class SearchView(FormView):
@@ -118,10 +118,13 @@ class SearchView(FormView):
         context['imaging_seds']=SED.get_sed_list(imagingObjs, user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'], coords)
         context['ssrs']=SSR.get_ssr_list(ssrObjs, user)
-
-        # first request for search page - start with all record search
         context['literatures']=literatures
         context['brain_regions']=brain_regions
+        context['selected_coord_ids']=[]
+        if user.is_authenticated() and not user.is_anonymous():
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+            for coord in selected_coords:
+                context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
         return self.render_to_response(context)
 
@@ -292,6 +295,11 @@ class SEDSearchView(FormView):
         coords=[sedCoords[sed.id] for sed in imagingObjs]
         context['imaging_seds']=SED.get_sed_list(imagingObjs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['selected_coord_ids']=[]
+        if user.is_authenticated() and not user.is_anonymous():
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+            for coord in selected_coords:
+                context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
         return self.render_to_response(context)
 
