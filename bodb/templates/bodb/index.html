@@ -124,16 +124,18 @@
     </ol>
 
     <!-- Run the tour -->
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
-    <script>
-        $(window).load(function() {
-            $('#joyRideTipContent').joyride({
-                autoStart : true,
-                localStorage: true,
-                localStorageKey: 'index_tour'
+    {% if user.is_authenticated and not user.is_anonymous  %}
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+        <script>
+            $(window).load(function() {
+                $('#joyRideTipContent').joyride({
+                    autoStart : true,
+                    localStorage: true,
+                    localStorageKey: 'index_tour'
+                });
             });
-        });
-    </script>
+        </script>
+    {% endif %}
 {% endblock %}
