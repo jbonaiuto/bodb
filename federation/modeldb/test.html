@@ -1,9 +1,300 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-<head>
-    <title></title>
-</head>
-<body>
+    <head id="ctl00_Head1">
+        <title>
+            ModelDB - Metadata-driven Search
+        </title>
+        <link href="./_common/css/siteNet.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <!-- Main client side script block -->
+        <script>
+            var vBaseClass;
+            var vResponseXML;	// results in XML
+            var vQueryXML;	// query composition in XML
+            vdocFormStr = "document.aspnetForm";
 
-</body>
+
+            var browser;	//-- browser type
+            //----------------------------------------------
+            function XDQuery(h, action) { //-- previously called:XmlQuery(h, action) {
+                //-- post xdquery by xmlhttp, retrieves result and displays
+                //-- h is a div id where to preint the table results.
+
+                var vgXdQ = createXmlDoc();  //--xd Query used for search
+                //====== generating the xsql
+                //xmlp.Open('POST', 'gqd_proxy.asp?action=execute&Source_ID=' + c_dsid, false);
+                //xmlp.Send(vgXdQ.xml);
+                var xw,xs,xp,xe;
+                var x1,x2,x3;
+                var i,i1,i2;
+                var t1,t2,t3;
+                xw = vgXdQ.createElement("edsp_query");
+                x1 = vgXdQ.createElement("from");
+
+                xblAddNodeValueDoc(x1, 2, "id", "g1", vgXdQ);
+                xblAddNodeValueDoc(x1, 2, "gId", "c" + vBaseClass, vgXdQ);
+                xw.appendChild(x1);
+
+                xs = vgXdQ.createElement("select");
+                xp = vgXdQ.createElement("conditions");
+                xe = vgXdQ.createElement("expression");
+
+                //--transversing table to get all data to form the xml
+                var vtrid;
+                var cxs = 0, cxp = 0; // counters
+                var tcg = document.getElementById("tcg");
+                for(i1=1; i1 < tcg.rows.length - 1; i1++ ) {
+                    vtrid = tcg.rows[i1].cells[0].innerHTML;
+
+                    //-- if attribute was seleted to be shown
+                    //alert(eval(vdocFormStr + '.qs' + vtrid));
+                    if (eval(vdocFormStr + '.qs' + vtrid).checked == true) {
+                        cxs++;
+                        t1 = vdocFormStr + '.qp' + vtrid;
+                        t2 = t1 + '.item(' + t1 + ".selectedIndex).value";
+                        t3 = t1 + '.item(' + t1 + ".selectedIndex).text";
+                        x1 = vgXdQ.createElement("col");
+                        xblAddNodeValueDoc(x1, 2, "id",   "c"  + vtrid, vgXdQ);
+                        xblAddNodeValueDoc(x1, 2, "cId",  "g1." + eval(t2) , vgXdQ);
+                        xblAddNodeValueDoc(x1, 2, "name", eval(t3), vgXdQ);
+                        xs.appendChild(x1);
+                    }
+                    //-- if value was added to search
+                    if (eval(vdocFormStr + '.qv' + vtrid).value != '') {  //-- should be trimmed ?? pending
+                        t1 = vdocFormStr + '.qp' + vtrid;
+                        t2 = t1 + '.item(' + t1 + ".selectedIndex).value";
+                        t3 = vdocFormStr + '.qv' + vtrid + '.value';
+
+                        cxp++;
+                        x1 = vgXdQ.createElement("cond");
+                        xblAddNodeValueDoc(x1, 2, "id",   "n"  + vtrid, vgXdQ);
+                        xblAddNodeValueDoc(x1, 2, "cId",  "g1." + eval(t2) , vgXdQ);
+                        xblAddNodeValueDoc(x1, 2, "value", eval(t3), vgXdQ);
+                        xp.appendChild(x1);
+                        //--- pending // operator goes here
+                    }
+                }
+                xw.appendChild(xs);
+                xw.appendChild(xp);
+                xw.appendChild(xe);
+                vgXdQ.appendChild(xw);
+                //-- move up
+                var v_boolExp = "";
+                var v_mess_debug = false;  //? pending verify
+                var v_mess_data  = false;  //? pending verify
+                var hsc_1 = document.getElementById("hsc_1");
+                var hsc_2 = document.getElementById("hsc_2");
+                if (hsc_1.innerHTML != ""){
+                    v_boolExp = eval(vdocFormStr + ".ctr_boolExp.value")
+                }
+                if (hsc_2.innerHTML != "") {
+                    v_mess_debug = eval(vdocFormStr + ".ctr_mess_debug.checked")
+                    //v_mess_data  = document.formS1.ctr_mess_data.checked;	//-- checkbox was removed
+                }
+                xblAddNodeValueDoc(xe, 2, "value", v_boolExp, vgXdQ);
+                xblAddNodeValueDoc(xw, 2, "debug", v_mess_debug, vgXdQ);
+
+                //-- check if query has changed
+                if (action == 'check_query') {return vgXdQ;}	//-- check if query has changed
+                vQueryXML = vgXdQ;	//-- store query in global variable
+
+                //====== end of generating the xsql
+                var div_debug = document.getElementById("div_debug");
+                var div_results = document.getElementById("div_results");
+                div_debug.innerHTML = "";
+                div_results.innerHTML = "&nbsp;";
+
+                if (action == 'execute') {
+                    //-- pending use event firing
+                    div_results.innerHTML = "<font color='red'>Wait, Processing...</font>";
+                    //-- pending refresh results
+
+                    //--
+                    if(browser=="ie5") var xmlp  = new ActiveXObject("MSXML2.XMLHttp");      //-- used to post query
+                    else var xmlp = new XMLHttpRequest();
+
+                    //		POST TO QUERY ADAPTER TO RETURN DATA
+                    xmlp.open('POST', 'eavXDSearch.aspx', false);
+                    xmlp.send(vgXdQ);
+                    vResponseXML = xmlp.responseXML.documentElement;
+                    //alert(vResponseXML.xml);
+
+
+                    //------ formating xml inside as http table
+                    var vtr, vtc;
+                    var sxs;
+                    //-- showing mesages notes
+                    if (v_mess_debug == true)
+                        dispxml(div_debug, vResponseXML.getElementsByTagName("debug")[0]);
+                    /*	//-- data checkbox was removed
+                     if (v_mess_data  == true)
+                     dispxml(div_debug, vResponseXML.getElementsByTagName("rs")[0], false );
+                     */
+
+                    //-- error check
+                    sxs = vResponseXML.getElementsByTagName("error")[0];
+                    if (sxs != null) {
+                        t1 = "";
+                        t1 = t1 + "&nbsp;<b>Error</b><br />";
+                        t1 = t1 + "&nbsp;<u>id</u>: " + sxs.getAttribute("id")+ "<br />";
+                        t1 = t1 + "&nbsp;<u>Description</u>: " + sxs.getAttribute("description")+ "<br />";
+                        t1 = t1 + "&nbsp;<u>value</u>: " + sxs.getAttribute("value")+ "<br />";
+                        div_results.innerHTML = t1;
+                        return
+                    }
+                    formatResults();
+                }
+            }
+            //----------------------------------------------
+            function formatResults() {
+                if(vResponseXML == null) return;
+                showDataSetResultsXMLtext();
+                checkQueryStatus();
+            }
+            //----------------------------------------------
+            function xblAddNodeValueDoc(xc, nodeType, nodename, nodevalue, xDoc) {
+                var xn;
+                xn = xDoc.createElement(nodename);
+                xn.text = "" + nodevalue;     //--PENDING, forced to fit
+                switch (nodeType) {
+                    case 1 : //-- as NODE_ELEMENT
+                        xc.appendChild(xn);
+                        break;
+                    case 2 : //-- as ATTRIBUTE
+                        //xc.attributes.setNamedItem(xn);
+                        xc.setAttribute(nodename, nodevalue);
+                        break;
+                    default:
+                }
+            }
+            //----------------------------------------------
+            function dispxml(h, x, clear) {
+                if (clear == true ) h.innerHTML = '';
+                h.innerHTML = h.innerHTML + dispxml_aux(x, 0);
+            }
+            //----------------------------------------------
+            function dispxml_aux(x, level) {
+                var ret = '';
+                for (var i=0; i<level; i++) ret = ret + '&nbsp;&nbsp;';
+                //--
+                if (x.nodeType == 3 ) {    //-- text node
+                    ret = ret + '<font color=blue>' + x.text + '</font>';
+                }
+                else if (x.nodeType == 1 ) {                     //-- element node
+                    ret = ret + '<font color=brown>' + x.nodeName + '</font>';
+                    //if (x.attributes != null)
+                    for (var i=0; i < x.attributes.length ; i++){
+                        ret = ret + '&nbsp;<font color=green>' + x.attributes[i].name + '</font>=';
+                        ret = ret + '&nbsp;"<b>' + x.attributes[i].value + '</b>"';
+                    }
+                }
+                ret = ret + '<br>'
+                for (var i=0; i < x.childNodes.length ; i++){
+                    ret = ret + dispxml_aux(x.childNodes[i],level+1);
+                }
+                return ret;
+            }
+            //----------------------------------------------
+            //----------------------------------------------
+            function showDataSetResultsXMLtext() {
+                var div_results = document.getElementById('div_results');
+                pdata = vResponseXML.getElementsByTagName('rs')[0];
+                if(browser == "ie5") 	var xmlstring = pdata.xml
+                else {
+                    var objXMLSerializer = new XMLSerializer;
+                    var xmlstring = objXMLSerializer.serializeToString(pdata);
+                }
+                //var browserWidth = browser=="ie5"? document.body.clientHeight/5.1:window.innerHeight/6.5;
+                var browserWidth = 110;
+                div_results.innerHTML = "<textarea rows=20 cols='" + browserWidth +"' id=textarea1 name=textarea1>" + xmlstring + "</textarea>";
+            }
+            //----------------------------------------------
+            //----------------------------------------------
+            function checkQueryStatus() {
+                var thisQueryXML;
+                var thisQueryXMLString;
+                var vQueryXMLString;
+                //-- obtain the new query in xml
+                thisQueryXML = XDQuery('a', 'check_query');
+                //-- convert queries to strings
+                if(browser == "ie5") {
+                    thisQueryXMLString = thisQueryXML.xml;
+                    vQueryXMLString = vQueryXML.xml;
+                }
+                else {
+                    var objXMLSerializer = new XMLSerializer;
+                    thisQueryXMLString = objXMLSerializer.serializeToString(thisQueryXML);
+                    vQueryXMLString = objXMLSerializer.serializeToString(vQueryXML);
+                }
+                //-- compare the two query xml strings
+                var textarea1 = document.getElementById("textarea1");
+                if(thisQueryXMLString == vQueryXMLString) {
+                    if(textarea1 != null) document.getElementById("textarea1").style.backgroundColor = "white";
+                }
+                else {
+                    if(textarea1 != null) document.getElementById("textarea1").style.backgroundColor="whitesmoke";
+                }
+
+                var div_results = document.getElementById("div_results");
+                var exTable = document.getElementById("exTable");
+                if(thisQueryXMLString == vQueryXMLString) {
+                    if(div_results != null) document.getElementById("div_results").style.backgroundColor="white";
+                    if(exTable != null)	document.getElementById("exTable").style.backgroundColor="white";
+                }
+                else {
+                    if(div_results != null) document.getElementById("div_results").style.backgroundColor="whitesmoke";
+                    if(exTable != null) document.getElementById("exTable").style.backgroundColor="whitesmoke";
+                }
+            }
+            //----------------------------------------------
+            //** create xml document appropriate for browser type
+            function createXmlDoc() {
+                //alert("creating xmldoc");
+                var xmldoc;
+                if(browser == "nav6") {
+                    xmldoc = document.implementation.createDocument("", "", null);
+                }
+                else if(browser == "ie5") {
+                    xmldoc = new ActiveXObject("Msxml.DOMDocument"); // use version 3 later? Msxml2.
+                    xmldoc.async = false;
+                }
+                else {
+                    //alert('Your browser can\'t handle this script');
+                    xmldoc = "";	// handle error
+                }
+                return xmldoc;
+            }
+            //----------------------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------
+            //--------------MODAL.JS------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------
+            // Global for brower version branching.
+            var nav6 = browser == nav6;
+
+            XDQuery('a', 'execute')
+        </script>
+        <form name="aspnetForm" method="post" action="eavXDSearch.aspx?db=2&amp;cl=19" id="aspnetForm">
+            <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTI3NDAzNDMyOQ9kFgJmD2QWAgIDD2QWBGYPDxYEHglCYWNrQ29sb3IMHgRfIVNCAghkFgICAQ8PFgIeBFRleHQFBlB1YmxpY2RkAgEPZBYKAgEPDxYGHwAKpQEeC0JvcmRlckNvbG9yCo8BHwECGGQWAmYPDxYCHwIFvQo8c2VsZWN0IGlkPSJ2Y1NDIiBuYW1lPSJ2Y1NDIiAgb25jaGFuZ2U9ICJqYXZhc2NyaXB0OnJlc2V0U2VhcmNoR3JpZCh2Y1NDW3ZjU0Muc2VsZWN0ZWRJbmRleF0udmFsdWUpIiA+PG9wdGlvbiB2YWx1ZT0iMTI1IiAgPjIgT2JqZWN0cyBSZWxhdGlvbnNoaXAgKGVkZ2UpPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iOTIiICA+QWx0ZXJuYXRlIE1vZGVsIEZpbGU8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMjgiICA+Q2FtZSB0byBNb2RlbERCIGJlY2F1c2Ugd2FzPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iOTciICA+Q2VsbDwvb3B0aW9uPjxvcHRpb24gdmFsdWU9IjExNyIgID5DaGFyYWN0ZXI8L29wdGlvbj48b3B0aW9uIHZhbHVlPSI4NyIgID5Db2xsYWJvcmF0aW9uPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iMTU5IiAgPkNvbXBvbmVudDwvb3B0aW9uPjxvcHRpb24gdmFsdWU9IjE5IiAgc2VsZWN0ZWQgID5Db21wdXRhdGlvbmFsIG1vZGVsPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iMTQyIiAgPkdhcCBKdW5jdGlvbnM8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMjYiICA+R2VuZSBOYW1lPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iMTM2IiAgPkdlbmUgc3BlY2llPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iOTEiICA+SW1wbGVtZW50ZXI8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMTgiICA+Sm91cm5hbDwvb3B0aW9uPjxvcHRpb24gdmFsdWU9Ijg4IiAgPkxvY2FsIENvbnRhY3Q8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIzOSIgID5Nb2RlbCBUb3BpYzwvb3B0aW9uPjxvcHRpb24gdmFsdWU9IjM4IiAgPk1vZGVsIFR5cGU8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIzNiIgID5Nb2RlbGluZyBBcHBsaWNhdGlvbjwvb3B0aW9uPjxvcHRpb24gdmFsdWU9IjEyMiIgID5PbnRvbG9neSB0ZXJtPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iNDIiICA+UGFwZXI8L29wdGlvbj48b3B0aW9uIHZhbHVlPSI0NCIgID5QYXBlciBBdXRob3I8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMzUiICA+UGFwZXIgVXNhZ2U8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMjciICA+UHJvdmVuYW5jZS1EYXRlIG1hZGUgcHVibGljPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iMTI0IiAgPlJlbGF0aW9uc2hpcDwvb3B0aW9uPjxvcHRpb24gdmFsdWU9IjE1NyIgID5SdW4gQ3VyYXRpb248L29wdGlvbj48b3B0aW9uIHZhbHVlPSI3MyIgID5TUUwgcHJvZ3JhbXM8L29wdGlvbj48b3B0aW9uIHZhbHVlPSIxMzciICA+U3BlY2llPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iODkiICA+U3RhdHVzPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0iMTE5IiAgPlRyZWUgb3IgZ3JhcGg8L29wdGlvbj48L3NlbGVjdD5kZAICDw8WBh8ACp8BHwMKjwEfAQIYZGQCAw8PFgYfAAqfAR8DCo8BHwECGGRkAgQPDxYGHwAKnwEfAwqPAR8BAhhkZAIFDw8WBB8DCo8BHwECEGRkZM2lKMfZE6WVdcaR7Iw2e1uI3cH/GKjEJ1d9TpLJFdNG" />
+            <input type="hidden" id="vcSC" name="vcSC" value="19"/>
+
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        <table border="0" cellpadding="4" cellspacing="0" width="100%" id="Table10">
+                            <tr>
+                                <td>
+                                    <table border="1" cellpadding="0" cellspacing="0" width="100%" id="Table11">
+                                        <tr><td bgcolor="whitesmoke"><div id="div_debug" ></div></td></tr>
+                                        <tr><td bgcolor="whitesmoke"><div id="div_results">&nbsp;</div></td></tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
 </html>
