@@ -215,12 +215,16 @@ function doneCoordSelect(res, status)
     {
         var txt = res.responseText;
         var data = eval('('+txt+')');
+        var msg='Coordinated unselected';
         if(data.selected)
-            document.getElementById('coord_'+data.id+'_message').innerHTML='Coordinate selected';
-        else
-            document.getElementById('coord_'+data.id+'_message').innerHTML='Coordinated unselected';
-        document.getElementById('coord_'+data.id+'_message').style.display='block';
-        //$('#coord_'+data.id+'_message').fadeOut(5000, function(){});
+            msg='Coordinate selected';
+        var elems=document.getElementsByName('coord_'+data.sed_id+'_'+data.id+'_message');
+        for(var i=0; i<elems.length; i++)
+        {
+            elems[i].innerHTML=msg;
+            elems[i].style.display='block';
+            $('#'+elems[i].id).fadeOut(5000, function(){});
+        }
     }
     return false;
 

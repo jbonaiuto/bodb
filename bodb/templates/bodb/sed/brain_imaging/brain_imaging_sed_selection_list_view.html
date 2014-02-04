@@ -1,14 +1,12 @@
 {% load staticfiles %}
 <script type="text/javascript">
-    function setAllSEDSelectedCoords(coord_ids, selected)
+    function setAllSEDSelectedCoords(sed_id, selected)
     {
-        for(var i=0; i<coord_ids.length; i++)
+        var boxes=$('.sed_'+sed_id+'_coord_select');
+        for(var i=0; i<boxes.length; i++)
         {
-            alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
-            document.getElementById('sed_coord_select_'+coord_ids[i]).checked=selected;
-            alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
-            //alert(document.getElementById('sed_coord_select_'+coord_ids[i]).checked);
-            //sedCoordSelect(selected, coord_ids[i], '{{ csrf_token }}');
+            boxes[i].checked=selected;
+            sedCoordSelect(selected, boxes[i].value, '{{ csrf_token }}');
         }
         return false;
     }
@@ -85,7 +83,7 @@
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td>
                                         {% if user.is_authenticated and not user.is_anonymous %}
-                                            <input type=checkbox name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord.id in selected_coord_ids %}checked=True{% endif %}/>
+                                            <input type=checkbox class="sed_{{ sed.id }}_coord_select" name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord.id in selected_coord_ids %}checked=True{% endif %}/>
                                         {% endif %}
                                     </td>
                                     <td>{{ coord.named_brain_region }}</td>
@@ -93,14 +91,14 @@
                                     <td>{{ coord.coord.x }}</td>
                                     <td>{{ coord.coord.y }}</td>
                                     <td>{{ coord.coord.z }}</td>
-                                    <td><span id="coord_{{ coord.id }}_message" class="messages"></span></td>
+                                    <td><span id="coord_{{ sed.id }}_{{ coord.id }}_message" name="coord_{{ sed.id }}_{{ coord.id }}_message" class="messages"></span></td>
                                 </tr>
                             {% endfor %}
                             {% if user.is_authenticated and not user.is_anonymous %}
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td colspan="7">
-                                        <a href="" onclick="return setAllSEDSelectedCoords([{% for coord in coords %}{% if forloop.counter0 > 0 %}, {% endif %}{{ coord.id }}{% endfor %}], true);">Select all</a> /&nbsp;
-                                        <a href="" onclick="return setAllSEDSelectedCoords([{% for coord in coords %}{% if forloop.counter0 > 0 %}, {% endif %}{{ coord.id }}{% endfor %}], false);">Unselect all</a>
+                                        <a href="" onclick="return setAllSEDSelectedCoords('{{ sed.id }}', true);">Select all</a> /&nbsp;
+                                        <a href="" onclick="return setAllSEDSelectedCoords('{{ sed.id }}', false);">Unselect all</a>
                                     </td>
                                 </tr>
                             {% endif %}
