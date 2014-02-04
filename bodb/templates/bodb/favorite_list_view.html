@@ -4,6 +4,8 @@
     <title>BODB - Favorite Entries</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
+        animatedcollapse.addDiv('coordData', 'fade=1');
+
         function saveCoordinateSelection()
         {
             selectionName=document.getElementById('id_selectionName').value;
