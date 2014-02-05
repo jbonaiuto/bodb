@@ -317,6 +317,7 @@ function doneConnDiagram(res, status)
         document.getElementById(data.graphId+'Div').style.display='block';
         $('input:button').button();
         $('#'+data.graphId).zoomable();
+        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer'});
     }
     else
         alert(txt);
