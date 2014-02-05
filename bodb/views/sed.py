@@ -1020,7 +1020,7 @@ class SelectSEDCoordView(JSONResponseMixin, BaseCreateView):
             # save selected SED coord
             selectedCoord.save()
 
-            context = {'id':self.request.POST['coordId'], 'selected':True }
+            context = {'id':self.request.POST['coordId'], 'sed_id': selectedCoord.sed_coordinate.sed.id, 'selected':True }
         return context
 
 
@@ -1029,12 +1029,14 @@ class UnselectSEDCoordView(JSONResponseMixin, BaseCreateView):
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            sed_id=None
             # load selected SED coordinate pointing to atlas coord
             for selectedCoord in SelectedSEDCoord.objects.filter(sed_coordinate__id=self.request.POST['coordId'], selected=True,
                 user=self.request.user):
+                sed_id=selectedCoord.sed_coordinate.sed.id
                 # delete selected SED coordinate (SED coordinate remains intact)
                 selectedCoord.delete()
-            context = {'id':self.request.POST['coordId'], 'selected':False }
+            context = {'id':self.request.POST['coordId'], 'sed_id': sed_id, 'selected':False }
         return context
 
 
