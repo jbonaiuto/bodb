@@ -87,10 +87,13 @@
 			touchInfos.touchMove = false; // is the user is in move mode?
 			touchInfos.touchPinch = false; // or is the user is in pinch mode?
 			
+			
+			
 			// smartZoomData is used to saved every plugin vars
 		    targetElement.data('smartZoomData', {
                settings : settings, // given settings
                containerDiv : containerDiv, // target container
+               originalMap:null,
                originalSize: {width:targetElement.width(), height:targetElement.height()}, // plugin target size at the beginning
                originalPosition: targetElement.offset(), // plugin target position at the beginning 
                transitionObject:getBrowserTransitionObject(), // use to know if the browser is compatible with css transition
@@ -102,6 +105,19 @@
                moveLastPosition:null // save the last mouse/touch position use in "moveOnMotion" method  
             });
             
+            
+            var smartData = targetElement.data('smartZoomData');
+            if (targetElement.attr("useMap") != "") {
+            	var tempOriginalMap = document.getElementById(targetElement.attr("useMap").substring(1));
+				if (tempOriginalMap != null) {
+					smartData.originalMap = tempOriginalMap.cloneNode(true);
+				//for IE6, we need to manually copy the areas' coords
+
+				for (var i = 0; i < smartData.originalMap.areas.length; i++)
+					smartData.originalMap.areas[i].coords = tempOriginalMap.areas[i].coords;
+					}
+			}
+			
 			// adjust the contain and target size into the page            
 		    adjustToContainer();
 
@@ -154,7 +170,7 @@
 	    	// manage scale min, max
 	  		newScale = Math.max(smartData.adjustedPosInfos.scale, newScale); // the scale couldn't be lowest than the initial scale
 	  		newScale = Math.min(smartData.settings.maxScale, newScale); // the scale couldn't be highest than the max setted by user
-	  		
+
 	        var newWidth = originalSize.width * newScale; // new size to apply according to new scale
 		  	var newHeight = originalSize.height * newScale;
 		  
@@ -168,11 +184,13 @@
 		
 			if(duration == null) // default effect duration is 700ms
 				duration = 700;
-			
+				
 			animate(targetElement, validPosition.x, validPosition.y, newWidth, newHeight, duration, function(){ // set the new position and size via the animation function
 				smartData.currentWheelDelta = 0; // reset the weelDelta when zoom end
 			 	updateMouseMoveCursor(); // remove "move" cursor when zoom end
 			});
+			
+			zoomMap(newScale);
 			
 	    },
 	     /**
@@ -244,7 +262,28 @@
     	} 
     } else {
     	$.error( 'Method ' +  method + ' does not exist on e-smartzoom jquery plugin' );
-    }    
+    }  
+    
+    function zoomMap(newScale) {
+			 // resize image map
+			 var smartData = targetElement.data('smartZoomData');
+			 var map = document.getElementById(targetElement.attr("useMap").substring(1));
+			 if (map != null) {
+			   for (var i = 0; i < map.areas.length; i++) {
+			     var area = map.areas[i];
+			     var originalArea = smartData.originalMap.areas[i];
+			     var newCoordString="";
+			     var coordPairs = originalArea.coords.split(' ');
+			     for (var j=0; j<coordPairs.length; j++) {
+			         var coord=coordPairs[j].split(',');
+			         if(j>0)
+			           newCoordString+=' ';
+			         newCoordString+=Math.round(coord[0] * newScale)+","+Math.round(coord[1] * newScale);
+			     }
+			     area.coords = newCoordString;
+			   }
+			 }
+			}  
     
     /**
      * call zoom function on mouse wheel event
@@ -558,7 +597,7 @@
 	  	var scaleToFit = Math.min(Math.min(containerRect.width/originalSize.width, containerRect.height/originalSize.height), 1).toFixed(2); // scale to use to include the target into containerRect
 	  	var newWidth = originalSize.width * scaleToFit; // we could now find the new size
 	  	var newHeight = originalSize.height * scaleToFit;
-	  
+
 	    // store the position and size information in adjustedPosInfos object
 	  	smartData.adjustedPosInfos = {"left":(containerRect.width - newWidth)/2 + parentOffset.left, "top": (containerRect.height - newHeight)/2 + parentOffset.top, "width": newWidth, "height" : newHeight, "scale":scaleToFit};
 	  	stopAnim();
