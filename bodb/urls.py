@@ -11,7 +11,7 @@ from bodb.views.messaging import UserMessageListView, CreateUserMessageView, Rea
 from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
-from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView
+from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
 from bodb.views.sed import CreateSEDView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, ConnectivityDiagramView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView
 from bodb.views.ssr import SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
@@ -95,6 +95,10 @@ urlpatterns = patterns('',
     url(r'^prediction/(?P<pk>\d+)/edit/$', UpdatePredictionView.as_view(), {}, 'prediction_edit'),
     url(r'^prediction/tag/(?P<name>[^/]+)/$', PredictionTaggedView.as_view(), {}, 'prediction_tagged'),
 
+    url(r'^search/$', SearchView.as_view(), {}, 'search'),
+    url(r'^search/modeldb/$', ModelDBSearchView.as_view(), {}, 'modeldb_search'),
+    url(r'^search/pubmed/$', PubmedSearchView.as_view(), {}, 'pubmed_search'),
+
     url(r'^sed/(?P<pk>\d+)/$', SEDDetailView.as_view(), {}, 'sed_view'),
     url(r'^sed/(?P<pk>\d+)/delete/$', DeleteSEDView.as_view(), {}, 'sed_delete'),
     url(r'^sed/(?P<pk>\d+)/edit/$', UpdateSEDView.as_view(), {}, 'sed_edit'),
@@ -121,9 +125,6 @@ urlpatterns = patterns('',
     url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
     url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
     url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),
-
-    url(r'^search/$', SearchView.as_view(), {}, 'search'),
-    url(r'^search/pubmed/$', PubmedSearchView.as_view(), {}, 'pubmed_search'),
 
     url(r'^ssr/(?P<pk>\d+)/$', SSRDetailView.as_view(), {}, 'ssr_view'),
     url(r'^ssr/(?P<pk>\d+)/delete/$', DeleteSSRView.as_view(), {}, 'ssr_delete'),

@@ -152,6 +152,13 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
+                    <td width=20%>&nbsp;</td>
+                    <td width=200px align=right>
+                        <input type=button class=btn value="Search ModelDB" onclick="return showPopup('search_modeldb', 700, 700, '/bodb/search/modeldb/');"  onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr valign=top>
                     <td width=20%>{{ form.title.label_tag }}*</td>
                     <td width=200px>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
                     <td class="myerrors"><span id="title_errors">{{ form.title.errors }}</span></td>

@@ -417,6 +417,10 @@ class PubmedSearchForm(forms.Form):
     start = forms.IntegerField(widget=forms.HiddenInput)
 
 
+class ModelDBSearchForm(forms.Form):
+    all = forms.CharField(help_text='All fields', required=False)
+
+
 class BOPForm(forms.ModelForm):
     collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
     parent = forms.ModelChoiceField(queryset=BOP.objects.all(),widget=forms.HiddenInput,required=False)

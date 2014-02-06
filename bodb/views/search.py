@@ -1,10 +1,12 @@
 import datetime
 from Bio import Entrez
+from federation.modeldb.search import runModelDBSearch
+
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
-from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm
+from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm, ModelDBSearchForm
 from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 
@@ -345,6 +347,25 @@ class SEDSearchView(FormView):
 
         return self.render_to_response(context)
 
+
+class ModelDBSearchView(FormView):
+    form_class=ModelDBSearchForm
+    template_name = 'bodb/search/search_modeldb.html'
+
+    def get_context_data(self, **kwargs):
+        context=super(ModelDBSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='BODB-Insert-Model#ModelDB_Search'
+        context['ispopup']=('_popup' in self.request.GET)
+        return context
+
+    def form_valid(self, form):
+        context=self.get_context_data()
+
+        searchData={'keywords': form.cleaned_data['all']}
+        results=runModelDBSearch(searchData, self.request.user.id)
+        context['search_results']=results
+        context['form']=form
+        return self.render_to_response(context)
 
 class PubmedSearchView(FormView):
     form_class=PubmedSearchForm

@@ -133,8 +133,10 @@ class Model(Module):
         return html
 
     def get_modeldb_url(self):
-        url='http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model='+self.modeldb_accession_number
-        return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in ModelDB</a>' % (url,url)
+        if self.modeldb_accession_number is not None:
+            url='http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model='+str(self.modeldb_accession_number)
+            return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in ModelDB</a>' % (url,url)
+        return ''
 
     @staticmethod
     def get_literature_models(literature, user):
@@ -441,3 +443,13 @@ def model_gxl(models, user):
     glx+='</graph>\n'
     glx+='</gxl>\n'
     return glx
+
+class ModelDBResult:
+    def __init__(self):
+        self.accession_number=''
+        self.exists=False
+        self.title=''
+        self.description=''
+        self.keywords=''
+        self.literature=None
+        self.authors=''
