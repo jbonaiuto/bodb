@@ -31,6 +31,11 @@
     <div id="list">
         <h2>Workspaces</h2>
         <table class="tab_panel">
+            <tr>
+                <td colspan="5">
+                    <input class="btn" type="button" value="New" onclick="document.location.href='/bodb/workspace/new/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
             <tr class="section_subheader">
                 <td colspan="5">
                     Select a workspace to make it active
@@ -56,11 +61,6 @@
                     <td><span id="workspace_{{ workspace.id }}_message" class="messages"></span></td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="5">
-                    <input class="btn" type="button" value="New" onclick="document.location.href='/bodb/workspace/new/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
-                </td>
-            </tr>
         </table>
     </div>
 {% endblock %}
