@@ -190,7 +190,7 @@
 			 	updateMouseMoveCursor(); // remove "move" cursor when zoom end
 			});
 			
-			zoomMap(newScale);
+			zoomMap( newScale );
 			
 	    },
 	     /**
