@@ -1,3 +1,4 @@
+from Bio import Entrez
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
@@ -373,3 +374,52 @@ class PubMedResult:
         self.pages=''
         self.language=''
         self.url=''
+
+
+def importPubmedLiterature(pubmed_id):
+    if Literature.objects.filter(pubmed_id=pubmed_id):
+        lit=Literature.objects.get(pubmed_id=pubmed_id)
+    else:
+        article_handles=Entrez.esummary(db="pubmed", id=pubmed_id)
+        article_record=Entrez.read(article_handles)[0]
+        lit=Journal(title=article_record['Title'].replace('\'', '\\\''), year=article_record['PubDate'].split(' ')[0],
+            pubmed_id=pubmed_id, url='http://www.ncbi.nlm.nih.gov/pubmed/'+article_record['Id'], collator=User.objects.get(username='jbonaiuto'))
+        if 'Source' in article_record:
+            lit.journal_name=article_record['Source'].replace('\'', '\\\'')
+        if 'Volume' in article_record:
+            try:
+                lit.volume=int(article_record['Volume'])
+            except ValueError:
+                None
+        if 'Issue' in article_record:
+            lit.issue=article_record['Issue']
+        if 'Pages' in article_record:
+            lit.pages=article_record['Pages']
+        if 'LangList' in article_record:
+            lit.language=", ".join(article_record['LangList'])
+        lit.save()
+        if 'AuthorList' in article_record:
+            authorList=", ".join(article_record['AuthorList']).replace('\'', '\\\'')
+            authors=authorList.split(', ')
+            # list of author ids
+            for idx,author in enumerate(authors):
+                full_name = author.split()
+                last_name = unicode(full_name[0].encode('latin1','xmlcharrefreplace'))
+                first_name = full_name[1]
+
+                # get Id if author exists
+                if Author.objects.filter(first_name=first_name, last_name=last_name):
+                    orderedAuth=LiteratureAuthor(author=Author.objects.filter(first_name=first_name, last_name=last_name)[0], order=idx)
+                    orderedAuth.save()
+                    lit.authors.add(orderedAuth)
+
+                # otherwise add new author
+                else:
+                    a=Author()
+                    a.first_name=first_name
+                    a.last_name=last_name
+                    a.save()
+                    orderedAuth=LiteratureAuthor(author=a,order=idx)
+                    orderedAuth.save()
+                    lit.authors.add(orderedAuth)
+    return lit
