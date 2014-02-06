@@ -15,8 +15,24 @@
 	background: rgba(58, 56, 63, 0.8);	
 	border: solid 1px #100000;
 	color:#FFFFFF;
-	padding: 8px;
+	padding: 5px;
 	text-align: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:13px;
+    font-weight:bold;
+    font-stretch:extra-condensed;
+    width: 115px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 5px;
+    z-index: 10;
+}
+
+.zoomContainer{
+    width:1000px;
+    /*height:368px;*/
+    padding:0px;
+    float: left;
 }
 
 #positionButtonDiv .positionButtonSpan img{

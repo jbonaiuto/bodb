@@ -319,8 +319,6 @@ function doneConnDiagram(res, status)
         document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
         document.getElementById(data.graphId+'Div').style.display='block';
-        $('input:button').button();
-        $('#'+data.graphId).zoomable();
         $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer'});
     }
     else

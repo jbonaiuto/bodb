@@ -3,38 +3,41 @@
 <link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
 <script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.min.js' %}"></script>
 <script type="text/javascript">
-		
+
+    $(document).ready(function()
+    {
 		$('#topPositionMap,#leftPositionMap,#rightPositionMap,#bottomPositionMap').bind("click", moveButtonClickHandler);
 		$('#zoomInButton,#zoomOutButton').bind("click", zoomButtonClickHandler);
-		
-		function zoomButtonClickHandler(e){
-	    	var scaleToAdd = 0.8;
-			if(e.target.id == 'zoomOutButton')
-				scaleToAdd = -scaleToAdd;
-			$('#{{ connectionGraphId }}').smartZoom('zoom', scaleToAdd);
-	    }
-	    
-	    function moveButtonClickHandler(e){
-	    	var pixelsToMoveOnX = 0;
-			var pixelsToMoveOnY = 0;
-	
-			switch(e.target.id){
-				case "leftPositionMap":
-					pixelsToMoveOnX = 50;	
-				break;
-				case "rightPositionMap":
-					pixelsToMoveOnX = -50;
-				break;
-				case "topPositionMap":
-					pixelsToMoveOnY = 50;	
-				break;
-				case "bottomPositionMap":
-					pixelsToMoveOnY = -50;	
-				break;
-			}
-			$('#{{ connectionGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
-	    }
 
+		
+        function zoomButtonClickHandler(e){
+            var scaleToAdd = 0.8;
+            if(e.target.id == 'zoomOutButton')
+                scaleToAdd = -scaleToAdd;
+            $('#{{ connectionGraphId }}').smartZoom('zoom', scaleToAdd);
+        }
+
+        function moveButtonClickHandler(e){
+            var pixelsToMoveOnX = 0;
+            var pixelsToMoveOnY = 0;
+
+            switch(e.target.id){
+                case "leftPositionMap":
+                    pixelsToMoveOnX = 50;
+                break;
+                case "rightPositionMap":
+                    pixelsToMoveOnX = -50;
+                break;
+                case "topPositionMap":
+                    pixelsToMoveOnY = 50;
+                break;
+                case "bottomPositionMap":
+                    pixelsToMoveOnY = -50;
+                break;
+            }
+            $('#{{ connectionGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
+        }
+    });
 </script>
 {% endblock %}
 <div id="connectivitySEDData">
@@ -105,39 +108,31 @@
             </tr>
             <tr class="col_header">
                 <td colspan="6">
-                <div id="{{ connectionGraphId }}Div" style="display:none">
-                        <p>
-                            Zoom:
-                            <input type="button" value="+" onclick="$('#{{ connectionGraphId }}').zoomable('zoomIn')" title="Zoom in" />
-                            <input type="button" value="-" onclick="$('#{{ connectionGraphId }}').zoomable('zoomOut')" title="Zoom out" />
-                            <input type="button" value="Reset" onclick="$('#{{ connectionGraphId }}').zoomable('reset')" />
-                        </p>
-                	<div id="positionButtonDiv">
-							<p>Zoom : 
-								<span>
-									<img id="zoomInButton" class="zoomButton" src={% static 'bodb/images/zoom_assets/zoomIn.png' %} title="zoom in" alt="zoom in" />
-									<img id="zoomOutButton" class="zoomButton" src={% static 'bodb/images/zoom_assets/zoomOut.png' %} title="zoom out" alt="zoom out" />
-								</span>
-							</p>
-							<p>Pan: 
-								<span class="positionButtonSpan">
-									<map name="positionMap" class="positionMapClass">
-										<area id="topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
-										<area id="leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
-										<area id="rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
-										<area id="bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
-									</map>
-									<img src={% static 'bodb/images/zoom_assets/position.png' %} usemap="#positionMap" />
-								</span>
-							</p>
-						</div>
-                        <div style="overflow:hidden;position:relative;max-width:1000px;max-height:1000px;">
-                            <img src="" usemap="#{{ connectionGraphId }}Map" id="{{ connectionGraphId }}"/>
-                            <map id="{{ connectionGraphId }}Map" name="{{ connectionGraphId }}Map">
-                            </map>
+                    <div id="{{ connectionGraphId }}Div" style="display:none" class="zoomContainer">
+                        <div id="positionButtonDiv">
+                            <p>Zoom :
+                                <span>
+                                    <img id="zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
+                                    <img id="zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
+                                </span>
+                            </p>
+                            <p>Pan:
+                                <span class="positionButtonSpan">
+                                    <map name="positionMap" class="positionMapClass">
+                                        <area id="topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
+                                        <area id="leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
+                                        <area id="rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
+                                        <area id="bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
+                                    </map>
+                                    <img src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
+                                </span>
+                            </p>
                         </div>
+                        <img src="" usemap="#{{ connectionGraphId }}Map" id="{{ connectionGraphId }}"/>
+                        <map id="{{ connectionGraphId }}Map" name="{{ connectionGraphId }}Map">
+                        </map>
+                        <br><span id="{{ connectionGraphId }}Msg"></span>
                     </div>
-                    <br><span id="{{ connectionGraphId }}Msg"></span>
                 </td>
             </tr>
         {% endif %}
