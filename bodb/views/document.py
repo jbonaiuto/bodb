@@ -1,3 +1,4 @@
+import Image
 import fileinput
 import os
 from django.contrib.auth.models import Group
@@ -174,4 +175,5 @@ def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
     FILE = open(map_path, 'r')
     map = FILE.read()
     FILE.close()
-    return diagram, map
+    im=Image.open(png_path)
+    return diagram, im.size, map

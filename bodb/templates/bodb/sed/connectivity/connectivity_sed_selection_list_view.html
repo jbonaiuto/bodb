@@ -2,6 +2,7 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
 <script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.rwdImageMaps.js' %}"></script>
 <script type="text/javascript">
 
     $(document).ready(function()
@@ -124,11 +125,11 @@
                                         <area id="rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
                                         <area id="bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
                                     </map>
-                                    <img src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
+                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
                                 </span>
                             </p>
                         </div>
-                        <img src="" usemap="#{{ connectionGraphId }}Map" id="{{ connectionGraphId }}" style="width:100%"/>
+                        <img src="" usemap="#{{ connectionGraphId }}Map" id="{{ connectionGraphId }}" style="width:100%" origWidth="" origHeight=""/>
                         <map id="{{ connectionGraphId }}Map" name="{{ connectionGraphId }}Map">
                         </map>
                         <br><span id="{{ connectionGraphId }}Msg"></span>

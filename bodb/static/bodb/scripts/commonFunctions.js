@@ -315,10 +315,13 @@ function doneConnDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
+        document.getElementById(data.graphId).setAttribute('origWidth',data.connDiagramW);
+        document.getElementById(data.graphId).setAttribute('origHeight',data.connDiagramH);
         document.getElementById(data.graphId).src='/media/'+data.connDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
         document.getElementById(data.graphId+'Div').style.display='block';
+        $('img[usemap]').rwdImageMaps();
         $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer'});
     }
     else

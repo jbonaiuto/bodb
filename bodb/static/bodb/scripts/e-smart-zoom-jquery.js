@@ -265,25 +265,25 @@
     }  
     
     function zoomMap(newScale) {
-			 // resize image map
-			 var smartData = targetElement.data('smartZoomData');
-			 var map = document.getElementById(targetElement.attr("useMap").substring(1));
-			 if (map != null) {
-			   for (var i = 0; i < map.areas.length; i++) {
-			     var area = map.areas[i];
-			     var originalArea = smartData.originalMap.areas[i];
-			     var newCoordString="";
-			     var coordPairs = originalArea.coords.split(' ');
-			     for (var j=0; j<coordPairs.length; j++) {
-			         var coord=coordPairs[j].split(',');
-			         if(j>0)
-			           newCoordString+=' ';
-			         newCoordString+=Math.round(coord[0] * newScale)+","+Math.round(coord[1] * newScale);
-			     }
-			     area.coords = newCoordString;
-			   }
-			 }
-			}  
+         // resize image map
+         var smartData = targetElement.data('smartZoomData');
+         var map = document.getElementById(targetElement.attr("useMap").substring(1));
+         if (map != null) {
+             for (var i = 0; i < map.areas.length; i++) {
+                 var area = map.areas[i];
+                 var originalArea = smartData.originalMap.areas[i];
+                 var newCoordString="";
+                 var coordPairs = originalArea.coords.split(' ');
+                 for (var j=0; j<coordPairs.length; j++) {
+                     var coord=coordPairs[j].split(',');
+                     if(j>0)
+                        newCoordString+=' ';
+                     newCoordString+=Math.round(coord[0] * newScale)+","+Math.round(coord[1] * newScale);
+                 }
+                area.coords = newCoordString;
+             }
+         }
+    }
     
     /**
      * call zoom function on mouse wheel event

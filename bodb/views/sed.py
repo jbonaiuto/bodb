@@ -960,7 +960,9 @@ class ConnectivityDiagramView(JSONResponseMixin,BaseCreateView):
             graphTool=self.request.POST['graphTool']
             connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds[]'))
             dot_xml = conn_sed_gxl(connectionSEDs)
-            context['connDiagram'], context['connMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
+            context['connDiagram'], size, context['connMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
+            context['connDiagramW']=size[0]
+            context['connDiagramH']=size[1]
             context['graphId']=self.request.POST['graphID']
         return context
 
