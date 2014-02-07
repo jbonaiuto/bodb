@@ -105,6 +105,8 @@
         {
             if(validateForm())
             {
+                document.getElementById('savingMsg').style.display = 'block';
+                document.getElementById('savingOver').style.display = 'block';
                 var title=document.getElementById('id_title').value;
                 var brief_desc=document.getElementById('id_brief_description').value
                 var data={'title': title, 'brief_description': brief_desc};
@@ -116,6 +118,8 @@
 
         function doneCheckSimilarModels(res, status)
         {
+            document.getElementById('savingMsg').style.display = 'none';
+            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")

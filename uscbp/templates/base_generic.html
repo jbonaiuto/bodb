@@ -73,11 +73,13 @@
 <body {% if not ispopup %}class="tundra" onLoad="onLoad()"{% endif %}>
     <div id="toPopup">
         <div class="close"></div>
-        <span class="ecs_tooltip">Press Esc to close <span class="arrow"></span></span>
+        <span id="ecs_tooltip" class="ecs_tooltip">Press Esc to close <span class="arrow"></span></span>
         <div id="popup_content"></div>
     </div>
     <div class="loader"></div>
     <div id="backgroundPopup"></div>
+    <div id='savingMsg' style='display: none;'>Saving, please wait...</div>
+    <div id='savingOver' style='display: none;'></div>
     {% if not ispopup %}
         <table style="width:100%" cellpadding=0 cellspacing=0>
             <tr>
