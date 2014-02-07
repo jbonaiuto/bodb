@@ -450,7 +450,6 @@ class PubmedSearchView(FormView):
         # if there is a search phrase
         search_results=[]
         if len(searchPhrase)>0:
-            print(searchPhrase)
             # get IDs of pubmed articles matching the search phrase
             id_handle=Entrez.esearch(db="pubmed", term=searchPhrase, retmax=self.number, retstart=start, mindate=minDate,
                 maxdate=maxDate)
