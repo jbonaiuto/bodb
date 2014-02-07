@@ -367,6 +367,17 @@ class ModelDBSearchView(FormView):
         context['form']=form
         return self.render_to_response(context)
 
+stop_words=['a', 'about', 'again', 'all', 'almost', 'also', 'although', 'always', 'among', 'an', 'and', 'another',
+            'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'between', 'both', 'but', 'by', 'can',
+            'could', 'did', 'do', 'does', 'done', 'due', 'during', 'each', 'either', 'enough', 'especially', 'etc',
+            'for', 'found', 'from', 'further', 'had', 'has', 'have', 'having', 'here', 'how', 'however', 'i', 'if',
+            'in', 'into', 'is', 'it', 'its', 'itself', 'just', 'kg', 'km', 'made', 'mainly', 'make', 'may', 'mg',
+            'might', 'ml', 'mm', 'most', 'mostly', 'must', 'nearly', 'neither', 'no', 'nor', 'obtained', 'of', 'often',
+            'on', 'our', 'overall', 'perhaps', 'pmid', 'quite', 'rather', 'really', 'regarding', 'seem', 'seen',
+            'several', 'should', 'show', 'showed', 'shown', 'shows', 'significantly', 'since', 'so', 'some', 'such',
+            'than', 'that', 'the', 'their', 'theirs', 'them', 'then', 'there', 'therefore', 'these', 'they', 'this',
+            'those', 'through', 'thus', 'to', 'upon', 'use', 'used', 'using', 'various', 'very', 'was', 'we', 'were',
+            'what', 'when', 'which', 'while', 'with', 'within', 'without', 'would']
 class PubmedSearchView(FormView):
     form_class=PubmedSearchForm
     template_name='bodb/search/search_pubmed.html'
@@ -386,7 +397,11 @@ class PubmedSearchView(FormView):
         # get search phrase
         searchPhrase=''
         if len(form.cleaned_data['all']):
-            searchPhrase+='%s[tiab]' % form.cleaned_data['all']
+            for i,word in enumerate(form.cleaned_data['all'].split()):
+                if not word in stop_words:
+                    if i>0:
+                        searchPhrase+='+AND+'
+                    searchPhrase+='%s[tiab]' % word.replace(':','')
         if len(form.cleaned_data['journal']):
             if len(searchPhrase):
                 searchPhrase+='+AND+'
@@ -398,7 +413,10 @@ class PubmedSearchView(FormView):
         if len(form.cleaned_data['authors']):
             if len(searchPhrase):
                 searchPhrase+='+AND+'
-            searchPhrase+='%s[au]' % form.cleaned_data['authors']
+            for i,word in enumerate(form.cleaned_data['authors'].split()):
+                if i>0:
+                    searchPhrase+='+AND+'
+                searchPhrase+='%s[au]' % word
         if len(form.cleaned_data['issue']):
             if len(searchPhrase):
                 searchPhrase+='+AND+'
@@ -406,7 +424,11 @@ class PubmedSearchView(FormView):
         if len(form.cleaned_data['title']):
             if len(searchPhrase):
                 searchPhrase+='+AND+'
-            searchPhrase+='%s[ti]' % form.cleaned_data['title']
+            for i,word in enumerate(form.cleaned_data['title'].split()):
+                if not word in stop_words:
+                    if i>0:
+                        searchPhrase+='+AND+'
+                    searchPhrase+='%s[Title]' % word.replace(':','')
         minDate='1900'
         if len(form.cleaned_data['min_year']):
             minDate=form.cleaned_data['min_year']
@@ -428,6 +450,7 @@ class PubmedSearchView(FormView):
         # if there is a search phrase
         search_results=[]
         if len(searchPhrase)>0:
+            print(searchPhrase)
             # get IDs of pubmed articles matching the search phrase
             id_handle=Entrez.esearch(db="pubmed", term=searchPhrase, retmax=self.number, retstart=start, mindate=minDate,
                 maxdate=maxDate)
