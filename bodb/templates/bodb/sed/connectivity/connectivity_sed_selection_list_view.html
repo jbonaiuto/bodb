@@ -7,32 +7,32 @@
 
     $(document).ready(function()
     {
-		$('#topPositionMap,#leftPositionMap,#rightPositionMap,#bottomPositionMap').bind("click", moveButtonClickHandler);
-		$('#zoomInButton,#zoomOutButton').bind("click", zoomButtonClickHandler);
+		$('#{{ connectionGraphId }}topPositionMap,#{{ connectionGraphId }}leftPositionMap,#{{ connectionGraphId }}rightPositionMap,#{{ connectionGraphId }}bottomPositionMap').bind("click", {{ connectionGraphId }}moveButtonClickHandler);
+		$('#{{ connectionGraphId }}zoomInButton,#{{ connectionGraphId }}zoomOutButton').bind("click", {{ connectionGraphId }}zoomButtonClickHandler);
 
 		
-        function zoomButtonClickHandler(e){
+        function {{ connectionGraphId }}zoomButtonClickHandler(e){
             var scaleToAdd = 0.8;
-            if(e.target.id == 'zoomOutButton')
+            if(e.target.id == '{{ connectionGraphId }}zoomOutButton')
                 scaleToAdd = -scaleToAdd;
             $('#{{ connectionGraphId }}').smartZoom('zoom', scaleToAdd);
         }
 
-        function moveButtonClickHandler(e){
+        function {{ connectionGraphId }}moveButtonClickHandler(e){
             var pixelsToMoveOnX = 0;
             var pixelsToMoveOnY = 0;
 
             switch(e.target.id){
-                case "leftPositionMap":
+                case "{{ connectionGraphId }}leftPositionMap":
                     pixelsToMoveOnX = 50;
                 break;
-                case "rightPositionMap":
+                case "{{ connectionGraphId }}rightPositionMap":
                     pixelsToMoveOnX = -50;
                 break;
-                case "topPositionMap":
+                case "{{ connectionGraphId }}topPositionMap":
                     pixelsToMoveOnY = 50;
                 break;
-                case "bottomPositionMap":
+                case "{{ connectionGraphId }}bottomPositionMap":
                     pixelsToMoveOnY = -50;
                 break;
             }
@@ -113,17 +113,17 @@
                         <div id="positionButtonDiv">
                             <p>Zoom :
                                 <span>
-                                    <img id="zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
-                                    <img id="zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
+                                    <img id="{{ connectionGraphId }}zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
+                                    <img id="{{ connectionGraphId }}zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
                                 </span>
                             </p>
                             <p>Pan:
                                 <span class="positionButtonSpan">
                                     <map name="positionMap" class="positionMapClass">
-                                        <area id="topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
-                                        <area id="leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
-                                        <area id="rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
-                                        <area id="bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
+                                        <area id="{{ connectionGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
+                                        <area id="{{ connectionGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
+                                        <area id="{{ connectionGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
+                                        <area id="{{ connectionGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
                                     </map>
                                     <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
                                 </span>
