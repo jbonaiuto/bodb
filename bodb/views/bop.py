@@ -240,6 +240,9 @@ class BOPDiagramView(JSONResponseMixin,BaseCreateView):
             graphTool=self.request.POST['graphTool']
             bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds[]'))
             dot_xml=bop_gxl(bops, self.request.user)
-            context['bopDiagram'], context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
+            context['bopDiagram'], size, context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
+                self.request.user, ext=self.request.POST['graphID'])
+            context['bopDiagramW']=size[0]
+            context['bopDiagramH']=size[1]
             context['graphId']=self.request.POST['graphID']
         return context

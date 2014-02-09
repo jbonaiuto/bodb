@@ -302,9 +302,9 @@ function doneReferenceExport(res, status)
 
 function generateConnDiagram(connSEDIds, graphTool, graphId, csrf_token)
 {
+    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     var data={'graphTool': graphTool, 'connSEDIds': connSEDIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/sed/connectivityDiagram/", data: data, complete: doneConnDiagram };
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     $.ajax(args);
     return false;
 }
@@ -321,8 +321,8 @@ function doneConnDiagram(res, status)
         document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
         document.getElementById(data.graphId+'Div').style.display='block';
-        $('img[usemap]').rwdImageMaps();
-        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer'});
+        $('#'+data.graphId).rwdImageMaps();
+        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
     }
     else
         alert(txt);
@@ -330,13 +330,13 @@ function doneConnDiagram(res, status)
 
 function generateBOPDiagram(graphTool, graphId, csrf_token)
 {
+    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     var bopIds=[];
     var bopCheckboxes=$('.selectedBOPCheckbox');
     for(var i=0; i<bopCheckboxes.length; i++)
         bopIds.push(bopCheckboxes[i].value);
     var data={'graphTool': graphTool, 'bopIds': bopIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/bopDiagram/", data: data, complete: doneBOPDiagram };
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     $.ajax(args);
     return false;
 }
@@ -347,13 +347,14 @@ function doneBOPDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
-        var date = new Date();
+        document.getElementById(data.graphId).setAttribute('origWidth',data.bopDiagramW);
+        document.getElementById(data.graphId).setAttribute('origHeight',data.bopDiagramH);
         document.getElementById(data.graphId).src='/media/'+data.bopDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.bopMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view BOP details.";
         document.getElementById(data.graphId+'Div').style.display='block';
-        $('input:button').button();
-        $('#'+data.graphId).zoomable();
+        $('#'+data.graphId).rwdImageMaps();
+        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
     }
     else
         alert(txt);
@@ -361,13 +362,13 @@ function doneBOPDiagram(res, status)
 
 function generateModelDiagram(graphTool, graphId, csrf_token)
 {
+    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     var modelIds=[];
     var modelCheckboxes=$('.selectedModelCheckbox');
     for(var i=0; i<modelCheckboxes.length; i++)
         modelIds.push(modelCheckboxes[i].value);
     var data={'graphTool': graphTool, 'modelIds': modelIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/modelDiagram/", data: data, complete: doneModelDiagram };
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
     $.ajax(args);
     return false;
 }
@@ -378,13 +379,14 @@ function doneModelDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
-        var date = new Date();
+        document.getElementById(data.graphId).setAttribute('origWidth',data.modelDiagramW);
+        document.getElementById(data.graphId).setAttribute('origHeight',data.modelDiagramH);
         document.getElementById(data.graphId).src='/media/'+data.modelDiagram;
         document.getElementById(data.graphId+'Map').innerHTML=data.modelMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view Model or SED details.";
         document.getElementById(data.graphId+'Div').style.display='block';
-        $('input:button').button();
-        $('#'+data.graphId).zoomable();
+        $('#'+data.graphId).rwdImageMaps();
+        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
     }
     else
         alert(txt);

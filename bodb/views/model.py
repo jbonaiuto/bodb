@@ -786,6 +786,9 @@ class ModelDiagramView(JSONResponseMixin,BaseCreateView):
             graphTool=self.request.POST['graphTool']
             models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds[]'))
             dot_xml=model_gxl(models, self.request.user)
-            context['modelDiagram'], context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml, self.request.user)
+            context['modelDiagram'], size, context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
+                self.request.user, ext=self.request.POST['graphID'])
+            context['modelDiagramW']=size[0]
+            context['modelDiagramH']=size[1]
             context['graphId']=self.request.POST['graphID']
         return context
