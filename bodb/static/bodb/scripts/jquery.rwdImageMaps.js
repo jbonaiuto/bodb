@@ -42,15 +42,29 @@
                         var $this = $(this);
 						if (!$this.data(c))
 							$this.data(c, $this.attr(c));
-						
-						var coordPairs = $this.data(c).split(' ');
+
                         var newCoordString = '';
-						for (var i = 0; i < coordPairs.length; ++i) {
-                            var coord=coordPairs[i].split(',');
-                            if(i>0)
-                                newCoordString+=' ';
-                            newCoordString+=Math.round(((coord[0]/w)*100)*wPercent)+","+Math.round(((coord[1]/h)*100)*hPercent);
-						}
+                        if($this.attr('shape')=='poly')
+                        {
+                            var coordPairs = $this.data(c).split(' ');
+                            for (var i = 0; i < coordPairs.length; ++i) {
+                                var coord=coordPairs[i].split(',');
+                                if(i>0)
+                                    newCoordString+=' ';
+                                newCoordString+=Math.round(((coord[0]/w)*100)*wPercent)+","+Math.round(((coord[1]/h)*100)*hPercent);
+                            }
+                        }
+                        else
+                        {
+                            var coords = $this.data(c).split(',');
+                            for (var i=0; i<coords.length/2; i++) {
+                                if(i>0)
+                                    newCoordString+=',';
+                                var newCoordx=Math.round(((coords[i*2]/w)*100)*wPercent);
+                                var newCoordy=Math.round(((coords[i*2+1]/h)*100)*hPercent);
+                                newCoordString+=newCoordx+","+newCoordy;
+                            }
+                        }
                         $this.attr(c, newCoordString);
 					});
 				}).attr('src', $that.attr('src'));

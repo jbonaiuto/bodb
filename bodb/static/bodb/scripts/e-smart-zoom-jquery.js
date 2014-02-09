@@ -235,22 +235,31 @@
         var relScale=newScale/smartData['lastScale'];
         var map = document.getElementById(targetElement.attr("useMap").substring(1));
         if (map != null) {
-            alert(relScale);
             for (var i = 0; i < map.areas.length; i++) {
                 var area = map.areas[i];
                 var newCoordString="";
-                var coordPairs = area.coords.split(' ');
-                if(i==0)
-                    alert(area.coords);
-                for (var j=0; j<coordPairs.length; j++) {
-                    var coord=coordPairs[j].split(',');
-                    if(j>0)
-                       newCoordString+=' ';
-                    newCoordString+=Math.round(coord[0] * relScale)+","+Math.round(coord[1] * relScale);
+                if(area.shape=='poly')
+                {
+                    var coordPairs = area.coords.split(' ');
+                    for (var j=0; j<coordPairs.length; j++) {
+                        var coord=coordPairs[j].split(',');
+                        if(j>0)
+                           newCoordString+=' ';
+                        newCoordString+=Math.round(coord[0] * relScale)+","+Math.round(coord[1] * relScale);
+                    }
+                }
+                else
+                {
+                    var coords = area.coords.split(',');
+                    for (var j=0; j<coords.length/2; j++) {
+                        if(j>0)
+                            newCoordString+=',';
+                        var newCoordx=Math.round(coords[j*2]*relScale);
+                        var newCoordy=Math.round(coords[j*2+1]*relScale);
+                        newCoordString+=newCoordx+","+newCoordy;
+                    }
                 }
                 area.coords = newCoordString;
-                if(i==0)
-                    alert(area.coords);
             }
         }
         smartData['lastScale']=newScale;
