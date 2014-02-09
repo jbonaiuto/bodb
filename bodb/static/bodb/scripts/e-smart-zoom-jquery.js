@@ -34,10 +34,6 @@
 		  *					           'dblClickEnabled' : true enable plugin mouse doubleClick behviour
 		  *					           'mouseMoveEnabled' : true enable plugin target drag behviour
 		  * 					       'moveCursorEnabled' : true show moveCursor for drag
-		  * 					       'touchEnabled' : true enable plugin touch interaction 
-		  *						       'dblTapEnabled' : true enable plugin double tap behaviour 
-		  *						       'pinchEnabled' : true enable zoom when user pinch on target
-		  *						       'touchMoveEnabled' : true enable target move via touch
 		  *                            'containerBackground' : '#FFFFFF' zoom target container background color (if containerClass is not set)
 		  *                            'containerClass' : '' class to apply to zoom target container if you whant to change background or borders (don't change size or position via the class)
 		  * 						  } 
@@ -61,10 +57,6 @@
 		      'dblClickEnabled' : true,
 		      'mouseMoveEnabled' : true,
 		      'moveCursorEnabled' : true,
-		      'touchEnabled' : true,
-		      'dblTapEnabled' : true,
-		      'pinchEnabled' : true,
-		      'touchMoveEnabled' : true,
 		      'containerBackground' : "#FFFFFF",
 		      'containerClass' : ""
 		    }, options);
@@ -80,15 +72,6 @@
 		   		containerDiv.css({'background-color':settings.containerBackground});
 		    containerDiv.append(targetElement);
 			
-			// create touchInfos object that will be use to manage zoom with touch events
-			var touchInfos = new Object();
-			touchInfos.lastTouchEndTime = 0; // this var is use to know if user had doubleTap or not 
-			touchInfos.lastTouchPositionArr = null; // list of touch point used for pinch
-			touchInfos.touchMove = false; // is the user is in move mode?
-			touchInfos.touchPinch = false; // or is the user is in pinch mode?
-			
-			
-			
 			// smartZoomData is used to saved every plugin vars
 		    targetElement.data('smartZoomData', {
                settings : settings, // given settings
@@ -97,34 +80,19 @@
                originalSize: {width:targetElement.width(), height:targetElement.height()}, // plugin target size at the beginning
                originalPosition: targetElement.offset(), // plugin target position at the beginning 
                transitionObject:getBrowserTransitionObject(), // use to know if the browser is compatible with css transition
-               touch:touchInfos, // save touchInfos
                mouseWheelDeltaFactor:0.15, // enable to slow down the zoom via mouse wheel
                currentWheelDelta:0, // the current mouse wheel delta used to calculate scale to apply
                adjustedPosInfos:null, // use to save the adjust information in "adjustToContainer" method (so we can access the normal target size in plugin when we whant)
                moveCurrentPosition:null, // save the current mouse/touch position use in "moveOnMotion" method   
-               moveLastPosition:null // save the last mouse/touch position use in "moveOnMotion" method  
+               moveLastPosition:null, // save the last mouse/touch position use in "moveOnMotion" method
+               lastScale:1.0
             });
-            
-            
-            var smartData = targetElement.data('smartZoomData');
-            if (targetElement.attr("useMap") != "") {
-            	var tempOriginalMap = document.getElementById(targetElement.attr("useMap").substring(1));
-				if (tempOriginalMap != null) {
-					smartData.originalMap = tempOriginalMap.cloneNode(true);
-				//for IE6, we need to manually copy the areas' coords
 
-				for (var i = 0; i < smartData.originalMap.areas.length; i++)
-					smartData.originalMap.areas[i].coords = tempOriginalMap.areas[i].coords;
-					}
-			}
-			
-			// adjust the contain and target size into the page            
+			// adjust the contain and target size into the page
 		    adjustToContainer();
 
 			// listening mouse and touch events
-			if(settings.touchEnabled == true)
-	        	targetElement.bind('touchstart.smartZoom', touchStartHandler);
-	        if(settings.mouseEnabled == true){
+			if(settings.mouseEnabled == true){
 	        	if(settings.mouseMoveEnabled == true)
 		        	targetElement.bind('mousedown.smartZoom', mouseDownHandler);
 		        if(settings.scrollEnabled == true){
@@ -228,16 +196,13 @@
 	    	var containerDiv = smartData.containerDiv;
 	    	// remove all listenerns 
 	        targetElement.unbind('mousedown.smartZoom');
-	        targetElement.bind('touchstart.smartZoom');
-	    	containerDiv.unbind('mousewheel.smartZoom');
+	        containerDiv.unbind('mousewheel.smartZoom');
 	        containerDiv.unbind('dblclick.smartZoom');
 	    	containerDiv.unbind( 'mousewheel.smartZoom DOMMouseScroll.smartZoom');
 		    $(window).unbind('resize.smartZoom');
 			$(document).unbind('mousemove.smartZoom');
 			$(document).unbind('mouseup.smartZoom');
-			$(document).unbind('touchmove.smartZoom');
-	    	$(document).unbind('touchend.smartZoom');
-		
+
 			targetElement.css({"cursor":"default"}); // reset default cursor
 		    containerDiv.before(targetElement); // move target element to original container 
 	   		animate(targetElement, smartData.originalPosition.left, smartData.originalPosition.top,  smartData.originalSize.width, smartData.originalSize.height, 5); // reset initial position
@@ -266,21 +231,29 @@
     
     function zoomMap(newScale) {
          // resize image map
-         var map = document.getElementById(targetElement.attr("useMap").substring(1));
-         if (map != null) {
-             for (var i = 0; i < map.areas.length; i++) {
-                 var area = map.areas[i];
-                 var newCoordString="";
-                 var coordPairs = area.coords.split(' ');
-                 for (var j=0; j<coordPairs.length; j++) {
-                     var coord=coordPairs[j].split(',');
-                     if(j>0)
-                        newCoordString+=' ';
-                     newCoordString+=Math.round(coord[0] * newScale)+","+Math.round(coord[1] * newScale);
-                 }
+        var smartData = targetElement.data('smartZoomData');
+        var relScale=newScale/smartData['lastScale'];
+        var map = document.getElementById(targetElement.attr("useMap").substring(1));
+        if (map != null) {
+            alert(relScale);
+            for (var i = 0; i < map.areas.length; i++) {
+                var area = map.areas[i];
+                var newCoordString="";
+                var coordPairs = area.coords.split(' ');
+                if(i==0)
+                    alert(area.coords);
+                for (var j=0; j<coordPairs.length; j++) {
+                    var coord=coordPairs[j].split(',');
+                    if(j>0)
+                       newCoordString+=' ';
+                    newCoordString+=Math.round(coord[0] * relScale)+","+Math.round(coord[1] * relScale);
+                }
                 area.coords = newCoordString;
-             }
-         }
+                if(i==0)
+                    alert(area.coords);
+            }
+        }
+        smartData['lastScale']=newScale;
     }
     
     /**
@@ -362,113 +335,6 @@
 		
 		$(document).unbind('mousemove.smartZoom'); // remove listeners when drag is done
 		$(document).unbind('mouseup.smartZoom');    	
-    }
-    
-    /**
-     * save touch position and init vars on touch start (information will be use in touchMoveHandler function and touch end)
-     * @param {Object} e : touch event  
-     */
-    function touchStartHandler(e){
-    	e.preventDefault(); // prevent default browser drag
-    	
-    	$(document).unbind('touchmove.smartZoom'); // unbind if we already listen touch events
-	    $(document).unbind('touchend.smartZoom');
-    	
-	    $(document).bind('touchmove.smartZoom', touchMoveHandler); // listen move and touch end events to manage drag on touch
-    	$(document).bind('touchend.smartZoom', touchEndHandler);
-    	
-		var touchList = e.originalEvent.touches; // get touch infos from event 
-		var firstTouch = touchList[0];
-		     
-		var smartData = targetElement.data('smartZoomData'); 
-		smartData.touch.touchMove = false; // will be set to true if the user start drag
-		smartData.touch.touchPinch = false; // will be set to true if the user whant to pinch (zoom)
-    	smartData.moveCurrentPosition = new Point(firstTouch.clientX, firstTouch.clientY); // save the finger position on screen on touch start
-    	smartData.moveLastPosition = new Point(firstTouch.clientX, firstTouch.clientY);
-    	smartData.touch.lastTouchPositionArr = new Array(); // save touch position off all fingers to manage pinch
-    	var currentTouch;
-    	var nbTouch = touchList.length;
-    	for(var i = 0;i<nbTouch;++i){
-    		currentTouch = touchList[i];
-    		smartData.touch.lastTouchPositionArr.push(new Point(currentTouch.clientX, currentTouch.clientY));
-    	}
-    }
-    
-    /**
-     *  manage pinch or drag when touch move
-     * @param {Object} e : touch event
-     */
-    function touchMoveHandler(e){ 
- 		e.preventDefault(); // prevent default browser behaviour
-
-    	var smartData = targetElement.data('smartZoomData');
-    	
-		var touchListEv = e.originalEvent.touches; // get touch information on event
-    	var nbTouch = touchListEv.length;
-		var currentFirstTouchEv = touchListEv[0];
-		
-		if(nbTouch == 1 && !smartData.touch.touchPinch && smartData.settings.touchMoveEnabled == true){ // if the user use only one finger and touchPinch==false => we manage drag
-			smartData.touch.touchMove = true;
-			moveOnMotion(currentFirstTouchEv.clientX, currentFirstTouchEv.clientY, 0);
-		}else if(nbTouch == 2 && !smartData.touch.touchMove && smartData.settings.pinchEnabled == true){ // if the user use two fingers and touchMove==false => we manage pinch 
-			smartData.touch.touchPinch = true;
-			
-			var currentSecondTouchEv = touchListEv[1]; // get current fingers position and last fingers positions
-			var lastP1 = smartData.touch.lastTouchPositionArr[0];
-			var lastP2 = smartData.touch.lastTouchPositionArr[1];
-			var currentP1 = new Point(currentFirstTouchEv.clientX, currentFirstTouchEv.clientY);
-			var currentP2 = new Point(currentSecondTouchEv.clientX, currentSecondTouchEv.clientY);
-			
-			var currentP1P2Distance = currentP1.distance(currentP2); // distance between current two fingers positions
-			var lastP1P2Distance = lastP1.distance(lastP2); // distance between the last two fingers positions registered 
-			var currentDistance = currentP1P2Distance - lastP1P2Distance; // distance between last move and current move
-			
-			if(Math.abs(currentDistance)<3) // finger pixel error (jump between in and out mode sometimes if i don't do this check)  
-				return;
-			
-			var middle =  new Point((currentP1.x + currentP2.x) /2, (currentP1.y + currentP2.y) /2); // get the point between the two fingers
-			var targetRect = getTargetRect(); // the current plugin target size
-			var originSize = smartData.originalSize; // original plugin target size
-			var currentScale = (targetRect.width / originSize.width); // current scale base on original size
-			var newZoomValueToAdd = currentP1P2Distance/lastP1P2Distance; // scale between current distance and last fingers distance
-			var newZoomScale = ((targetRect.width * newZoomValueToAdd) / originSize.width); // the new zoom scale
-			
-			publicMethods.zoom(newZoomScale - currentScale, middle, 0); // call zoom fonction with the scale to add (newZoomScale - currentScale)
-			
-			smartData.touch.lastTouchPositionArr[0] = currentP1; //update last touch position points for next function iteration 
-			smartData.touch.lastTouchPositionArr[1] = currentP2;
-		}
-    }
-    
-    /**
-     * manage touch move end or double tap at touch end
-     * @param {Object} e : touch event
-     */
-    function touchEndHandler(e){
- 		e.preventDefault(); // prevent default browser behaviour
- 		
- 		var nbTouchAtEnd = e.originalEvent.touches.length;
-    	if(nbTouchAtEnd == 0){ // unbind listeners if the user take off all his fingers
-	    	$(document).unbind('touchmove.smartZoom');
-		    $(document).unbind('touchend.smartZoom');
-    	}
-    	var smartData = targetElement.data('smartZoomData');
-    	
-    	if(smartData.touch.touchPinch) // nothing to do for pinch behaviour in this function
-    		return;
-    		
-    	if(smartData.touch.touchMove){ // smooth motion at end if we are in drag mode
-    		if(smartData.moveLastPosition.distance(smartData.moveCurrentPosition) > 1){ // smooth only if the user drag fast
-				var interpolateP = smartData.moveLastPosition.interpolate(smartData.moveCurrentPosition, -4); // the end smooth motion is calculate according to last finger motion 
-				moveOnMotion(interpolateP.x, interpolateP.y, 500);
-			}
-    	}else{
-    		if(smartData.settings.dblTapEnabled == true && smartData.touch.lastTouchEndTime != 0 && new Date().getTime() - smartData.touch.lastTouchEndTime < 300){ // if the user double tap (double tap if there is less than 300 ms between first and second tap)
-				var lastStartPos = smartData.touch.lastTouchPositionArr[0];
-			    zoomOnDblClick(lastStartPos.x, lastStartPos.y);  
-	    	}
-	    	smartData.touch.lastTouchEndTime = new Date().getTime();
-    	}
     }
     
     /**
