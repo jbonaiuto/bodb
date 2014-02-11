@@ -29,11 +29,13 @@
         <h2>{{ document }} Permissions</h2>
         <form id="permForm" method="post" action="">
             {% csrf_token %}
-            <h3>Groups</h3>
             <div id="groupDiv" style="display:block">
                 <table class="tab_panel">
+                    <tr class="section_subheader">
+                        <td colspan="4">Groups</td>
+                    </tr>
                     <tr class="col_header">
-                        <td style="width:250px">Group</td>
+                        <td style="width:250px">&nbsp;</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
@@ -66,11 +68,13 @@
                     </tr>
                 </table>
             </div>
-            <h3>Users</h3>
             <div id="userDiv" style="display:block">
                 <table class="tab_panel">
+                    <tr class="section_subheader">
+                        <td colspan="4">Users</td>
+                    </tr>
                     <tr class="col_header">
-                        <td style="width:250px">Username</td>
+                        <td style="width:250px">&nbsp;</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
