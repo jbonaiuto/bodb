@@ -21,7 +21,6 @@
         function {{ connectionGraphId }}moveButtonClickHandler(e){
             var pixelsToMoveOnX = 0;
             var pixelsToMoveOnY = 0;
-
             switch(e.target.id){
                 case "{{ connectionGraphId }}leftPositionMap":
                     pixelsToMoveOnX = 50;
@@ -119,13 +118,13 @@
                             </p>
                             <p>Pan:
                                 <span class="positionButtonSpan">
-                                    <map name="positionMap" class="positionMapClass">
+                                    <map name="{{ connectionGraphId }}positionMap" class="positionMapClass">
                                         <area id="{{ connectionGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
                                         <area id="{{ connectionGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
                                         <area id="{{ connectionGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
                                         <area id="{{ connectionGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
                                     </map>
-                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
+                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ connectionGraphId }}positionMap" />
                                 </span>
                             </p>
                         </div>

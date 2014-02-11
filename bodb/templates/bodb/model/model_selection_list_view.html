@@ -112,13 +112,13 @@
                                 </p>
                                 <p>Pan:
                                 <span class="positionButtonSpan">
-                                    <map name="positionMap" class="positionMapClass">
+                                    <map name="{{ modelGraphId }}positionMap" class="positionMapClass">
                                         <area id="{{ modelGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
                                         <area id="{{ modelGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
                                         <area id="{{ modelGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
                                         <area id="{{ modelGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
                                     </map>
-                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#positionMap" />
+                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ modelGraphId }}positionMap" />
                                 </span>
                                 </p>
                             </div>
