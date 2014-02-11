@@ -78,7 +78,7 @@
     </div>
     <div class="loader"></div>
     <div id="backgroundPopup"></div>
-    <div id='savingMsg' style='display: none;'>Saving, please wait...</div>
+    <div id='savingMsg' style='display: none;'>Saving, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='savingOver' style='display: none;'></div>
     {% if not ispopup %}
         <table style="width:100%" cellpadding=0 cellspacing=0>
@@ -87,23 +87,18 @@
                 <td style="width:700px" align=left>
                     <div id="user_info">
                         {% if user.is_authenticated and not user.is_anonymous  %}
-                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;
+                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;{% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                             <br>[<a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;
                             [<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
-                            {% ifnotequal message_count 0 %}
-                                <br><div class="alert"><a id="messagesLink" href="/bodb/messages/">You have {{ message_count }} unread message{% ifnotequal message_count 1 %}s{% endifnotequal %}</a></div>
-                            {% else %}
-                                [<a id="messagesLink" href="/bodb/messages/">Messages</a>]
-                            {% endifnotequal %}
-                            {% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                         {% else %}
                             <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
                             <br>[<a href="" onclick="return openHelp('BODB_Login');">Help</a>]
                         {% endif %}
                     </div>
                 </td>
-                <td style="width:50px" align=right>
+                <td style="width:90px" align=right valign="top">
                     <div id="user_img">
+                        <a href="/bodb/messages"><img src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 10px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
                         {% if user.is_authenticated and user.get_profile.avatar %}
                             <img height=55 src="{{ user.get_profile.avatar.url }}"/>
                         {% endif %}
