@@ -96,9 +96,9 @@
                         {% endif %}
                     </div>
                 </td>
-                <td width="105px" align=right valign="top">
+                <td width="110px" align=right valign="top">
                     <div id="user_img">
-                        <a href="/bodb/messages" style="position: relative;bottom: 20px;left: 10px;"><img src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
+                        <a href="/bodb/messages" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
                         {% if user.is_authenticated and user.get_profile.avatar %}
                             <img height=55 src="{{ user.get_profile.avatar.url }}"/>
                         {% endif %}
