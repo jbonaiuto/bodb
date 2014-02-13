@@ -26,8 +26,8 @@ class Workspace(models.Model):
     related_seds = models.ManyToManyField('SED')
     related_ssrs = models.ManyToManyField('SSR')
     saved_coordinate_selections = models.ManyToManyField('SavedSEDCoordSelection')
-    #created_date = models.DateTimeField(auto_now_add=True,blank=True)
-    created_date = models.DateTimeField(blank=True)
+    created_date = models.DateTimeField(auto_now_add=True,blank=True)
+    #created_date = models.DateTimeField(blank=True)
 
     class Meta:
         app_label='bodb'
@@ -395,5 +395,4 @@ def user_post_save_handler(sender, instance, created, **kwargs):
 
 
 # Register the User.post_save signal handler
-#post_save.connect(user_post_save_handler, sender=User)
 post_save.connect(user_post_save_handler, sender=User)

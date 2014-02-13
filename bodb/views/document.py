@@ -174,6 +174,8 @@ def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
     os.system('%s -Tcmapx -o%s -Tpng -o%s %s' % (graphTool, map_path, png_path, dot_path))
     FILE = open(map_path, 'r')
     map = FILE.read()
+    map_lines=map.split('\n')
+    map='\n'.join(map_lines[1:-2])
     FILE.close()
     im=Image.open(png_path)
     return diagram, im.size, map
