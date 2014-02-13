@@ -11,25 +11,36 @@ class Command(BaseCommand):
         message = "this is a very, very basic newsletter for new entries that will provide full urls when run from the server.\n"
         message += "clearly it needs more love.\n"
         
-        #bops = BOP.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=30)).order_by('-creation_time')[:5]
+        #bops = BOP.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
         bops = BOP.objects.filter(draft=0, public=1).order_by('-creation_time')[:5]
-        message += "new BOPs\n"
+        message += "New BOPs\n\n"
         for bop in bops:
-            message += bop.get_absolute_url() + '\n'
+            message += bop.title + ' (' + settings.URL_BASE + bop.get_absolute_url() + ')\n'
+            message += bop.get_collator_str() + '\n'
+            message += bop.brief_description + '\n\n'
             
+        #models = Model.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
         models = Model.objects.filter(draft=0, public=1).order_by('-creation_time')[:5]
-        message += "\nnew Models\n"
+        message += "\nNew Models\n\n"
         for model in models:
-            message += model.get_absolute_url() + '\n'
+            message += model.title + ' (' + settings.URL_BASE + model.get_absolute_url() + ')\n'
+            message += model.get_collator_str() + '\n'
+            message += model.brief_description + '\n\n'
             
+        #seds = SED.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
         seds = SED.objects.filter(draft=0, public=1).order_by('-creation_time')[:5]
-        message += "\nnew SEDs\n"
+        message += "\nNew SEDs\n\n"
         for sed in seds:
-            message += sed.get_absolute_url() + '\n'
+            message += sed.title + ' (' + settings.URL_BASE + sed.get_absolute_url() + ')\n'
+            message += sed.get_collator_str() + '\n'
+            message += sed.brief_description + '\n\n'
             
+        #ssrs = SSR.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
         ssrs = SSR.objects.filter(draft=0, public=1).order_by('-creation_time')[:5]
-        message += "\nnew SSRs\n"
+        message += "\nNew SSRs\n\n"
         for ssr in ssrs:
-            message += ssr.get_absolute_url() + '\n'
+            message += ssr.title + ' (' + settings.URL_BASE + ssr.get_absolute_url() + ')\n'
+            message += ssr.get_collator_str() + '\n'
+            message += ssr.brief_description + '\n\n'
         
-        send_mail("new entries", message, settings.DEFAULT_FROM_EMAIL, ['mwinter@unboundedpress.org, jbonaiuto@gmail.com, arbib@usc.edu'])
+        send_mail("new entries", message, settings.DEFAULT_FROM_EMAIL, ['mwinter@unboundedpress.org'])
