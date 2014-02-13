@@ -1,4 +1,4 @@
-from PIL import Image
+import Image
 import fileinput
 import os
 from django.contrib.auth.models import Group
