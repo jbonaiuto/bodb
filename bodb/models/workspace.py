@@ -27,7 +27,6 @@ class Workspace(models.Model):
     related_ssrs = models.ManyToManyField('SSR')
     saved_coordinate_selections = models.ManyToManyField('SavedSEDCoordSelection')
     created_date = models.DateTimeField(auto_now_add=True,blank=True)
-    #created_date = models.DateTimeField(blank=True)
 
     class Meta:
         app_label='bodb'
