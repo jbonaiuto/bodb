@@ -232,6 +232,7 @@ class WorkspaceDetailView(BODBView,FormView):
 
     def get_context_data(self, **kwargs):
         context=super(WorkspaceDetailView,self).get_context_data(**kwargs)
+        user=self.request.user
         context['helpPage']='BODB-View-Workspace'
         context['workspace']=self.object
 
@@ -240,29 +241,30 @@ class WorkspaceDetailView(BODBView,FormView):
         context['modelGraphId']='modelRelationshipDiagram'
 
         context['form']=WorkspaceInvitationForm(initial={
-            'invited_by':self.request.user,
+            'invited_by':user,
             'workspace':self.object
         })
         invited_user_ids=[]
         for invite in WorkspaceInvitation.objects.filter(workspace=self.object).exclude(status='declined'):
             invited_user_ids.append(invite.invited_user.id)
-        context['form'].fields['invited_users'].queryset=User.objects.all().exclude(id=self.request.user.id).exclude(id__in=invited_user_ids)
+        context['form'].fields['invited_users'].queryset=User.objects.all().exclude(id=user.id).exclude(id__in=invited_user_ids)
 
         context['selected']=self.request.GET.get('selected','activity')
-        context['admin']=(self.request.user in self.object.admin_users.all()) or self.request.user.is_superuser
-        context['can_delete_coord_selection']=self.request.user.has_perm('delete_coordinate_selection',self.object)
-        context['can_add_coord_selection']=self.request.user.has_perm('add_coordinate_selection',self.object)
-        context['can_change_coord_selection']=self.request.user.has_perm('change_coordinate_selection',self.object)
-        context['can_add_post']=self.request.user.has_perm('add_post',self.object)
-        context['can_add_entry']=self.request.user.has_perm('add_entry',self.object)
-        context['can_remove_entry']=self.request.user.has_perm('remove_entry',self.object)
-        context['can_add_bookmark']=self.request.user.has_perm('add_bookmark',self.object)
-        context['can_change_bookmark']=self.request.user.has_perm('change_bookmark',self.object)
-        context['can_delete_bookmark']=self.request.user.has_perm('delete_bookmark',self.object)
+        context['admin']=(user in self.object.admin_users.all()) or user.is_superuser
+        context['can_delete_coord_selection']=user.has_perm('delete_coordinate_selection',self.object)
+        context['can_add_coord_selection']=user.has_perm('add_coordinate_selection',self.object)
+        context['can_change_coord_selection']=user.has_perm('change_coordinate_selection',self.object)
+        context['can_add_post']=user.has_perm('add_post',self.object)
+        context['can_add_entry']=user.has_perm('add_entry',self.object)
+        context['can_remove_entry']=user.has_perm('remove_entry',self.object)
+        context['can_add_bookmark']=user.has_perm('add_bookmark',self.object)
+        context['can_change_bookmark']=user.has_perm('change_bookmark',self.object)
+        context['can_delete_bookmark']=user.has_perm('delete_bookmark',self.object)
         members=[]
         for usr in self.object.group.user_set.all():
-            subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=self.request.user).count()>0
-            is_admin=usr in self.object.admin_users.all()
+            if user.is_authenticated() and not user.is_anonymous():
+                subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=user).count()>0
+                is_admin=usr in self.object.admin_users.all()
             members.append([usr,is_admin,subscribed_to])
         context['members']=members
         if context['admin']:
@@ -271,7 +273,6 @@ class WorkspaceDetailView(BODBView,FormView):
         context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object)
 
         # Visibility query filter
-        user=self.request.user
         visibility = Document.get_security_q(user)
 
         context['models']=Model.get_model_list(self.object.related_models.filter(visibility).distinct(),user)
@@ -291,15 +292,16 @@ class WorkspaceDetailView(BODBView,FormView):
 
         # loaded coordinate selection
         context['loaded_coord_selection']=None
-        if self.request.user.get_profile().loaded_coordinate_selection and \
-           self.request.user.get_profile().loaded_coordinate_selection in self.object.saved_coordinate_selections.all():
-            context['loaded_coord_selection']=self.request.user.get_profile().loaded_coordinate_selection
-            SelectedSEDCoord.objects.filter(saved_selection__id=context['loaded_coord_selection'].id).update(selected=True)
+        if user.is_authenticated() and not user.is_anonymous():
+            if user.get_profile().loaded_coordinate_selection and \
+               user.get_profile().loaded_coordinate_selection in self.object.saved_coordinate_selections.all():
+                context['loaded_coord_selection']=user.get_profile().loaded_coordinate_selection
+                SelectedSEDCoord.objects.filter(saved_selection__id=context['loaded_coord_selection'].id).update(selected=True)
         # load saved selections
         context['saved_coord_selections']=self.object.saved_coordinate_selections.all()
 
         # load selected coordinates
-        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=self.request.user.id)
+        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
 
         context['selected_coords']=[]
         for coord in selected_coord_objs:
