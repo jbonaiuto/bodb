@@ -262,6 +262,8 @@ class WorkspaceDetailView(BODBView,FormView):
         context['can_delete_bookmark']=user.has_perm('delete_bookmark',self.object)
         members=[]
         for usr in self.object.group.user_set.all():
+            subscribed=False
+            is_admin=False
             if user.is_authenticated() and not user.is_anonymous():
                 subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=user).count()>0
                 is_admin=usr in self.object.admin_users.all()
