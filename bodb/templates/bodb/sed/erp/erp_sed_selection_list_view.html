@@ -1,4 +1,81 @@
 {% load staticfiles %}
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
+<link rel="stylesheet" href="{% static 'bodb/css/tip-skyblue/tip-skyblue.css' %}" type="text/css" media="all" />
+<script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.rwdImageMaps.js' %}"></script>
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
+    <script type="text/javascript">
+
+        function showComponentPopup(electrode_name)
+        {
+            //console.log(electrode_name);
+            var txt=electrode_name;
+            var elems=document.getElementsByName('position_'+electrode_name);
+            //console.log(elems.length);
+            for(var i=0; i<elems.length; i++)
+            {
+                //console.log(elems[i].innerHTML);
+                txt+='<hr>'+elems[i].innerHTML;
+            }
+            //console.log(txt);
+            return txt;
+        }
+
+        function showERPDiagram()
+        {
+            document.getElementById('{{ erpGraphId }}Div').style.display='inline';
+            $('#{{ erpGraphId }}').rwdImageMaps();
+            $('#{{ erpGraphId }}').smartZoom({'containerClass':'zoomableContainer','maxScale':10});
+            return false;
+        }
+
+        $(document).ready(function()
+        {
+            $('#{{ erpGraphId }}topPositionMap,#{{ erpGraphId }}leftPositionMap,#{{ erpGraphId }}rightPositionMap,#{{ erpGraphId }}bottomPositionMap').bind("click", {{ erpGraphId }}moveButtonClickHandler);
+            $('#{{ erpGraphId }}zoomInButton,#{{ erpGraphId }}zoomOutButton').bind("click", {{ erpGraphId }}zoomButtonClickHandler);
+
+
+            function {{ erpGraphId }}zoomButtonClickHandler(e){
+                var scaleToAdd = 0.8;
+                if(e.target.id == '{{ erpGraphId }}zoomOutButton')
+                    scaleToAdd = -scaleToAdd;
+                $('#{{ erpGraphId }}').smartZoom('zoom', scaleToAdd);
+            }
+
+            function {{ erpGraphId }}moveButtonClickHandler(e){
+                var pixelsToMoveOnX = 0;
+                var pixelsToMoveOnY = 0;
+                switch(e.target.id){
+                    case "{{ erpGraphId }}leftPositionMap":
+                        pixelsToMoveOnX = 50;
+                        break;
+                    case "{{ erpGraphId }}rightPositionMap":
+                        pixelsToMoveOnX = -50;
+                        break;
+                    case "{{ erpGraphId }}topPositionMap":
+                        pixelsToMoveOnY = 50;
+                        break;
+                    case "{{ erpGraphId }}bottomPositionMap":
+                        pixelsToMoveOnY = -50;
+                        break;
+                }
+                $('#{{ erpGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
+            }
+
+            var map=document.getElementById('{{ erpGraphId }}Map');
+            $('map[name="{{ erpGraphId }}Map"]').find('area').each(function() {
+                $('#'+this.id).poshytip({
+                    className: 'tip-skyblue',
+                    content: showComponentPopup(this.id),
+                    showTimeout: 0,
+                    alignTo: 'cursor',
+                    alignX: 'right'
+                });
+            });
+        });
+    </script>
+{% endblock %}
 <div id="erpSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
@@ -20,7 +97,7 @@
             <td>Description</td>
             <td width=10px>&nbsp;</td>
         </tr>
-        {% for selected,is_favorite,subscribed,sed in erp_seds %}
+        {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                 <td align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
@@ -45,6 +122,222 @@
                 <td>{{sed.brief_description }}</td>
                 <td><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
             </tr>
+            {% if components %}
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td colspan="2"></td>
+                    <td colspan="3" class="col_header">Components</td>
+                </tr>
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td colspan="2"></td>
+                    <td colspan="3">
+                        <table class="tab_panel">
+                            <tr>
+                                <td style="width:200px"><strong>Name</strong></td>
+                                <td style="width:100px"><strong>Peak latency (ms)</strong></td>
+                                <td style="width:150px"><strong>Peak latency type</strong></td>
+                                <td style="width:200px"><strong>Electrode position system</strong></td>
+                                <td style="width:150px"><strong>Electrode position</strong></td>
+                                <td></td>
+                            </tr>
+                            {% for component in components %}
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td>{{ component.component_name }}</td>
+                                    <td>{{ component.latency_peak }}</td>
+                                    <td>{{ component.latency_peak_type }}</td>
+                                    <td>{{ component.electrode_position.position_system }}</td>
+                                    <td>{{ component.electrode_position }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        {% for component in components %}
+                            <div name="position_{{ component.electrode_position }}" style="display: none;">
+                                {{ sed.title }}
+                                <br>{{ component.component_name }}
+                                <br>{{ component.latency_peak }} ms
+                                <br>{{ component.latency_peak_type }}
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
         {% endfor %}
+        {% if not ispopup %}
+            <tr class="col_header">
+                <td colspan="5">
+                    <a href="" onclick="return showERPDiagram();">Show ERP Diagram</a>
+                </td>
+            </tr>
+            <tr class="col_header">
+                <td colspan="5">
+                    <div id="{{ erpGraphId }}Div" style="display: none;" class="zoomContainer">
+                        <div id="positionButtonDiv">
+                            <p>Zoom :
+                                <span>
+                                    <img id="{{ erpGraphId }}zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
+                                    <img id="{{ erpGraphId }}zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
+                                </span>
+                            </p>
+                            <p>Pan:
+                                <span class="positionButtonSpan">
+                                    <map name="{{ erpGraphId }}positionMap" class="positionMapClass">
+                                        <area id="{{ erpGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
+                                        <area id="{{ erpGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
+                                        <area id="{{ erpGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
+                                        <area id="{{ erpGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
+                                    </map>
+                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ erpGraphId }}positionMap" />
+                                </span>
+                            </p>
+                        </div>
+                        <img src="{% static "bodb/images/eeg/10-5.png" %}" usemap="#{{ erpGraphId }}Map" id="{{ erpGraphId }}" style="width:700px" origWidth="1417" origHeight="1379"/>
+                        <map id="{{ erpGraphId }}Map" name="{{ erpGraphId }}Map">
+                            <area shape="circle" coords="706,101,27" id="Nz" />
+                            <area shape="circle" coords="549,243,27" id="Fp1" />
+                            <area shape="circle" coords="706,226,27" id="Fpz" />
+                            <area shape="circle" coords="862,243,27" id="Fp2" />
+                            <area shape="circle" coords="595,284,24" id="AFp3" />
+                            <area shape="circle" coords="818,283,24" id="AFp4" />
+                            <area shape="circle" coords="404,309,27" id="AF7" />
+                            <area shape="circle" coords="507,335,24" id="AF5h" />
+                            <area shape="circle" coords="586,348,24" id="AF3h" />
+                            <area shape="circle" coords="706,351,27" id="AFz" />
+                            <area shape="circle" coords="827,346,24" id="AF4h" />
+                            <area shape="circle" coords="902,337,24" id="AF6h" />
+                            <area shape="circle" coords="1007,309,27" id="AF8" />
+                            <area shape="circle" coords="380,375,24" id="AFF7h" />
+                            <area shape="circle" coords="467,396,24" id="AFF5h" />
+                            <area shape="circle" coords="561,408,24" id="AFF3h" />
+                            <area shape="circle" coords="658,413,24" id="AFF1h" />
+                            <area shape="circle" coords="754,413,24" id="AFF2h" />
+                            <area shape="circle" coords="850,408,24" id="AFF4h" />
+                            <area shape="circle" coords="944,396,24" id="AFF6h" />
+                            <area shape="circle" coords="1031,374,24" id="AFF8h" />
+                            <area shape="circle" coords="183,337,27" id="F9" />
+                            <area shape="circle" coords="285,419,27" id="F7" />
+                            <area shape="circle" coords="382,449,27" id="F5" />
+                            <area shape="circle" coords="487,466,27" id="F3" />
+                            <area shape="circle" coords="596,474,27" id="F1" />
+                            <area shape="circle" coords="706,476,27" id="Fz" />
+                            <area shape="circle" coords="816,474,27" id="F2" />
+                            <area shape="circle" coords="924,466,27" id="F4" />
+                            <area shape="circle" coords="1029,449,27" id="F6" />
+                            <area shape="circle" coords="1126,419,27" id="F8" />
+                            <area shape="circle" coords="1228,337,27" id="F10" />
+                            <area shape="circle" coords="182,456,24" id="FFT9h" />
+                            <area shape="circle" coords="294,504,24" id="FFT7h" />
+                            <area shape="circle" coords="409,523,24" id="FFC5h" />
+                            <area shape="circle" coords="526,534,24" id="FFC3h" />
+                            <area shape="circle" coords="646,538,24" id="FFC1h" />
+                            <area shape="circle" coords="765,538,24" id="FFC2h" />
+                            <area shape="circle" coords="885,534,24" id="FFC4h" />
+                            <area shape="circle" coords="1003,523,24" id="FFC6h" />
+                            <area shape="circle" coords="1117,504,24" id="FFT8h" />
+                            <area shape="circle" coords="1229,456,24" id="FFT10h" />
+                            <area shape="circle" coords="83,520,27" id="FT9" />
+                            <area shape="circle" coords="207,563,27" id="FT7" />
+                            <area shape="circle" coords="329,584,27" id="FC5" />
+                            <area shape="circle" coords="454,594,27" id="FC3" />
+                            <area shape="circle" coords="579,600,27" id="FC1" />
+                            <area shape="circle" coords="706,602,27" id="FCz" />
+                            <area shape="circle" coords="832,600,27" id="FC2" />
+                            <area shape="circle" coords="958,595,27" id="FC4" />
+                            <area shape="circle" coords="1082,584,27" id="FC6" />
+                            <area shape="circle" coords="1204,563,27" id="FT8" />
+                            <area shape="circle" coords="1328,519,27" id="FT10" />
+                            <area shape="circle" coords="121,633,24" id="FTT9h" />
+                            <area shape="circle" coords="251,650,24" id="FTT7h" />
+                            <area shape="circle" coords="380,658,24" id="FCC5h" />
+                            <area shape="circle" coords="510,662,24" id="FCC3h" />
+                            <area shape="circle" coords="640,663,24" id="FCC1h" />
+                            <area shape="circle" coords="770,664,24" id="FCC2h" />
+                            <area shape="circle" coords="901,662,24" id="FCC4h" />
+                            <area shape="circle" coords="1031,658,24" id="FCC6h" />
+                            <area shape="circle" coords="1161,650,24" id="FTT8h" />
+                            <area shape="circle" coords="1290,632,24" id="FTT10h" />
+                            <area shape="circle" coords="48,727,27" id="T9" />
+                            <area shape="circle" coords="179,726,27" id="T7" />
+                            <area shape="circle" coords="311,726,27" id="C5" />
+                            <area shape="circle" coords="443,726,27" id="C3" />
+                            <area shape="circle" coords="574,726,27" id="C1" />
+                            <area shape="circle" coords="706,726,27" id="Cz" />
+                            <area shape="circle" coords="837,726,27" id="C2" />
+                            <area shape="circle" coords="969,726,27" id="C4" />
+                            <area shape="circle" coords="1100,726,27" id="C6" />
+                            <area shape="circle" coords="1232,726,27" id="T8" />
+                            <area shape="circle" coords="1363,726,27" id="T10" />
+                            <area shape="circle" coords="251,803,24" id="TTP7h" />
+                            <area shape="circle" coords="380,795,24" id="CCP5h" />
+                            <area shape="circle" coords="510,790,24" id="CCP3h" />
+                            <area shape="circle" coords="640,789,24" id="CCP1h" />
+                            <area shape="circle" coords="771,788,24" id="CCP2h" />
+                            <area shape="circle" coords="902,791,24" id="CCP4h" />
+                            <area shape="circle" coords="1031,795,24" id="CCP6h" />
+                            <area shape="circle" coords="1160,802,24" id="TTP8h" />
+                            <area shape="circle" coords="207,889,27" id="TP7" />
+                            <area shape="circle" coords="329,869,27" id="CP5" />
+                            <area shape="circle" coords="453,858,27" id="CP3" />
+                            <area shape="circle" coords="580,853,27" id="CP1"/>
+                            <area shape="circle" coords="705,851,27" id="CPz" />
+                            <area shape="circle" coords="832,853,27" id="CP2" />
+                            <area shape="circle" coords="958,858,27" id="CP4" />
+                            <area shape="circle" coords="1083,868,27" id="CP6" />
+                            <area shape="circle" coords="1204,889,27" id="TP8" />
+                            <area shape="circle" coords="183,996,24" id="TPP9h" />
+                            <area shape="circle" coords="295,949,24" id="TPP7h" />
+                            <area shape="circle" coords="409,929,24" id="CPP5h" />
+                            <area shape="circle" coords="526,918,24" id="CPP3h" />
+                            <area shape="circle" coords="646,914,24" id="CPP1h" />
+                            <area shape="circle" coords="766,914,24" id="CPP2h" />
+                            <area shape="circle" coords="885,919,24" id="CPP4h" />
+                            <area shape="circle" coords="1002,929,24" id="CPP6h" />
+                            <area shape="circle" coords="1117,949,24" id="TPP8h" />
+                            <area shape="circle" coords="1229,996,24" id="TPP10h" />
+                            <area shape="circle" coords="183,1115,27" id="P9" />
+                            <area shape="circle" coords="285,1033,27" id="P7" />
+                            <area shape="circle" coords="382,1003,27" id="P5" />
+                            <area shape="circle" coords="487,987,27" id="P3" />
+                            <area shape="circle" coords="596,978,27" id="P1" />
+                            <area shape="circle" coords="706,976,27" id="Pz" />
+                            <area shape="circle" coords="815,979,27" id="P2" />
+                            <area shape="circle" coords="923,987,27" id="P4" />
+                            <area shape="circle" coords="1029,1003,27" id="P6" />
+                            <area shape="circle" coords="1126,1033,27" id="P8" />
+                            <area shape="circle" coords="1228,1115,27" id="P10" />
+                            <area shape="circle" coords="296,1141,24" id="PPO9h" />
+                            <area shape="circle" coords="380,1078,24" id="PPO7h" />
+                            <area shape="circle" coords="468,1056,24" id="PPO5h" />
+                            <area shape="circle" coords="561,1045,24" id="PPO3h" />
+                            <area shape="circle" coords="657,1039,24" id="PPO1h" />
+                            <area shape="circle" coords="754,1039,24" id="PPO2h" />
+                            <area shape="circle" coords="850,1044,24" id="PPO4h" />
+                            <area shape="circle" coords="944,1056,24" id="PPO6h" />
+                            <area shape="circle" coords="1031,1077,24" id="PPO8h" />
+                            <area shape="circle" coords="1115,1141,24" id="PPO10h" />
+                            <area shape="circle" coords="334,1252,27" id="PO9" />
+                            <area shape="circle" coords="403,1144,27" id="PO7" />
+                            <area shape="circle" coords="510,1115,24" id="PO5h" />
+                            <area shape="circle" coords="586,1106,24" id="PO3h" />
+                            <area shape="circle" coords="706,1101,27" id="POz" />
+                            <area shape="circle" coords="826,1106,24" id="PO4h" />
+                            <area shape="circle" coords="901,1115,24" id="PO6h" />
+                            <area shape="circle" coords="1008,1143,27" id="PO8" />
+                            <area shape="circle" coords="1077,1252,27" id="PO10" />
+                            <area shape="circle" coords="447,1241,24" id="POO9h" />
+                            <area shape="circle" coords="592,1167,24" id="POO3" />
+                            <area shape="circle" coords="820,1167,24" id="POO4" />
+                            <area shape="circle" coords="964,1241,24" id="POO10h" />
+                            <area shape="circle" coords="549,1210,27" id="O1" />
+                            <area shape="circle" coords="706,1226,27" id="Oz" />
+                            <area shape="circle" coords="862,1209,27" id="O2" />
+                            <area shape="circle" coords="618,1286,24" id="OI1h" />
+                            <area shape="circle" coords="793,1286,24" id="OI2h" />
+                            <area shape="circle" coords="515,1332,27" id="I1" />
+                            <area shape="circle" coords="706,1351,27" id="Iz" />
+                            <area shape="circle" coords="896,1332,27" id="I2" />
+                        </map>
+                    </div>
+                </td>
+            </tr>
+        {% endif %}
     </table>
 </div>

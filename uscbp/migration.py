@@ -579,7 +579,6 @@ def import_seds(legacy_img_dir, new_media_dir):
                 amplitude_peak=old_erp_component.amplitude_peak,
                 amplitude_mean=old_erp_component.amplitude_mean,
                 scalp_region=old_erp_component.scalp_region,
-                electrode_cap=old_erp_component.electrode_cap,
                 electrode_name=old_erp_component.electrode_name,
                 source=old_erp_component.source,
                 interpretation=old_erp_component.interpretation

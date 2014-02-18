@@ -20,8 +20,8 @@ class Species(models.Model):
     genus_name = models.CharField(max_length=200)
     species_name = models.CharField(max_length=200)
     common_name = models.CharField(max_length=200, blank=True)
-    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    #creation_time = models.DateTimeField(blank=True)
+    #creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    creation_time = models.DateTimeField(blank=True)
     # When listing multiple records - the plural form of species is species, not speciess
     class Meta:
         app_label='bodb'
@@ -40,8 +40,8 @@ class Nomenclature(models.Model):
     version = models.CharField(max_length=100)
     # species the nomenclature is based on
     species = models.ManyToManyField(Species)
-    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    #creation_time = models.DateTimeField(blank=True)
+    #creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    creation_time = models.DateTimeField(blank=True)
     class Meta:
         app_label='bodb'
         ordering=['name']
@@ -62,6 +62,23 @@ class CoordinateSpace(models.Model):
         return u"%s" % self.name
 
 
+class ElectrodePositionSystem(models.Model):
+    name = models.CharField(max_length=200)
+    class Meta:
+        app_label='bodb'
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+class ElectrodePosition(models.Model):
+    name=models.CharField(max_length=5)
+    position_system=models.ForeignKey(ElectrodePositionSystem)
+    class Meta:
+        app_label='bodb'
+
+    def __unicode__(self):
+        return self.name
+
 # A three-dimensional Cartesian coordinate
 class ThreeDCoord(models.Model):
     x=models.FloatField()
@@ -69,6 +86,7 @@ class ThreeDCoord(models.Model):
     z=models.FloatField()
     class Meta:
         app_label='bodb'
+
 
 # Brain Region
 class BrainRegion(models.Model):
@@ -101,6 +119,7 @@ class BrainRegion(models.Model):
     def get_absolute_url(self):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 
+
 # Brain region volume
 class BrainRegionVolume(models.Model):
     brain_region = models.ForeignKey(BrainRegion)
@@ -109,11 +128,13 @@ class BrainRegionVolume(models.Model):
     class Meta:
         app_label='bodb'
 
+
 class CoCoMacBrainRegion(models.Model):
     brain_region = models.ForeignKey(BrainRegion, related_name='cocomac_region')
     cocomac_id = models.CharField(max_length=100)
     class Meta:
         app_label='bodb'
+
 
 class BrainNavigatorBrainRegion(models.Model):
     brain_region = models.ForeignKey(BrainRegion, related_name='brainnav_region')

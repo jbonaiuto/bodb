@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
 from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm, ModelDBSearchForm
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord
+from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 
 class SearchView(FormView):
@@ -27,7 +27,9 @@ class SearchView(FormView):
         context['brain_region_search_form']=BrainRegionSearchForm(self.request.POST or None,prefix='brain_region')
         context['searchType']=self.request.POST.get('searchType','all')
         context['allConnectionGraphId']='allConnectivitySEDDiagram'
+        context['allErpGraphId']='allErpSEDDiagram'
         context['sedConnectionGraphId']='sedConnectivitySEDDiagram'
+        context['sedErpGraphId']='sedErpSEDDiagram'
         context['allBopGraphId']='allBOPRelationshipDiagram'
         context['bopBOPGraphId']='bopRelationshipDiagram'
         context['allModelGraphId']='allModelRelationshipDiagram'
@@ -114,7 +116,9 @@ class SearchView(FormView):
         context['bops']=BOP.get_bop_list(bopObjs, user)
         context['models']=Model.get_model_list(modelObjs, user)
         context['generic_seds']=SED.get_sed_list(genericObjs, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpObjs]
         context['erp_seds']=SED.get_sed_list(erpObjs, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['connectivity_seds']=SED.get_sed_list(connectivityObjs, user)
         coords=[sedCoords[sed.id] for sed in imagingObjs]
         context['imaging_seds']=SED.get_sed_list(imagingObjs, user)
@@ -297,6 +301,7 @@ class SEDSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         context['type']=self.request.GET.get('type',None)
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         return context
 
     def form_valid(self, form):
@@ -328,7 +333,9 @@ class SEDSearchView(FormView):
 
         # load selected sed ids
         context['generic_seds']=SED.get_sed_list(genericObjs,user)
-        context['erp_seds']=SED.get_sed_list(erpObjs,user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpObjs]
+        context['erp_seds']=SED.get_sed_list(erpObjs, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['connectivity_seds']=SED.get_sed_list(connectivityObjs,user)
         coords=[sedCoords[sed.id] for sed in imagingObjs]
         context['imaging_seds']=SED.get_sed_list(imagingObjs,user)

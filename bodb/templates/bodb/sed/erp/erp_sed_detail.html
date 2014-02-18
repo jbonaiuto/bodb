@@ -100,6 +100,34 @@
                     save();
             }
         }
+
+        function updateElectrodePosition(system_elem_id, system_elem_value)
+        {
+            var form_id=system_elem_id.substring(17);
+            form_id=form_id.substring(0,form_id.indexOf('-'));
+            var position_elem=document.getElementById('id_erp_component-'+form_id+'-electrode_position');
+            for(i=position_elem.options.length-1;i>=1;i--)
+            {
+                position_elem.remove(i);
+            }
+            var data={'form_id': form_id};
+            var args={type:"GET", url:"/bodb/sed/electrode_positions/"+system_elem_value+"/", data: data, complete: doneUpdateElectrodePosition };
+            $.ajax(args)
+        }
+
+        function doneUpdateElectrodePosition(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                var position_elem=document.getElementById('id_erp_component-'+data.form_id+'-electrode_position');
+                for(var i=0; i<data.position_ids.length; i++)
+                {
+                    position_elem.options[position_elem.options.length]=new Option(data.position_names[i],data.position_ids[i]);
+                }
+            }
+        }
     </script>
 {% endblock %}
 {% block content %}
