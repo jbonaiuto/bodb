@@ -20,8 +20,8 @@ class Species(models.Model):
     genus_name = models.CharField(max_length=200)
     species_name = models.CharField(max_length=200)
     common_name = models.CharField(max_length=200, blank=True)
-    #creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    creation_time = models.DateTimeField(blank=True)
+    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    #creation_time = models.DateTimeField(blank=True)
     # When listing multiple records - the plural form of species is species, not speciess
     class Meta:
         app_label='bodb'
@@ -40,8 +40,8 @@ class Nomenclature(models.Model):
     version = models.CharField(max_length=100)
     # species the nomenclature is based on
     species = models.ManyToManyField(Species)
-    #creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    creation_time = models.DateTimeField(blank=True)
+    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    #creation_time = models.DateTimeField(blank=True)
     class Meta:
         app_label='bodb'
         ordering=['name']
