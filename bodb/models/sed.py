@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 import sys
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
@@ -101,6 +101,12 @@ class ERPSED(SED):
         app_label='bodb'
 
     @staticmethod
+    def augment_sed_list(sed_list, components):
+        for sed_list_item,component_list in zip(sed_list,components):
+            sed_list_item.append(component_list)
+        return sed_list
+
+    @staticmethod
     def get_literature_seds(literature, user):
         return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
 
@@ -112,6 +118,20 @@ class ERPSED(SED):
     @staticmethod
     def get_tagged_seds(name, user):
         return ERPSED.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+
+
+class ElectrodeCap(models.Model):
+    manufacturer=models.CharField(max_length=100)
+    name=models.CharField(max_length=100)
+    version=models.CharField(max_length=50)
+    num_channels=models.IntegerField()
+    image_filename=models.CharField(max_length=100)
+
+    class Meta:
+        app_label='bodb'
+
+    def __unicode__(self):
+        return '%s - %s (%s) %dch' % (self.manufacturer,self.name,self.version,self.num_channels)
 
 
 # ERP SED Component Model, 1-to-Many relationship with ERP SED Model objects
@@ -132,10 +152,9 @@ class ERPComponent(models.Model):
     amplitude_peak=models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
     amplitude_mean=models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
 
-    scalp_region=models.CharField(max_length=100)
-
-    electrode_cap=models.CharField(max_length=100, blank=True)
-    electrode_name=models.CharField(max_length=100, blank=True)
+    electrode_cap=models.ForeignKey(ElectrodeCap, null=True, blank=True)
+    channel_number=models.CharField(max_length=100, blank=True)
+    electrode_position=models.ForeignKey(ElectrodePosition, null=True, blank=True)
 
     source=models.CharField(max_length=100, blank=True)
 

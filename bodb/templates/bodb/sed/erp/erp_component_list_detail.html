@@ -56,20 +56,24 @@
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td width=60px>&nbsp;</td>
-                                    <td>Scalp region*</td>
-                                    <td colspan="5">
-                                        {{ erp_component_form.scalp_region }}
+                                    <td>Electrode position system*</td>
+                                    <td>
+                                        {{ erp_component_form.electrode_position_system }}
+                                    </td>
+                                    <td>Electrode position*</td>
+                                    <td colspan="3">
+                                        {{ erp_component_form.electrode_position }}
                                     </td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                     <td width=60px>&nbsp;</td>
                                     <td>Electrode cap</td>
-                                    <td colspan="3">
+                                    <td colspan="2">
                                         {{ erp_component_form.electrode_cap }}
                                     </td>
-                                    <td>Electrode name</td>
-                                    <td>
-                                        {{ erp_component_form.electrode_name }}
+                                    <td>Channel</td>
+                                    <td colspan="2">
+                                        {{ erp_component_form.channel_number }}
                                     </td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -124,7 +128,7 @@
                 <td style="width:120px">
                     <input id="id_erp_component-<%= id %>-latency_peak" name="erp_component-<%= id %>-latency_peak" size="10" type="text" />
                 </td>
-                <td style="width:120px;">Peak latency type*</td>
+                <td style="width:120px;">Peak Latency type*</td>
                 <td style="width:120px">
                     <select id="id_erp_component-<%= id %>-latency_peak_type" name="erp_component-<%= id %>-latency_peak_type" style="font-size: 80%;font-family: verdana, sans-serif">
                         <option value="exact">Exact</option>
@@ -150,20 +154,36 @@
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
                 <td width=60px>&nbsp;</td>
-                <td>Scalp region*</td>
-                <td colspan="5">
-                    <input id="id_erp_component-<%= id %>-scalp_region" name="erp_component-<%= id %>-scalp_region" size="50" type="text" />
+                <td>Electrode position system*</td>
+                <td>
+                    <select id="id_erp_component-<%= id %>-electrode_position_system" name="erp_component-<%= id %>-electrode_position_system" onchange="updateElectrodePosition(this.id, this.value)" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="" selected="selected">---------</option>
+                        {% for electrode_position_system in electrode_position_systems %}
+                            <option value="{{ electrode_position_system.id }}">{{ electrode_position_system.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>Electrode position*</td>
+                <td colspan="3">
+                    <select id="id_erp_component-<%= id %>-electrode_position" name="erp_component-<%= id %>-electrode_position" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="" selected="selected">---------</option>
+                    </select>
                 </td>
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Electrode cap</td>
-                <td colspan="3">
-                    <input id="id_erp_component-<%= id %>-electrode_cap" name="erp_component-<%= id %>-electrode_cap" size="50" type="text" />
+                <td colspan="2">
+                    <select id="id_erp_component-<%= id %>-electrode_cap" name="erp_component-<%= id %>-electrode_cap" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="" selected="selected">---------</option>
+                        {% for electrode_cap in electrode_caps %}
+                            <option value="{{ electrode_cap.id }}">{{ electrode_cap }}</option>
+                        {% endfor %}
+                    </select>
                 </td>
-                <td>Electrode name</td>
-                <td>
-                    <input id="id_erp_component-<%= id %>-electrode_name" name="erp_component-<%= id %>-electrode_name" size="50" type="text" />
+                <td>Channel</td>
+                <td colspan="2">
+                    <input id="id_erp_component-<%= id %>-channel_number" name="erp_component-<%= id %>-channel_number" size="5" type="text" />
                 </td>
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
@@ -177,8 +197,7 @@
                 <td width=60px>&nbsp;</td>
                 <td>Interpretation*</td>
                 <td colspan="5">
-                    <textarea cols="57" id="id_erp_component-<%= id %>-interpretation" name="erp_component-<%= id %>-interpretation" rows="3">
-                    </textarea>
+                    <textarea cols="57" id="id_erp_component-<%= id %>-interpretation" name="erp_component-<%= id %>-interpretation" rows="3"></textarea>
                 </td>
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>
@@ -188,6 +207,7 @@
             </tr>
         </table>
         <div class="myerrors">
+
         </div>
     </div>
 </script>

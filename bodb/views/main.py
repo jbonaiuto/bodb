@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -85,10 +85,14 @@ class DraftListView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-        context['erp_seds']=SED.get_sed_list(ERPSED.objects.filter(collator=user,draft=1),user)
+        erp_seds=ERPSED.objects.filter(collator=user,draft=1)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(collator=user,draft=1),user)
 
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
 
@@ -102,6 +106,7 @@ class FavoriteListView(BODBView):
         context=super(FavoriteListView,self).get_context_data(**kwargs)
         user=self.request.user
         context['connectionGraphId']='connectionSEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         context['models']=[]
@@ -124,7 +129,10 @@ class FavoriteListView(BODBView):
             coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
             context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-            context['erp_seds']=SED.get_sed_list(ERPSED.objects.filter(document_ptr__in=profile.favorites.all()),user)
+            erp_seds=ERPSED.objects.filter(document_ptr__in=profile.favorites.all())
+            components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+            context['erp_seds']=SED.get_sed_list(erp_seds, user)
+            context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
             context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(document_ptr__in=profile.favorites.all()),user)
 
             context['loaded_coord_selection']=profile.loaded_coordinate_selection
@@ -189,7 +197,10 @@ class TagView(BODBView):
         context['tagged_models']=Model.get_model_list(Model.get_tagged_models(name, user),user)
         context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user), user)
         context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_tagged_seds(name, user),user)
-        context['erp_seds']=SED.get_sed_list(ERPSED.get_tagged_seds(name, user),user)
+        erp_seds=ERPSED.get_tagged_seds(name, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
@@ -198,6 +209,7 @@ class TagView(BODBView):
         context['tagged_ssrs']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), user)
 
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         return context

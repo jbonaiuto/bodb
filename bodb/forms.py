@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.forms.models import ErrorList, inlineformset_factory, modelformset_factory, formset_factory
-from bodb.models import BOP, DocumentFigure, Document, RelatedBOP, LiteratureAuthor, Journal, Book, Chapter, Conference, Thesis, Unpublished, Author, Literature, BrainRegion, RelatedBrainRegion, ModelAuthor, Model, Variable, Module, RelatedModel, BrainRegionRequest, ERPSED, CoordinateSpace, BrainImagingSED, SEDCoord, Nomenclature
+from bodb.models import BOP, DocumentFigure, Document, RelatedBOP, LiteratureAuthor, Journal, Book, Chapter, Conference, Thesis, Unpublished, Author, Literature, BrainRegion, RelatedBrainRegion, ModelAuthor, Model, Variable, Module, RelatedModel, BrainRegionRequest, ERPSED, CoordinateSpace, BrainImagingSED, SEDCoord, Nomenclature, ElectrodePositionSystem, ElectrodePosition
 from bodb.models.discussion import Post, Forum
 from bodb.models.messaging import Subscription, UserSubscription, Message
-from bodb.models.sed import SED, BuildSED, TestSED, TestSEDSSR, ERPComponent, ConnectivitySED
+from bodb.models.sed import SED, BuildSED, TestSED, TestSEDSSR, ERPComponent, ConnectivitySED, ElectrodeCap
 from bodb.models.ssr import Prediction, SSR, PredictionSSR
 from bodb.models.workspace import BodbProfile, Workspace, WorkspaceBookmark
 from registration.forms import RegistrationForm
@@ -651,8 +651,8 @@ class ERPSEDForm(forms.ModelForm):
     cognitive_paradigm = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     sensory_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     response_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
-    control_condition = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
-    experimental_condition = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
+    control_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+    experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
     public = forms.BooleanField(help_text='Make the entry public', required=False)
     type=forms.CharField(widget=forms.HiddenInput,required=False)
@@ -680,9 +680,14 @@ class ERPComponentInlineForm(forms.ModelForm):
     latency_onset=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_mean=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
-    scalp_region=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
-    electrode_cap=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    electrode_name=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    electrode_position_system=forms.ModelChoiceField(ElectrodePositionSystem.objects.all(),
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif', 'onchange': 'updateElectrodePosition(this.id, this.value)'}),
+        required=False)
+    electrode_position=forms.ModelChoiceField(ElectrodePosition.objects.all(),
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
+    electrode_cap=forms.ModelChoiceField(ElectrodeCap.objects.all(),
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
+    channel_number=forms.CharField(widget=forms.TextInput(attrs={'size':'5'}),required=False)
     source=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
     interpretation=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
 

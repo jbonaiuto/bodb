@@ -248,6 +248,14 @@
                         newCoordString+=Math.round(coord[0] * relScale)+","+Math.round(coord[1] * relScale);
                     }
                 }
+                else if(area.shape=='circle')
+                {
+                    var coords=area.coords.split(',');
+                    var newCoordX=Math.round(coords[0]*relScale);
+                    var newCoordY=Math.round(coords[1]*relScale);
+                    var newRad=Math.round(coords[2]*relScale);
+                    newCoordString=newCoordX+","+newCoordY+","+newRad;
+                }
                 else
                 {
                     var coords = area.coords.split(',');

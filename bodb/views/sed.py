@@ -6,8 +6,8 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms import SEDForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedBOPFormSet, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, BrainRegion, ThreeDCoord, WorkspaceActivityItem, RelatedModel
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, BrainRegion, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -838,6 +838,8 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateERPSEDView, self).get_context_data(**kwargs)
+        context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
+        context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, prefix='erp_component')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
@@ -856,7 +858,10 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
 class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
+        print(self.request.POST)
         context = super(UpdateERPSEDView,self).get_context_data(**kwargs)
+        context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
+        context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, instance=self.object,
             queryset=ERPComponent.objects.filter(erp_sed=self.object),prefix='erp_component')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
@@ -943,12 +948,16 @@ class SEDTaggedView(BODBView):
         context['tag']=name
         context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user)
         context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_tagged_seds(name, user),user)
-        context['erp_seds']=SED.get_sed_list(ERPSED.get_tagged_seds(name, user),user)
+        erp_seds=ERPSED.get_tagged_seds(name, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         return context
 
 
@@ -1189,3 +1198,17 @@ class SaveCoordinateSelectionView(JSONResponseMixin, BaseUpdateView):
             }
         return context
 
+class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
+    model=ElectrodePositionSystem
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            positions=ElectrodePosition.objects.filter(position_system__id=self.kwargs.get('pk'))
+            position_ids=[position.id for position in positions]
+            position_names=[position.name for position in positions]
+            context={
+                'form_id': self.request.GET.get('form_id'),
+                'position_ids': position_ids,
+                'position_names': position_names
+            }
+        return context

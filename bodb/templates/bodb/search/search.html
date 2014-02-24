@@ -77,9 +77,11 @@
             <tr>
                 <td {% if showTabs %}colspan=8{% endif %}>
                     {% with allConnectionGraphId as connectionGraphId %}
-                        {% with allBopGraphId as bopGraphId %}
-                            {% with allModelGraphId as modelGraphId %}
-                                {% include "bodb/search/search_all.html" %}
+                        {% with allErpGraphId as erpGraphId %}
+                            {% with allBopGraphId as bopGraphId %}
+                                {% with allModelGraphId as modelGraphId %}
+                                    {% include "bodb/search/search_all.html" %}
+                                {% endwith %}
                             {% endwith %}
                         {% endwith %}
                     {% endwith %}
@@ -91,7 +93,9 @@
                         {% include "bodb/search/search_models.html" %}
                     {% endwith %}
                     {% with sedConnectionGraphId as connectionGraphId %}
-                        {% include "bodb/search/search_seds.html" %}
+                        {% with sedErpGraphId as erpGraphId %}
+                            {% include "bodb/search/search_seds.html" %}
+                        {% endwith %}
                     {% endwith %}
                     {% include "bodb/search/search_ssrs.html" %}
                     {% include "bodb/search/search_brain_regions.html" %}

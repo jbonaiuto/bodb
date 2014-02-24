@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin
 from bodb.forms import BrainRegionRequestForm, BrainRegionRequestDenyForm, BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord
+from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent
 from bodb.search import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
@@ -141,6 +141,7 @@ class BrainRegionView(DetailView):
 
         user = self.request.user
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
         search_data={'type':'brain imaging','coordinate_brain_region':self.object.name}
@@ -155,7 +156,10 @@ class BrainRegionView(DetailView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
         context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user)
-        context['erp_seds']=SED.get_sed_list(ERPSED.get_brain_region_seds(self.object, user), user)
+        erp_seds=ERPSED.get_brain_region_seds(self.object, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
         context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
         context['helpPage']='BODB-View-BrainRegion'

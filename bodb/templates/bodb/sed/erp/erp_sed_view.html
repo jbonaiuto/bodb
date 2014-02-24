@@ -172,18 +172,19 @@
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                     <td><strong>Peak Latency (ms):</strong> {{ component.latency_peak }}</td>
                     <td><strong>Peak Latency Type:</strong> {{ component.latency_peak_type }}</td>
-                    <td><strong>Peak Latency Onset:</strong> {{ component.latency_onset }}</td>
+                    <td><strong>Peak Latency Onset:</strong>{% if component.latency_onset %}{ component.latency_onset }}{% endif %}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td><strong>Peak Amplitude:</strong> {{ component.amplitude_peak }}</td>
-                    <td colspan="2"><strong>Mean Amplitude:</strong> {{ component.amplitude_mean }}</td>
+                    <td><strong>Peak Amplitude:</strong>{% if component.amplitude_peak %} {{ component.amplitude_peak }}{% endif %}</td>
+                    <td colspan="2"><strong>Mean Amplitude:</strong>{% if component.amplitude_mean %} {{ component.amplitude_mean }}{% endif %}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="3"><strong>Scalp Region:</strong> {{ component.scalp_region }}</td>
+                    <td><strong>Electrode Position System:</strong> {{ component.electrode_position.position_system.name }}</td>
+                    <td colspan="2"><strong>Electrode Position:</strong> {{ component.electrode_position.name }}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                     <td><strong>Electrode Cap:</strong> {{ component.electrode_cap }}</td>
-                    <td colspan="2"><strong>Electrode Name:</strong> {{ component.electrode_name }}</td>
+                    <td colspan="2"><strong>Channel:</strong> {{ component.channel_number }}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                     <td colspan="3"><strong>Source:</strong> {{ component.source }}</td>

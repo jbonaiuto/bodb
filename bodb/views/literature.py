@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -250,6 +250,7 @@ class LiteratureDetailView(TemplateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         context['models']=Model.get_model_list(Model.get_literature_models(literature, user), user)
@@ -260,7 +261,10 @@ class LiteratureDetailView(TemplateView):
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
         context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_literature_seds(literature,user), user)
-        context['erp_seds']=SED.get_sed_list(ERPSED.get_literature_seds(literature, user), user)
+        erp_seds=ERPSED.get_literature_seds(literature, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         context['can_add_entry']=False
         context['can_remove_entry']=False

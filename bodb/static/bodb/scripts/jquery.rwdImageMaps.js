@@ -54,6 +54,14 @@
                                 newCoordString+=Math.round(((coord[0]/w)*100)*wPercent)+","+Math.round(((coord[1]/h)*100)*hPercent);
                             }
                         }
+                        else if($this.attr('shape')=='circle')
+                        {
+                            var coords=$this.data(c).split(',');
+                            var newCoordX=Math.round(((coords[0]/w)*100)*wPercent);
+                            var newCoordY=Math.round(((coords[1]/h)*100)*hPercent);
+                            var newRad=Math.round(((coords[2]/w)*100)*wPercent);
+                            newCoordString=newCoordX+","+newCoordY+","+newRad;
+                        }
                         else
                         {
                             var coords = $this.data(c).split(',');
