@@ -4,7 +4,7 @@ from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, Cr
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView, BOPDiagramView
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView
 from bodb.views.discussion import ForumPostView
-from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView
+from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentDetailView, DocumentListView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
@@ -16,6 +16,8 @@ from bodb.views.sed import CreateSEDView, SEDDetailView, SimilarSEDView, UpdateS
 from bodb.views.ssr import SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import WorkspaceListView, ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
+
+from rest_framework.urlpatterns import format_suffix_patterns
 
 feeds = {
     'latestModels': LatestModels,
@@ -60,6 +62,9 @@ urlpatterns = patterns('',
 
     url(r'^document/(?P<pk>\d+)/permissions/$', ManageDocumentPermissionsView.as_view(), {}, 'manage_permissions'),
     url(r'^document/public_request/$', DocumentPublicRequestView.as_view(), {}, 'public_request'),
+    
+    url(r'^document/$', DocumentListView.as_view()),
+    url(r'^document/(?P<pk>[0-9]+)/$', DocumentDetailView.as_view()),
 
     url(r'^drafts/$', DraftListView.as_view(), {}, 'drafts_view'),
 
@@ -184,3 +189,5 @@ urlpatterns = patterns('',
 
     url(r'', IndexView.as_view(), {}, 'index'),
 )
+
+#urlpatterns = format_suffix_patterns(urlpatterns)
