@@ -44,9 +44,10 @@ def get_queryset(user, forvar=None):
 
         # filter tagged items        
         if applabel:
-            queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower()).filter(q)
+            queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower())
         if model:
             queryset = queryset.filter(content_type__model=model.lower())
+        queryset=queryset.filter(q)
             
         # get tags
         tag_ids = queryset.values_list('tag_id', flat=True)
