@@ -4,9 +4,17 @@ from django.views.generic import UpdateView, DeleteView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms import DocumentFigureFormSet, SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem
-from bodb.views.document import DocumentDetailView
+from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
+
+from bodb.serializers import SSRSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
 
 
 class UpdateSSRView(UpdateView):
@@ -54,10 +62,20 @@ class DeleteSSRView(DeleteView):
     model=SSR
     success_url = '/bodb/index.html'
 
+class SSRAPIListView(DocumentAPIListView):
+    queryset = SSR.objects.all()[:5]
+    serializer_class = SSRSerializer
+    
+class SSRAPIDetailView(DocumentAPIDetailView):
+    queryset = SSR.objects.all()
+    serializer_class = SSRSerializer
 
 class SSRDetailView(DocumentDetailView):
     model = SSR
     template_name = 'bodb/ssr/ssr_view.html'
+    
+    queryset = SSR.objects.all()
+    serializer_class = SSRSerializer
 
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)

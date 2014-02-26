@@ -4,9 +4,17 @@ from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms import BOPForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedModelFormSet, BuildSEDFormSet, BOPRelatedBOPFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl
-from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
+from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
+
+from bodb.serializers import BOPSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
 
 class EditBOPMixin():
     model = BOP
@@ -148,11 +156,18 @@ class DeleteBOPView(DeleteView):
     model=BOP
     success_url = '/bodb/index.html'
 
+class BOPAPIListView(DocumentAPIListView):
+    queryset = BOP.objects.all()[:5]
+    serializer_class = BOPSerializer
+    
+class BOPAPIDetailView(DocumentAPIDetailView):    
+    queryset = BOP.objects.all()
+    serializer_class = BOPSerializer
 
 class BOPDetailView(DocumentDetailView):
     model = BOP
     template_name = 'bodb/bop/bop_view.html'
-
+    
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
         user=self.request.user

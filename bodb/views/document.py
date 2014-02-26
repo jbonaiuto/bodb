@@ -1,4 +1,4 @@
-import Image
+from PIL import Image
 import fileinput
 import os
 from django.contrib.auth.models import Group
@@ -12,7 +12,30 @@ from registration.models import User
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
-class DocumentDetailView(DetailView):
+from bodb.serializers import DocumentSerializer
+from bodb.permissions import IsEditorOrReadOnly
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
+from rest_framework import permissions
+
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, XMLRenderer
+
+class DocumentAPIListView(generics.ListCreateAPIView):
+    queryset = Document.objects.all()[:5]
+    serializer_class = DocumentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+class DocumentDetailView(DetailView, generics.RetrieveUpdateDestroyAPIView):
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
@@ -52,6 +75,24 @@ class DocumentDetailView(DetailView):
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
         return context
+    
+class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+    
+    #renderer_classes = (TemplateHTMLRenderer, JSONRenderer, XMLRenderer)
+    
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly,)
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
 
 class ManageDocumentPermissionsView(DetailView):
     template_name = 'bodb/document_permissions_detail.html'

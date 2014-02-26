@@ -8,9 +8,17 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms import SEDForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedBOPFormSet, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, BrainRegion, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
-from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
+
+from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
 
 class EditSEDMixin():
     model = SED
@@ -128,9 +136,50 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
 class DeleteSEDView(DeleteView):
     model=SED
     success_url = '/bodb/index.html'
+    
+class SEDAPIListView(DocumentAPIListView):
+    queryset = SED.objects.all()[:5]
+    serializer_class = SEDSerializer
+    
+class ERPSEDAPIListView(DocumentAPIListView):
+    queryset = ERPSED.objects.all()[:5]
+    serializer_class = ERPSEDSerializer
+    
+class BrainImagingSEDAPIListView(DocumentAPIListView):
+    queryset = BrainImagingSED.objects.all()[:5]
+    serializer_class = BrainImagingSEDSerializer
+    
+class ConnectivitySEDAPIListView(DocumentAPIListView):
+    queryset = ConnectivitySED.objects.all()[:5]
+    serializer_class = ConnectivitySEDSerializer
+    
+class SEDAPIDetailView(DocumentAPIDetailView):
+    queryset = SED.objects.all()
+    serializer_class = SEDSerializer
+    
+    model = SED
 
+    def get(self, request, *args, **kwargs):
+        id=self.kwargs.get('pk', None)
+        type=SED.objects.get(id=id).type
+        if type=='event related potential':
+            self.serializer_class = ERPSEDSerializer
+            self.model=ERPSED
+        elif type=='brain imaging':
+            self.serializer_class = BrainImagingSEDSerializer
+            self.model=BrainImagingSED
+            if BredeBrainImagingSED.objects.filter(id=id).count():
+                self.model=BredeBrainImagingSED
+        elif type=='connectivity':
+            self.serializer_class = ConnectivitySEDSerializer
+            self.model=ConnectivitySED
+            if CoCoMacConnectivitySED.objects.filter(id=id).count():
+                self.model=CoCoMacConnectivitySED
+        self.queryset = self.model.objects.all()
+        return super(SEDAPIDetailView, self).get(request, *args, **kwargs)
 
 class SEDDetailView(DocumentDetailView):
+    
     model = SED
     template_name = 'bodb/sed/generic/generic_sed_view.html'
 
@@ -230,7 +279,6 @@ class SEDDetailView(DocumentDetailView):
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         return context
-
 
 class EditBrainImagingSEDMixin():
     model=BrainImagingSED
