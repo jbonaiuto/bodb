@@ -33,14 +33,14 @@ def get_queryset(user, forvar=None):
                 applabel = forvar
 
         q=Q()
-        if isinstance(user,User) and user.is_authenticated() and not user.is_anonymous():
-            if not user.is_superuser:
-                own_entry_q=Q(document__collator__id=user.id)
-                public_q=Q(document__public=1)
-                group_q=Q(Q(document__draft=0) & Q(document__collator__groups__in=list(user.groups.all())))
-                q=own_entry_q | public_q | group_q
-        else:
-            q=Q(document__public=1)
+#         if isinstance(user,User) and user.is_authenticated() and not user.is_anonymous():
+#             if not user.is_superuser:
+#                 own_entry_q=Q(document__collator__id=user.id)
+#                 public_q=Q(document__public=1)
+#                 group_q=Q(Q(document__draft=0) & Q(document__collator__groups__in=list(user.groups.all())))
+#                 q=own_entry_q | public_q | group_q
+#         else:
+#             q=Q(document__public=1)
 
         # filter tagged items        
         if applabel:
