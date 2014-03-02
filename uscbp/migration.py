@@ -766,10 +766,27 @@ def import_models(legacy_img_dir, new_media_dir):
             new_testsed=new_sed.TestSED(
                 id=old_testsed.id,
                 model=new_mod,
-                sed=new_sed.SED.objects.get(id=old_testsed.sed.id),
                 relationship=old_testsed.relationship,
                 relevance_narrative=old_testsed.brief_description
             )
+            if old_testsed.sed is not None:
+                new_testsed.sed=new_sed.SED.objects.get(id=old_testsed.sed.id)
+            else:
+                new_sed= new_sed.SED(
+                    type='generic',
+                    collator = User.objects.get(id=old_testsed.collator.id),
+                    title = old_testsed.title,
+                    brief_description = old_testsed.brief_description,
+                    narrative = old_testsed.narrative,
+                    draft = old_testsed.draft,
+                    public = old_testsed.public,
+                    creation_time = old_testsed.creation_time,
+                    last_modified_time = old_testsed.last_modified_time,
+                    last_modified_by=User.objects.get(id=old_testsed.collator.id)
+                )
+                new_testsed.sed=new_sed
+
+
             new_testsed.save()
             new_testsedssr=new_sed.TestSEDSSR(
                 test_sed=new_testsed,
