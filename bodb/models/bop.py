@@ -185,7 +185,7 @@ def bop_gxl(bops, user):
     for bop in bops:
         glx+='<node id="%d">\n' % bop.id
         glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bop.id
-        glx+='<node id="%s">\n' % bop.title
+        glx+='<node id="%s">\n' % bop.title.replace('"','\'')
         glx+='<type xlink:href="/bodb/bop/%d/" xlink:type="simple"/>\n' % bop.id
         glx+='</node>\n'
         glx+='</graph>\n'
@@ -196,12 +196,13 @@ def bop_gxl(bops, user):
             related_bop=BOP.objects.get(id=rrbop.document.id)
             if related_bop in bops:
                 glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (bop.id,related_bop.id,bop.title,related_bop.title)
-                glx+='<attr name="name"><string>%s</string></attr>\n' % rrbop.relationship
+                if rrbop.relationship:
+                    glx+='<attr name="name"><string>%s</string></attr>\n' % rrbop.relationship.replace('"','\'')
                 glx+='</edge>\n'
         child_bops=BOP.get_child_bops(bop, user)
         for child_bop in child_bops:
             if child_bop in bops:
-                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (child_bop.id,bop.id,child_bop.title,bop.title)
+                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (child_bop.id,bop.id,child_bop.title.replace('"','\''),bop.title.replace('"','\''))
                 glx+='<attr name="name"><string>Parent-of</string></attr>\n'
                 glx+='</edge>\n'
     glx+='</graph>\n'

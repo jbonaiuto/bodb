@@ -419,8 +419,10 @@ def conn_sed_gxl(conn_seds):
     glx+='<attr name="overlap"><string>scale</string></attr>\n'
     nodes={}
     for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__())+' ('+sed.source_region.nomenclature.name+')'
-        targetname=str(sed.target_region.__unicode__())+' ('+sed.target_region.nomenclature.name+')'
+        sourcename=str(sed.source_region.__unicode__().replace('"','\''))+' ('+\
+                   sed.source_region.nomenclature.name.replace('"','\'')+')'
+        targetname=str(sed.target_region.__unicode__().replace('"','\''))+' ('+\
+                   sed.target_region.nomenclature.name.replace('"','\'')+')'
         if not str(sed.source_region.__unicode__()) in nodes:
             nodes[str(sed.source_region.__unicode__())]=[]
         nodes[str(sed.source_region.__unicode__())].append((sourcename, sed.source_region.id))
@@ -428,7 +430,7 @@ def conn_sed_gxl(conn_seds):
             nodes[str(sed.target_region.__unicode__())]=[]
         nodes[str(sed.target_region.__unicode__())].append((targetname, sed.target_region.id))
     for i,(node_name, children) in enumerate(nodes.iteritems()):
-        glx+='<node id="'+node_name+'">\n'
+        glx+='<node id="'+node_name.replace('"','\'')+'">\n'
         glx+='<graph id="cluster_%d" edgeids="true" edgemode="directed" hypergraph="false">\n' % i
         for (name,id) in children:
             glx+='<node id="'+name+'">\n'
@@ -437,8 +439,10 @@ def conn_sed_gxl(conn_seds):
         glx+='</graph>\n'
         glx+='</node>\n'
     for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__())+' ('+sed.source_region.nomenclature.name+')'
-        targetname=str(sed.target_region.__unicode__())+' ('+sed.target_region.nomenclature.name+')'
+        sourcename=str(sed.source_region.__unicode__().replace('"','\''))+' ('+\
+                   sed.source_region.nomenclature.name.replace('"','\'')+')'
+        targetname=str(sed.target_region.__unicode__().replace('"','\''))+' ('+\
+                   sed.target_region.nomenclature.name.replace('"','\'')+')'
         glx+='<edge id="'+str(sed.id)+'" to="'+targetname+'" from="'+sourcename+'">\n'
         glx+='<type xlink:href="/bodb/sed/'+str(sed.id)+'/" xlink:type="simple"/>\n'
         glx+='</edge>\n'
