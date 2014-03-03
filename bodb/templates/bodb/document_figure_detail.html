@@ -1,9 +1,53 @@
+<script type="text/javascript">
+    function addFigureForm(){
+        var count = $('#figures').children().length;
+        var tmplMarkup = $('#figure-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#figures').append(compiledTmpl);
+        // update form count
+        $('#id_figure-TOTAL_FORMS').attr('value', count+1);
+        $('#id_figure-'+count+'-order').poshytip({
+            className: 'tip-skyblue',
+            content: 'The order in which the figure will be listed.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_figure-'+count+'-title').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a title for the figure',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_figure-'+count+'-caption').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a caption describing the figure.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        return false;
+    }
+</script>
 <div id="figureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr>
             <td colspan=5 class="table_header">
-                <a href="#" class="add-figure" onclick="return addInlineForm('figures','figure','figure');">Add new</a>
+                <a href="#" class="add-figure" onclick="return addFigureForm();">Add new</a>
             </td>
         </tr>
         <tr class="col_header">

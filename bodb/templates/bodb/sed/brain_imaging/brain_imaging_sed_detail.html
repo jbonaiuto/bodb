@@ -1,6 +1,9 @@
 {% extends "base_generic.html" %}
+{% load staticfiles %}
 {% block extrahead %}
     <title>BODB - {% if form.instance.id %}Edit {{ form.instance.title }}{% else %}Add{% endif %} SED</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bodb/css/tip-skyblue/tip-skyblue.css' %}" type="text/css" media="all" />
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('bopData', 'fade=1');
@@ -17,8 +20,7 @@
         function validateForm()
         {
             var errors=0;
-
-            clearSpan(document, 'span_errors');
+            clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
@@ -44,6 +46,8 @@
                 animatedcollapse.show('brainRegionData');
             errors+=relatedBrainRegionErrors;
 
+            if(errors>0)
+                document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
             return errors==0;
         }
 
@@ -138,6 +142,177 @@
                 clearSpan(document, 'span_core_header_4');
         }
 
+        $(document).ready(function()
+        {
+            $('#id_title').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the name of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_brief_description').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a brief description of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_narrative').poshytip({
+                className: 'tip-skyblue',
+                content: "Enter a complete description of the SED.",
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_tags').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a comma-separated list of keywords. Look a the tag cloud for suggested keywords.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_method').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the experimental method used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_control_condition').poshytip({
+                className: 'tip-skyblue',
+                content: 'Describe the control condition used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_experimental_condition').poshytip({
+                className: 'tip-skyblue',
+                content: 'Describe the experimental condition used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_coord_space').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the coordinate space that coordinates are reported in.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_core_header_1').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the core headers used to describe the columns of the data table.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_core_header_2').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the core headers used to describe the columns of the data table.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_core_header_3').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the core headers used to describe the columns of the data table.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_core_header_4').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select the core headers used to describe the columns of the data table.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_extra_header').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter any additional headers used to describe the columns of the data table, separated by "|".',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_data').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the coordinate table with a row on each line and columns separated by "|".',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+        });
+
     </script>
 {% endblock %}
 {% block content %}
@@ -212,11 +387,6 @@
                     <td>&nbsp;</td>
                     <td>{{ form.data }}<br>Use newline to separate rows and tab or | to separate columns.</td>
                     <td><span id="data_errors"></span></td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <span id="span_errors" class="myerrors"></span>
-                    </td>
                 </tr>
                 <tr>
                     <td colspan=3 style="padding:0px">
@@ -299,6 +469,9 @@
                     </td>
                 </tr>
             </table>
+            <span id="form_errors" class="myerrors">
+                {{ form.errors }}
+            </span>
             <br>
             <input id="id_type" name="type" value="brain imaging" type="hidden"/>
             {{ form.draft }}

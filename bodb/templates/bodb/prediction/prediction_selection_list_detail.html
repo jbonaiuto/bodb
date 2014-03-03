@@ -1,9 +1,65 @@
+<script type="text/javascript">
+    function addPredictionForm()
+    {
+        var count = $('#predictions').children().length;
+        var tmplMarkup = $('#prediction-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#predictions').append(compiledTmpl);
+        // update form count
+        $('#id_prediction-TOTAL_FORMS').attr('value', count+1);
+        $('#id_prediction-'+count+'-title').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a name for the prediction made by the model.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+        $('#id_prediction-'+count+'-brief_description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a brief description of the prediction made by the model.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+        $('#id_prediction-'+count+'-predictionssr_set-0-ssr_title').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a name for the model simulation results that yield this prediction.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+        $('#id_prediction-'+count+'-predictionssr_set-0-ssr_brief_description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a brief description of the model simulation results that yield this prediction.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+        return false;
+    }
+</script>
 <div id="predictionData" style="display:none">
     <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">
             <td colspan=3>
-                <a href="#" class="add-figure" onclick="return addInlineForm('predictions','prediction','prediction');">Add new</a>
+                <a href="#" class="add-figure" onclick="return addPredictionForm();">Add new</a>
             </td>
         </tr>
         <tr class="col_header">

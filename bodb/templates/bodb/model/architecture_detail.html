@@ -1,3 +1,165 @@
+<script type="text/javascript">
+    function addInput(){
+        var count = $('#inputs').children().length;
+        var tmplMarkup = $('#input-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#inputs').append(compiledTmpl);
+        // update form count
+        $('#id_input-TOTAL_FORMS').attr('value', count+1);
+        $('#id_input-'+count+'-name').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the input.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_input-'+count+'-data_type').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the type of data the input requires (scalar, vector, float, integer, etc).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_input-'+count+'-description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a short description of the input.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        return false;
+    }
+
+    function addOutput(){
+        var count = $('#outputs').children().length;
+        var tmplMarkup = $('#output-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#outputs').append(compiledTmpl);
+        // update form count
+        $('#id_output-TOTAL_FORMS').attr('value', count+1);
+        $('#id_output-'+count+'-name').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the output.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_output-'+count+'-data_type').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the type of data the output requires (scalar, vector, float, integer, etc).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_output-'+count+'-description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a short description of the output.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        return false;
+    }
+
+    function addState(){
+        var count = $('#states').children().length;
+        var tmplMarkup = $('#state-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#states').append(compiledTmpl);
+        // update form count
+        $('#id_state-TOTAL_FORMS').attr('value', count+1);
+        $('#id_state-'+count+'-name').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the state.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_state-'+count+'-data_type').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the type of data the state requires (scalar, vector, float, integer, etc).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_state-'+count+'-description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a short description of the state.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        return false;
+    }
+
+    function addSubmodule(){
+        var count = $('#modules').children().length;
+        var tmplMarkup = $('#module-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#modules').append(compiledTmpl);
+        // update form count
+        $('#id_module-TOTAL_FORMS').attr('value', count+1);
+        $('#id_module-'+count+'-title').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the module.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        $('#id_module-'+count+'-brief_description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a brief description of the module.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 1000
+        });
+        return false;
+    }
+</script>
 <div id="architectureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
@@ -20,7 +182,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-input" onclick="return addInlineForm('inputs','input','input');">Add new</a>
+                            <a href="#" class="add-input" onclick="return addInput();">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -76,7 +238,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-output" onclick="return addInlineForm('outputs','output','output');">Add new</a>
+                            <a href="#" class="add-output" onclick="return addOutput();">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -132,7 +294,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-state" onclick="return addInlineForm('states','state','state');">Add new</a>
+                            <a href="#" class="add-state" onclick="return addState();">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -188,7 +350,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-module" onclick="return addInlineForm('modules','module','module');">Add new</a>
+                            <a href="#" class="add-module" onclick="return addSubmodule();">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">

@@ -49,6 +49,82 @@ function addSEDMultiple(type, sed_id, data){
     $('#'+type+'_seds').append(compiledTmpl);
     // update form count
     $('#id_'+type+'_sed-TOTAL_FORMS').attr('value', count+1);
+    if(type=='build')
+    {
+        $('#id_build_sed-'+count+'-relationship').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select "scene setting" for experimental data that sets the stage for the model or BOP, "support" for data that is used to design and build the model or BOP.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+
+        $('#id_build_sed-'+count+'-relevance_narrative').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a description of how this experimental data was used to design and build the model or BOP.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'left',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+    }
+    else if(type=='test')
+    {
+        $('#id_test_sed-'+count+'-relationship').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select "explanation" for experimental data that is explained by the model, "contradiction" for data that contradicts the model.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+
+        $('#id_test_sed-'+count+'-relevance_narrative').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a description of how this experimental data was used to test the model.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+
+        $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_title').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a title for the model simulation results that were compared to the experimental data.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+
+        $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_brief_description').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a short description of the model simulation results that were compared to the experimental data.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
+    }
     return false;
 }
 

@@ -996,7 +996,7 @@ class PredictionSSRInlineForm(forms.ModelForm):
     prediction = forms.ModelChoiceField(queryset=Prediction.objects.all(),widget=forms.HiddenInput,required=False)
     ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
     ssr_collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr_title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
+    ssr_title = forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=True)
     ssr_brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'50','rows':'3'}),required=True)
     ssr_draft=forms.CharField(widget=forms.HiddenInput,required=False)
     ssr_public = forms.BooleanField(widget=forms.HiddenInput, required=False)

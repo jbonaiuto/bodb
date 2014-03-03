@@ -6,6 +6,30 @@
         $('#related_bops').append(compiledTmpl);
         // update form count
         $('#id_related_bop-TOTAL_FORMS').attr('value', count+1);
+        {% if bop_relationship %}
+            $('#id_related_bop-'+count+'-relationship').poshytip({
+                className: 'tip-skyblue',
+                content: 'Select "involves" to describe a relationship in which one BOP subsumes the other. Select "synonym" to mark two BOPs as identical',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+        {% endif %}
+        $('#id_related_bop-'+count+'-relevance_narrative').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a description of how the BOP is related to this entry.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
         return false;
     }
 </script>

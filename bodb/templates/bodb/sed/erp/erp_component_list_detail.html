@@ -1,9 +1,166 @@
+<script type="text/javascript">
+    function addComponentForm()
+    {
+        var count = $('#erp_components').children().length;
+        var tmplMarkup = $('#erp_component-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#erp_components').append(compiledTmpl);
+        // update form count
+        $('#id_erp_component-TOTAL_FORMS').attr('value', count+1);
+
+        $('#id_erp_component-'+count+'-component_name').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-latency_peak').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the latency of the peak of the ERP component in ms or a time bin (i.e. 100-200ms).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-latency_peak_type').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select "exact" for exact peak latency, "approximate" for an estimate of the peak latency, "time window" for a range of peak latencies.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-latency_onset').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the onset latency of the peak of the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-amplitude_peak').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the amplitude of the peak of the ERP component (in microV).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-amplitude_mean').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the mean amplitude of the peak of the ERP component (in microV).',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-electrode_position_system').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select the electrode position system used to report the location of the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-electrode_position').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select the electrode position of the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-electrode_cap').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select the electrode cap used.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-channel_number').poshytip({
+            className: 'tip-skyblue',
+            content: 'Select the channel number the ERP component is reported in.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-source').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the possible sources for the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        $('#id_erp_component-'+count+'-interpretation').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the interpretation of the ERP component.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 3000
+        });
+
+        return false;
+    }
+</script>
 <div id="erpComponentData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr>
             <td class="table_header">
-                <a href="#" class="add-erp_component" onclick="return addInlineForm('erp_components','erp_component','erp_component');">Add new</a>
+                <a href="#" class="add-erp_component" onclick="return addComponentForm();">Add new</a>
             </td>
         </tr>
         <tr>

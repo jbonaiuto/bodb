@@ -1,6 +1,9 @@
 {% extends "base_generic.html" %}
+{% load staticfiles %}
 {% block extrahead %}
     <title>BODB - {% if form.instance.id %}Edit {{ form.instance.title }}{% else %}Add{% endif %} SED</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bodb/css/tip-skyblue/tip-skyblue.css' %}" type="text/css" media="all" />
     <script type="text/javascript">
         animatedcollapse.addDiv('erpComponentData', 'fade=1');
         animatedcollapse.addDiv('figureData', 'fade=1');
@@ -18,8 +21,7 @@
         function validateForm()
         {
             var errors=0;
-
-            clearSpan(document, 'span_errors');
+            clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
@@ -43,6 +45,8 @@
                 animatedcollapse.show('brainRegionData');
             errors+=relatedBrainRegionErrors;
 
+            if(errors>0)
+                document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
             return errors==0;
         }
 
@@ -128,6 +132,117 @@
                 }
             }
         }
+
+        $(document).ready(function()
+        {
+            $('#id_title').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the name of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_brief_description').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a brief description of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_narrative').poshytip({
+                className: 'tip-skyblue',
+                content: "Enter a complete description of the SED.",
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_tags').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a comma-separated list of keywords. Look a the tag cloud for suggested keywords.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_cognitive_paradigm').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the cognitive paradigm used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_sensory_modality').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the sensory modality used in this SED (i.e. vision, audition, etc).',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_response_modality').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the response modality used in this SED (i.e. reaching, saccades, button presses, etc).',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_control_condition').poshytip({
+                className: 'tip-skyblue',
+                content: 'Describe the control condition used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+
+            $('#id_experimental_condition').poshytip({
+                className: 'tip-skyblue',
+                content: 'Describe the experimental condition used in this SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 5000
+            });
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -163,11 +278,6 @@
                         {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}
-                <tr>
-                    <td colspan="3">
-                        <span id="span_errors" class="myerrors"></span>
-                    </td>
-                </tr>
                 <tr class="section_subheader">
                     <td colspan=3>ERP Experiment Description</td>
                 </tr>
@@ -295,9 +405,9 @@
                     </td>
                 </tr>
             </table>
-            <div class="myerrors">
+            <span id="form_errors" class="myerrors">
                 {{ form.errors }}
-            </div>
+            </span>
             <br>
             <input id="id_type" name="type" value="event related potential" type="hidden"/>
             {{ form.draft }}

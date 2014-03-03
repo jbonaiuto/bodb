@@ -6,6 +6,17 @@
         $('#related_models').append(compiledTmpl);
         // update form count
         $('#id_related_model-TOTAL_FORMS').attr('value', count+1);
+        $('#id_related_model-'+count+'-relationship').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter a description of how the model is related to this entry.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignY: 'center',
+            alignX: 'right',
+            offsetX: 5,
+            timeOnScreen: 5000
+        });
         return false;
     }
 </script>
