@@ -429,8 +429,8 @@ def sed_report_rtf(context, display_settings):
     c2.SetSpan(2)
     table.AddRow(c1, c2)
 
-    if BrainImagingSED.objects.filter(id=id):
-        imagingSED=BrainImagingSED.objects.get(id=id)
+    if BrainImagingSED.objects.filter(id=context['sed'].id):
+        imagingSED=BrainImagingSED.objects.get(id=context['sed'].id)
 
         # Method
         c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Method *'), thin_frame)
@@ -452,13 +452,13 @@ def sed_report_rtf(context, display_settings):
 
     section.append(table)
 
-    if BrainImagingSED.objects.filter(id=id):
+    if BrainImagingSED.objects.filter(id=context['sed'].id):
         p = PyRTF.Paragraph(ss.ParagraphStyles.Heading4)
         p.append("Data")
         section.append(p)
 
-        imagingSED=BrainImagingSED.objects.get(id=id)
-        coords=SEDCoord.objects.filter(sed__id=id)
+        imagingSED=BrainImagingSED.objects.get(id=context['sed'].id)
+        coords=SEDCoord.objects.filter(sed__id=context['sed'].id)
 
         table = PyRTF.Table()
         table.SetGapBetweenCells(0)
@@ -511,9 +511,7 @@ def sed_report_rtf(context, display_settings):
             table.AddRow(region_header, hemi_header, x_header, y_header, z_header, stat_header)
 
         for coord in coords:
-            region_cell = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.brain_region).encode('latin1','ignore')), thin_frame)
-            if not coord.brain_region:
-                region_cell = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.named_brain_region).encode('latin1','ignore')), thin_frame)
+            region_cell = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.named_brain_region).encode('latin1','ignore')), thin_frame)
             hemi_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.hemisphere).encode('latin1','ignore')), thin_frame)
 
             x_cell=None
@@ -524,11 +522,11 @@ def sed_report_rtf(context, display_settings):
 
             for col in header_elems:
                 if col=='x':
-                    x_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.x).encode('latin1','ignore')), thin_frame)
+                    x_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.x).encode('latin1','ignore')), thin_frame)
                 elif col=='y':
-                    y_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.y).encode('latin1','ignore')), thin_frame)
+                    y_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.y).encode('latin1','ignore')), thin_frame)
                 elif col=='z':
-                    z_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.z).encode('latin1','ignore')), thin_frame)
+                    z_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.z).encode('latin1','ignore')), thin_frame)
                 elif col=='rCBF':
                     rCBF_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.rcbf).encode('latin1','ignore')), thin_frame)
                 elif col=='T' or col=='Z':
@@ -613,8 +611,8 @@ def sed_report_pdf(context, display_settings):
     tableStyle.append(('SPAN',(1,rows),(2,rows)))
     rows += 1
 
-    if BrainImagingSED.objects.filter(id=id):
-        imagingSED=BrainImagingSED.objects.get(id=id)
+    if BrainImagingSED.objects.filter(id=context['sed'].id):
+        imagingSED=BrainImagingSED.objects.get(id=context['sed'].id)
 
         # Method
         basicInfoData.append([Paragraph('Method *',styles['Heading2']),
@@ -639,9 +637,9 @@ def sed_report_pdf(context, display_settings):
     t=reportlab.platypus.tables.Table(basicInfoData, [1.5*inch, inch, 5*inch], style=tableStyle)
     elements.append(t)
 
-    if BrainImagingSED.objects.filter(id=id):
-        imagingSED=BrainImagingSED.objects.get(id=id)
-        coords=SEDCoord.objects.filter(sed__id=id)
+    if BrainImagingSED.objects.filter(id=context['sed'].id):
+        imagingSED=BrainImagingSED.objects.get(id=context['sed'].id)
+        coords=SEDCoord.objects.filter(sed__id=context['sed'].id)
 
         elements.append(Paragraph('Data', styles['Heading2']))
         coordData=[]
@@ -674,19 +672,16 @@ def sed_report_pdf(context, display_settings):
 
         for coord in coords:
             cols=[]
-            if coord.brain_region:
-                cols.append(Paragraph(unicode(coord.brain_region).encode('latin1','ignore'),styles['BodyText']))
-            else:
-                cols.append(Paragraph(unicode(coord.named_brain_region).encode('latin1','ignore'),styles['BodyText']))
+            cols.append(Paragraph(unicode(coord.named_brain_region).encode('latin1','ignore'),styles['BodyText']))
             cols.append(Paragraph(unicode(coord.hemisphere).encode('latin1','ignore'),styles['BodyText']))
 
             for col in header_elems:
                 if col=='x':
-                    cols.append(Paragraph(unicode(coord.x).encode('latin1','ignore'),styles['BodyText']))
+                    cols.append(Paragraph(unicode(coord.coord.x).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='y':
-                    cols.append(Paragraph(unicode(coord.y).encode('latin1','ignore'),styles['BodyText']))
+                    cols.append(Paragraph(unicode(coord.coord.y).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='z':
-                    cols.append(Paragraph(unicode(coord.z).encode('latin1','ignore'),styles['BodyText']))
+                    cols.append(Paragraph(unicode(coord.coord.z).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='rCBF':
                     cols.append(Paragraph(unicode(coord.rcbf).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='T' or col=='Z':
