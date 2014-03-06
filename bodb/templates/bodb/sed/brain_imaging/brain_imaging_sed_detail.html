@@ -46,6 +46,63 @@
                 animatedcollapse.show('brainRegionData');
             errors+=relatedBrainRegionErrors;
 
+            var num_cols=1;
+            if(document.getElementById('id_core_header_1').value!='N/A')
+            {
+                if(document.getElementById('id_core_header_1').value=='x | y | z')
+                    num_cols+=3;
+                else
+                    num_cols+=1;
+            }
+            if(document.getElementById('id_core_header_2').value!='N/A')
+            {
+                if(document.getElementById('id_core_header_2').value=='x | y | z')
+                    num_cols+=3;
+                else
+                    num_cols+=1;
+            }
+            if(document.getElementById('id_core_header_3').value!='N/A')
+            {
+                if(document.getElementById('id_core_header_3').value=='x | y | z')
+                    num_cols+=3;
+                else
+                    num_cols+=1;
+            }
+            if(document.getElementById('id_core_header_4').value!='N/A')
+            {
+                if(document.getElementById('id_core_header_4').value=='x | y | z')
+                    num_cols+=3;
+                else
+                    num_cols+=1;
+            }
+            if(document.getElementById('id_extra_header').value.length>0)
+                num_cols+=document.getElementById('id_extra_header').value.split('|').length;
+
+            var dataTxt=document.getElementById('id_data').value;
+            var rows=[];
+            if(dataTxt.indexOf('\r\n')>-1)
+                rows=dataTxt.split('\r\n');
+            else
+                rows=dataTxt.split('\n');
+            for(var i=0; i<rows.length; i++)
+            {
+                var row_cols=[];
+                if(rows[i].indexOf('\t')>-1)
+                    row_cols=rows[i].split('\t');
+                else
+                    row_cols=rows[i].split('|');
+                if(row_cols.length<num_cols)
+                {
+                    errors+=1;
+                    document.getElementById('data_errors').innerHTML+='Row '+(i+1)+' has too few columns<br>';
+                }
+                else if(row_cols.length>num_cols)
+                {
+                    errors+=1
+                    document.getElementById('data_errors').innerHTML+='Row '+(i+1)+' has too many columns<br>';
+                }
+            }
+
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
             return errors==0;
@@ -240,54 +297,6 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_core_header_1').poshytip({
-                className: 'tip-skyblue',
-                content: 'Select the core headers used to describe the columns of the data table.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignY: 'center',
-                alignX: 'right',
-                offsetX: 5,
-                timeOnScreen: 5000
-            });
-
-            $('#id_core_header_2').poshytip({
-                className: 'tip-skyblue',
-                content: 'Select the core headers used to describe the columns of the data table.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignY: 'center',
-                alignX: 'right',
-                offsetX: 5,
-                timeOnScreen: 5000
-            });
-
-            $('#id_core_header_3').poshytip({
-                className: 'tip-skyblue',
-                content: 'Select the core headers used to describe the columns of the data table.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignY: 'center',
-                alignX: 'right',
-                offsetX: 5,
-                timeOnScreen: 5000
-            });
-
-            $('#id_core_header_4').poshytip({
-                className: 'tip-skyblue',
-                content: 'Select the core headers used to describe the columns of the data table.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignY: 'center',
-                alignX: 'right',
-                offsetX: 5,
-                timeOnScreen: 5000
-            });
-
             $('#id_extra_header').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter any additional headers used to describe the columns of the data table, separated by "|".',
@@ -386,7 +395,7 @@
                 <tr valign=top>
                     <td>&nbsp;</td>
                     <td>{{ form.data }}<br>Use newline to separate rows and tab or | to separate columns.</td>
-                    <td><span id="data_errors"></span></td>
+                    <td class="myerrors"><span id="data_errors"></span></td>
                 </tr>
                 <tr>
                     <td colspan=3 style="padding:0px">
