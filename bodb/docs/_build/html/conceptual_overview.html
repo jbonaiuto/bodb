@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Conceptual Overview &mdash; BODB 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="BODB 1.0.0 documentation" href="index.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BODB 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="conceptual-overview">
+<h1>Conceptual Overview<a class="headerlink" href="#conceptual-overview" title="Permalink to this headline">¶</a></h1>
+<p>Advances in neuroscientific research have led to a flood of information that can only be structured and navigated with the aid of databases and the technology of the World Wide Web. As one contribution to channeling this flood, we are developing BODB to facilitate the interchange between those developing new brain models and those developing new experiments. The current ideas are that the system</p>
+<ol class="arabic simple">
+<li>houses capsules of neuroscientific literature information that will facilitate comparison and integration of original articles;</li>
+<li>provides a standard form and repository for entering BOPs;</li>
+<li>provides a standard form and repository for entering Model summaries;</li>
+<li>supplies a sharing point for the data in (1,2,3) among users to enhance knowledge development;</li>
+<li>provides a repository of experimental data with a standard structure, and the experimental-data and cross-experiment data analysis tools (currently our focus is on brain imaging data); and</li>
+<li>provides a means to connect related documents together with practical search tools to enhance the accessibility of information.</li>
+</ol>
+<p>These features are intended for use by both brain modelers and brain experimenters. The experimental data and analysis tools will be used by the brain modeler in extracting knowledge and developing new models, and by the experimenter in designing further experimental protocols. Furthermore, the BOP and Model entries will supply knowledge for the modeler to construct new models, and provide the experimenter suggestions to contrive new experiments. Consequently, the implementation and integration of these features would enhance a theory-experiment cycle (Arbib, 2001).</p>
+<p>Our current version of BODB combines features of an SDB (Summary Database) and Model Repository (as in Brain Models on the Web [BMW], Bischoff-Grethe, Spoelstra &amp; Arbib, 2001), supplemented with a variety of new features. The system provides data entities for storing article information, brain operating principles, models, generic summary data, brain-imaging experimental data, and, finally , their relations.</p>
+<div class="align-center figure">
+<img alt="_images/bodb_entity_schema.png" src="_images/bodb_entity_schema.png" />
+<p class="caption">The entity relationship schema of BODB’s fundamental entities.</p>
+</div>
+<div class="section" id="article-information">
+<h2>Article Information<a class="headerlink" href="#article-information" title="Permalink to this headline">¶</a></h2>
+<p>This is quite standard, functioning as a bibliography, keeping information on publications cited in other entries in BODB. As usual, each item is categorized into one of 7 types: journal, book, chapter, thesis, conference, electronic, and unpublished. Brain Operating Principle (BOP): This originated from the observation that key concepts concerning brain mechanisms are sometimes implicit in many references but integrated in none. The Brain Operating Principle entity is designed to serve as a repository for maintaining structured and succinct concepts about “how the brain (or a key - functional or structural - subsystem) works”, whether extracted and generalized from empirical data, or exemplified in computational models. We designed this entity with the m:n relationship linking to Article information since one brain operating principle could be derived from many articles, while one article could be a source of information for two or more principles.</p>
+</div>
+<div class="section" id="model">
+<h2>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
+<p>This is designed to function as a repository for descriptions of computational models of brain mechanisms with fields available to provide linkages to actual implementations, simulations, documentation and descriptions. We designed this entity, too, with the m:n relationship to Article information. Another m:n relationship links the Model and Brain Operating Principle entities because one model could be derived from many principles, while one principle could be exemplified in many models. Since one model could be synthesized from other models, the m:n self-relationship is also supplied to this entity.</p>
+</div>
+<div class="section" id="brain-region">
+<h2>Brain Region<a class="headerlink" href="#brain-region" title="Permalink to this headline">¶</a></h2>
+<p>This entity contains names and hierarchies of regions of the human brain, currently based on data from the Research Imaging Center, The University of Texas Health Science Center at San Antonio. These brain region names are used to categorize entries related to specific human brain regions, enhancing entry-search capability.</p>
+</div>
+<div class="section" id="summaries-of-empirical-data-and-simulation-results">
+<h2>Summaries of Empirical Data and Simulation Results<a class="headerlink" href="#summaries-of-empirical-data-and-simulation-results" title="Permalink to this headline">¶</a></h2>
+<p>BODB provides forms for two types of summaries: one for summarizing experimental data (SED) and the other for summarizing simulation results (SSR). For SEDs, BODB currently provides generic forms to contribute to a repository for summarizing related facts, experimental settings and results from one or several publications. A specific form for brain imaging experimental data (see below) is also provided. For SSRs, BODB provides only a generic form for use in documenting each related set of key findings associated with a model. Each SED is amenable for use to support the design of a model or to be used in testing a model - whose SSRs may explain the SED or be contradicted by SEDs. The latter situation may either be used to downgrade confidence in the model or to point the way to further efforts that build on the current model.</p>
+</div>
+<div class="section" id="brain-imaging-experimental-data">
+<h2>Brain Imaging Experimental Data<a class="headerlink" href="#brain-imaging-experimental-data" title="Permalink to this headline">¶</a></h2>
+<p>Currently, this entity provides the one specifically structured type of Summary of Experimental Data for BODB. It serves primarily as a repository for tables of brain-imaging experimental data. We adapted the Talairach Daemon (TD) developed by the San Antonio group as well as ideas from USCBP’s own NeuARt project (Dashti et al., 2001) to enable the user to graphically compare and contrast the experimental data on brain-slice images. One brain imaging article could have two or more experiment sets, and almost every brain imaging experiment will relate to multiple brain regions.</p>
+<p>In addition to the basic entities described so far, we added a set of tables that are responsible for maintaining block diagrams for models and anatomical relationships, etc., with supplementary information such as box area (coordinates) and box name. These diagrams not only help the user visualize Model entries, but also provide connections between Models via hierarchical relations.</p>
+<p>Connections among entities not only allow the user to go back and forth between entries via their relations, but provide options for cross search as well (e.g. to search models by related brain operating principles).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Conceptual Overview</a><ul>
+<li><a class="reference internal" href="#article-information">Article Information</a></li>
+<li><a class="reference internal" href="#model">Model</a></li>
+<li><a class="reference internal" href="#brain-region">Brain Region</a></li>
+<li><a class="reference internal" href="#summaries-of-empirical-data-and-simulation-results">Summaries of Empirical Data and Simulation Results</a></li>
+<li><a class="reference internal" href="#brain-imaging-experimental-data">Brain Imaging Experimental Data</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">Introduction</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/conceptual_overview.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             >previous</a> |</li>
+        <li><a href="index.html">BODB 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, USC Brain Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
