@@ -396,28 +396,13 @@ class EditBrainImagingSEDMixin():
                 if len(row)>0:
                     # split row into columns
                     if row.find('|')>-1:
-                        if row.find(' | ')>-1:
-                            row_elems=row.split(' | ')
-                        else:
-                            row_elems=row.split('|')
+                        row_elems=[x.strip() for x in row.split('|')]
                     else:
                         row_elems=row.split('\t')
 
                     # create SED Coordinate from row data
                     coord=SEDCoord()
                     coord.named_brain_region=row_elems[brainRegionIdx]
-                    if BrainRegion.objects.filter(name=coord.named_brain_region,
-                        brainregionvolume__coord_space=self.object.coord_space):
-                        coord.brain_region=BrainRegion.objects.get(name=coord.named_brain_region,
-                            brainregionvolume__coord_space=self.object.coord_space)
-                    elif BrainRegion.objects.filter(abbreviation=coord.named_brain_region,
-                        brainregionvolume__coord_space=self.object.coord_space) and\
-                         len(BrainRegion.objects.filter(abbreviation=coord.named_brain_region,
-                             brainregionvolume__coord_space=self.object.coord_space))==1:
-                        coord.brain_region=BrainRegion.objects.get(abbreviation=coord.named_brain_region,
-                            brainregionvolume__coord_space=self.object.coord_space)
-                    else:
-                        errorRows.append(idx)
                     if tstatIdx>-1:
                         coord.statistic='t'
                         if len(row_elems[tstatIdx])>0:
