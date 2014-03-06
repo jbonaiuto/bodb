@@ -467,77 +467,78 @@ def sed_report_rtf(context, display_settings):
         region_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'Brain Region'), thin_frame)
         hemi_span=TabPS.DEFAULT_WIDTH * 2
         hemi_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'Hemisphere'), thin_frame)
-        x_span=None
-        x_header=None
-        y_span=None
-        y_header=None
-        z_span=None
-        z_header=None
-        rcbf_span=None
-        rcbf_header=None
-        stat_span=None
-        stat_header=None
 
-        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4
-        header_elems=header_str.split(' | ')
+        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4+' | '+imagingSED.extra_header
+        header_elems=[x.strip() for x in header_str.split('|')]
+
+        spans=[region_span, hemi_span]
+        headers=[region_header, hemi_header]
         for elem in header_elems:
             if elem=='x':
                 x_span=TabPS.DEFAULT_WIDTH
                 x_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'x'), thin_frame)
+                spans.append(x_span)
+                headers.append(x_header)
             elif elem=='y':
                 y_span=TabPS.DEFAULT_WIDTH
                 y_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'y'), thin_frame)
+                spans.append(y_span)
+                headers.append(y_header)
             elif elem=='z':
                 z_span=TabPS.DEFAULT_WIDTH
                 z_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'z'), thin_frame)
+                spans.append(z_span)
+                headers.append(z_header)
             elif elem=='rCBF':
                 rcbf_span=TabPS.DEFAULT_WIDTH
                 rcbf_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'rCBF'), thin_frame)
+                spans.append(rcbf_span)
+                headers.append(rcbf_header)
             elif elem=='T' or elem=='Z':
                 stat_span=TabPS.DEFAULT_WIDTH*2
                 if elem=='T':
-                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'t score'), thin_frame)
+                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'T'), thin_frame)
                 elif elem=='Z':
-                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'z score'), thin_frame)
+                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'Z'), thin_frame)
+                spans.append(stat_span)
+                headers.append(stat_header)
+            elif not elem=='hemisphere' and not elem=='N/A':
+                extra_span=TabPS.DEFAULT_WIDTH
+                extra_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(elem).encode('latin1','ignore')), thin_frame)
+                spans.append(extra_span)
+                headers.append(extra_header)
 
-        if x_span and y_span and z_span and rcbf_span and stat_span:
-            table.SetColumnWidths(region_span, hemi_span, x_span, y_span, z_span, rcbf_span, stat_span)
-            table.AddRow(region_header, hemi_header, x_header, y_header, z_header, rcbf_header, stat_header)
-        elif x_span and y_span and z_span and rcbf_span:
-            table.SetColumnWidths(region_span, hemi_span, x_span, y_span, z_span, rcbf_span)
-            table.AddRow(region_header, hemi_header, x_header, y_header, z_header, rcbf_header)
-        elif x_span and y_span and z_span and stat_span:
-            table.SetColumnWidths(region_span, hemi_span, x_span, y_span, z_span, stat_span)
-            table.AddRow(region_header, hemi_header, x_header, y_header, z_header, stat_header)
+        table.SetColumnWidths(*spans)
+        table.AddRow(*headers)
 
         for coord in coords:
             region_cell = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.named_brain_region).encode('latin1','ignore')), thin_frame)
             hemi_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.hemisphere).encode('latin1','ignore')), thin_frame)
-
-            x_cell=None
-            y_cell=None
-            z_cell=None
-            rCBF_cell=None
-            stat_cell=None
+            cells=[region_cell,hemi_cell]
 
             for col in header_elems:
                 if col=='x':
                     x_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.x).encode('latin1','ignore')), thin_frame)
+                    cells.append(x_cell)
                 elif col=='y':
                     y_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.y).encode('latin1','ignore')), thin_frame)
+                    cells.append(y_cell)
                 elif col=='z':
                     z_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.z).encode('latin1','ignore')), thin_frame)
+                    cells.append(z_cell)
                 elif col=='rCBF':
                     rCBF_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.rcbf).encode('latin1','ignore')), thin_frame)
+                    cells.append(rCBF_cell)
                 elif col=='T' or col=='Z':
                     stat_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.statistic_value).encode('latin1','ignore')), thin_frame)
+                    cells.append(stat_cell)
 
-            if x_cell and y_cell and z_cell and rCBF_cell and stat_cell:
-                table.AddRow(region_cell, hemi_cell, x_cell, y_cell, z_cell, rCBF_cell, stat_cell)
-            elif x_cell and y_cell and z_cell and rCBF_cell:
-                table.AddRow(region_cell, hemi_cell, x_cell, y_cell, z_cell, rCBF_cell)
-            elif x_cell and y_cell and z_cell and stat_cell:
-                table.AddRow(region_cell, hemi_cell, x_cell, y_cell, z_cell, stat_cell)
+            extra_cols=[x.strip() for x in coord.extra_data.split('|')]
+            for col in extra_cols:
+                cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(col).encode('latin1','ignore')),thin_frame)
+                cells.append(cell)
+
+            table.AddRow(*cells)
 
         section.append(table)
 
@@ -649,8 +650,8 @@ def sed_report_pdf(context, display_settings):
         header=[Paragraph('Brain Region',styles['Heading4']),
                 Paragraph('Hemisphere',styles['Heading4'])]
         col_width=[1.5*inch, inch]
-        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4
-        header_elems=header_str.split(' | ')
+        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4+' | '+imagingSED.extra_header
+        header_elems=[x.strip() for x in header_str.split('|')]
         for elem in header_elems:
             if elem=='x':
                 col_width.append(inch)
@@ -665,6 +666,9 @@ def sed_report_pdf(context, display_settings):
                 col_width.append(inch)
                 header.append(Paragraph(elem,styles['Heading4']))
             elif elem=='T' or elem=='Z':
+                col_width.append(inch)
+                header.append(Paragraph(elem,styles['Heading4']))
+            elif not elem=='hemisphere' and not elem=='N/A':
                 col_width.append(inch)
                 header.append(Paragraph(elem,styles['Heading4']))
         coordData.append(header)
@@ -686,7 +690,9 @@ def sed_report_pdf(context, display_settings):
                     cols.append(Paragraph(unicode(coord.rcbf).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='T' or col=='Z':
                     cols.append(Paragraph(unicode(coord.statistic_value).encode('latin1','ignore'),styles['BodyText']))
-
+            extra_cols=[x.strip() for x in coord.extra_data.split('|')]
+            for col in extra_cols:
+                cols.append(Paragraph(unicode(col).encode('latin1','ignore'),styles['BodyText']))
             coordData.append(cols)
             rows += 1
 
