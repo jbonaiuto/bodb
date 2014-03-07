@@ -28,6 +28,26 @@ feeds = {
     }
 
 urlpatterns = patterns('',
+    url(r'^api/document$', DocumentAPIListView.as_view()),
+    url(r'^api/document/(?P<pk>[0-9]+)/$', DocumentAPIDetailView.as_view()),
+    url(r'^api/document/sed$', SEDAPIListView.as_view()),
+    url(r'^api/document/sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
+    url(r'^api/document/sed/erpsed$', ERPSEDAPIListView.as_view()),
+    url(r'^api/document/sed/erpsed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
+    url(r'^api/document/sed/brainimagingsed$', BrainImagingSEDAPIListView.as_view()),
+    url(r'^api/document/sed/brainimaginingsed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
+    url(r'^api/document/sed/connectivitysed$', ConnectivitySEDAPIListView.as_view()),
+    url(r'^api/document/sed/connectivitysed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
+    url(r'^api/document/ssr$', SSRAPIListView.as_view()),
+    url(r'^api/document/ssr/(?P<pk>[0-9]+)/$', SSRAPIDetailView.as_view()),
+    url(r'^api/document/bop$', BOPAPIListView.as_view()),
+    url(r'^api/document/bop/(?P<pk>[0-9]+)/$', BOPAPIDetailView.as_view()),
+    url(r'^api-auth/', include('rest_framework.urls',namespace='rest_framework')),
+)
+
+urlpatterns = format_suffix_patterns(urlpatterns)
+  
+urlpatterns = urlpatterns + patterns('',
     (r'^feeds/latestModels/$', LatestModels()),
     url(r'^docs/', include('documentation.urls')),
     url(r'^about/$', AboutView.as_view(), {}, 'about'),
@@ -64,22 +84,8 @@ urlpatterns = patterns('',
 
     url(r'^document/(?P<pk>\d+)/permissions/$', ManageDocumentPermissionsView.as_view(), {}, 'manage_permissions'),
     url(r'^document/public_request/$', DocumentPublicRequestView.as_view(), {}, 'public_request'),
-                       
-    url(r'^api/document$', DocumentAPIListView.as_view()),
-    url(r'^api/document/(?P<pk>[0-9]+)/$', DocumentAPIDetailView.as_view()),
-    url(r'^api/document/sed$', SEDAPIListView.as_view()),
-    url(r'^api/document/sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/erpsed$', ERPSEDAPIListView.as_view()),
-    url(r'^api/document/sed/erpsed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/brainimagingsed$', BrainImagingSEDAPIListView.as_view()),
-    url(r'^api/document/sed/brainimaginingsed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/connectivitysed$', ConnectivitySEDAPIListView.as_view()),
-    url(r'^api/document/sed/connectivitysed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/ssr$', SSRAPIListView.as_view()),
-    url(r'^api/document/ssr/(?P<pk>[0-9]+)/$', SSRAPIDetailView.as_view()),
-    url(r'^api/document/bop$', BOPAPIListView.as_view()),
-    url(r'^api/document/bop/(?P<pk>[0-9]+)/$', BOPAPIDetailView.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls',namespace='rest_framework')),
+               
+    
 
     url(r'^drafts/$', DraftListView.as_view(), {}, 'drafts_view'),
 
