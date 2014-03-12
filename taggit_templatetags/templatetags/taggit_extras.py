@@ -2,6 +2,7 @@ from django import template
 from django.db import models
 from django.db.models import Count, Q
 from django.core.exceptions import FieldError
+from bodb.models import Document
 from registration.models import User
 
 from templatetag_sugar.register import tag
@@ -32,23 +33,26 @@ def get_queryset(user, forvar=None):
             except ValueError:
                 applabel = forvar
 
+
         q=Q()
         if isinstance(user,User) and user.is_authenticated() and not user.is_anonymous():
             if not user.is_superuser:
-                own_entry_q=Q(document__collator__id=user.id)
-                public_q=Q(document__public=1)
-                group_q=Q(Q(document__draft=0) & Q(document__collator__groups__in=list(user.groups.all())))
+                own_entry_q=Q(collator__id=user.id)
+                public_q=Q(public=1)
+                group_q=Q(Q(draft=0) & Q(collator__groups__in=list(user.groups.all())))
                 q=own_entry_q | public_q | group_q
         else:
-            q=Q(document__public=1)
+            q=Q(public=1)
 
         # filter tagged items        
         if applabel:
             queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower())
         if model:
             queryset = queryset.filter(content_type__model=model.lower())
-        queryset=queryset.filter(q)
-            
+        if len(q):
+            doc_ids=[doc.id for doc in Document.objects.filter(q)]
+            queryset=queryset.filter(object_id__in=doc_ids)
+
         # get tags
         tag_ids = queryset.values_list('tag_id', flat=True)
         queryset = Tag.objects.filter(id__in=tag_ids)
