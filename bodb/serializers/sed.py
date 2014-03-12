@@ -6,7 +6,7 @@ from bodb.serializers.literature import LiteratureSerializer
 
 class SEDSerializer(serializers.ModelSerializer):
     references = LiteratureSerializer(source = 'literature', fields = ('id','title','authors','collator'))
-    related_brain_region = RelatedBrainRegionSerializer(source = 'document')
+    related_brain_region = RelatedBrainRegionSerializer(source = 'related_region_document')
     #related_modeln = RelatedBrainRegionSerializer(source = 'document')
     
     class Meta:
