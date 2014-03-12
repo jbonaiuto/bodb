@@ -183,6 +183,24 @@ class SEDReportView(View):
             return sed_report_rtf(context, display_settings)
         elif format=='pdf':
             return sed_report_pdf(context, display_settings)
+        elif format=='json':
+            return report_json(context, display_settings)
+        
+
+import json
+from bodb.serializers.sed import SEDSerializer
+from rest_framework.renderers import UnicodeJSONRenderer
+#from rest_framework.response import Response
+
+def report_json(context, display_settings):
+    response = HttpResponse(mimetype='application/json')
+    response['Content-Disposition'] = 'attachment; filename=SED_Report.json'
+    
+    serializer = SEDSerializer(context['sed'])
+    data = UnicodeJSONRenderer().render(serializer.data)
+    json.dump(data, response)
+
+    return response
 
 
 # Report generator for SSR page
@@ -374,7 +392,6 @@ def ssr_report_pdf(context, display_settings):
     doc.build(elements)
 
     return response
-
 
 def sed_report_rtf(context, display_settings):
     response = HttpResponse(mimetype='application/rtf')
