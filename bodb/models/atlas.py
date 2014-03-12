@@ -145,7 +145,7 @@ class BrainNavigatorBrainRegion(models.Model):
 
 # The relationship between some record and a Brain Region
 class RelatedBrainRegion(models.Model):
-    document = models.ForeignKey('Document', related_name='brain_region')
+    document = models.ForeignKey('Document', related_name='document')
     brain_region = models.ForeignKey(BrainRegion, related_name='brain_region', null=True)
     relationship = models.TextField(blank=True)
     class Meta:
