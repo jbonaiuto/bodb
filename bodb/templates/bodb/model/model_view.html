@@ -404,6 +404,7 @@
                 <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{model.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
+        <br>
         <input class="btn" type="button" value="Export" onclick="exportModel(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         Format:&nbsp;
         <select id="exportType">
