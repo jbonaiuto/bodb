@@ -50,8 +50,7 @@ def get_queryset(user, forvar=None):
         if model:
             queryset = queryset.filter(content_type__model=model.lower())
         if len(q):
-            doc_ids=[doc.id for doc in Document.objects.filter(q)]
-            queryset=queryset.filter(object_id__in=doc_ids)
+            queryset=queryset.filter(object_id__in=Document.objects.filter(q).values_list('id',flat=True))
 
         # get tags
         tag_ids = queryset.values_list('tag_id', flat=True)
