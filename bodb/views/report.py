@@ -13,12 +13,33 @@ from reportlab.platypus import *
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
-from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord
+from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
 from uscbp.image_utils import get_thumbnail
 
 thin_edge  = BorderPS( width=10, style=BorderPS.SINGLE )
 thin_frame  = FramePS( thin_edge,  thin_edge,  thin_edge,  thin_edge )
 styles = getSampleStyleSheet()
+
+def get_sed_report_context(request, sed):
+    # load related entries
+    figures = list(DocumentFigure.objects.filter(document=sed).order_by('order'))
+    related_bops = list(RelatedBOP.get_related_bops(sed, request.user))
+    related_models = RelatedModel.get_sed_related_models(sed, request.user)
+    related_brain_regions = list(RelatedBrainRegion.objects.filter(document=sed))
+    references = list(sed.literature.all())
+    related_bops.sort(compareRelatedBops)
+    related_models.sort(compareRelatedModels)
+    related_brain_regions.sort(compareRelatedBrainRegions)
+    references.sort(key=Literature.author_names)
+    context = {
+        'sed': sed,
+        'figures': figures,
+        'related_bops': related_bops,
+        'related_models': related_models,
+        'related_brain_regions': related_brain_regions,
+        'references': references
+    }
+    return context
 
 class BOPReportView(View):
     def post(self, request, *args, **kwargs):
@@ -52,7 +73,7 @@ class BOPReportView(View):
             'related_bops': related_bops,
             'related_models': related_models,
             'related_brain_regions': related_brain_regions,
-            'references':references
+            'references':references,
         }
 
         display_settings={
@@ -66,14 +87,46 @@ class BOPReportView(View):
             'referencedisp': int(request.POST['referenceDisplay'])
         }
 
+        response = HttpResponse(mimetype='application/%s' % format)
+        response['Content-Disposition'] = 'attachment; filename=BOP_Report.%s' % format
+
+
         if format=='rtf':
-            return bop_report_rtf(context, display_settings)
+            doc=bop_report_rtf(context, display_settings)
         elif format=='pdf':
-            return bop_report_pdf(context, display_settings)
+            elements=bop_report_pdf(context, display_settings)
+
+        if request.POST['includeSEDs']=='true':
+            display_settings={
+                'figuredisp': 1,
+                'narrativedisp': 1,
+                'relatedbopdisp': 1,
+                'relatedmodeldisp': 1,
+                'relatedregiondisp': 1,
+                'referencedisp': 1
+
+            }
+            for buildsed in context['building_seds'] :
+                bsed_context = get_sed_report_context(request, buildsed.sed)
+                if format=='rtf':
+                    doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
+                elif format=='pdf':
+                    elements=sed_report_pdf(bsed_context, display_settings, elements=elements)
+
+        if format=='rtf':
+            DR = Renderer()
+            DR.Write(doc,response)
+        elif format=='pdf':
+            ##############################################################################
+            # Create the PDF object, using the response object as its "file."
+            doc = SimpleDocTemplate(response)
+            doc.build(elements)
+        return response
 
 
 # Report generator for Model page
 class ModelReportView(View):
+
     def post(self, request, *args, **kwargs):
         id = self.kwargs.get('pk', None)
         format = self.kwargs.get('format', None)
@@ -101,7 +154,7 @@ class ModelReportView(View):
         states.sort(compareVariables)
         modules.sort(compareModules)
         building_seds.sort(compareBuildSEDs)
-        testing_seds.sort(compareDocuments)
+        testing_seds.sort(compareTestSEDs)
         predictions.sort(compareDocuments)
         related_models.sort(compareRelatedModels)
         related_bops.sort(compareRelatedBops)
@@ -135,10 +188,46 @@ class ModelReportView(View):
             'referencedisp': int(request.POST['referenceDisplay'])
         }
 
+        response = HttpResponse(mimetype='application/%s' % format)
+        response['Content-Disposition'] = 'attachment; filename=Model_Report.%s' % format
+
         if format=='rtf':
-            return model_report_rtf(context, display_settings)
+            doc=model_report_rtf(context, display_settings)
         elif format=='pdf':
-            return model_report_pdf(context, display_settings)
+            elements=model_report_pdf(context, display_settings)
+
+        if request.POST['includeSEDs']=='true':
+            display_settings={
+                'figuredisp': 1,
+                'narrativedisp': 1,
+                'relatedbopdisp': 1,
+                'relatedmodeldisp': 1,
+                'relatedregiondisp': 1,
+                'referencedisp': 1
+
+            }
+            for buildsed in context['building_seds'] :
+                bsed_context = get_sed_report_context(request, buildsed.sed)
+                if format=='rtf':
+                    doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
+                elif format=='pdf':
+                    elements=sed_report_pdf(bsed_context, display_settings, elements=elements)
+
+            for testsed in context['testing_seds']:
+                tsed_context = get_sed_report_context(request, testsed.sed)
+                if format=='rtf':
+                    doc=sed_report_rtf(tsed_context, display_settings, doc=doc)
+                elif format=='pdf':
+                    elements=sed_report_pdf(tsed_context, display_settings, elements=elements)
+
+        if format=='rtf':
+            DR = Renderer()
+            DR.Write(doc,response)
+        elif format=='pdf':
+            doc = SimpleDocTemplate(response)
+            doc.build(elements)
+
+        return response
 
 
 # Report generator for SED page
@@ -147,28 +236,8 @@ class SEDReportView(View):
         id = self.kwargs.get('pk', None)
         format = self.kwargs.get('format', None)
 
-        user=request.user
         sed=get_object_or_404(SED, id=id)
-        # load related entries
-        figures = list(DocumentFigure.objects.filter(document=sed).order_by('order'))
-        related_bops = list(RelatedBOP.get_related_bops(sed,user))
-        related_models = RelatedModel.get_sed_related_models(sed,user)
-        related_brain_regions = list(RelatedBrainRegion.objects.filter(document=sed))
-        references = list(sed.literature.all())
-
-        related_bops.sort(compareRelatedBops)
-        related_models.sort(compareRelatedModels)
-        related_brain_regions.sort(compareRelatedBrainRegions)
-        references.sort(key=Literature.author_names)
-
-        context={
-            'sed':sed,
-            'figures':figures,
-            'related_bops':related_bops,
-            'related_models':related_models,
-            'related_brain_regions':related_brain_regions,
-            'references':references
-        }
+        context = get_sed_report_context(request, sed)
 
         display_settings={
             'figuredisp': int(request.POST['figureDisplay']),
@@ -179,12 +248,21 @@ class SEDReportView(View):
             'referencedisp': int(request.POST['referenceDisplay'])
 
         }
+
+        response = HttpResponse(mimetype='application/%s' % format)
+        response['Content-Disposition'] = 'attachment; filename=SED_Report.%s' % format
+
         if format=='rtf':
-            return sed_report_rtf(context, display_settings)
+            doc=sed_report_rtf(context, display_settings)
+            DR = Renderer()
+            DR.Write(doc,response)
         elif format=='pdf':
-            return sed_report_pdf(context, display_settings)
+            doc = SimpleDocTemplate(response)
+            elements=sed_report_pdf(context, display_settings)
+            doc.build(elements)
         elif format=='json':
-            return report_json(context, display_settings)
+            response=report_json(context, display_settings)
+        return response
         
 
 import json
@@ -213,15 +291,6 @@ class SSRReportView(View):
         # load related entries
         model=Model.objects.filter(Q(testsed__testsedssr__ssr=ssr) | Q(prediction__predictionssr__ssr=ssr))[0]
         figures=list(DocumentFigure.objects.filter(document=ssr).order_by('order'))
-        #related_seds = list(ssr.get_related_seds(True, True, request.user))
-        #related_ssrs = list(ssr.get_related_ssrs(request.user))
-        #related_models = list(ssr.get_related_models(request.user))
-        #references = list(ssr.literature.all())
-
-        #related_seds.sort(compareDocuments)
-        #related_ssrs.sort(compareDocuments)
-        #related_models.sort(compareRelatedModels)
-        #references.sort(key=Literature.author_names)
 
         context={
             'ssr':ssr,
@@ -232,23 +301,25 @@ class SSRReportView(View):
         display_settings={
             'figuredisp': int(request.POST['figureDisplay']),
             'narrativedisp': int(request.POST['narrativeDisplay']),
-            #relatedseddisp = int(request.POST['sedDisplay'])
-            #relatedssrdisp = int(request.POST['ssrDisplay'])
-            #relatedmodeldisp = int(request.POST['relatedModelDisplay'])
-            #referencedisp = int(request.POST['referenceDisplay'])
         }
+        response = HttpResponse(mimetype='application/%s' % format)
+        response['Content-Disposition'] = 'attachment; filename=SSR_Report.%s' % format
+
         if format=='rtf':
-            return ssr_report_rtf(context, display_settings)
+            doc=ssr_report_rtf(context, display_settings)
+            DR = Renderer()
+            DR.Write(doc,response)
         elif format=='pdf':
-            return ssr_report_pdf(context, display_settings)
+            doc = SimpleDocTemplate(response)
+            elements=ssr_report_pdf(context, display_settings)
+            doc.build(elements)
+        return response
 
 
-def ssr_report_rtf(context, display_settings):
-    response = HttpResponse(mimetype='application/rtf')
-    response['Content-Disposition'] = 'attachment; filename=SSR_Report.rtf'
-
+def ssr_report_rtf(context, display_settings, doc=None):
     # Create the document
-    doc = PyRTF.Elements.Document()
+    if doc is None:
+        doc = PyRTF.Elements.Document()
     ss = doc.StyleSheet
     NormalText = TextStyle( TextPropertySet( ss.Fonts.Arial, 22 ) )
     NormalText.TextPropertySet.SetSize(22).SetBold(True).SetUnderline(False).SetItalic(False)
@@ -322,21 +393,13 @@ def ssr_report_rtf(context, display_settings):
 #    if referencedisp and references and len(references) :
 #        section=reference_section_rtf(section, ss, references)
 
-    DR = Renderer()
-    DR.Write(doc,response)
-
-    return response
+    return doc
 
 
-def ssr_report_pdf(context, display_settings):
-    response = HttpResponse(mimetype='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=SSR_Report.pdf'
-
+def ssr_report_pdf(context, display_settings, elements=None):
     ##############################################################################
-    # Create the PDF object, using the response object as its "file."
-    # set up Canvas
-    doc = SimpleDocTemplate(response)
-    elements = []
+    if elements is None:
+        elements = []
 
     elements.append(Paragraph('SSR: %s' % unicode(context['ssr'].title).encode('latin1','ignore'), styles['Heading1']))
 
@@ -389,16 +452,12 @@ def ssr_report_pdf(context, display_settings):
 #    if referencedisp and references and len(references) :
 #        elements=reference_section_pdf(elements, references)
 
-    doc.build(elements)
+    return elements
 
-    return response
-
-def sed_report_rtf(context, display_settings):
-    response = HttpResponse(mimetype='application/rtf')
-    response['Content-Disposition'] = 'attachment; filename=SED_Report.rtf'
-
+def sed_report_rtf(context, display_settings, doc=None):
     # Create the document
-    doc = PyRTF.Elements.Document()
+    if doc is None:
+        doc = PyRTF.Elements.Document()
     ss = doc.StyleSheet
     NormalText = TextStyle( TextPropertySet( ss.Fonts.Arial, 22 ) )
     NormalText.TextPropertySet.SetSize(22).SetBold(True).SetUnderline(False).SetItalic(False)
@@ -587,21 +646,12 @@ def sed_report_rtf(context, display_settings):
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         reference_section_rtf(section, ss, context['references'])
 
-    DR = Renderer()
-    DR.Write(doc,response)
-
-    return response
+    return doc
 
 
-def sed_report_pdf(context, display_settings):
-    response = HttpResponse(mimetype='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=SED_Report.pdf'
-
-    ##############################################################################
-    # Create the PDF object, using the response object as its "file."
-    # set up Canvas
-    doc = SimpleDocTemplate(response)
-    elements = []
+def sed_report_pdf(context, display_settings, elements=None):
+    if elements is None:
+        elements = []
 
     elements.append(Paragraph('SED: %s' % unicode(context['sed'].title).encode('latin1','ignore'), styles['Heading1']))
 
@@ -744,21 +794,17 @@ def sed_report_pdf(context, display_settings):
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         elements=reference_section_pdf(elements, context['references'])
 
-    doc.build(elements)
-
-    return response
+    return elements
 
 
-def model_report_rtf(context, display_settings):
+def model_report_rtf(context, display_settings, doc=None):
 
 
     ##############################################################################
 
-    response = HttpResponse(mimetype='application/rtf')
-    response['Content-Disposition'] = 'attachment; filename=Model_Report.rtf'
-
     # Create the document
-    doc = PyRTF.Elements.Document()
+    if doc is None:
+        doc = PyRTF.Elements.Document()
     ss = doc.StyleSheet
     NormalText = TextStyle( TextPropertySet( ss.Fonts.Arial, 22 ) )
     NormalText.TextPropertySet.SetSize(22).SetBold(True).SetUnderline(False).SetItalic(False)
@@ -1077,21 +1123,13 @@ def model_report_rtf(context, display_settings):
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         reference_section_rtf(section, ss, context['references'])
 
-    DR = Renderer()
-    DR.Write(doc,response)
-
-    return response
+    return doc
 
 
-def model_report_pdf(context, display_settings):
-    response = HttpResponse(mimetype='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=Model_Report.pdf'
-
+def model_report_pdf(context, display_settings, elements=None):
     ##############################################################################
-    # Create the PDF object, using the response object as its "file."
-    # set up Canvas
-    doc = SimpleDocTemplate(response)
-    elements = []
+    if elements is None:
+        elements = []
 
     elements.append(Paragraph('Model: %s' % context['model'].title, styles['Heading1'], encoding='latin1'))
 
@@ -1415,21 +1453,16 @@ def model_report_pdf(context, display_settings):
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         elements=reference_section_pdf(elements, context['references'])
 
-    doc.build(elements)
-
-    return response
+    return elements
 
 
-def bop_report_rtf(context, display_settings):
+def bop_report_rtf(context, display_settings, doc=None):
 
     ##############################################################################
-
-    response = HttpResponse(mimetype='application/rtf')
-    response['Content-Disposition'] = 'attachment; filename=BOP_Report.rtf'
-
     # Create the PDF object, using the response object as its "file."
-    # set up Canvas		
-    doc = PyRTF.Elements.Document()
+    # set up Canvas
+    if doc is None:
+        doc = PyRTF.Elements.Document()
     ss = doc.StyleSheet
     NormalText = TextStyle( TextPropertySet( ss.Fonts.Arial, 22 ) )
     NormalText.TextPropertySet.SetSize(22).SetBold(True).SetUnderline(False).SetItalic(False)
@@ -1533,21 +1566,13 @@ def bop_report_rtf(context, display_settings):
     # References
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         section=reference_section_rtf(section, ss, context['references'])
-
-    DR = Renderer()
-    DR.Write(doc,response)
-
-    return response
+    return doc
 
 
-def bop_report_pdf(context, display_settings):
-    response = HttpResponse(mimetype='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=BOP_Report.pdf'
+def bop_report_pdf(context, display_settings, elements=None):
 
-    ##############################################################################
-    # Create the PDF object, using the response object as its "file."
-    doc = SimpleDocTemplate(response)
-    elements = []
+    if elements is None:
+        elements = []
 
     #print bop title
     elements.append(Paragraph('BOP: %s' % unicode(context['bop'].title).encode('latin1','ignore'), styles['Heading1']))
@@ -1647,9 +1672,7 @@ def bop_report_pdf(context, display_settings):
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         elements=reference_section_pdf(elements, context['references'])
 
-    doc.build(elements)
-
-    return response
+    return elements
 
 
 def related_model_section_rtf(section, ss, related_models):

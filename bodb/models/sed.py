@@ -516,7 +516,6 @@ class BuildSED(models.Model):
 def compareBuildSEDs(a, b):
     return cmp(a.sed.title.lower(), b.sed.title.lower())
 
-
 class TestSEDSSR(models.Model):
     test_sed=models.ForeignKey('TestSED')
     ssr=models.ForeignKey('SSR', null=True)
@@ -603,6 +602,10 @@ class TestSED(models.Model):
         if TestSEDSSR.objects.filter(test_sed=self).count()>0:
             return TestSEDSSR.objects.filter(test_sed=self)[0].ssr
         return None
+
+
+def compareTestSEDs(a, b):
+    return cmp(a.sed.title.lower(), b.sed.title.lower())
 
 
 def find_similar_seds(user, title, brief_description):

@@ -87,9 +87,11 @@
             document.location.href='/bodb/';
         }
 
-        function exportBOP(type)
+        function exportBOP()
         {
+            var type=document.getElementById('exportType').value;
             updateSectionDisplaySettings();
+            document.getElementById('reportIncludeSEDs').value=document.getElementById('linkSEDs').checked;
             document.getElementById('reportForm').action='/bodb/bop/{{bop.id}}/report/'+type+'/';
             document.getElementById('reportForm').submit();
         }
@@ -390,12 +392,13 @@
             {% endif %}
         {% endif %}
         <br>
-        <input class="btn" type="button" value="Export" onclick="exportBOP(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        <input class="btn" type="button" value="Export" onclick="exportBOP()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         Format:&nbsp;
         <select id="exportType">
             <option value="pdf">PDF</option>
             <option value="rtf">RTF</option>
-        </select>
+        </select>&nbsp;
+        <input type="checkbox" id="linkSEDs" name="linkSEDs"> Include SEDs
     </div>
     <form id="fileForm" action=""></form>
     <form id="reportForm" name="reportForm" action="/bodb/bop/{{bop.id}}/report/" method="post">
@@ -408,5 +411,6 @@
         <input id="relatedBopDisplay" type="hidden" name="relatedBopDisplay" value=0>
         <input id="relatedBrainRegionDisplay" type="hidden" name="relatedBrainRegionDisplay" value=0>
         <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
+        <input id="reportIncludeSEDs" type="hidden" name="includeSEDs" value=0>
     </form>
 {% endblock %}
