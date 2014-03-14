@@ -1,0 +1,198 @@
+Inserting Data
+==============
+
+.. figure:: images/insert_splash.png
+    :align: center
+    :figclass: align-center
+
+    BODB insert page
+
+* The insert page provides links for adding new entries:
+* Literature - Literature (Journal Article, Book, Chapter, Conference, Thesis, and Unpublished) Information 
+* Brain Operating Principle - Brain Operating Principle (e.g. Winner-Take-All) 
+* Model - Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle) 
+* Summary of Experimental Data - A summary of experimental data. 
+
+Insert Literature
+-----------------
+
+After the user clicks "Literature" from the Insert page, the following screen will appear:
+
+.. figure:: images/add_lit.png
+    :align: center
+    :figclass: align-center
+
+    The literature insert page
+    
+Type
+^^^^
+
+Six types of article forms are available and these can be selected by changing the value of the "Type" dropdown: "Journal", "Book", "Chapter", "Thesis", "Conference", and "Unpublished". Each type has appropriate fields. To avoid having redundant references in the database, we recommend first searching for a desired reference and then using the result if found, before adding a new reference. 
+
+Add New Author
+^^^^^^^^^^^^^^
+
+To add an author, click the "Add new" link in the "Authors" section. The ordering of authors when the Literature entry is listed can be set by setting the "Order" field of each author appropriately.
+
+.. figure:: images/add_author.png
+    :align: center
+    :figclass: align-center
+
+    A new author added to a new Literature entry
+
+PubMed Search
+^^^^^^^^^^^^^^
+
+In general, the user can enter the information manually. However, for journal articles ("Journal"), we provide a tool for automatically retrieving article information from PubMed (which can also be accessed directly at http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?DB=pubmed.
+
+Given keywords and/or a year range, the PubMed tool will list the most relevant articles from PubMed Database. The user can click on the "Import" link next to a search result to transfer the entry into BODB.
+
+.. figure:: images/search_pubmed.png
+    :align: center
+    :figclass: align-center
+
+    Pubmed search tool
+    
+Save
+^^^^
+
+Clicking on the "Save" button will save the entry in the BODB database and redirect to the Literature view page.
+
+.. figure:: images/lit_view.png
+    :align: center
+    :figclass: align-center
+
+    Literature view
+    
+    
+Insert BOP
+-----------------
+
+A form for populating BODB with BOPs will be described here that is shown after clicking on the "Brain Operating Principle" link in the Insert page. Click on the "Save Draft" button to save a draft of the present principle to the BODB database. The principal draft will also be available to edit at a later time and will be listed in the Workspace for convenience.
+
+.. figure:: images/add_bop.png
+    :align: center
+    :figclass: align-center
+
+    The input form for Brain Operating Principle entries
+    
+Title
+^^^^^
+The name of the principle, e.g. "Winner-Take-All". It is very important to first search for existing BOPs to increase the utility of BODB by helping collators gather similar BOPs into a single entry, where this is appropriate.
+
+Parent
+^^^^^^
+The BOP entry with a parent relationship to this one. For example, "Reinforcement learning" would be the parent of "Temporal difference learning". In order to link to an existing BOP, click on the "Search" button, which will open the BOP search window. Clicking on the "Add" button will open another Add BOP window in order to add a new BOP as the parent.
+
+Brief Description
+^^^^^^^^^^^^^^^^^
+A brief description of the principle. We provide a text input area but in general the entry should be much shorter (say 200 words) since a full description can be entered in the "Narrative" field.
+
+Narrative
+^^^^^^^^^
+A full length description of the present principle.
+
+Tags
+^^^^
+A list of keywords associated with this BOP entry.
+
+Figures
+^^^^^^^
+Clicking on the "Show" link in the "Figures" section will expand the Figures section, displaying figures linked to the current entry and allowing the user to add new figures. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Figures section.
+
+.. figure:: images/add_bop_figure.png
+    :align: center
+    :figclass: align-center
+
+    Literature view
+
+To add a new figure, click on the "Add new" link. This will open up the Add Figure window where the used can enter the order the figure will appear, upload the actualy file and then provide a title and caption. clicking "Delete" will delete the figure and remove it from the BOP.
+
+Summaries of Experimental Data (SEDs)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Clicking on the "Show" link in the "Summaries of Experimental Data (SEDs)" section will expand the SEDs section, displaying the SEDs linked to the current entry and allowing the user to add new SEDs. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the SEDs section.
+
+.. figure:: images/add_sed_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded SEDs section
+
+In order to add an existing SED to the current BOP, clicking on the "Search" link will open the SED Search window. Clicking "Select" next to one of the search results will add that SED to the SED section. In order to add a new SED and link it to the current BOP entry, click on the "Add new" link will to add a new SED and automatically add it to the SED section.
+
+A specific summary datum may be classified as pertaining to the present BOP in 2 different ways. 
+
+#. Scene setting - Background information that is not specifically used in developing or assessing the principle. 
+#. Support - These are data that are examples of the principle.
+
+After the user links an existing SED or adds a new one, she should specify the relation between the present BOP entry and the SED as one of "Scene Setting" or "Support" and add a "Relevance Narrative". This will aid in clarifying how the summary data relate to the principle.
+
+Clicking on the "Remove" link next to a linked SED will remove that SED from the current BOP entry.
+
+Related BOPs
+^^^^^^^^^^^^
+This allows listing of principles related to the present principle. Clicking on the "Show" link in the "Related BOPs" section will expand the Related BOPs section, displaying the BOPs linked to the current entry and allowing the user to add new BOPs. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Related BOPs section.
+
+.. figure:: images/add_bop_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded Related BOPs section
+
+In order to add an existing BOP to the current BOP, clicking on the "Search" link will open the BOP Search window. Clicking "Select" next to one of the search results will add that BOP to the Related BOPs section. Click on the "Add new" link to create a new SED and automatically add it to the Related BOPs section. 
+
+A specific summary datum may be classified as pertaining to the present BOP in 2 different ways. 
+
+#. Involves - To describe that the related BOP is subsumed by the current BOP entry. 
+#. Synonym - Marks the two BOPs as identical.
+
+After the user links an existing SED or adds a new one, she should specify the relation between the present BOP entry and the related BOP as one of "Involves" or "Synonym" and add a "Relevance Narrative". This will aid in clarifying how the two BOPs relate.
+
+Clicking on the "Remove" link next to a linked BOP will remove that BOP from the current entry.
+
+Related Models
+^^^^^^^^^^^^^^
+
+This will list any models that use this principle. Clicking on the "Show" link in the "Related Models" section will expand the Related Models section, displaying the Models linked to the current entry and allowing the user to add new Models. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Related Models section.
+
+.. figure:: images/add_mod_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded Related Models section
+
+In order to add an existing Model to the current BOP, clicking on the "Search" link will open the Model Search window. Clicking "Select" next to one of the search results will add that Model to the Related Models section. In order to add a new Model and link it to the current BOP entry, click on the "Add new" link to create a new Model and automatically add it to the Related Models section. 
+
+After the user links an existing SED or adds a new one, she add a "Relationship". This will aid in clarifying how the Model relates to the BOP. 
+
+Clicking on the "Remove" link next to a linked Model will remove that Model from the current entry.
+
+Related Brain Regions
+^^^^^^^^^^^^^^^^^^^^^
+Brain region(s) that relate to the present principle. For example, reinforcement learning has many related brain regions: Basal Ganglia, Prefrontal Cortex, etc. Clicking on the "Show" link in the "Related Brain Regions" section will expand the Related Brain Regions section, displaying the Brain Regions linked to the current entry. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Related Brain Regions section.
+
+.. figure:: images/add_br_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded Related Brain Regions section
+
+In order to add an existing Brain Region to the current BOP, clicking on the "Search" link will open the Brain Region Search window. Clicking "Select" next to one of the search results will add that Brain Region to the current BOP entry. As Brain Regions need to be available in the Brainsurfer Atlas and adminstered, the user must request a new Brain Region if necessary by clickincg the "Request New" link
+
+Clicking "Remove" next to a linked Brain Region will remove it from the current BOP entry.
+
+References
+^^^^^^^^^^
+References to articles, books chapters, etc., relevant to this principle. Clicking on the "Show" link in the "References" section will expand the References section, displaying Literature linked to the current entry and allowing the user to add new Literature entries. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the References section.
+
+.. figure:: images/add_ref_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded References section
+
+To link an existing Literature entry to the current BOP, click on the "Search" link. This will open the Literature Search window where "Select" link next to any search result can be clicked to link it to the current BOP entry. Click on "Add new" link to create a new Literature entry and automatically add it to the References Section.
+
+Clicking "Remove" will remove the Reference from the BOP.
+
+
