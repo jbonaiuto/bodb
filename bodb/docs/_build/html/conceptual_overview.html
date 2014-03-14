@@ -25,6 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="BODB 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="User Login and Registration" href="login_register.html" />
     <link rel="prev" title="Introduction" href="introduction.html" /> 
   </head>
   <body>
@@ -34,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="login_register.html" title="User Login and Registration"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
@@ -62,6 +66,12 @@
 <div class="align-center figure">
 <img alt="_images/bodb_entity_schema.png" src="_images/bodb_entity_schema.png" />
 <p class="caption">The entity relationship schema of BODB’s fundamental entities.</p>
+</div>
+<div class="section" id="brain-operating-principle">
+<h2>Brain Operating Principle<a class="headerlink" href="#brain-operating-principle" title="Permalink to this headline">¶</a></h2>
+<p>In BODB, a Brain Operating Principle is a generalized description of an &#8220;operating principle&#8221; common to a range of functions (schemas) or structures (regions, circuits, neurons, etc.) of the brain. At the micro-level, the principle could describe electro-chemical dynamics; at the macro-level, it might describe the activity of multiple groups of cells achieving some task by competitive and/or cooperative means.</p>
+<p>In general, a principle specific to the operation of a single model does not count as a BOP. Rather, it should simply be part of the description of the relevant model. The same applies to a principle describing a single functionality of a brain region as modeled by a set of alternate models. The whole idea of BOPs is to let one search for models which are related by “how they work” (a functional ontology) rather than by the brain regions they model (a structural ontology). Clearly, a principle specific to one model or to very similar models does not serve this purpose (though there may be very rare exceptions).</p>
+<p>One example of a Brain Operating is the Winner-Take-All (WTA) Principle, which asserts that &#8220;A Winner-Take-All network responds (after a delay) to an array of inputs of different intensity with an output array which encodes which input had the greatest intensity.&#8221; This BOP applies to aspects of the operation of a varied range of models. These include: (i) The Prey-Selector Model of Didday (1976) which models the frog’s tectum as a Winner-Take-All network that selects one of several visually presented prey objects. (ii) The Dominey and Arbib (1992) model of the control of saccades: The superior colliculus is modeled as a WTA for selecting among a set of retinotopically coded targets. (iii) Self-Organizing feature Maps (Kohonen, 1982): At each training trial, the WTA selects the neuron that responds best, then provides a Hebbian adjustment to nearby neurons in relation to the current stimulus, with the size of the synaptic change decaying with distance from the winner. (iv) The Taxon-Affordance Model (Guazzelli et al., 1998): Premotor cortex combines maps of affordances, incentives and expected reinforcement and then applies a WTA to choose a particular affordance. (v) The basal ganglia based model (Redgrave, Prescott and Gurney, 1999) for selecting one of several competing actions. (vi) The Itti &amp; Koch (2000) model of visual attention which applies WTA to a sum of feature maps to locate the most location in a given scene.</p>
 </div>
 <div class="section" id="article-information">
 <h2>Article Information<a class="headerlink" href="#article-information" title="Permalink to this headline">¶</a></h2>
@@ -96,6 +106,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Conceptual Overview</a><ul>
+<li><a class="reference internal" href="#brain-operating-principle">Brain Operating Principle</a></li>
 <li><a class="reference internal" href="#article-information">Article Information</a></li>
 <li><a class="reference internal" href="#model">Model</a></li>
 <li><a class="reference internal" href="#brain-region">Brain Region</a></li>
@@ -108,6 +119,9 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="introduction.html"
                         title="previous chapter">Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="login_register.html"
+                        title="next chapter">User Login and Registration</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/conceptual_overview.txt"
@@ -136,6 +150,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="login_register.html" title="User Login and Registration"
+             >next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>

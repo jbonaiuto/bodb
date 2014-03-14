@@ -16,10 +16,17 @@ Our current version of BODB combines features of an SDB (Summary Database) and M
 
 .. figure:: images/bodb_entity_schema.png
     :align: center
-    :alt: alternate text
     :figclass: align-center
 
     The entity relationship schema of BODB’s fundamental entities.
+    
+Brain Operating Principle
+-------------------
+In BODB, a Brain Operating Principle is a generalized description of an "operating principle" common to a range of functions (schemas) or structures (regions, circuits, neurons, etc.) of the brain. At the micro-level, the principle could describe electro-chemical dynamics; at the macro-level, it might describe the activity of multiple groups of cells achieving some task by competitive and/or cooperative means.
+
+In general, a principle specific to the operation of a single model does not count as a BOP. Rather, it should simply be part of the description of the relevant model. The same applies to a principle describing a single functionality of a brain region as modeled by a set of alternate models. The whole idea of BOPs is to let one search for models which are related by “how they work” (a functional ontology) rather than by the brain regions they model (a structural ontology). Clearly, a principle specific to one model or to very similar models does not serve this purpose (though there may be very rare exceptions).
+
+One example of a Brain Operating is the Winner-Take-All (WTA) Principle, which asserts that "A Winner-Take-All network responds (after a delay) to an array of inputs of different intensity with an output array which encodes which input had the greatest intensity." This BOP applies to aspects of the operation of a varied range of models. These include: (i) The Prey-Selector Model of Didday (1976) which models the frog’s tectum as a Winner-Take-All network that selects one of several visually presented prey objects. (ii) The Dominey and Arbib (1992) model of the control of saccades: The superior colliculus is modeled as a WTA for selecting among a set of retinotopically coded targets. (iii) Self-Organizing feature Maps (Kohonen, 1982): At each training trial, the WTA selects the neuron that responds best, then provides a Hebbian adjustment to nearby neurons in relation to the current stimulus, with the size of the synaptic change decaying with distance from the winner. (iv) The Taxon-Affordance Model (Guazzelli et al., 1998): Premotor cortex combines maps of affordances, incentives and expected reinforcement and then applies a WTA to choose a particular affordance. (v) The basal ganglia based model (Redgrave, Prescott and Gurney, 1999) for selecting one of several competing actions. (vi) The Itti & Koch (2000) model of visual attention which applies WTA to a sum of feature maps to locate the most location in a given scene.
 
 Article Information
 -------------------
