@@ -73,6 +73,7 @@
                     sent: data.invitations[i]['sent'], user: data.invitations[i]['user'],
                     body: data.invitations[i]['body'], status: data.invitations[i]['status']});
                 $('#invitationList').append(compiledTmpl);
+                $('textarea:not(.processed)').TextAreaResizer();
             }
         }
     }

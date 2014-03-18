@@ -30,6 +30,7 @@
                 });
                 document.getElementById('id_'+data.form_prefix+'-body').value='';
                 $('#'+data.parent_div).prepend(compiledTmpl);
+                $('textarea:not(.processed)').TextAreaResizer();
             }
         }
     }

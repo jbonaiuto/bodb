@@ -4,6 +4,7 @@
         var tmplMarkup = $('#reference-template').html();
         var compiledTmpl = _.template(tmplMarkup, { id : count, lit: lit_id, authors: data[0], year: data[1], title: data[2]});
         $('#references').append(compiledTmpl);
+        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 

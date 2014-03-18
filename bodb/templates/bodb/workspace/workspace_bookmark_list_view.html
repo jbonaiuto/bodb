@@ -33,6 +33,7 @@
                 document.getElementById('id_bookmark-url').value='';
                 document.getElementById('id_bookmark-description').value='';
                 $('#bookmarks').append(compiledTmpl);
+                $('textarea:not(.processed)').TextAreaResizer();
             }
         }
         return false;

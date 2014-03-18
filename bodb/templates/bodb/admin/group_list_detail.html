@@ -3,6 +3,7 @@
         var tmplMarkup = $('#group-template').html();
         var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
         $('#groups').append(compiledTmpl);
+        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 
@@ -10,6 +11,8 @@
         var tmplMarkup = $('#group-template').html();
         var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
         $('#group-'+group_id).replaceWith(compiledTmpl);
+        $('textarea:not(.processed)').TextAreaResizer();
+        return false;
     }
 
     function deleteGroup(id)

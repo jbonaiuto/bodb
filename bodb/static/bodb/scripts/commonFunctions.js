@@ -39,6 +39,7 @@ function addInlineForm(div_id, prefix, form_prefix){
     $('#'+div_id).append(compiledTmpl);
     // update form count
     $('#id_'+form_prefix+'-TOTAL_FORMS').attr('value', count+1);
+    $('textarea:not(.processed)').TextAreaResizer();
     return false;
 }
 
@@ -49,6 +50,7 @@ function addSEDMultiple(type, sed_id, data){
     $('#'+type+'_seds').append(compiledTmpl);
     // update form count
     $('#id_'+type+'_sed-TOTAL_FORMS').attr('value', count+1);
+    $('textarea:not(.processed)').TextAreaResizer();
     if(type=='build')
     {
         $('#id_build_sed-'+count+'-relationship').poshytip({

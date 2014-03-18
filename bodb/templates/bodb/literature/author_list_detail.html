@@ -7,6 +7,7 @@
         $('#{{ groupName }}_authors').append(compiledTmpl);
         // update form count
         $('#id_{{ groupName }}_author-TOTAL_FORMS').attr('value', count+1);
+        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 </script>

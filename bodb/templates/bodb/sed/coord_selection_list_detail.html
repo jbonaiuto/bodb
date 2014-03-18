@@ -27,6 +27,7 @@
                 document.getElementById('id_selectionCollator').innerHTML=data.collator;
                 document.getElementById('selectionLoadedButtons').style.display='inline';
                 document.getElementById('id_selectionId').value=data.id;
+                $('textarea:not(.processed)').TextAreaResizer();
                 return false;
             }
             else
@@ -122,6 +123,7 @@
                         statistic_value: coord_array['statistic_value'], extra_data: coord_array['extra_data']});
                     $('#sed-'+ sed_id +'-coords').append(compiledTmpl);
                 }
+                $('textarea:not(.processed)').TextAreaResizer();
             }
         }
         return false;

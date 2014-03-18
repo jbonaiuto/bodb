@@ -4,6 +4,7 @@
         var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
             admin: admin, groups: groups, name: name, email: email });
         $('#users').append(compiledTmpl);
+        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 
@@ -12,6 +13,8 @@
         var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
             admin: admin, groups: groups, name: name, email: email });
         $('#user-'+user_id).replaceWith(compiledTmpl);
+        $('textarea:not(.processed)').TextAreaResizer();
+        return false;
     }
 
     function toggleActive(userId, active)
