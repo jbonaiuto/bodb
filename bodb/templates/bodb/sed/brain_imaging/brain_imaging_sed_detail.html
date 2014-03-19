@@ -207,9 +207,9 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
+                offsetY: -45,
                 timeOnScreen: 3000
             });
 
@@ -243,9 +243,9 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
+                offsetY: -75,
                 timeOnScreen: 3000
             });
 
@@ -255,9 +255,9 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
+                offsetY: -60,
                 timeOnScreen: 5000
             });
 
@@ -291,9 +291,9 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
+                offsetY: -60,
                 timeOnScreen: 5000
             });
 
@@ -303,9 +303,9 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
+                offsetY: -75,
                 timeOnScreen: 5000
             });
 
@@ -332,8 +332,8 @@
             <table class="tab_panel">
                 <tr valign=top>
                     <td width=20%>{{ form.title.label_tag }}*</td>
-                    <td width=200px>{{ form.title }} {%if form.instance.draft%}<font color=red>&lt;draft&gt;</font>{%endif%}</td>
-                    <td class="myerrors"><span id="title_errors">{{ form.title.errors }}</span></td>
+                    <td>{{ form.title }} {%if form.instance.draft%}<font color=red>&lt;draft&gt;</font>{%endif%}</td>
+                    <td class="myerrors" width=10%><span id="title_errors">{{ form.title.errors }}</span></td>
                 </tr>
                 <tr valign=top>
                     <td>{{ form.brief_description.label_tag }}*</td>

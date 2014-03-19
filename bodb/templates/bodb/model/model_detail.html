@@ -159,10 +159,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -45,
+                timeOnScreen: 5000
             });
 
             $('#id_brief_description').poshytip({
@@ -174,7 +174,7 @@
                 alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                timeOnScreen: 5000
             });
 
             $('#id_narrative').poshytip({
@@ -186,19 +186,19 @@
                 alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                timeOnScreen: 5000
             });
 
             $('#id_tags').poshytip({
                 className: 'tip-skyblue',
-                content: 'Enter a comma-separated list of keywords. Look a the tag cloud for suggested keywords.',
+                content: 'Enter a comma-separated list of keywords. Look at the tag cloud for suggested keywords.',
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -75,
+                timeOnScreen: 5000
             });
 
             $('#id_modeldb_accession_number').poshytip({
@@ -207,10 +207,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -60,
+                timeOnScreen: 5000
             });
 
             $('#id_execution_url').poshytip({
@@ -219,10 +219,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -60,
+                timeOnScreen: 5000
             });
 
             $('#id_documentation_url').poshytip({
@@ -231,10 +231,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -60,
+                timeOnScreen: 5000
             });
 
             $('#id_description_url').poshytip({
@@ -243,10 +243,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -60,
+                timeOnScreen: 5000
             });
 
             $('#id_simulation_url').poshytip({
@@ -255,10 +255,10 @@
                 showOn: 'focus',
                 showTimeout: 100,
                 alignTo: 'target',
-                alignY: 'center',
                 alignX: 'right',
                 offsetX: 5,
-                timeOnScreen: 3000
+                offsetY: -60,
+                timeOnScreen: 5000
             });
         });
     </script>
@@ -270,15 +270,15 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
-                    <td width=20%>&nbsp;</td>
-                    <td width=200px align=right>
+                    <td width=20%>
                         <input type=button class=btn value="Search ModelDB" onclick="return showPopup('search_modeldb', 700, 700, '/bodb/search/modeldb/');"  onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                     </td>
-                    <td>&nbsp;</td>
+                    <td align=right></td>
+                    <td width=10%>&nbsp;</td>
                 </tr>
                 <tr valign=top>
                     <td width=20%>{{ form.title.label_tag }}*</td>
-                    <td width=200px>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
+                    <td>{{ form.title }} {%if form.instance.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</td>
                     <td class="myerrors"><span id="title_errors">{{ form.title.errors }}</span></td>
                 </tr>
                 <tr>

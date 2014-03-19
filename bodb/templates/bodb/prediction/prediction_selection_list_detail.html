@@ -13,9 +13,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 5000
         });
         $('#id_prediction-'+count+'-brief_description').poshytip({
@@ -24,9 +24,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -75,
             timeOnScreen: 5000
         });
         $('#id_prediction-'+count+'-predictionssr_set-0-ssr_title').poshytip({
@@ -35,9 +35,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 5000
         });
         $('#id_prediction-'+count+'-predictionssr_set-0-ssr_brief_description').poshytip({
@@ -46,9 +46,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -75,
             timeOnScreen: 5000
         });
         $('textarea:not(.processed)').TextAreaResizer();
@@ -92,7 +92,7 @@
                                     <td style="width:150px">
                                         {{ prediction_form.title }}
                                     </td>
-                                    <td width=200px>
+                                    <td>
                                         {{ prediction_form.brief_description }}
                                     </td>
                                     <td class="myerrors">
@@ -134,7 +134,7 @@
                                                                         <td style="width:150px">
                                                                             {{ predictionssr_form.ssr_title }}
                                                                         </td>
-                                                                        <td width=200px>
+                                                                        <td>
                                                                             {{ predictionssr_form.ssr_brief_description }}
                                                                         </td>
                                                                         <td class="myerrors">
@@ -176,7 +176,7 @@
                 <td style="width:150px">
                     <input id="id_prediction-<%= id %>-title" name="prediction-<%= id %>-title" size="13" type="text" />
                 </td>
-                <td width=200px>
+                <td>
                     <textarea cols="50" id="id_prediction-<%= id %>-brief_description" name="prediction-<%= id %>-brief_description" rows="3"></textarea>
                 </td>
                 <td class="myerrors">
@@ -214,7 +214,7 @@
                                             <td style="width:150px">
                                                 <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_title" name="prediction-<%= id %>-predictionssr_set-0-ssr_title" size="13" type="text" />
                                             </td>
-                                            <td width=200px>
+                                            <td>
                                                 <textarea cols="50" id="id_prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" name="prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" rows="3"></textarea>
                                             </td>
                                             <td class="myerrors">

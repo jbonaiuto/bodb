@@ -14,9 +14,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -45,
             timeOnScreen: 3000
         });
 
@@ -26,9 +26,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -75,
             timeOnScreen: 3000
         });
 
@@ -38,10 +38,10 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
-            timeOnScreen: 3000
+            offsetY: -90,
+            timeOnScreen: 5000
         });
 
         $('#id_erp_component-'+count+'-latency_onset').poshytip({
@@ -50,9 +50,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -62,9 +62,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -74,9 +74,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -86,9 +86,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -98,9 +98,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -110,9 +110,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -45,
             timeOnScreen: 3000
         });
 
@@ -122,9 +122,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -134,9 +134,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -60,
             timeOnScreen: 3000
         });
 
@@ -146,9 +146,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -65,
             timeOnScreen: 3000
         });
         $('textarea:not(.processed)').TextAreaResizer();
@@ -228,9 +228,8 @@
                                     <td colspan="2">
                                         {{ erp_component_form.electrode_cap }}
                                     </td>
-                                    <td>Channel</td>
-                                    <td colspan="2">
-                                        {{ erp_component_form.channel_number }}
+                                    <td colspan="3">
+                                        Channel {{ erp_component_form.channel_number }}
                                     </td>
                                 </tr>
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -338,9 +337,8 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td>Channel</td>
-                <td colspan="2">
-                    <input id="id_erp_component-<%= id %>-channel_number" name="erp_component-<%= id %>-channel_number" size="5" type="text" />
+                <td colspan="3">
+                    Channel <input id="id_erp_component-<%= id %>-channel_number" name="erp_component-<%= id %>-channel_number" size="5" type="text" />
                 </td>
             </tr>
             <tr class="<%= getTRTag(id) %>" valign=top>

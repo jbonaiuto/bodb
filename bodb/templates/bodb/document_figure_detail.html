@@ -12,10 +12,10 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
-            timeOnScreen: 1000
+            offsetY: -45,
+            timeOnScreen: 5000
         });
         $('#id_figure-'+count+'-title').poshytip({
             className: 'tip-skyblue',
@@ -23,9 +23,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -45,
             timeOnScreen: 1000
         });
         $('#id_figure-'+count+'-caption').poshytip({
@@ -34,9 +34,9 @@
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -80,
             timeOnScreen: 1000
         });
         $('textarea:not(.processed)').TextAreaResizer();

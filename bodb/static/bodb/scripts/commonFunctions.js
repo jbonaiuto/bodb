@@ -59,9 +59,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -85,
             timeOnScreen: 5000
         });
 
@@ -71,9 +71,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'left',
             offsetX: 5,
+            offsetY: -90,
             timeOnScreen: 5000
         });
     }
@@ -85,9 +85,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -85,
             timeOnScreen: 5000
         });
 
@@ -97,9 +97,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -80,
             timeOnScreen: 5000
         });
 
@@ -109,9 +109,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -75,
             timeOnScreen: 5000
         });
 
@@ -121,9 +121,9 @@ function addSEDMultiple(type, sed_id, data){
             showOn: 'focus',
             showTimeout: 100,
             alignTo: 'target',
-            alignY: 'center',
             alignX: 'right',
             offsetX: 5,
+            offsetY: -80,
             timeOnScreen: 5000
         });
     }
