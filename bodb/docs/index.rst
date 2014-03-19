@@ -15,7 +15,8 @@ Contents:
    conceptual_overview
    login_register
    bodb_structure
-   insert
+   insert_data
+   search_data
 
 
 

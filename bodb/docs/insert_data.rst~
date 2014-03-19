@@ -57,12 +57,6 @@ Save
 ^^^^
 
 Clicking on the "Save" button will save the entry in the BODB database and redirect to the Literature view page.
-
-.. figure:: images/lit_view.png
-    :align: center
-    :figclass: align-center
-
-    Literature view
     
     
 Insert BOP
@@ -104,7 +98,7 @@ Clicking on the "Show" link in the "Figures" section will expand the Figures sec
     :align: center
     :figclass: align-center
 
-    Literature view
+    The expanded figures section
 
 To add a new figure, click on the "Add new" link. This will open up the Add Figure window where the used can enter the order the figure will appear, upload the actualy file and then provide a title and caption. clicking "Delete" will delete the figure and remove it from the BOP.
 
@@ -528,3 +522,82 @@ Lorem ipsum...
     :figclass: align-center
 
     Summary of Connectivity Data
+    
+*Title*
+
+The name of the SED entry.
+
+*Brief Description*
+
+A brief description of the SED. We provide a text input area but in general the entry should be much shorter (say 200 words) since a full description can be entered in the "Narrative" field.
+
+*Narrative*
+
+A full length description of the SED. The narrative must be detailed enough to provide rigorous constraints for the design and/or testing of models.
+
+*Tags*
+
+A list of keywords associated with this SED entry.
+
+*Source Region*
+
+Lorem ipsum...
+
+*Target Region*
+
+Lorem ipsum...
+    
+    
+Figures
+^^^^^^^
+Clicking on the "Show" link in the "Figures" section will expand the Figures section, displaying figures linked to the current entry and allowing the user to add new figures. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Figures section.
+
+.. figure:: images/add_bop_figure.png
+    :align: center
+    :figclass: align-center
+
+    The expanded figures section
+
+To add a new figure, click on the "Add new" link. This will open up the Add Figure window where the used can enter the order the figure will appear, upload the actualy file and then provide a title and caption. clicking "Delete" will delete the figure and remove it from the SED.
+
+Related BOPs
+^^^^^^^^^^^^
+This allows listing of principles related to the present SED. Clicking on the "Show" link in the "Related BOPs" section will expand the Related BOPs section, displaying the BOPs linked to the current entry and allowing the user to add new BOPs. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Related BOPs section.
+
+.. figure:: images/add_bop_to_model.png
+    :align: center
+    :figclass: align-center
+
+    The expanded Related BOPs section
+
+In order to add an existing BOP to the current SED, clicking on the "Search" link will open the BOP Search window. Clicking "Select" next to one of the search results will add that BOP to the Related BOPs section. Click on the "Add new" link to create a new BOP and automatically add it to the Related BOPs section. 
+
+After the user links an existing BOP or adds a new one, she should add a "Relevance Narrative". This will aid in clarifying how the BOP relates to the SED.
+
+Clicking on the "Remove" link next to a linked BOP will remove that BOP from the current entry.
+
+Related Brain Regions
+^^^^^^^^^^^^^^^^^^^^^
+Brain region(s) that relate to the present SED. For example, reinforcement learning has many related brain regions: Basal Ganglia, Prefrontal Cortex, etc. Clicking on the "Show" link in the "Related Brain Regions" section will expand the Related Brain Regions section, displaying the Brain Regions linked to the current entry. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the Related Brain Regions section.
+
+.. figure:: images/add_br_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded Related Brain Regions section
+
+In order to add an existing Brain Region to the current SED, clicking on the "Search" link will open the Brain Region Search window. Clicking "Select" next to one of the search results will add that Brain Region to the current SED entry. As Brain Regions need to be available in the Brainsurfer Atlas and adminstered, the user must request a new Brain Region if necessary by clicking the "Request New" link.
+
+References
+^^^^^^^^^^
+References to articles, books chapters, etc., relevant to this SED. Clicking on the "Show" link in the "References" section will expand the References section, displaying Literature linked to the current entry and allowing the user to add new Literature entries. After expansion, the "Show" link will turn into a "Hide" link that can be used to collapse the References section.
+
+.. figure:: images/add_ref_to_bop.png
+    :align: center
+    :figclass: align-center
+
+    The expanded References section
+
+To link an existing Literature entry to the current SED, click on the "Search" link. This will open the Literature Search window where "Select" link next to any search result can be clicked to link it to the current SED entry. Click on "Add new" link to create a new Literature entry and automatically add it to the References Section.
+
+Clicking "Remove" will remove the Reference from the SED.

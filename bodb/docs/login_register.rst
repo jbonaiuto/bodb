@@ -1,5 +1,5 @@
 User Login and Registration
-===================
+===========================
 
 When you first go to BODB, at the top right, there are links to login into the site or register for an account.
 
