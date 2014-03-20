@@ -7,8 +7,8 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
 from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm, ModelDBSearchForm
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
+from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent
 
 class SearchView(FormView):
     form_class = AllSearchForm
