@@ -2,7 +2,11 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
-from bodb.forms import BOPForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedModelFormSet, BuildSEDFormSet, BOPRelatedBOPFormSet
+from bodb.forms.bop import BOPForm, BOPRelatedBOPFormSet
+from bodb.forms.brain_region import RelatedBrainRegionFormSet
+from bodb.forms.document import DocumentFigureFormSet
+from bodb.forms.model import RelatedModelFormSet
+from bodb.forms.sed import BuildSEDFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
 from bodb.views.main import BODBView

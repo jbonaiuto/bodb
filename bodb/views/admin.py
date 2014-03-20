@@ -6,7 +6,8 @@ from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedir
 from django.shortcuts import redirect, render_to_response, render
 from django.views.generic import UpdateView, View, CreateView, DetailView
 from django.views.generic.edit import BaseUpdateView
-from bodb.forms import BodbProfileForm, SubscriptionFormSet, UserSubscriptionFormSet, UserForm, GroupForm
+from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
+from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
 from bodb.models import BodbProfile, Nomenclature
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView

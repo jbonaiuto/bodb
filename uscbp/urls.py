@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from bodb.forms import BodbRegistrationForm
+from bodb.forms.admin import BodbRegistrationForm
 from bodb.views.admin import UpdateUserProfileView, BodbRegistrationView
 from django.conf import settings
 from django.conf.urls.static import static

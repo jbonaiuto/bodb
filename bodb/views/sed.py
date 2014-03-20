@@ -1,12 +1,13 @@
 from string import atof
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, View, TemplateView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
-from bodb.forms import SEDForm, RelatedBrainRegionFormSet, DocumentFigureFormSet, RelatedBOPFormSet, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, BrainRegion, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition
+from bodb.forms.bop import RelatedBOPFormSet
+from bodb.forms.brain_region import RelatedBrainRegionFormSet
+from bodb.forms.document import DocumentFigureFormSet
+from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView

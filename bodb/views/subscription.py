@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView
-from bodb.forms import SubscriptionForm, UserSubscriptionForm
+from bodb.forms.subscription import SubscriptionForm, UserSubscriptionForm
 from bodb.models import Subscription, UserSubscription
 from registration.models import User
 

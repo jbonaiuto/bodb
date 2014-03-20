@@ -3,7 +3,12 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
-from bodb.forms import ModelForm, DocumentFigureFormSet, RelatedBOPFormSet, RelatedBrainRegionFormSet, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, BuildSEDFormSet, PredictionFormSet, TestSEDFormSet, ModuleForm
+from bodb.forms.bop import RelatedBOPFormSet
+from bodb.forms.brain_region import RelatedBrainRegionFormSet
+from bodb.forms.document import DocumentFigureFormSet
+from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm
+from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
+from bodb.forms.ssr import PredictionFormSet
 from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl
 from bodb.models.ssr import SSR, Prediction
 from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl

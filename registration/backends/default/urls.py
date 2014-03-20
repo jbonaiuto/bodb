@@ -21,7 +21,7 @@ from django.conf.urls import patterns
 from django.conf.urls import include
 from django.conf.urls import url
 from django.views.generic.base import TemplateView
-from bodb.forms import BodbRegistrationForm
+from bodb.forms.admin import BodbRegistrationForm
 
 from registration.backends.default.views import ActivationView
 from registration.backends.default.views import RegistrationView

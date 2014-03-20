@@ -1,5 +1,5 @@
 from django.views.generic.edit import BaseUpdateView
-from bodb.forms import PostForm
+from bodb.forms.discussion import PostForm
 from bodb.models import Forum
 from uscbp.views import JSONResponseMixin
 

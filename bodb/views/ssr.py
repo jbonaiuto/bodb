@@ -2,7 +2,8 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import UpdateView, DeleteView
 from django.views.generic.edit import BaseUpdateView
-from bodb.forms import DocumentFigureFormSet, SSRForm
+from bodb.forms.document import DocumentFigureFormSet
+from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
@@ -35,7 +36,15 @@ class UpdateSSRView(UpdateView):
 
         if figure_formset.is_valid():
 
-            self.object = form.save()
+            self.object = form.save(commit=False)
+
+            # Set the collator if this is a new BOP
+            if self.object.id is None:
+                self.object.collator=self.request.user
+            self.object.last_modified_by=self.request.user
+            self.object.save()
+            # Needed to save the literature and tags
+            form.save_m2m()
 
             # save figures
             figure_formset.instance = self.object

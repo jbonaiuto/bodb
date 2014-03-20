@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.views.generic import UpdateView, DeleteView
-from bodb.forms import PredictionSSRFormSet, PredictionForm
+from bodb.forms.ssr import PredictionSSRFormSet, PredictionForm
 from bodb.models import Prediction, SSR, PredictionSSR
 from bodb.views.document import DocumentDetailView
 from bodb.views.main import BODBView

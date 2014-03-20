@@ -2,7 +2,7 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, DeleteView
-from bodb.forms import MessageForm
+from bodb.forms.messaging import MessageForm
 from bodb.models import Message
 
 class UserMessageListView(View):
