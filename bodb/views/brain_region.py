@@ -6,7 +6,7 @@ from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
 from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent
-from bodb.search.sed import runSEDCoordSearch
+from bodb.search import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
 class BrainRegionRequestListView(ListView):
