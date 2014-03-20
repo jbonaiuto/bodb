@@ -6,7 +6,7 @@ Entrez.email = 'uscbrainproject@gmail.com'
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
-from bodb.forms import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, SSRSearchForm, PubmedSearchForm, ModelDBSearchForm
+from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm
 from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
 from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent
 
@@ -22,7 +22,7 @@ class SearchView(FormView):
         context['bop_search_form']=BOPSearchForm(self.request.POST or None,prefix='bop')
         context['model_search_form']=ModelSearchForm(self.request.POST or None,prefix='model')
         context['sed_search_form']=SEDSearchForm(self.request.POST or None,prefix='sed')
-        context['ssr_search_form']=SSRSearchForm(self.request.POST or None,prefix='ssr')
+        context['ssr_search_form']=DocumentSearchForm(self.request.POST or None,prefix='ssr')
         context['literature_search_form']=LiteratureSearchForm(self.request.POST or None,prefix='literature')
         context['brain_region_search_form']=BrainRegionSearchForm(self.request.POST or None,prefix='brain_region')
         context['searchType']=self.request.POST.get('searchType','all')
