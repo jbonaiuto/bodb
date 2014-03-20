@@ -3,9 +3,10 @@ from django.core.mail import EmailMessage
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin
-from bodb.forms import BrainRegionRequestForm, BrainRegionRequestDenyForm, BrainRegionForm
+from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
+from bodb.forms.brain_region import BrainRegionForm
 from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent
-from bodb.search import runSEDCoordSearch
+from bodb.search.sed import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
 class BrainRegionRequestListView(ListView):
@@ -144,7 +145,7 @@ class BrainRegionView(DetailView):
         context['erpGraphId']='erpSEDDiagram'
         context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
-        search_data={'type':'brain imaging','coordinate_brain_region':self.object.name}
+        search_data={'type':'brain imaging','coordinate_brain_region':self.object.name, 'search_options':'all'}
         sedCoords=runSEDCoordSearch(imaging_seds, search_data, user.id)
         coords=[]
         for sed in imaging_seds:
