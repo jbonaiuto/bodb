@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Administration &mdash; BODB 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="BODB 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="User Profile" href="user_profile.html" />
+    <link rel="prev" title="Workspaces" href="workspaces.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="user_profile.html" title="User Profile"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="workspaces.html" title="Workspaces"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BODB 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="administration">
+<h1>Administration<a class="headerlink" href="#administration" title="Permalink to this headline">¶</a></h1>
+<p>The Administration page allows administrators to manage BOBD users, user groups, and brain nomenclatures. It is accessed by clicking on the &#8220;Admin&#8221; link in the main toolbar.</p>
+<div class="section" id="users">
+<h2>Users<a class="headerlink" href="#users" title="Permalink to this headline">¶</a></h2>
+<p>The Users tab allows administrators to add and edit BODB users.</p>
+<div class="align-center figure">
+<img alt="_images/user_tab.png" src="_images/user_tab.png" />
+<p class="caption">The Users tab of the Administration page</p>
+</div>
+<p>Each BODB user is listed on this tab, including their status (active, staff, or admin), the groups they belong to, as well as the real name and email address. To change a user&#8217;s status, simply click on the appropriate checkbox. Clicking on the user&#8217;s username will pop-up the User View page. Clicking on the &#8220;Edit&#8221; link next to the username will pop-up the User Edit page. To add a new user, click on the &#8220;Add new&#8221; link. This will open the User Insert page.</p>
+<div class="section" id="insert-user">
+<h3>Insert User<a class="headerlink" href="#insert-user" title="Permalink to this headline">¶</a></h3>
+<p>The User Insert page allows administrators to modify the attributes of an existing user. Click on the &#8220;Save&#8221; button to save the changes, or &#8220;Close&#8221; to cancel and close the window.</p>
+<div class="align-center figure">
+<img alt="_images/add_user.png" src="_images/add_user.png" />
+<p class="caption">The User Insert page</p>
+</div>
+<p><em>Basic Information</em></p>
+<p>To change the user&#8217;s username, password, first name, last name, or email address edit the data in the appropriate text field. The user&#8217;s active status can be changed by checking or unchecking the &#8220;Active&#8221; checkbox. Inactive users cannot login to the system. The &#8220;Staff status&#8221; field is currently unused by the system. The admin status of the user can be changed by checking or unchecking the &#8220;Admin status&#8221; checkbox. Only admin users can access the Administration Page. The groups that the user belongs to can be modified by selecting or unselecting groups from the &#8220;Groups&#8221; list. Hold down &#8220;control&#8221; or &#8220;command&#8221; on a Mac, to select more than one group.</p>
+<p><em>Security Permissions</em></p>
+<p>The user&#8217;s security permissions can be set in the Permissions section. Checking or unchecking the &#8220;Add&#8221;, &#8220;Change&#8221; or &#8220;Delete&#8221; checkbox for a given entry type grants or removes permissions for the user to perform that action on entries of that type. These security permissions override those of any groups the user belongs</p>
+</div>
+<div class="section" id="view-user">
+<h3>View User<a class="headerlink" href="#view-user" title="Permalink to this headline">¶</a></h3>
+<p>The User View page displays all of the user&#8217;s information. The Permissions section displays their security permissions. These permissions override those of groups that the user belongs to. To edit the user&#8217;s information, click on the &#8220;Edit&#8221; button. This will open the User Edit page. Clicking on the &#8220;Close&#8221; button will close the current window.</p>
+<div class="align-center figure">
+<img alt="_images/view_user.png" src="_images/view_user.png" />
+<p class="caption">The User View page</p>
+</div>
+</div>
+<div class="section" id="edit-user">
+<h3>Edit User<a class="headerlink" href="#edit-user" title="Permalink to this headline">¶</a></h3>
+<p>The User Edit page allows administrators to modify the attributes of an existing user. Click on the &#8220;Save&#8221; button to save the changes, or &#8220;Close&#8221; to cancel and close the window.</p>
+<div class="align-center figure">
+<img alt="_images/edit_user.png" src="_images/edit_user.png" />
+<p class="caption">The User Edit page</p>
+</div>
+<p><em>Basic Information</em></p>
+<p>To change the user&#8217;s username, password, first name, last name, or email address edit the data in the appropriate text field. The user&#8217;s active status can be changed by checking or unchecking the &#8220;Active&#8221; checkbox. Inactive users cannot login to the system. The &#8220;Staff status&#8221; field is currently unused by the system. The admin status of the user can be changed by checking or unchecking the &#8220;Admin status&#8221; checkbox. Only admin users can access the Administration Page. The groups that the user belongs to can be modified by selecting or unselecting groups from the &#8220;Groups&#8221; list. Hold down &#8220;control&#8221; or &#8220;command&#8221; on a Mac, to select more than one group.</p>
+<p><em>Security Permissions</em></p>
+<p>The user&#8217;s security permissions can be set in the Permissions section. Checking or unchecking the &#8220;Add&#8221;, &#8220;Change&#8221; or &#8220;Delete&#8221; checkbox for a given entry type grants or removes permissions for the user to perform that action on entries of that type. These security permissions override those of any groups the user belongs to.</p>
+</div>
+</div>
+<div class="section" id="groups">
+<h2>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h2>
+<p>The Groups tab allows administrators to add, edit, and delete BODB user groups.</p>
+<div class="align-center figure">
+<img alt="_images/group_tab.png" src="_images/group_tab.png" />
+<p class="caption">The Groups tab of the Administration page</p>
+</div>
+<p>Each BODB group is listed on this tab. Clicking on the group&#8217;s name will pop-up the Group View page. Clicking on the &#8220;Edit&#8221; link next to the group name will pop-up the Group Edit page and clicking on the &#8220;Delete&#8221; link will delete the group. To add a new group, click on the &#8220;Add new&#8221; link, which will open the Group Insert page.</p>
+<div class="section" id="insert-group">
+<h3>Insert Group<a class="headerlink" href="#insert-group" title="Permalink to this headline">¶</a></h3>
+<p>The Group Insert page allows administrators to add new user groups to the system. Click on the &#8220;Save&#8221; button to save the new group, or &#8220;Close&#8221; to cancel and close the window.</p>
+<div class="align-center figure">
+<img alt="images/add_group.png" src="images/add_group.png" />
+<p class="caption">The Group Insert page</p>
+</div>
+<p><em>Basic Information</em></p>
+<p>To set the group&#8217;s name enter the data in the &#8220;Name&#8221; text field.</p>
+<p><em>Security Permissions</em></p>
+<p>The group&#8217;s security permissions can be set in the Permissions section. Checking or unchecking the &#8220;Add&#8221;, &#8220;Change&#8221; or &#8220;Delete&#8221; checkbox for a given entry type grants or removes permissions for users in this group to perform that action on entries of that type. These security permissions are inherited by each user belonging to this group, but are overridden by each user&#8217;s personal security permissions.</p>
+</div>
+<div class="section" id="view-group">
+<h3>View Group<a class="headerlink" href="#view-group" title="Permalink to this headline">¶</a></h3>
+<p>The Group View page displays all of the user group&#8217;s information. The Permissions section displays its security permissions. These permissions are inherited by each user belonging to the group, but are overridden by their personal security permissions. To edit the group&#8217;s information, click on the &#8220;Edit&#8221; button. This will open the Group Edit page. To delete the group click on the &#8220;Delete&#8221; button. Clicking on the &#8220;Close&#8221; button will close the current window.</p>
+<div class="align-center figure">
+<img alt="_images/view_group.png" src="_images/view_group.png" />
+<p class="caption">The Group View page</p>
+</div>
+</div>
+<div class="section" id="edit-group">
+<h3>Edit Group<a class="headerlink" href="#edit-group" title="Permalink to this headline">¶</a></h3>
+<p>The Group Edit page allows administrators to modify the attributes of an existing user group. Click on the &#8220;Save&#8221; button to save the changes, or &#8220;Close&#8221; to cancel and close the window. To delete the group, click on the &#8220;Delete&#8221; button.</p>
+<div class="align-center figure">
+<img alt="_images/edit_group.png" src="_images/edit_group.png" />
+<p class="caption">The Group Edit page</p>
+</div>
+<p><em>Basic Information</em></p>
+<p>To change the group&#8217;s name, edit the data in the &#8220;Name&#8221; text field.</p>
+<p><em>Security Permissions</em></p>
+<p>The group&#8217;s security permissions can be set in the Permissions section. Checking or unchecking the &#8220;Add&#8221;, &#8220;Change&#8221; or &#8220;Delete&#8221; checkbox for a given entry type grants or removes permissions for user&#8217;s in this group to perform that action on entries of that type. These security permissions are inherited by each user in this group, but are overridden by each user&#8217;s personal security permissions.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Administration</a><ul>
+<li><a class="reference internal" href="#users">Users</a><ul>
+<li><a class="reference internal" href="#insert-user">Insert User</a></li>
+<li><a class="reference internal" href="#view-user">View User</a></li>
+<li><a class="reference internal" href="#edit-user">Edit User</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#groups">Groups</a><ul>
+<li><a class="reference internal" href="#insert-group">Insert Group</a></li>
+<li><a class="reference internal" href="#view-group">View Group</a></li>
+<li><a class="reference internal" href="#edit-group">Edit Group</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="workspaces.html"
+                        title="previous chapter">Workspaces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="user_profile.html"
+                        title="next chapter">User Profile</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/admin.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="user_profile.html" title="User Profile"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="workspaces.html" title="Workspaces"
+             >previous</a> |</li>
+        <li><a href="index.html">BODB 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, USC Brain Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
