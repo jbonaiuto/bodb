@@ -60,7 +60,7 @@ class SED(Document):
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        return SED.objects.filter(Q(Q(type='generic') & Q(relatedbrainregion__brain_region=brain_region) &
+        return SED.objects.filter(Q(Q(type='generic') & Q(related_region_document__brain_region=brain_region) &
                                     Document.get_security_q(user))).distinct()
 
     @staticmethod
@@ -112,7 +112,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        return ERPSED.objects.filter(Q(Q(relatedbrainregion__brain_region=brain_region) &
+        return ERPSED.objects.filter(Q(Q(related_region_document__brain_region=brain_region) &
                                        Document.get_security_q(user))).distinct()
 
     @staticmethod
@@ -210,7 +210,7 @@ class BrainImagingSED(SED):
         region_q=Q(sedcoord__named_brain_region=brain_region) | \
                  Q(sedcoord__coord__brainregionvolume__brain_region__name=brain_region) | \
                  Q(sedcoord__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
-                 Q(relatedbrainregion__brain_region=brain_region)
+                 Q(related_region_document__brain_region=brain_region)
         return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
     @staticmethod
@@ -373,7 +373,7 @@ class ConnectivitySED(SED):
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
-                 Q(relatedbrainregion__brain_region=brain_region)
+                 Q(related_region_document__brain_region=brain_region)
         return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
     @staticmethod
