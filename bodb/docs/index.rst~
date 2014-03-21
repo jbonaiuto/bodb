@@ -15,8 +15,15 @@ Contents:
    conceptual_overview
    login_register
    bodb_structure
-   insert
-   search
+   insert_data
+   search_data
+   visualization
+   drafts
+   favorites
+   workspaces
+   admin
+   tags
+   user_profile
 
 
 

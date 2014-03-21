@@ -17,6 +17,15 @@ Contents:
    bodb_structure
    insert_data
    search_data
+   visualization
+   drafts
+   favorites
+   workspaces
+   admin
+   user_profile
+   tags
+   messages
+   graphs
 
 
 
