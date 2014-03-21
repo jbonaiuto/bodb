@@ -141,7 +141,7 @@
                             <div style="background:#e6e8ed;">
                                 {% get_tagcloud as model_tags user for 'bodb.Model' %}
                                 {% for tag in model_tags %}
-                                    <a href="/bodb/model/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                    <a href="/bodb/model/tag/{{ tag }}/"><span style="font-size: {{ tag.weight|floatformat:0 }}px;">{{ tag }} ({{ tag.num_times }})</span></a>&nbsp;&nbsp;
                                 {% endfor %}
                                 <br><br>
                             </div>
@@ -149,7 +149,7 @@
                             <div style="background:#e6e8ed;">
                                 {% get_tagcloud as bop_tags user for 'bodb.BOP' %}
                                 {% for tag in bop_tags %}
-                                    <a href="/bodb/bop/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                    <a href="/bodb/bop/tag/{{ tag }}/"><span style="font-size: {{ tag.weight|floatformat:0 }}px;">{{ tag }} ({{ tag.num_times }})</span></a>&nbsp;&nbsp;
                                 {% endfor %}
                                 <br><br>
                             </div>
@@ -157,7 +157,7 @@
                             <div style="background:#e6e8ed;">
                                 {% get_tagcloud as sed_tags user for 'bodb.SED' %}
                                 {% for tag in sed_tags %}
-                                    <a href="/bodb/sed/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                    <a href="/bodb/sed/tag/{{ tag }}/"><span style="font-size: {{ tag.weight|floatformat:0 }}px;">{{ tag }} ({{ tag.num_times }})</span></a>&nbsp;&nbsp;
                                 {% endfor %}
                                 <br><br>
                             </div>
@@ -165,7 +165,7 @@
                             <div style="background:#e6e8ed;">
                                 {% get_tagcloud as prediction_tags user for 'bodb.Prediction' %}
                                 {% for tag in prediction_tags %}
-                                    <a href="/bodb/prediction/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                    <a href="/bodb/prediction/tag/{{ tag }}/"><span style="font-size: {{ tag.weight|floatformat:0 }}px;">{{ tag }} ({{ tag.num_times }})</span></a>&nbsp;&nbsp;
                                 {% endfor %}
                                 <br><br>
                             </div>
@@ -173,7 +173,7 @@
                             <div style="background:#e6e8ed;">
                                 {% get_tagcloud as ssr_tags user for 'bodb.SSR' %}
                                 {% for tag in ssr_tags %}
-                                    <a href="/bodb/ssr/tag/{{ tag }}/"><font size={{ tag.weight|floatformat:0 }}>{{ tag }} ({{ tag.num_times }})</font></a>&nbsp;&nbsp;
+                                    <a href="/bodb/ssr/tag/{{ tag }}/"><span style="font-size: {{ tag.weight|floatformat:0 }}px;">{{ tag }} ({{ tag.num_times }})</span></a>&nbsp;&nbsp;
                                 {% endfor %}
                                 <br><br>
                             </div>
