@@ -198,9 +198,7 @@ class DocumentPublicRequestView(JSONResponseMixin,BaseCreateView):
 
 
 def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
-    prefix=user.username
-    if not len(prefix):
-        prefix=time.strftime("%Y.%m.%d.%H:%M:%S")
+    prefix='%s.%s' % (user.username,time.strftime("%Y.%m.%d.%H:%M:%S"))
     xml_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.xml' % (prefix,ext))
     dot_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.dot' % (prefix,ext))
     FILE = open(xml_path, 'w')
