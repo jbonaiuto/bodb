@@ -185,7 +185,7 @@ def bop_gxl(bops, user):
     for bop in bops:
         glx+='<node id="%d">\n' % bop.id
         glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bop.id
-        glx+='<node id="%s">\n' % bop.title.replace('"','\'')
+        glx+='<node id="%s">\n' % bop.title.replace('"','\'').replace('&','&amp;')
         glx+='<type xlink:href="/bodb/bop/%d/" xlink:type="simple"/>\n' % bop.id
         glx+='</node>\n'
         glx+='</graph>\n'
@@ -195,14 +195,18 @@ def bop_gxl(bops, user):
         for rrbop in reverse_related_bops:
             related_bop=BOP.objects.get(id=rrbop.document.id)
             if related_bop in bops:
-                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (bop.id,related_bop.id,bop.title,related_bop.title)
+                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (bop.id,related_bop.id,
+                                                                bop.title.replace('"','\'').replace('&','&amp;'),
+                                                                related_bop.title.replace('"','\'').replace('&','&amp;'))
                 if rrbop.relationship:
-                    glx+='<attr name="name"><string>%s</string></attr>\n' % rrbop.relationship.replace('"','\'')
+                    glx+='<attr name="name"><string>%s</string></attr>\n' % rrbop.relationship.replace('"','\'').replace('&','&amp;')
                 glx+='</edge>\n'
         child_bops=BOP.get_child_bops(bop, user)
         for child_bop in child_bops:
             if child_bop in bops:
-                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (child_bop.id,bop.id,child_bop.title.replace('"','\''),bop.title.replace('"','\''))
+                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (child_bop.id,bop.id,
+                                                                child_bop.title.replace('"','\'').replace('&','&amp;'),
+                                                                bop.title.replace('"','\'').replace('&','&amp;'))
                 glx+='<attr name="name"><string>Parent-of</string></attr>\n'
                 glx+='</edge>\n'
     glx+='</graph>\n'
