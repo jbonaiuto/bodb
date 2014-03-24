@@ -65,7 +65,7 @@
         </tr>
         <tr class="col_header">
             <td style="width:120px">&nbsp;</td>
-            <td style="width:150px">Title*</td>
+            <td style="width:200px">Title*</td>
             <td>Description*</td>
         </tr>
         <tr>
@@ -89,7 +89,7 @@
                                     <td style="width:120px">
                                         <a href="" onclick="return deleteInlineForm('prediction', {{ forloop.counter0 }});">Remove</a>&nbsp;
                                     </td>
-                                    <td style="width:150px">
+                                    <td style="width:200px">
                                         {{ prediction_form.title }}
                                     </td>
                                     <td>
@@ -110,7 +110,7 @@
                                         <table class="tab_panel">
                                             <tr>
                                                 <td style="width:120px">&nbsp;</td>
-                                                <td class="col_header" style="width:150px"><i>Title*</i></td>
+                                                <td class="col_header" style="width:200px"><i>Title*</i></td>
                                                 <td class="col_header"><i>Description</i>*</td>
                                             </tr>
                                             <tr class="{% cycle 'even_row' 'odd_row' %}">
@@ -131,7 +131,7 @@
                                                                 <table class="tab_panel">
                                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                                         <td style="width:120px">&nbsp;</td>
-                                                                        <td style="width:150px">
+                                                                        <td style="width:200px">
                                                                             {{ predictionssr_form.ssr_title }}
                                                                         </td>
                                                                         <td>
@@ -173,7 +173,7 @@
                 <td style="width:120px">
                     <a href="" onclick="return deleteInlineForm('prediction', <%= id %>);">Remove</a>&nbsp;
                 </td>
-                <td style="width:150px">
+                <td style="width:200px">
                     <input id="id_prediction-<%= id %>-title" name="prediction-<%= id %>-title" size="13" type="text" />
                 </td>
                 <td>
@@ -193,7 +193,7 @@
                     <table class="tab_panel">
                         <tr>
                             <td style="width:120px">&nbsp;</td>
-                            <td class="col_header" style="width:150px"><i>Title*</i></td>
+                            <td class="col_header" style="width:200px"><i>Title*</i></td>
                             <td class="col_header"><i>Description</i>*</td>
                         </tr>
                         <tr class="<%= getTRTag(id) %>">
@@ -211,7 +211,7 @@
                                     <table class="tab_panel">
                                         <tr class="<%= getTRTag(id) %>" valign=top>
                                             <td style="width:120px">&nbsp;</td>
-                                            <td style="width:150px">
+                                            <td style="width:200px">
                                                 <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_title" name="prediction-<%= id %>-predictionssr_set-0-ssr_title" size="13" type="text" />
                                             </td>
                                             <td>

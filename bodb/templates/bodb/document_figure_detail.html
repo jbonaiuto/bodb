@@ -52,10 +52,10 @@
             </td>
         </tr>
         <tr class="col_header">
-            <td width=60px>&nbsp;</td>
-            <td width=60px>Order*</td>
-            <td width=300px>File*</td>
-            <td width=175px>Title*</td>
+            <td style="width:60px">&nbsp;</td>
+            <td style="width:100px">Order*</td>
+            <td style="width:275px">File*</td>
+            <td style="width:250px">Title*</td>
             <td>Caption*</td>
         </tr>
         <tr>
@@ -75,13 +75,13 @@
                                     <td width=60px>
                                         <a href="" onclick="return deleteInlineForm('figure', {{ forloop.counter0 }});">Delete</a>
                                     </td>
-                                    <td width=60px>
+                                    <td width=100px>
                                         {{ figure_form.order }}
                                     </td>
-                                    <td style="width:300px">
+                                    <td style="width:275px">
                                         {{ figure_form.figure }}
                                     </td>
-                                    <td style="width:175px">
+                                    <td style="width:250px">
                                         {{ figure_form.title }}
                                     </td>
                                     <td>
@@ -112,13 +112,13 @@
                 <td width=60px>
                     <a href="" onclick="return deleteInlineForm('figure', <%= id %>);">Delete</a>
                 </td>
-                <td width=60px>
+                <td style="width:100px">
                     <input id="id_figure-<%= id %>-order" name="figure-<%= id %>-order" size="3" type="text" value="<%= id %>"/>
                 </td>
-                <td style="width:300px">
+                <td style="width:275px">
                     <input id="id_figure-<%= id %>-figure" name="figure-<%= id %>-figure" type="file" />
                 </td>
-                <td style="width:175px">
+                <td style="width:250px">
                     <input id="id_figure-<%= id %>-title" maxlength="100" name="figure-<%= id %>-title" type="text" />
                 </td>
                 <td>

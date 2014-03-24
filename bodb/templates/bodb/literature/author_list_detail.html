@@ -20,8 +20,8 @@
         </tr>
         <tr class="col_header">
             <td style="width:150px">&nbsp;</td>
-            <td style="width:150px">First name*</td>
-            <td style="width:120px">Middle name</td>
+            <td style="width:175px">First name*</td>
+            <td style="width:150px">Middle name</td>
             <td style="width:300px">Last name*</td>
             <td>Order*</td>
         </tr>
@@ -41,10 +41,10 @@
                                     <td style="width:150px">
                                         <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', {{ forloop.counter0 }});">Delete</a>
                                     </td>
-                                    <td style="width:150px">
+                                    <td style="width:175px">
                                         {{ author_form.author_first_name }}
                                     </td>
-                                    <td style="width:120px">
+                                    <td style="width:150px">
                                         {{ author_form.author_middle_name }}
                                     </td>
                                     <td style="width:300px">
@@ -78,10 +78,10 @@
                 <td style="width:150px">
                     <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', <%= id %>);">Delete</a>
                 </td>
-                <td style="width:150px">
+                <td style="width:175px">
                     <input id="id_{{ groupName }}_author-<%= id %>-author_first_name" name="{{ groupName }}_author-<%= id %>-author_first_name" size="13" type="text" />
                 </td>
-                <td style="width:120px">
+                <td style="width:150px">
                     <input id="id_{{ groupName }}_author-<%= id %>-author_middle_name" name="{{ groupName }}_author-<%= id %>-author_middle_name" size="10" type="text" />
                 </td>
                 <td style="width:300px">
