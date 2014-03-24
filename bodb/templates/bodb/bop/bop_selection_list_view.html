@@ -75,6 +75,8 @@
                             </a>
                             <input type=checkbox name="selectedBOPCheckbox" class="selectedBOPCheckbox" id="selectedBOPCheckbox_{{ bop.id }}" value="{{ bop.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleBOPSelect(this.value, '{{ csrf_token }}');"/>
                         {% endif %}
+                    {% else %}
+                        <input type=checkbox name="selectedBOPCheckbox" class="selectedBOPCheckbox" id="selectedBOPCheckbox_{{ bop.id }}" value="{{ bop.id }}" style="display:none"/>
                     {% endif %}
                 </td>
                 <td>

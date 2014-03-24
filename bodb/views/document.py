@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
 import sys
+import time
 from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, SelectedSEDCoord
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -197,10 +198,13 @@ class DocumentPublicRequestView(JSONResponseMixin,BaseCreateView):
 
 
 def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
-    xml_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.xml' % (user.username,ext))
-    dot_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.dot' % (user.username,ext))
+    prefix=user.username
+    if not len(prefix):
+        prefix=time.strftime("%Y.%m.%d.%H:%M:%S")
+    xml_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.xml' % (prefix,ext))
+    dot_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.dot' % (prefix,ext))
     FILE = open(xml_path, 'w')
-    FILE.write(dotXML)
+    FILE.write(unicode(dotXML.encode('latin1','ignore')))
     FILE.close()
     os.system('gxl2dot -o %s %s' % (dot_path, xml_path))
     for line in fileinput.input(dot_path, inplace=1):
@@ -209,8 +213,8 @@ def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
         if 'name' in line:
             line = line.replace('name','label')
         sys.stdout.write(line)
-    map_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.map' % (user.username,ext))
-    diagram = os.path.join('export', '%s.%s.png' % (user.username,ext))
+    map_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.map' % (prefix,ext))
+    diagram = os.path.join('export', '%s.%s.png' % (prefix,ext))
     png_path = os.path.join(settings.MEDIA_ROOT, diagram)
     os.system('%s -Tcmapx -o%s -Tpng -o%s %s' % (graphTool, map_path, png_path, dot_path))
     FILE = open(map_path, 'r')

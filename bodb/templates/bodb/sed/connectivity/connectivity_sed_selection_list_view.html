@@ -77,6 +77,8 @@
                             <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedConnectivitySEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
                             <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
                         {% endif %}
+                    {% else %}
+                        <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedConnectivitySEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" style="display:none"/>
                     {% endif %}
                 </td>
                 <td>
