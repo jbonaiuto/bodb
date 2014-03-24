@@ -381,6 +381,9 @@ function doneReferenceExport(res, status)
 function generateConnDiagram(connSEDIds, graphTool, graphId, csrf_token)
 {
     document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+    $('#'+graphId).attr('src','');
+    document.getElementById(graphId+'Div').style.display='none';
+    $('#'+graphId).smartZoom('destroy');
     var data={'graphTool': graphTool, 'connSEDIds': connSEDIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/sed/connectivityDiagram/", data: data, complete: doneConnDiagram };
     $.ajax(args);
@@ -393,9 +396,11 @@ function doneConnDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
-        document.getElementById(data.graphId).setAttribute('origWidth',data.connDiagramW);
-        document.getElementById(data.graphId).setAttribute('origHeight',data.connDiagramH);
-        document.getElementById(data.graphId).src='/media/'+data.connDiagram;
+        $('#'+data.graphId).attr('origWidth',data.connDiagramW);
+        $('#'+data.graphId).attr('origHeight',data.connDiagramH);
+        document.getElementById(data.graphId).removeAttribute('style');
+        $('#'+data.graphId).attr('style','width:100%');
+        $('#'+data.graphId).attr('src','/media/'+data.connDiagram);
         document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
         document.getElementById(data.graphId+'Div').style.display='block';
@@ -413,6 +418,9 @@ function generateBOPDiagram(graphTool, graphId, csrf_token)
     var bopCheckboxes=$('.selectedBOPCheckbox');
     for(var i=0; i<bopCheckboxes.length; i++)
         bopIds.push(bopCheckboxes[i].value);
+    $('#'+graphId).attr('src','');
+    document.getElementById(graphId+'Div').style.display='none';
+    $('#'+graphId).smartZoom('destroy');
     var data={'graphTool': graphTool, 'bopIds': bopIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/bopDiagram/", data: data, complete: doneBOPDiagram };
     $.ajax(args);
@@ -425,9 +433,11 @@ function doneBOPDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
-        document.getElementById(data.graphId).setAttribute('origWidth',data.bopDiagramW);
-        document.getElementById(data.graphId).setAttribute('origHeight',data.bopDiagramH);
-        document.getElementById(data.graphId).src='/media/'+data.bopDiagram;
+        $('#'+data.graphId).attr('origWidth',data.bopDiagramW);
+        $('#'+data.graphId).attr('origHeight',data.bopDiagramH);
+        document.getElementById(data.graphId).removeAttribute('style');
+        $('#'+data.graphId).attr('style','width:100%');
+        $('#'+data.graphId).attr('src','/media/'+data.bopDiagram);
         document.getElementById(data.graphId+'Map').innerHTML=data.bopMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view BOP details.";
         document.getElementById(data.graphId+'Div').style.display='block';
@@ -445,6 +455,9 @@ function generateModelDiagram(graphTool, graphId, csrf_token)
     var modelCheckboxes=$('.selectedModelCheckbox');
     for(var i=0; i<modelCheckboxes.length; i++)
         modelIds.push(modelCheckboxes[i].value);
+    $('#'+graphId).attr('src','');
+    document.getElementById(graphId+'Div').style.display='none';
+    $('#'+graphId).smartZoom('destroy');
     var data={'graphTool': graphTool, 'modelIds': modelIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/modelDiagram/", data: data, complete: doneModelDiagram };
     $.ajax(args);
@@ -457,9 +470,11 @@ function doneModelDiagram(res, status)
     var data = eval('('+txt+')');
     if (status=="success")
     {
-        document.getElementById(data.graphId).setAttribute('origWidth',data.modelDiagramW);
-        document.getElementById(data.graphId).setAttribute('origHeight',data.modelDiagramH);
-        document.getElementById(data.graphId).src='/media/'+data.modelDiagram;
+        $('#'+data.graphId).attr('origWidth',data.modelDiagramW);
+        $('#'+data.graphId).attr('origHeight',data.modelDiagramH);
+        document.getElementById(data.graphId).removeAttribute('style');
+        $('#'+data.graphId).attr('style','width:100%');
+        $('#'+data.graphId).attr('src','/media/'+data.modelDiagram);
         document.getElementById(data.graphId+'Map').innerHTML=data.modelMap;
         document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view Model or SED details.";
         document.getElementById(data.graphId+'Div').style.display='block';
