@@ -203,3 +203,6 @@ SERVER = 'bodb.usc.edu'
 
 DOCUMENTATION_ROOT = os.path.join(PROJECT_PATH, '../bodb/docs')
 DOCUMENTATION_ACCESS_FUNCTION = lambda user: True
+
+TAGCLOUD_MAX=24
+TAGCLOUD_MIN=10
