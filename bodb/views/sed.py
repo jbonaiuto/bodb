@@ -104,7 +104,7 @@ class CreateSEDView(EditSEDMixin, CreateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#insert-generic-sed'
         context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
@@ -503,7 +503,7 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-brain-imaging-summary-data'
         context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
@@ -745,7 +745,7 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-connectivity-data'
         context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
@@ -880,7 +880,7 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-event-related-potential-data'
         context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
@@ -978,7 +978,7 @@ class SEDTaggedView(BODBView):
         # get tagged items
 
         user=self.request.user
-        context['helpPage']='BODB-Tags'
+        context['helpPage']='tags.html'
         context['tag']=name
         context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user)
         context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_tagged_seds(name, user),user)

@@ -168,7 +168,7 @@ class EditLiteratureMixin():
 
 
 class CreateLiteratureView(EditLiteratureMixin,View):
-    helpPage='BODB-Insert-Literature'
+    helpPage='insert_data.html#insert-literature'
     required_perm='bodb.add_literature'
 
 

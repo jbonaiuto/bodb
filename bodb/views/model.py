@@ -303,6 +303,7 @@ class CreateModelView(EditModelMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateModelView,self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
             queryset=ModelAuthor.objects.none(), prefix='model_author')
@@ -432,7 +433,7 @@ class ModelTaggedView(BODBView):
         context=super(ModelTaggedView,self).get_context_data(**kwargs)
         name = self.kwargs.get('name', None)
         user=self.request.user
-        context['helpPage']= 'BODB-Tags'
+        context['helpPage']= 'tags.html'
         context['tag']= name
         context['modelGraphId']='modelRelationshipDiagram'
         context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),user)

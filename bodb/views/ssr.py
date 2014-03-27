@@ -136,7 +136,7 @@ class SSRTaggedView(BODBView):
         name = self.kwargs.get('name', None)
         user=self.request.user
 
-        context['helpPage']='BODB-Tags'
+        context['helpPage']='tags.html'
         context['tag']=name
         context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user),user)
         return context

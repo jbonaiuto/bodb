@@ -12,7 +12,7 @@ class UserMessageListView(View):
         context={}
         context['messages']=request.user.message_recipient_set.all()
         context['sent']=request.user.message_sender_set.all()
-        context['helpPage']='BODB-Messaging'
+        context['helpPage']='messages.html'
         context['ispopup']=('_popup' in request.GET)
         return context
 
@@ -45,7 +45,7 @@ class CreateUserMessageView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserMessageView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Messaging'
+        context['helpPage']='messages.html#composing-a-new-message'
         return context
 
     def get(self, request, *args, **kwargs):
@@ -85,7 +85,7 @@ class ReadReplyUserMessageView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReadReplyUserMessageView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Messaging'
+        context['helpPage']='messages.html#viewing-messages'
         return context
 
     def get(self, request, *args, **kwargs):

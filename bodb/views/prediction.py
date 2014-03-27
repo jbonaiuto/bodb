@@ -91,7 +91,7 @@ class PredictionTaggedView(BODBView):
         name = self.kwargs.get('name', None)
         user=self.request.user
 
-        context['helpPage']='BODB-Tags'
+        context['helpPage']='tags.html'
         context['tag']=name
         context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user)
         return context

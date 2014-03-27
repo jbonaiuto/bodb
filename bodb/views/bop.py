@@ -121,7 +121,7 @@ class CreateBOPView(EditBOPMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBOPView,self).get_context_data(**kwargs)
-
+        context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, prefix='build_sed')
@@ -244,7 +244,7 @@ class BOPTaggedView(BODBView):
         context=super(BOPTaggedView,self).get_context_data(**kwargs)
         name = self.kwargs.get('name', None)
         user=self.request.user
-        context['helpPage']='BODB-Tags'
+        context['helpPage']='tags.html'
         context['tag']=name
         context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user)
         context['bopGraphId']='bopRelationshipDiagram'

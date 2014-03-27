@@ -31,6 +31,7 @@ class IndexView(BODBView):
 
     def get_context_data(self, **kwargs):
         context=super(IndexView,self).get_context_data(**kwargs)
+        context['helpPage']='index.html'
         # load recently added entries
         context['models'] = Model.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
         context['bops'] = BOP.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
@@ -67,7 +68,7 @@ class InsertView(BODBView):
 
     def get_context_data(self, **kwargs):
         context=super(InsertView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Insert'
+        context['helpPage']='insert_data.html'
         return context
 
 
@@ -76,6 +77,7 @@ class DraftListView(BODBView):
 
     def get_context_data(self, **kwargs):
         context=super(DraftListView,self).get_context_data(**kwargs)
+        context['helpPage']='drafts.html'
         user=self.request.user
         context['models']=Model.get_model_list(Model.objects.filter(collator=user,draft=1),user)
         context['bops']=BOP.get_bop_list(BOP.objects.filter(collator=user,draft=1),user)
@@ -104,6 +106,7 @@ class FavoriteListView(BODBView):
 
     def get_context_data(self, **kwargs):
         context=super(FavoriteListView,self).get_context_data(**kwargs)
+        context['helpPage']='favorites.html'
         user=self.request.user
         context['connectionGraphId']='connectionSEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
@@ -190,7 +193,7 @@ class TagView(BODBView):
         context=super(TagView,self).get_context_data(**kwargs)
         name = self.kwargs.get('name', None)
         user=self.request.user
-        context['helpPage']='BODB-Tags'
+        context['helpPage']='tags.html'
         context['tag']=name
 
         context['tagged_bops']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user)
