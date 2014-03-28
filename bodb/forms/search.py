@@ -33,7 +33,7 @@ class DocumentSearchForm(SearchForm):
     collator = forms.BooleanField(help_text="Only search your entries", required=False)
     username = forms.CharField(help_text='Username of the collator',required=False)
     first_name = forms.CharField(help_text='First name of the collator',required=False)
-    last_name = forms.CharField(help_text='First name of the collator',required=False)
+    last_name = forms.CharField(help_text='Last name of the collator',required=False)
     related_brain_region = forms.CharField(help_text='Related brain region', required=False)
     related_brain_region_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     related_bop = forms.CharField(help_text="Related BOP", required=False)
@@ -56,6 +56,20 @@ class DocumentWithLiteratureSearchForm(DocumentSearchForm):
 class AllSearchForm(DocumentSearchForm):
     search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
     search_brede = forms.BooleanField(help_text='Search Brede', required=False)
+
+
+class UserSearchForm(SearchForm):
+    username = forms.CharField(help_text='Username of the user',required=False)
+    first_name = forms.CharField(help_text='First name of the user',required=False)
+    last_name = forms.CharField(help_text='Last name of the user',required=False)
+    bop = forms.CharField(help_text='BOPs entered by the user', required=False)
+    bop_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    model = forms.CharField(help_text='Models entered by the user', required=False)
+    model_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    sed = forms.CharField(help_text='SEDs entered by the user', required=False)
+    sed_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    ssr = forms.CharField(help_text='SSRs entered by the user', required=False)
+    ssr_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 
 
 class BOPSearchForm(DocumentWithLiteratureSearchForm):

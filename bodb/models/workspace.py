@@ -9,7 +9,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
-from bodb.models.messaging import Message
+from bodb.models.messaging import Message, UserSubscription
 from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
@@ -317,6 +317,18 @@ class BodbProfile(models.Model):
     class Meta:
         app_label='bodb'
 
+    @staticmethod
+    def get_user_list(users, user):
+        profile=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+        user_list=[]
+        for u in users:
+            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=u, user=user).count()>0
+            user_list.append([subscribed_to_user,u])
+        return user_list
+
+
 # create a new profile for the given user
 def create_user_profile(user):
 
@@ -370,6 +382,7 @@ def create_user_profile(user):
     if allocatedAccount is not None:
         allocatedAccount.delete()
 
+
 def parse_class_list(in_filename, out_filename, group_id):
     in_file=open(in_filename,'r')
     out_file=open(out_filename,'w')
@@ -386,6 +399,7 @@ def parse_class_list(in_filename, out_filename, group_id):
         out_file.write('%s\n' % sql)
     in_file.close()
     out_file.close()
+
 
 # A signal handler for the User.post_save event.
 def user_post_save_handler(sender, instance, created, **kwargs):
