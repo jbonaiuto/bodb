@@ -39,7 +39,7 @@
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">
             <td colspan={% if bop_relationship %}5{% else %}4{% endif %}>
-                <a href="/bodb/bop/search/?_multiple=1" onclick="return showPopup('search_bop',700,550,'/bodb/bop/search/?_multiple=1');">Search</a>
+                <a href="/bodb/bop/search/?_multiple=1" onclick="return showPopup('search_bop',700,550,'/bodb/bop/search/?_multiple=1&exclude={{ object.id }}');">Search</a>
             </td>
         </tr>
         <tr class="col_header">
@@ -80,7 +80,7 @@
                                         {% endif %}
                                     </td>
                                     {% if bop_relationship %}
-                                        <td style="width:100px">
+                                        <td style="width:150px">
                                             {{ related_bop_form.relationship }}
                                         </td>
                                     {% endif %}
