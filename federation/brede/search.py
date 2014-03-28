@@ -1,15 +1,14 @@
 import urllib
 from Bio import Entrez
-from django.db.models import Q
-from bodb.search import SEDSearch
+from bodb.search.sed import SEDSearch
 
 Entrez.email = 'uscbrainproject@gmail.com'
+import operator
 from lxml import etree
 from django.contrib.auth.models import User
-from bodb.models import BredeBrainImagingSED, Journal, Author, LiteratureAuthor, CoordinateSpace, ThreeDCoord, SEDCoord, importPubmedLiterature
+from bodb.models import BredeBrainImagingSED, Journal, Author, LiteratureAuthor, CoordinateSpace, ThreeDCoord, SEDCoord, importPubmedLiterature, Document
 
 def runBredeSearch(search_data, userId):
-    xpathString=''
     searcher=BredeSearcher(search_data)
     results=[]
     search_local=False
@@ -23,16 +22,22 @@ def runBredeSearch(search_data, userId):
                 print ("PARSING ERROR", e)
 
             if not woBibsDoc is None:
+                xpathStrings=[]
                 # construct search query
                 for key in search_data.iterkeys():
                     # if the searcher can search by this field
                     if hasattr(searcher, 'search_%s' % key):
                         # add field to query
                         dispatch=getattr(searcher, 'search_%s' % key)
-                        xpathString=dispatch(xpathString, userId)
+                        xpathStrings.append(dispatch(userId))
 
-                if not len(xpathString):
-                    xpathString='//Exp'
+                xpathString='//Exp'
+                
+                if len(xpathStrings):
+                    if search_data['search_options']=='all':
+                        xpathString=' & '.join(xpathStrings)
+                    else:
+                        xpathString=' | '.join(xpathStrings)
 
                 exp_nodes=woBibsDoc.xpath(xpathString)
                 for exp_node in exp_nodes:
@@ -54,7 +59,12 @@ def runBredeSearch(search_data, userId):
 
     if search_local:
         print('Searching locally')
-        q=Q()
+        filters=[]
+
+        op=operator.or_
+        if search_data['search_options']=='all':
+            op=operator.and_
+            
         searcher=SEDSearch(search_data)
         # construct search query
         for key in search_data.iterkeys():
@@ -62,13 +72,20 @@ def runBredeSearch(search_data, userId):
             if hasattr(searcher, 'search_%s' % key):
                 # add field to query
                 dispatch=getattr(searcher, 'search_%s' % key)
-                q=dispatch(q, userId)
+                filters.append(dispatch(userId))
 
+        # restrict to user's own entries or those of other users that are not drafts
+        if User.objects.filter(id=userId):
+            user=User.objects.get(id=userId)
+        else:
+            user=User.get_anonymous()
+            
+        q = reduce(op,filters) & Document.get_security_q(user)
+        
         # get results
         if q and len(q):
-            results = list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())
-        else:
-            results = list(BredeBrainImagingSED.objects.all())
+            return list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())
+        return list(BredeBrainImagingSED.objects.all())
 
     return results
 
@@ -187,8 +204,9 @@ class BredeSearcher:
     def __init__(self, search_data):
         self.__dict__.update(search_data)
     
-    def search_keywords(self, xpath_string, userId):
-        if self.keywords:
+    def search_keywords(self, userId):
+        xpath_string=''
+        if self.keywords:            
             search_nodes=['capsuleDescription','freeFormDescription','specificTask','behavioralDomain']
             for search_node in search_nodes:
                 words=self.keywords.split()
@@ -198,7 +216,8 @@ class BredeSearcher:
                     xpath_string='%s //Exp[contains(%s,"%s")]' % (xpath_string,search_node,word)
         return xpath_string
 
-    def search_title(self, xpath_string, userId):
+    def search_title(self, userId):
+        xpath_string=''
         if self.title:
             words=self.title.split()
             for word in words:
@@ -208,7 +227,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by description
-    def search_description(self, xpath_string, userId):
+    def search_description(self, userId):
+        xpath_string=''
         if self.description:
             words=self.description.split()
             for word in words:
@@ -217,7 +237,8 @@ class BredeSearcher:
                 xpath_string='%s //Exp[contains(freeFormDescription,"%s")]' % (xpath_string,word)
         return xpath_string
 
-    def search_related_brain_region(self, xpath_string, userId):
+    def search_related_brain_region(self, userId):
+        xpath_string=''
         if self.related_brain_region:
             words=self.related_brain_region.split()
             for word in words:
@@ -227,7 +248,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by related Literature title
-    def search_related_literature_title(self, xpath_string, userId):
+    def search_related_literature_title(self, userId):
+        xpath_string=''
         if self.related_literature_title:
             words=self.related_literature_title.split()
             for word in words:
@@ -237,7 +259,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by related Literature author name
-    def search_related_literature_author(self, xpath_string, userId):
+    def search_related_literature_author(self, userId):
+        xpath_string=''
         if self.related_literature_author:
             words=self.related_literature_author.split()
             for word in words:
@@ -247,7 +270,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by related Literature minimum year
-    def search_related_literature_year_min(self, xpath_string, userId):
+    def search_related_literature_year_min(self, userId):
+        xpath_string=''
         if self.related_literature_year_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -255,21 +279,24 @@ class BredeSearcher:
         return xpath_string
 
     # search by related Literature maximum year
-    def search_related_literature_year_max(self, xpath_string, userId):
+    def search_related_literature_year_max(self, userId):
+        xpath_string=''
         if self.related_literature_year_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[../year<=%d)]' % (xpath_string,self.related_literature_year_min)
         return xpath_string
 
-    def search_method(self, xpath_string, userId):
+    def search_method(self, userId):
+        xpath_string=''
         if self.method:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[modality="%s")]' % (xpath_string,self.method)
         return xpath_string
 
-    def search_coordinate_brain_region(self, xpath_string, userId):
+    def search_coordinate_brain_region(self, userId):
+        xpath_string=''
         if self.coordinate_brain_region:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -277,7 +304,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate x
-    def search_x_min(self, xpath_string, userId):
+    def search_x_min(self, userId):
+        xpath_string=''
         if self.x_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -285,7 +313,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate x
-    def search_x_max(self, xpath_string, userId):
+    def search_x_max(self, userId):
+        xpath_string=''
         if self.x_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -293,7 +322,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate y
-    def search_y_min(self, xpath_string, userId):
+    def search_y_min(self, userId):
+        xpath_string=''
         if self.y_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -301,7 +331,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate y
-    def search_y_max(self, xpath_string, userId):
+    def search_y_max(self, userId):
+        xpath_string=''
         if self.y_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -309,7 +340,8 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate z
-    def search_z_min(self, xpath_string, userId):
+    def search_z_min(self, userId):
+        xpath_string=''
         if self.z_min:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
@@ -317,16 +349,14 @@ class BredeSearcher:
         return xpath_string
 
     # search by coordinate z
-    def search_z_max(self, xpath_string, userId):
+    def search_z_max(self, userId):
+        xpath_string=''
         if self.z_max:
             if len(xpath_string):
                 xpath_string='%s | ' % xpath_string
             xpath_string='%s //Exp[Loc/zReported<=%.4f)]' % (xpath_string,self.z_max)
         return xpath_string
 
-class LocalBredeSearcher():
-    def __init__(self, search_data):
-        self.__dict__.update(search_data)
 
 def download(url):
     """Copy the contents of a file from a given URL

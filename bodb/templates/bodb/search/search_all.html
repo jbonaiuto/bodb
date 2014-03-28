@@ -7,6 +7,7 @@
     animatedcollapse.addDiv('sedResults', 'fade=1');
     animatedcollapse.addDiv('ssrResults', 'fade=1');
     animatedcollapse.addDiv('brainRegionResults', 'fade=1');
+    animatedcollapse.addDiv('userResults', 'fade=1');
 </script>
 <div id="allDiv" style="display:{%ifequal searchType 'all'%}block{% else %}none{% endifequal %}">
     <form id="allSearchForm" method="post" action="">
@@ -15,7 +16,8 @@
         <table class="tab_panel">
             <tr>
                 <td>
-                    <strong>Any field:</strong>&nbsp;{{ form.keywords }}
+                    <strong>Any field:</strong>&nbsp;{{ form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.keywords_options }}
                 </td>
             </tr>
             <tr>
@@ -42,29 +44,48 @@
                                 <td width=20%>
                                     <strong>Title</strong>
                                 </td>
-                                <td>{{ form.title }}</td>
+                                <td>{{ form.title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.title_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Description</strong>
                                 </td>
-                                <td>{{ form.description }}</td>
+                                <td>{{ form.description }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.description_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Narrative</strong>
                                 </td>
-                                <td>{{ form.narrative }}</td>
+                                <td>{{ form.narrative }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.narrative_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Tags</strong>
                                 </td>
-                                <td>{{ form.tags }}</td>
+                                <td>{{ form.tags }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Public</strong></td>
                                 <td>{{ form.public }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related Brain Regions</strong></td>
+                                <td>{{ form.related_brain_region }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.related_brain_region_options }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related BOPs</strong></td>
+                                <td>{{ form.related_bop }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.related_bop_options }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Related Models</strong></td>
+                                <td>{{ form.related_model }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ form.related_model_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Created</strong></td>
@@ -110,9 +131,10 @@
             </tr>
             <tr>
                 <td>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('allSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <strong>Search criteria combination:</strong> {{ form.search_options }}
                     <br>Search federated databases (warning this may drastically slow the search):
                     <br>CoCoMac {{ form.search_cocomac }} Brede {{ form.search_brede }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('allSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
             {% if literatures %}
@@ -284,6 +306,31 @@
                     <td style="padding:0px">
                         <div id="brainRegionResults" style="display:block">
                             {% include 'bodb/brainRegion/brain_region_list_view.html' %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0px">
+                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if users %}
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="padding:0px">
+                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                    </td>
+                </tr>
+                <tr class="section_header">
+                    <td>User Results (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
+                </tr>
+                <tr>
+                    <td style="padding:0px">
+                        <div id="userResults" style="display:block">
+                            {% include 'bodb/admin/user_list_view.html' %}
                         </div>
                     </td>
                 </tr>

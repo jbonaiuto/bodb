@@ -31,7 +31,9 @@
         <input type="hidden" id="searchType" name="searchType" value="seds"/>
         <table class="tab_panel">
             <tr>
-                <td colspan=10><strong>Any field:</strong>&nbsp;{{ sed_search_form.keywords }}</td>
+                <td colspan=10><strong>Any field:</strong>&nbsp;{{ sed_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.keywords_options }}
+                </td>
             </tr>
             <tr>
                 <td colspan=10 style="padding:0px">
@@ -55,21 +57,25 @@
                         <table class="tab_panel" style="background:#e6e8ed;">
                             <tr>
                                 <td width=20%><strong>Title</strong></td>
-                                <td>{{ sed_search_form.title }}</td>
+                                <td>{{ sed_search_form.title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.title_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Description</strong></td>
-                                <td>{{ sed_search_form.description }}</td>
+                                <td>{{ sed_search_form.description }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.description_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Narrative</strong></td>
-                                <td>{{ sed_search_form.narrative }}</td>
+                                <td>{{ sed_search_form.narrative }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.narrative_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Tags</strong>
                                 </td>
-                                <td>{{ sed_search_form.tags }}</td>
+                                <td>{{ sed_search_form.tags }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Type</strong></td>
@@ -81,11 +87,13 @@
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width=20%><strong>Control Condition</strong></td>
-                                                <td>{{ sed_search_form.control_condition }}</td>
+                                                <td>{{ sed_search_form.control_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.control_condition_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Experimental Condition</strong></td>
-                                                <td>{{ sed_search_form.experimental_condition }}</td>
+                                                <td>{{ sed_search_form.experimental_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.experimental_condition_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Method</strong></td>
@@ -93,7 +101,8 @@
                                             </tr>
                                             <tr>
                                                 <td><strong>Coordinate Brain Region</strong></td>
-                                                <td>{{ sed_search_form.coordinate_brain_region }}</td>
+                                                <td>{{ sed_search_form.coordinate_brain_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.coordinate_brain_region_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Coordinate Range</strong></td>
@@ -105,27 +114,33 @@
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width="20%"><strong>Source Region</strong></td>
-                                                <td>{{ sed_search_form.source_region }}</td>
+                                                <td>{{ sed_search_form.source_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.source_region_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Source Region Nomenclature</strong></td>
-                                                <td>{{ sed_search_form.source_region_nomenclature }}</td>
+                                                <td>{{ sed_search_form.source_region_nomenclature }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.source_region_nomenclature_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Target Region</strong></td>
-                                                <td>{{ sed_search_form.target_region }}</td>
+                                                <td>{{ sed_search_form.target_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.target_region_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Target Region Nomenclature</strong></td>
-                                                <td>{{ sed_search_form.target_region_nomenclature }}</td>
+                                                <td>{{ sed_search_form.target_region_nomenclature }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.target_region_nomenclature_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Source or Target Region</strong></td>
-                                                <td>{{ sed_search_form.connection_region }}</td>
+                                                <td>{{ sed_search_form.connection_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.connection_region_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Source or Target Region Nomenclature</strong></td>
-                                                <td>{{ sed_search_form.connection_region_nomenclature }}</td>
+                                                <td>{{ sed_search_form.connection_region_nomenclature }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.connection_region_nomenclature_options }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -133,27 +148,33 @@
                                         <table class="tab_panel">
                                             <tr>
                                                 <td width=20%><strong>Cognitive Paradigm</strong></td>
-                                                <td>{{ sed_search_form.cognitive_paradigm }}</td>
+                                                <td>{{ sed_search_form.cognitive_paradigm }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.cognitive_paradigm_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Sensory Modality</strong></td>
-                                                <td>{{ sed_search_form.sensory_modality }}</td>
+                                                <td>{{ sed_search_form.sensory_modality }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.sensory_modality_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Response Modality</strong></td>
-                                                <td>{{ sed_search_form.response_modality }}</td>
+                                                <td>{{ sed_search_form.response_modality }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.response_modality_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Control Condition</strong></td>
-                                                <td>{{ sed_search_form.erp_control_condition }}</td>
+                                                <td>{{ sed_search_form.erp_control_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.erp_control_condition_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Experimental Condition</strong></td>
-                                                <td>{{ sed_search_form.erp_experimental_condition }}</td>
+                                                <td>{{ sed_search_form.erp_experimental_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.erp_experimental_condition_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Component Name</strong></td>
-                                                <td>{{ sed_search_form.erp_component_name }}</td>
+                                                <td>{{ sed_search_form.erp_component_name }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.erp_component_name_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2">{{ sed_search_form.latency_peak_min }} &#8804; <strong>Peak Latency</strong> &#8804; {{ sed_search_form.latency_peak_max }}</td>
@@ -173,19 +194,23 @@
                                             </tr>
                                             <tr>
                                                 <td><strong>Scalp Region</strong></td>
-                                                <td>{{ sed_search_form.scalp_region }}</td>
+                                                <td>{{ sed_search_form.scalp_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.scalp_region_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Electrode Cap</strong></td>
-                                                <td>{{ sed_search_form.electrode_cap }}</td>
+                                                <td>{{ sed_search_form.electrode_cap }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.electrode_cap_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Electrode Name</strong></td>
-                                                <td>{{ sed_search_form.electrode_name }}</td>
+                                                <td>{{ sed_search_form.electrode_name }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.electrode_name_options }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Source</strong></td>
-                                                <td>{{ sed_search_form.source }}</td>
+                                                <td>{{ sed_search_form.source }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.source_options }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -193,7 +218,8 @@
                             </tr>
                             <tr>
                                 <td><strong>Tags</strong></td>
-                                <td>{{ sed_search_form.tags }}</td>
+                                <td>{{ sed_search_form.tags }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Public</strong></td>
@@ -201,7 +227,8 @@
                             </tr>
                             <tr>
                                 <td><strong>Related Brain Regions</strong></td>
-                                <td>{{ sed_search_form.related_brain_region }}</td>
+                                <td>{{ sed_search_form.related_brain_region }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.related_brain_region_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Created</strong></td>
@@ -247,13 +274,15 @@
                                 <td>
                                     <strong>Title</strong>
                                 </td>
-                                <td>{{ sed_search_form.related_literature_title }}</td>
+                                <td>{{ sed_search_form.related_literature_title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.related_literature_title_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Author</strong>
                                 </td>
-                                <td>{{ sed_search_form.related_literature_author }}</td>
+                                <td>{{ sed_search_form.related_literature_author }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.related_literature_author_options }}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -265,7 +294,8 @@
                                 <td>
                                     <strong>Annotation</strong>
                                 </td>
-                                <td>{{ sed_search_form.related_literature_annotation }}</td>
+                                <td>{{ sed_search_form.related_literature_annotation }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.related_literature_annotation_options }}</td>
                             </tr>
                         </table>
                         <b class="d4f"></b><b class="d3f"></b><b class="d2f"></b><b class="d1f"></b>
@@ -274,9 +304,10 @@
             </tr>
             <tr>
                 <td colspan=10>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('sed_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <strong>Search criteria combination:</strong> {{ sed_search_form.search_options }}
                     <br>Search federated databases (warning this may drastically slow the search):
                     <br>CoCoMac {{ sed_search_form.search_cocomac }} Brede {{ sed_search_form.search_brede }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('sed_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>

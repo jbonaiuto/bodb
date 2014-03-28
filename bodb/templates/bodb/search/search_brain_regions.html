@@ -7,7 +7,9 @@
         <input type="hidden" id="searchType" name="searchType" value="brain_regions"/>
         <table class="tab_panel" width=100%>
             <tr>
-                <td><strong>Any field:</strong>&nbsp;{{ brain_region_search_form.keywords }}<!--<input type=text name="all" value="{{ searchPhrase }}"/>--></td>
+                <td><strong>Any field:</strong>&nbsp;{{ brain_region_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.keywords_options }}
+                </td>
             </tr>
             <tr>
                 <td style="padding:0px">
@@ -31,23 +33,28 @@
                         <table class="tab_panel" style="background:#e6e8ed;">
                             <tr>
                                 <td width=20%><strong>Name</strong></td>
-                                <td>{{ brain_region_search_form.name }}</td>
+                                <td>{{ brain_region_search_form.name }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.name_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Abbreviation</strong></td>
-                                <td>{{ brain_region_search_form.abbreviation }}</td>
+                                <td>{{ brain_region_search_form.abbreviation }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.abbreviation_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Parent</strong></td>
-                                <td>{{ brain_region_search_form.parent }}</td>
+                                <td>{{ brain_region_search_form.parent }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.parent_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Nomenclature</strong></td>
-                                <td>{{ brain_region_search_form.nomenclature }}</td>
+                                <td>{{ brain_region_search_form.nomenclature }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.nomenclature_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Species</strong></td>
-                                <td>{{ brain_region_search_form.species }}</td>
+                                <td>{{ brain_region_search_form.species }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ brain_region_search_form.species_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Region Type</strong></td>
@@ -67,7 +74,8 @@
             </tr>
             <tr>
                 <td>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('brain_region_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <strong>Search criteria combination:</strong> {{ brain_region_search_form.search_options }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('brain_region_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
             <tr>

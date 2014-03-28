@@ -8,7 +8,8 @@
         <table class="tab_panel">
             <tr>
                 <td colspan=5>
-                    <strong>Any field:</strong>&nbsp;{{ literature_search_form.keywords }}
+                    <strong>Any field:</strong>&nbsp;{{ literature_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ literature_search_form.keywords_options }}
                 </td>
             </tr>
             <tr>
@@ -36,7 +37,8 @@
                                     <strong>Title</strong>
                                 </td>
                                 <td>
-                                    {{ literature_search_form.title }}
+                                    {{ literature_search_form.title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ literature_search_form.title_options }}
                                 </td>
                             </tr>
                             <tr>
@@ -44,7 +46,8 @@
                                     <strong>Author</strong>
                                 </td>
                                 <td>
-                                    {{ literature_search_form.author }}
+                                    {{ literature_search_form.author }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ literature_search_form.author_options }}
                                 </td>
                             </tr>
                             <tr>
@@ -68,7 +71,8 @@
                                     <strong>Annotation</strong>
                                 </td>
                                 <td>
-                                    {{ literature_search_form.annotation }}
+                                    {{ literature_search_form.annotation }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ literature_search_form.annotation_options }}
                                 </td>
                             </tr>
                             <tr>
@@ -124,7 +128,8 @@
             </tr>
             <tr>
                 <td colspan=5>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('literature_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <strong>Search criteria combination:</strong> {{ literature_search_form.search_options }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('literature_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
             <tr>

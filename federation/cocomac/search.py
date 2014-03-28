@@ -3,28 +3,32 @@ import urllib
 from xml.dom import minidom
 from pyexpat import ExpatError
 from django.db.models import Q
+import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
 from federation.cocomac.import_data import addNomenclature
 from registration.models import User
 
 def runCoCoMacSearch(search_data, userId):
-    searchString=""
     searcher=CoCoMacSearcher(search_data)
     results=[]
     search_local=False
     if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='connectivity'):
         if hasattr(searcher,'search_cocomac') and searcher.search_cocomac:
             print('Trying to search CoCoMac')
+            searchStrings=[]
             # construct search query
             for key in search_data.iterkeys():
                 # if the searcher can search by this field
                 if hasattr(searcher, 'search_%s' % key):
                     # add field to query
                     dispatch=getattr(searcher, 'search_%s' % key)
-                    searchString=dispatch(searchString)
+                    searchStrings.append(dispatch())
             cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=XML_Browser&SearchString="
-            if len(searchString):
-                cocomac_url+=searchString+" AND"
+            if len(searchStrings):
+                if search_data['search_options']=='all':
+                    cocomac_url+=" AND".join(searchStrings)
+                else:
+                    cocomac_url+=" OR".join(searchStrings)
             cocomac_url+=" NOT ('0') [Density]"
             cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage=32767"
 
@@ -81,7 +85,11 @@ def runCoCoMacSearch(search_data, userId):
 
     if search_local:
         print('Searching locally')
-        q=Q()
+        filters=[]
+
+        op=operator.or_
+        if search_data['search_options']=='all':
+            op=operator.and_
 
         # create SED search
         searcher=LocalCoCoMacSearcher(search_data)
@@ -92,7 +100,7 @@ def runCoCoMacSearch(search_data, userId):
             if hasattr(searcher, 'search_%s' % key):
                 # add field to query
                 dispatch=getattr(searcher, 'search_%s' % key)
-                q=dispatch(q, userId)
+                filters.append(dispatch(userId))
 
         # restrict to user's own entries or those of other users that are not drafts
         if User.objects.filter(id=userId):
@@ -100,14 +108,12 @@ def runCoCoMacSearch(search_data, userId):
         else:
             user=User.get_anonymous()
 
-        q &= Document.get_security_q(user)
+        q = reduce(op,filters) & Document.get_security_q(user)
 
         # get results
         if q and len(q):
-            results = list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
-        else:
-            results = list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
-        return results
+            return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
+        return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
 
     return results
 
@@ -137,52 +143,40 @@ class CoCoMacSearcher():
     def __init__(self, search_data):
         self.__dict__.update(search_data)
 
-    def search_source_region(self, searchString):
+    def search_source_region(self):
         if self.source_region:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="('"+unicode(self.source_region).encode('latin1','xmlcharrefreplace')+"') [SourceSite]"
-        return searchString
+            return "('"+unicode(self.source_region).encode('latin1','xmlcharrefreplace')+"') [SourceSite]"
+        return ""
 
-    def search_source_region_nomenclature(self, searchString):
+    def search_source_region_nomenclature(self):
         if self.source_region_nomenclature:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="('"+unicode(self.source_region_nomenclature).encode('latin1','xmlcharrefreplace')+"')[SourceMap]"
-        return searchString
+            return "('"+unicode(self.source_region_nomenclature).encode('latin1','xmlcharrefreplace')+"')[SourceMap]"
+        return ""
 
-    def search_target_region(self, searchString):
+    def search_target_region(self):
         if self.target_region:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="('"+unicode(self.target_region).encode('latin1','xmlcharrefreplace')+"') [TargetSite]"
-        return searchString
+            return "('"+unicode(self.target_region).encode('latin1','xmlcharrefreplace')+"') [TargetSite]"
+        return ""
 
-    def search_target_region_nomenclature(self, searchString):
+    def search_target_region_nomenclature(self):
         if self.target_region_nomenclature:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="('"+unicode(self.target_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [TargetMap]"
-        return searchString
+            return "('"+unicode(self.target_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [TargetMap]"
+        return ""
 
-    def search_connection_region(self, searchString):
+    def search_connection_region(self):
         if self.connection_region:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="(('"+unicode(self.connection_region).encode('latin1','xmlcharrefreplace')+"') [SourceSite] OR ('"+unicode(self.connection_region).encode('latin1','xmlcharrefreplace')+"') [TargetSite]"
-        return searchString
+            return "(('"+unicode(self.connection_region).encode('latin1','xmlcharrefreplace')+"') [SourceSite] OR ('"+unicode(self.connection_region).encode('latin1','xmlcharrefreplace')+"') [TargetSite]"
+        return ""
 
-    def search_connection_region_nomenclature(self, searchString):
+    def search_connection_region_nomenclature(self):
         if self.connection_region_nomenclature:
-            if len(searchString)>0:
-                searchString+=" AND "
-            searchString+="(('"+unicode(self.connection_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [SourceMap] OR ('"+unicode(self.connection_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [TargetMap]"
-        return searchString
+            return "(('"+unicode(self.connection_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [SourceMap] OR ('"+unicode(self.connection_region_nomenclature).encode('latin1','xmlcharrefreplace')+"') [TargetMap]"
+        return ""
 
-    def search_related_brain_region(self, searchString):
+    def search_related_brain_region(self):
         if self.related_brain_region:
-            return self.search_connection_region(self, searchString)
-        return searchString
+            return self.search_connection_region(self)
+        return ""
 
 
 class LocalCoCoMacSearcher():
@@ -190,7 +184,7 @@ class LocalCoCoMacSearcher():
         self.__dict__.update(search_data)
 
     # search by title, description, narrative, or tags
-    def search_keywords(self, q, userId):
+    def search_keywords(self, userId):
         if self.keywords:
             words=self.keywords.split()
             title_q=Q()
@@ -209,68 +203,68 @@ class LocalCoCoMacSearcher():
                 source_nom_q=Q(source_region__nomenclature__name__icontains=word)
                 target_nom_q=Q(target_region__nomenclature__name__icontains=word)
             keyword_q = title_q | description_q | source_q | target_q | source_nom_q | target_nom_q
-            q = q & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
     # search by title
-    def search_title(self, q, userId):
+    def search_title(self, userId):
         if self.title:
             words=self.title.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(title__icontains=word)
-            q = q  & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
     # search by description
-    def search_description(self, q, userId):
+    def search_description(self, userId):
         if self.description:
             words=self.description.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(brief_description__icontains=word)
-            q = q  & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_source_region(self, q, userId):
+    def search_source_region(self, userId):
         if self.source_region:
             words=self.source_region.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(source_region__name__icontains=word) | \
                             Q(source_region__abbreviation__icontains=word)
-            q &= keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_source_region_nomenclature(self, q, userId):
+    def search_source_region_nomenclature(self, userId):
         if self.source_region_nomenclature:
             words=self.source_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word)
-            q &= keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_target_region(self, q, userId):
+    def search_target_region(self, userId):
         if self.target_region:
             words=self.target_region.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(target_region__name__icontains=word) |\
                             Q(target_region__abbreviation__icontains=word)
-            q = q & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_target_region_nomenclature(self, q, userId):
+    def search_target_region_nomenclature(self, userId):
         if self.target_region_nomenclature:
             words=self.target_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(target_region__nomenclature__name__icontains=word)
-            q = q & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_connection_region(self, q, userId):
+    def search_connection_region(self, userId):
         if self.connection_region:
             words=self.connection_region.split()
             keyword_q=Q()
@@ -278,18 +272,18 @@ class LocalCoCoMacSearcher():
                 keyword_q = keyword_q | Q(source_region__name__icontains=word) | \
                             Q(source_region__abbreviation__icontains=word) | Q(target_region__name__icontains=word) | \
                             Q(target_region__abbreviation__icontains=word)
-            q = q & keyword_q
-        return q
+            return keyword_q
+        return Q()
 
-    def search_connection_region_nomenclature(self, q, userId):
+    def search_connection_region_nomenclature(self, userId):
         if self.connection_region_nomenclature:
             words=self.connection_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word) |\
                             Q(target_region__nomenclature__name__icontains=word)
-            q &= keyword_q
-        return q
+            return keyword_q
+        return Q()
 
 def download(url):
     """Copy the contents of a file from a given URL

@@ -8,7 +8,9 @@
         <input type="hidden" id="searchType" name="searchType" value="ssrs"/>
         <table class="tab_panel">
             <tr>
-                <td colspan=8><strong>Any field:</strong>&nbsp;{{ ssr_search_form.keywords }}</td>
+                <td colspan=8><strong>Any field:</strong>&nbsp;{{ ssr_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ ssr_search_form.keywords_options }}
+                </td>
             </tr>
             <tr>
                 <td colspan=8 style="padding:0px">
@@ -32,21 +34,25 @@
                         <table class="tab_panel" style="background:#e6e8ed;">
                             <tr>
                                 <td width=20%><strong>Title</strong></td>
-                                <td>{{ ssr_search_form.title }}</td>
+                                <td>{{ ssr_search_form.title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ ssr_search_form.title_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Description</strong></td>
-                                <td>{{ ssr_search_form.description }}</td>
+                                <td>{{ ssr_search_form.description }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ ssr_search_form.description_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Narrative</strong></td>
-                                <td>{{ ssr_search_form.narrative }}</td>
+                                <td>{{ ssr_search_form.narrative }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ ssr_search_form.narrative_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Tags</strong>
                                 </td>
-                                <td>{{ ssr_search_form.tags }}</td>
+                                <td>{{ ssr_search_form.tags }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ ssr_search_form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Public</strong></td>
@@ -96,7 +102,8 @@
             </tr>
             <tr>
                 <td colspan=8>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('ssr_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <strong>Search criteria combination:</strong> {{ ssr_search_form.search_options }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('ssr_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>

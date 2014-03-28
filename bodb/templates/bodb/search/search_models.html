@@ -8,7 +8,9 @@
         <input type="hidden" id="searchType" name="searchType" value="models"/>
         <table class="tab_panel">
             <tr>
-                <td colspan=8><strong>Any field:</strong>&nbsp;{{ model_search_form.keywords }}
+                <td colspan=8><strong>Any field:</strong>&nbsp;{{ model_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.keywords_options }}
+                </td>
             </tr>
             <tr>
                 <td colspan=8 style="padding:0px">
@@ -32,25 +34,30 @@
                         <table class="tab_panel" style="background:#e6e8ed;">
                             <tr>
                                 <td width=20%><strong>Title</strong></td>
-                                <td>{{ model_search_form.title }}</td>
+                                <td>{{ model_search_form.title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.title_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Author</strong></td>
-                                <td>{{ model_search_form.author }}</td>
+                                <td>{{ model_search_form.author }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.author_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Description</strong></td>
-                                <td>{{ model_search_form.description }}</td>
+                                <td>{{ model_search_form.description }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.description_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Narrative</strong></td>
-                                <td>{{ model_search_form.narrative }}</td>
+                                <td>{{ model_search_form.narrative }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.narrative_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Tags</strong>
                                 </td>
-                                <td>{{ model_search_form.tags }}</td>
+                                <td>{{ model_search_form.tags }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Public</strong></td>
@@ -58,31 +65,38 @@
                             </tr>
                             <tr>
                                 <td><strong>Building SEDs</strong></td>
-                                <td>{{ model_search_form.building_sed }}</td>
+                                <td>{{ model_search_form.building_sed }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.building_sed_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Testing SEDs</strong></td>
-                                <td>{{ model_search_form.testing_sed }}</td>
+                                <td>{{ model_search_form.testing_sed }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.testing_sed_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Predictions</strong></td>
-                                <td>{{ model_search_form.prediction }}</td>
+                                <td>{{ model_search_form.prediction }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.prediction_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>SSRs</strong></td>
-                                <td>{{ model_search_form.ssr }}</td>
+                                <td>{{ model_search_form.ssr }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.ssr_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Related Brain Regions</strong></td>
-                                <td>{{ model_search_form.related_brain_region }}</td>
+                                <td>{{ model_search_form.related_brain_region }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_brain_region_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Related BOPs</strong></td>
-                                <td>{{ model_search_form.related_bop }}</td>
+                                <td>{{ model_search_form.related_bop }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_bop_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Related Models</strong></td>
-                                <td>{{ model_search_form.related_model }}</td>
+                                <td>{{ model_search_form.related_model }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_model_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Created</strong></td>
@@ -128,13 +142,15 @@
                                 <td>
                                     <strong>Title</strong>
                                 </td>
-                                <td>{{ model_search_form.related_literature_title }}</td>
+                                <td>{{ model_search_form.related_literature_title }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_literature_title_options }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Author</strong>
                                 </td>
-                                <td>{{ model_search_form.related_literature_author }}</td>
+                                <td>{{ model_search_form.related_literature_author }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_literature_author_options }}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -146,7 +162,8 @@
                                 <td>
                                     <strong>Annotation</strong>
                                 </td>
-                                <td>{{ model_search_form.related_literature_annotation }}</td>
+                                <td>{{ model_search_form.related_literature_annotation }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ model_search_form.related_literature_annotation_options }}</td>
                             </tr>
                         </table>
                         <b class="d4f"></b><b class="d3f"></b><b class="d2f"></b><b class="d1f"></b></span>
@@ -162,7 +179,8 @@
             </tr>
             <tr>
                 <td colspan=8>
-                    <input class="btn" type="button" value="Search" onclick="document.getElementById('model_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/></form>
+                    <strong>Search criteria combination:</strong> {{ model_search_form.search_options }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('model_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>

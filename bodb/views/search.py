@@ -1,14 +1,20 @@
 import datetime
 from Bio import Entrez
-from federation.modeldb.search import runModelDBSearch
-
 Entrez.email = 'uscbrainproject@gmail.com'
+from bodb.search.user import runUserSearch
+from registration.models import User
+from bodb.search.atlas import runBrainRegionSearch
+from bodb.search.bop import runBOPSearch
+from bodb.search.literature import runLiteratureSearch
+from bodb.search.model import runModelSearch
+from bodb.search.sed import runSEDSearch, runSEDCoordSearch
+from bodb.search.ssr import runSSRSearch
+from federation.modeldb.search import runModelDBSearch
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch
-from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm
-from bodb.search import runBOPSearch, runSEDSearch, runLiteratureSearch, runBrainRegionSearch, runModelSearch, runSSRSearch, runSEDCoordSearch
-from bodb.models import BOP, SED, Literature, Journal, Book, Chapter, Thesis, Conference, Unpublished, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent
+from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -16,7 +22,7 @@ class SearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Search'
+        context['helpPage']='search_data.html'
         context['showTabs']=True
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_search_form']=BOPSearchForm(self.request.POST or None,prefix='bop')
@@ -25,6 +31,7 @@ class SearchView(FormView):
         context['ssr_search_form']=DocumentSearchForm(self.request.POST or None,prefix='ssr')
         context['literature_search_form']=LiteratureSearchForm(self.request.POST or None,prefix='literature')
         context['brain_region_search_form']=BrainRegionSearchForm(self.request.POST or None,prefix='brain_region')
+        context['user_search_form']=UserSearchForm(self.request.POST or None,prefix='user')
         context['searchType']=self.request.POST.get('searchType','all')
         context['allConnectionGraphId']='allConnectivitySEDDiagram'
         context['allErpGraphId']='allErpSEDDiagram'
@@ -44,88 +51,93 @@ class SearchView(FormView):
         ssr_form = context['ssr_search_form']
         literature_form = context['literature_search_form']
         brain_region_form = context['brain_region_search_form']
+        user_form=context['user_search_form']
 
         user=self.request.user
 
+        genericSEDs=[]
+        connectivitySEDs=[]
+        erpSEDs=[]
+        imagingSEDs=[]
         sedCoords=[]
-        literatures=[]
-        bopObjs=BOP.objects.none()
-        modelObjs=Model.objects.none()
-        genericObjs=[]
-        connectivityObjs=[]
-        erpObjs=[]
-        imagingObjs=[]
-        ssrObjs=SSR.objects.none()
+
+        literature=Literature.objects.none()
+        bops=BOP.objects.none()
+        models=Model.objects.none()
+        ssrs=SSR.objects.none()
         brain_regions=BrainRegion.objects.none()
+        users=User.objects.none()
 
         searchType=self.request.POST['searchType']
         if searchType=='bops' and bop_form.is_valid():
-            bopObjs=runBOPSearch(bop_form.cleaned_data, user.id)
+            bops=runBOPSearch(bop_form.cleaned_data, user.id)
         elif searchType=='models' and model_form.is_valid():
-            modelObjs=runModelSearch(model_form.cleaned_data, user.id)
+            models=runModelSearch(model_form.cleaned_data, user.id)
         elif searchType=='seds' and sed_form.is_valid():
-            sedObjs=runSEDSearch(sed_form.cleaned_data, user.id)
-            for idx,sedObj in enumerate(sedObjs):
+            seds=runSEDSearch(sed_form.cleaned_data, user.id)
+            for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
-                    erpObjs.append(ERPSED.objects.get(id=sedObj.id))
+                    erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                    imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
-                    genericObjs.append(sedObj)
-            connSEDs=runCoCoMacSearch(sed_form.cleaned_data, user.id)
-            for connSED in connSEDs:
-                connectivityObjs.append(connSED)
-            imagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
-            for imagingSED in imagingSEDs:
-                imagingObjs.append(imagingSED)
-            sedCoords=runSEDCoordSearch(imagingObjs, sed_form.cleaned_data, user.id)
+                    genericSEDs.append(sedObj)
+            cococmacConnSEDs=runCoCoMacSearch(sed_form.cleaned_data, user.id)
+            for connSED in cococmacConnSEDs:
+                connectivitySEDs.append(connSED)
+            bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
+            for imagingSED in bredeImagingSEDs:
+                imagingSEDs.append(imagingSED)
+            sedCoords=runSEDCoordSearch(imagingSEDs, sed_form.cleaned_data, user.id)
         elif searchType=='ssrs' and ssr_form.is_valid():
-            ssrObjs=runSSRSearch(ssr_form.cleaned_data, user.id)
+            ssrs=runSSRSearch(ssr_form.cleaned_data, user.id)
         elif searchType=='literature'and literature_form.is_valid():
-            literatures=list(runLiteratureSearch(literature_form.cleaned_data, user.id))
-            literatures.sort(key=Literature.author_names)
+            literature=runLiteratureSearch(literature_form.cleaned_data, user.id)
         elif searchType=='brain_regions' and brain_region_form.is_valid():
             brain_regions=runBrainRegionSearch(brain_region_form.cleaned_data)
+        elif searchType=='users' and user_form.is_valid():
+            users=runUserSearch(user_form.cleaned_data, user.id)
         else:
-            bopObjs=runBOPSearch(form.cleaned_data, user.id)
-            modelObjs=runModelSearch(form.cleaned_data, user.id)
-            sedObjs=runSEDSearch(form.cleaned_data, user.id)
-            for idx,sedObj in enumerate(sedObjs):
+            bops=runBOPSearch(form.cleaned_data, user.id)
+            models=runModelSearch(form.cleaned_data, user.id)
+            seds=runSEDSearch(form.cleaned_data, user.id)
+            for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
-                    erpObjs.append(ERPSED.objects.get(id=sedObj.id))
+                    erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                    imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
-                    genericObjs.append(sedObj)
-            connSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
-            for connSED in connSEDs:
-                connectivityObjs.append(connSED)
-            imagingSEDs=runBredeSearch(form.cleaned_data, user.id)
-            for imagingSED in imagingSEDs:
-                imagingObjs.append(imagingSED)
-            sedCoords=runSEDCoordSearch(imagingObjs, form.cleaned_data, user.id)
-            ssrObjs=runSSRSearch(form.cleaned_data, user.id)
-            literatures=list(runLiteratureSearch(form.cleaned_data, user.id))
-            literatures.sort(key=Literature.author_names)
+                    genericSEDs.append(sedObj)
+            cocomacConnSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
+            for connSED in cocomacConnSEDs:
+                connectivitySEDs.append(connSED)
+            bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
+            for imagingSED in bredeImagingSEDs:
+                imagingSEDs.append(imagingSED)
+            sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
+            ssrs=runSSRSearch(form.cleaned_data, user.id)
+            literature=runLiteratureSearch(form.cleaned_data, user.id)
             brain_regions=runBrainRegionSearch(form.cleaned_data)
+            users=runUserSearch(form.cleaned_data, user.id)
 
-        context['bops']=BOP.get_bop_list(bopObjs, user)
-        context['models']=Model.get_model_list(modelObjs, user)
-        context['generic_seds']=SED.get_sed_list(genericObjs, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpObjs]
-        context['erp_seds']=SED.get_sed_list(erpObjs, user)
-        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['connectivity_seds']=SED.get_sed_list(connectivityObjs, user)
-        coords=[sedCoords[sed.id] for sed in imagingObjs]
-        context['imaging_seds']=SED.get_sed_list(imagingObjs, user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'], coords)
-        context['ssrs']=SSR.get_ssr_list(ssrObjs, user)
-        context['literatures']=literatures
+        context['bops']=BOP.get_bop_list(bops, user)
+        context['models']=Model.get_model_list(models, user)
+        context['generic_seds']=SED.get_sed_list(genericSEDs, user)
+        context['erp_seds']=SED.get_sed_list(erpSEDs, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
+            [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, user)
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+            [sedCoords[sed.id] for sed in imagingSEDs])
+        context['ssrs']=SSR.get_ssr_list(ssrs, user)
+        context['literatures']=literature
         context['brain_regions']=brain_regions
+        context['users']=BodbProfile.get_user_list(users,user)
         context['can_add_entry']=False
         context['can_remove_entry']=False
         context['selected_coord_ids']=[]
@@ -147,13 +159,12 @@ class BOPSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BOPSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='search_data.html#bops'
         context['bop_search_form']=context.get('form')
         context['bopGraphId']='bopRelationshipDiagram'
         context['searchType']='bops'
         context['searchLabel']='Brain Operating Principles (BOPs)'
-        context['exclude']=None
-        if 'exclude' in self.request.GET:
-            context['exclude']=self.request.GET['exclude']
+        context['exclude']=self.request.GET.get('exclude',None)
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         return context
@@ -162,13 +173,9 @@ class BOPSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
 
-        bopObjs=runBOPSearch(form.cleaned_data, user.id)
+        bops=runBOPSearch(form.cleaned_data, user.id, exclude=context['exclude'])
 
-        bops_to_return=[]
-        for bop in bopObjs:
-            if context['exclude'] is None or not bop.id==context['exclude']:
-                bops_to_return.append(bop)
-        context['bops']=BOP.get_bop_list(bops_to_return, user)
+        context['bops']=BOP.get_bop_list(bops, user)
 
         user=self.request.user
         context['can_add_entry']=False
@@ -187,6 +194,7 @@ class BrainRegionSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='search_data.html#brain-regions'
         context['brain_region_search_form']=context.get('form')
         context['searchType']='brain_regions'
         context['searchLabel']='Brain Regions'
@@ -218,6 +226,7 @@ class LiteratureSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(LiteratureSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='search_data.html#literature'
         context['literature_search_form']=context.get('form')
         context['searchType']='literature'
         context['searchLabel']='Literature'
@@ -226,22 +235,7 @@ class LiteratureSearchView(FormView):
         return context
 
     def form_valid(self, form):
-        literatures=list(runLiteratureSearch(form.cleaned_data, self.request.user.id))
-        literatures.sort(key=Literature.author_names)
-
-        for idx,literature in enumerate(literatures):
-            if Journal.objects.filter(id=literature.id):
-                literatures[idx]=Journal.objects.get(id=literature.id)
-            elif Book.objects.filter(id=literature.id):
-                literatures[idx]=Book.objects.get(id=literature.id)
-            elif Chapter.objects.filter(id=literature.id):
-                literatures[idx]=Chapter.objects.get(id=literature.id)
-            elif Thesis.objects.filter(id=literature.id):
-                literatures[idx]=Thesis.objects.get(id=literature.id)
-            elif Conference.objects.filter(id=literature.id):
-                literatures[idx]=Conference.objects.get(id=literature.id)
-            elif Unpublished.objects.filter(id=literature.id):
-                literatures[idx]=Unpublished.objects.get(id=literature.id)
+        literatures=runLiteratureSearch(form.cleaned_data, self.request.user.id)
 
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
@@ -262,11 +256,13 @@ class ModelSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ModelSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='search_data.html#models'
         context['model_search_form']=context.get('form')
         context['searchType']='models'
         context['searchLabel']='Models'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
+        context['exclude']=self.request.GET.get('exclude',None)
         context['modelGraphId']='modelRelationshipDiagram'
         return context
 
@@ -274,8 +270,8 @@ class ModelSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
 
-        modelObjs=runModelSearch(form.cleaned_data, user.id)
-        context['models']=Model.get_model_list(modelObjs, user)
+        models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
+        context['models']=Model.get_model_list(models, user)
 
         user=self.request.user
         context['can_add_entry']=False
@@ -294,6 +290,7 @@ class SEDSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SEDSearchView,self).get_context_data(**kwargs)
+        context['helpPage']='search_data.html#summary-of-experimental-data'
         context['sed_search_form']=context.get('form')
         context['searchType']='seds'
         context['searchLabel']='Summaries of Experimental Data (SEDs)'
@@ -308,38 +305,38 @@ class SEDSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
 
-        genericObjs=[]
-        connectivityObjs=[]
-        erpObjs=[]
-        imagingObjs=[]
+        genericSEDs=[]
+        connectivitySEDs=[]
+        erpSEDs=[]
+        imagingSEDs=[]
 
-        sedObjs=runSEDSearch(form.cleaned_data, user.id)
-        for idx,sedObj in enumerate(sedObjs):
+        seds=runSEDSearch(form.cleaned_data, user.id)
+        for idx,sedObj in enumerate(seds):
             if sedObj.type=='event related potential':
-                erpObjs.append(ERPSED.objects.get(id=sedObj.id))
+                erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
             elif sedObj.type=='brain imaging':
-                imagingObjs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
             elif sedObj.type=='connectivity':
-                connectivityObjs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
             elif sedObj.type=='generic':
-                genericObjs.append(sedObj)
-        connSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
-        for connSED in connSEDs:
-            connectivityObjs.append(connSED)
-        imagingSEDs=runBredeSearch(form.cleaned_data, user.id)
-        for imagingSED in imagingSEDs:
-            imagingObjs.append(imagingSED)
-        sedCoords=runSEDCoordSearch(imagingObjs, form.cleaned_data, user.id)
+                genericSEDs.append(sedObj)
+        cocomacConnSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
+        for connSED in cocomacConnSEDs:
+            connectivitySEDs.append(connSED)
+        bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
+        for imagingSED in bredeImagingSEDs:
+            imagingSEDs.append(imagingSED)
+        sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
 
         # load selected sed ids
-        context['generic_seds']=SED.get_sed_list(genericObjs,user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpObjs]
-        context['erp_seds']=SED.get_sed_list(erpObjs, user)
-        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['connectivity_seds']=SED.get_sed_list(connectivityObjs,user)
-        coords=[sedCoords[sed.id] for sed in imagingObjs]
-        context['imaging_seds']=SED.get_sed_list(imagingObjs,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['generic_seds']=SED.get_sed_list(genericSEDs,user)
+        context['erp_seds']=SED.get_sed_list(erpSEDs, user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
+            [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs,user)
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+            [sedCoords[sed.id] for sed in imagingSEDs])
         context['can_add_entry']=False
         context['can_remove_entry']=False
         context['selected_coord_ids']=[]
@@ -374,6 +371,7 @@ class ModelDBSearchView(FormView):
         context['form']=form
         return self.render_to_response(context)
 
+
 stop_words=['a', 'about', 'again', 'all', 'almost', 'also', 'although', 'always', 'among', 'an', 'and', 'another',
             'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'between', 'both', 'but', 'by', 'can',
             'could', 'did', 'do', 'does', 'done', 'due', 'during', 'each', 'either', 'enough', 'especially', 'etc',
@@ -385,6 +383,8 @@ stop_words=['a', 'about', 'again', 'all', 'almost', 'also', 'although', 'always'
             'than', 'that', 'the', 'their', 'theirs', 'them', 'then', 'there', 'therefore', 'these', 'they', 'this',
             'those', 'through', 'thus', 'to', 'upon', 'use', 'used', 'using', 'various', 'very', 'was', 'we', 'were',
             'what', 'when', 'which', 'while', 'with', 'within', 'without', 'would']
+
+
 class PubmedSearchView(FormView):
     form_class=PubmedSearchForm
     template_name='bodb/search/search_pubmed.html'
@@ -394,7 +394,7 @@ class PubmedSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(PubmedSearchView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Insert-Literature#PubMed_Search'
+        context['helpPage']='insert_data.html#pubmed-search'
         context['ispopup']=('_popup' in self.request.GET)
         return context
 
