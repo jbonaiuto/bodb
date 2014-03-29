@@ -1,0 +1,130 @@
+import operator
+from django.db.models import Q
+from bodb.models import BrainRegion
+from taggit.utils import parse_tags
+
+def runBrainRegionSearch(search_data):
+    filters=[]
+
+    op=operator.or_
+    if search_data['search_options']=='all':
+        op=operator.and_
+
+    # create BrainRegion search
+    searcher=BrainRegionSearch(search_data)
+
+    # construct search query
+    for key in search_data.iterkeys():
+        # if the searcher can search by this field
+        if hasattr(searcher, 'search_%s' % key):
+            # add field to query
+            dispatch=getattr(searcher, 'search_%s' % key)
+            filters.append(dispatch())
+
+    q=reduce(op,filters)
+
+    # get results
+    if q and len(q):
+        results = BrainRegion.objects.filter(q).distinct()
+    else:
+        results = BrainRegion.objects.all()
+    return results
+
+
+class BrainRegionSearch(object):
+    def __init__(self, search_data):
+        self.__dict__.update(search_data)
+
+    # search by name or abbreviation
+    def search_keywords(self):
+        if self.keywords:
+            op=operator.or_
+            if self.keywords_options=='all':
+                op=operator.and_
+
+            words=parse_tags(self.keywords)
+            name_filters=[Q(name__icontains=word) for word in words]
+            abbreviation_filters=[Q(abbreviation__icontains=word) for word in words]
+            keyword_q = reduce(op,name_filters) | reduce(op,abbreviation_filters)
+            return keyword_q
+        return Q()
+
+    def search_title(self):
+        self.name=self.title
+        self.name_options=self.title_options
+        return self.search_name()
+
+    # search by name
+    def search_name(self):
+        if self.name:
+            op=operator.or_
+            if self.name_options=='all':
+                op=operator.and_
+
+            words=parse_tags(self.name)
+            keyword_filters=[Q(name__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by abbreviation
+    def search_abbreviation(self):
+        if self.abbreviation:
+            op=operator.or_
+            if self.abbreviation_options=='all':
+                op=operator.and_
+            words=parse_tags(self.abbreviation)
+            keyword_filters=[Q(abbreviation__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by parent
+    def search_parent(self):
+        if self.parent:
+            op=operator.or_
+            if self.parent_options=='all':
+                op=operator.and_
+            words=parse_tags(self.parent)
+            name_filters=[Q(parent_region__name__icontains=word) for word in words]
+            abbreviation_filters=[Q(parent_region__abbreviation__icontains=word) for word in words]
+            keyword_q = reduce(op,name_filters) | reduce(op,abbreviation_filters)
+            return keyword_q
+        return Q()
+
+    # search by nomenclature
+    def search_nomenclature(self):
+        if self.nomenclature:
+            op=operator.or_
+            if self.nomenclature_options=='all':
+                op=operator.and_
+            words=parse_tags(self.nomenclature)
+            keyword_filters=[Q(nomenclature__name__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by species
+    def search_species(self):
+        if self.species:
+            op=operator.or_
+            if self.species_options=='all':
+                op=operator.and_
+            words=parse_tags(self.species)
+            keyword_filters=[Q(Q(nomenclature__species__genus_name__icontains=word) |
+                               Q(nomenclature__species__species_name__icontains=word) |
+                               Q(nomenclature__species__common_name__icontains=word)) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by region type
+    def search_region_type(self):
+        if self.region_type:
+            return Q(brain_region_type__iexact=self.region_type)
+        return Q()
+
+    def search_public(self):
+        if self.public:
+            if self.public=='False':
+                # all literature entries are public, so return no entries
+                return Q(id=-1)
+        return Q()
+
+
