@@ -37,7 +37,7 @@ The user's security permissions can be set in the Permissions section. Checking 
 View User
 ^^^^^^^^^
 
-The User View page displays all of the user's information. The Permissions section displays their security permissions. These permissions override those of groups that the user belongs to. To edit the user's information, click on the "Edit" button. This will open the User Edit page. Clicking on the "Close" button will close the current window.
+The User View page displays all of the user's information. The Permissions section displays their security permissions. These permissions override those of groups that the user belongs to. The Models, BOPs, SEDs, and SSRs sections list the entries that the user has created. To edit the user's information, click on the "Edit" button. This will open the User Edit page. Clicking on the "Close" button will close the current window.
 
 .. figure:: images/view_user.png
     :align: center

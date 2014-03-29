@@ -8,7 +8,7 @@ from django.views.generic import UpdateView, View, CreateView, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
-from bodb.models import BodbProfile, Nomenclature
+from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView
 from registration.models import User
@@ -50,6 +50,7 @@ class UpdateUserProfileView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserProfileView,self).get_context_data(**kwargs)
+        context['helpPage']='user_profile.html'
         context['subscription_formset']=SubscriptionFormSet(self.request.POST or None,instance=self.request.user,
             prefix='subscription')
         context['user_subscription_formset']=UserSubscriptionFormSet(self.request.POST or None,
@@ -105,7 +106,7 @@ class AdminDetailView(View):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            context={'helpPage':'BODB_Administration',
+            context={'helpPage':'admin.html',
                      'users': User.objects.all().order_by('username'),
                      'groups': Group.objects.all().order_by('name'),
                      'nomenclatures': Nomenclature.objects.all().order_by('name')}
@@ -148,11 +149,10 @@ class EditUserMixin():
 
 class CreateUserView(EditUserMixin,CreateView):
     action='add'
-    helpPage='BODB-Insert-User'
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserView,self).get_context_data(**kwargs)
-        context['helpPage']=self.helpPage
+        context['helpPage']='admin.html#insert-user'
         context['ispopup']=('_popup' in self.request.GET)
         if self.request.POST:
             for permission in bodb_permissions:
@@ -165,11 +165,10 @@ class CreateUserView(EditUserMixin,CreateView):
 
 class UpdateUserView(EditUserMixin,UpdateView):
     action='edit'
-    helpPage='BODB-Edit-User'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView,self).get_context_data(**kwargs)
-        context['helpPage']=self.helpPage
+        context['helpPage']='admin.html#edit-user'
         context['ispopup']=('_popup' in self.request.GET)
         if self.request.POST:
             for permission in bodb_permissions:
@@ -186,11 +185,24 @@ class UserDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserDetailView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-View-User'
+        context['helpPage']='admin.html#view-user'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
         for permission in bodb_permissions:
             context[permission]=self.object.has_perm('bodb.%s' % permission)
+        context['models']=Model.get_model_list(Model.objects.filter(collator=self.object),self.request.user)
+        context['bops']=BOP.get_bop_list(BOP.objects.filter(collator=self.object),self.request.user)
+        context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',collator=self.object),self.request.user)
+        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(collator=self.object),self.request.user)
+        imaging_seds=BrainImagingSED.objects.filter(collator=self.object)
+        coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
+        context['imaging_seds']=SED.get_sed_list(imaging_seds,self.request.user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        erp_seds=ERPSED.objects.filter(collator=self.object)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user)
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+        context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(collator=self.object),self.request.user)
         return context
 
 
@@ -270,7 +282,7 @@ class CreateGroupView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGroupView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Insert-Group'
+        context['helpPage']='admin.html#insert-group'
         if self.request.POST:
             for permission in bodb_permissions:
                 context[permission]=permission in self.request.POST
@@ -304,7 +316,7 @@ class UpdateGroupView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Edit-Group'
+        context['helpPage']='admin.html#edit-group'
         if self.request.POST:
             for permission in bodb_permissions:
                 context[permission]=permission in self.request.POST
@@ -337,7 +349,7 @@ class GroupDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetailView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-View-Group'
+        context['helpPage']='admin.html#view-group'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
         for permission in bodb_permissions:
