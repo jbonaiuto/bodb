@@ -471,11 +471,11 @@ The mandatory "core" columns for brain-imaging data consists of "Brain Region", 
 
 *Extra Header*
 
-The user can specify optional "extra" columns by inserting the column names, separating each one with a Tab character, and ordering by the column sequence in the present table.
+The user can specify optional "extra" columns by inserting the column names, separating each one with a | character, and ordering by the column sequence in the present table.
 
 *Data*
 
-The user has to paste the data into the text area.
+The user has to paste the data into the text area. Each row should contain the same number of columns specified by the Core Column Header and Extra Header fields. Columns should be separated by a | character.
 
 Summary of Event Related Potential Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

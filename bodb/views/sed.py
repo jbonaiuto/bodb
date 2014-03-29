@@ -396,10 +396,7 @@ class EditBrainImagingSEDMixin():
             for row in data:
                 if len(row)>0:
                     # split row into columns
-                    if row.find('|')>-1:
-                        row_elems=[x.strip() for x in row.split('|')]
-                    else:
-                        row_elems=row.split('\t')
+                    row_elems=[x.strip() for x in row.split('|')]
 
                     # create SED Coordinate from row data
                     coord=SEDCoord()
@@ -455,6 +452,8 @@ class EditBrainImagingSEDMixin():
                     coord.extra_data=''
                     j=0
                     while j+i<len(row_elems):
+                        if j>0:
+                            coord.extra_data+='|'
                         coord.extra_data+=row_elems[j+i]
                         j+=1
 
@@ -521,7 +520,7 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
         # construct column list - core headers
         header_str=self.object.core_header_1+' | '+self.object.core_header_2+' | '+self.object.core_header_3 + ' | '+\
                    self.object.core_header_4
-        header_elems=header_str.split(' | ')
+        header_elems=[x.strip() for x in header_str.split('|')]
 
         imagingDataStr=''
         # process coordinates
@@ -533,29 +532,26 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
             for col in header_elems:
                 if col=='hemisphere':
                     data_row.append(coord.hemisphere)
-                    data_row_str+='\t'+coord.hemisphere
+                    data_row_str+=' | '+coord.hemisphere
                 elif col=='x':
                     data_row.append(coord.coord.x)
-                    data_row_str+='\t'+str(coord.coord.x)
+                    data_row_str+=' | '+str(coord.coord.x)
                 elif col=='y':
                     data_row.append(coord.coord.y)
-                    data_row_str+='\t'+str(coord.coord.y)
+                    data_row_str+=' | '+str(coord.coord.y)
                 elif col=='z':
                     data_row.append(coord.coord.z)
-                    data_row_str+='\t'+str(coord.coord.z)
+                    data_row_str+=' | '+str(coord.coord.z)
                 elif col=='rCBF':
                     data_row.append(coord.rcbf)
-                    data_row_str+='\t'+str(coord.rcbf)
+                    data_row_str+=' | '+str(coord.rcbf)
                 elif col=='T' or col=='Z':
                     data_row.append(coord.statistic_value)
-                    data_row_str+='\t'+str(coord.statistic_value)
-            if coord.extra_data.find(' | ')>-1:
-                extra_data=coord.extra_data.split(' | ')
-            else:
-                extra_data=coord.extra_data.split('|')
+                    data_row_str+=' | '+str(coord.statistic_value)
+            extra_data=[x.strip() for x in coord.extra_data.split('|')]
             for elem in extra_data:
                 data_row.append(elem)
-                data_row_str+='\t'+elem
+                data_row_str+=' | '+elem
 
             imagingDataStr+=data_row_str+'\n'
         return {'data': imagingDataStr}

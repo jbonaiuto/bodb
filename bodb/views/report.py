@@ -544,41 +544,17 @@ def sed_report_rtf(context, display_settings, doc=None):
         hemi_span=TabPS.DEFAULT_WIDTH * 2
         hemi_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'Hemisphere'), thin_frame)
 
-        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4+' | '+imagingSED.extra_header
-        header_elems=[x.strip() for x in header_str.split('|')]
+        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4
+        core_header_elems=[x.strip() for x in header_str.split('|')]
+        extra_header_elems=[x.strip() for x in imagingSED.extra_header.split('|')]
+        all_header_elems=[]
+        all_header_elems.extend(core_header_elems)
+        all_header_elems.extend(extra_header_elems)
 
         spans=[region_span, hemi_span]
         headers=[region_header, hemi_header]
-        for elem in header_elems:
-            if elem=='x':
-                x_span=TabPS.DEFAULT_WIDTH
-                x_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'x'), thin_frame)
-                spans.append(x_span)
-                headers.append(x_header)
-            elif elem=='y':
-                y_span=TabPS.DEFAULT_WIDTH
-                y_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'y'), thin_frame)
-                spans.append(y_span)
-                headers.append(y_header)
-            elif elem=='z':
-                z_span=TabPS.DEFAULT_WIDTH
-                z_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'z'), thin_frame)
-                spans.append(z_span)
-                headers.append(z_header)
-            elif elem=='rCBF':
-                rcbf_span=TabPS.DEFAULT_WIDTH
-                rcbf_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'rCBF'), thin_frame)
-                spans.append(rcbf_span)
-                headers.append(rcbf_header)
-            elif elem=='T' or elem=='Z':
-                stat_span=TabPS.DEFAULT_WIDTH*2
-                if elem=='T':
-                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'T'), thin_frame)
-                elif elem=='Z':
-                    stat_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,'Z'), thin_frame)
-                spans.append(stat_span)
-                headers.append(stat_header)
-            elif not elem=='hemisphere' and not elem=='N/A':
+        for elem in all_header_elems:
+            if not elem=='hemisphere' and not elem=='N/A':
                 extra_span=TabPS.DEFAULT_WIDTH
                 extra_header=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(elem).encode('latin1','ignore')), thin_frame)
                 spans.append(extra_span)
@@ -592,7 +568,7 @@ def sed_report_rtf(context, display_settings, doc=None):
             hemi_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.hemisphere).encode('latin1','ignore')), thin_frame)
             cells=[region_cell,hemi_cell]
 
-            for col in header_elems:
+            for col in core_header_elems:
                 if col=='x':
                     x_cell=Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(coord.coord.x).encode('latin1','ignore')), thin_frame)
                     cells.append(x_cell)
@@ -717,25 +693,15 @@ def sed_report_pdf(context, display_settings, elements=None):
         header=[Paragraph('Brain Region',styles['Heading4']),
                 Paragraph('Hemisphere',styles['Heading4'])]
         col_width=[1.5*inch, inch]
-        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4+' | '+imagingSED.extra_header
-        header_elems=[x.strip() for x in header_str.split('|')]
-        for elem in header_elems:
-            if elem=='x':
-                col_width.append(inch)
-                header.append(Paragraph(elem,styles['Heading4']))
-            elif elem=='y':
-                col_width.append(inch)
-                header.append(Paragraph(elem,styles['Heading4']))
-            elif elem=='z':
-                col_width.append(inch)
-                header.append(Paragraph(elem,styles['Heading4']))
-            elif elem=='rCBF':
-                col_width.append(inch)
-                header.append(Paragraph(elem,styles['Heading4']))
-            elif elem=='T' or elem=='Z':
-                col_width.append(inch)
-                header.append(Paragraph(elem,styles['Heading4']))
-            elif not elem=='hemisphere' and not elem=='N/A':
+        header_str=imagingSED.core_header_1+' | '+imagingSED.core_header_2+' | '+imagingSED.core_header_3 + ' | '+imagingSED.core_header_4
+        core_header_elems=[x.strip() for x in header_str.split('|')]
+        extra_header_elems=[x.strip() for x in imagingSED.extra_header.split('|')]
+        all_header_elems=[]
+        all_header_elems.extend(core_header_elems)
+        all_header_elems.extend(extra_header_elems)
+
+        for elem in all_header_elems:
+            if not elem=='hemisphere' and not elem=='N/A':
                 col_width.append(inch)
                 header.append(Paragraph(elem,styles['Heading4']))
         coordData.append(header)
@@ -746,7 +712,7 @@ def sed_report_pdf(context, display_settings, elements=None):
             cols.append(Paragraph(unicode(coord.named_brain_region).encode('latin1','ignore'),styles['BodyText']))
             cols.append(Paragraph(unicode(coord.hemisphere).encode('latin1','ignore'),styles['BodyText']))
 
-            for col in header_elems:
+            for col in core_header_elems:
                 if col=='x':
                     cols.append(Paragraph(unicode(coord.coord.x).encode('latin1','ignore'),styles['BodyText']))
                 elif col=='y':

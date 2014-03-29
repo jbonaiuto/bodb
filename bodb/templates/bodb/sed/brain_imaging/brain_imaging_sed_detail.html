@@ -87,10 +87,7 @@
             for(var i=0; i<rows.length; i++)
             {
                 var row_cols=[];
-                if(rows[i].indexOf('\t')>-1)
-                    row_cols=rows[i].split('\t');
-                else
-                    row_cols=rows[i].split('|');
+                row_cols=rows[i].split('|');
                 if(row_cols.length<num_cols)
                 {
                     errors+=1;
@@ -394,7 +391,7 @@
                 </tr>
                 <tr valign=top>
                     <td>&nbsp;</td>
-                    <td>{{ form.data }}<br>Use newline to separate rows and tab or | to separate columns.</td>
+                    <td>{{ form.data }}<br>Use newline to separate rows and | to separate columns.</td>
                     <td class="myerrors"><span id="data_errors"></span></td>
                 </tr>
                 <tr>
