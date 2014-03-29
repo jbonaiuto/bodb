@@ -1,6 +1,9 @@
 uscbp/settings.py
 .idea
+.project
+.pydevproject
 bodb/.idea
+bodb/docs/_build
 federation/cocomac/data/*.xml
 federation/cocomac/data/bibData/*.xml
 bodb/media/avatars/*
