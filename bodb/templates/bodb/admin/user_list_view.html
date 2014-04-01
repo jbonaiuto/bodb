@@ -1,0 +1,26 @@
+{% if users|length %}
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="col_header">
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:120px">Username</td>
+            <td style="width:150px">Real Name</td>
+            <td style="width:150px">Email</td>
+        </tr>
+        {% for subscribed,u in users %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>
+                    {% if not u == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ u.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}
+                </td>
+                <td>
+                    <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
+                </td>
+                <td>
+                    {{ u.first_name }} {{ u.last_name }}
+                </td>
+                <td>
+                    {{ u.email }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
