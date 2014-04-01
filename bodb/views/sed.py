@@ -125,7 +125,7 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#insert-generic-sed'
         context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -566,7 +566,7 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-brain-imaging-summary-data'
         context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -762,7 +762,7 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-connectivity-data'
         context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -902,7 +902,7 @@ class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
             queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
-        context['helpPage']='BODB-Insert-SED'
+        context['helpPage']='insert_data.html#summary-of-event-related-potential-data'
         context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)

@@ -138,7 +138,7 @@ class UpdateBOPView(EditBOPMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBOPView,self).get_context_data(**kwargs)
-
+        context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure', instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object))
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, prefix='build_sed',

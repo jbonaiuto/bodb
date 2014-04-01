@@ -173,7 +173,7 @@ class CreateLiteratureView(EditLiteratureMixin,View):
 
 
 class UpdateLiteratureView(EditLiteratureMixin,View):
-    helpPage='BODB-Edit-Literature'
+    helpPage='insert_data.html#insert-literature'
     required_perm='bodb.change_literature'
 
     def get_instances(self,request,id,literatureType):

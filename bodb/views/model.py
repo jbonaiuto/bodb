@@ -328,6 +328,7 @@ class CreateModelView(EditModelMixin, CreateView):
 class UpdateModelView(EditModelMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateModelView,self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
             queryset=ModelAuthor.objects.filter(model=self.object), prefix='model_author')
