@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    animatedcollapse.addDiv('userAdvancedOptions', 'fade=1');
+</script>
+<div id="userDiv" style="display:{%ifequal searchType 'users'%}block{% else %}none{% endifequal %}">
+    <form id="user_search_form" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" id="searchType" name="searchType" value="users"/>
+        <table class="tab_panel" width=100%>
+            <tr>
+                <td><strong>Any field:</strong>&nbsp;{{ user_search_form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ user_search_form.keywords_options }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td>
+                    Advanced Options (<a href="javascript:animatedcollapse.toggle('userAdvancedOptions')"><span id="userAdvancedOptionsLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_body">
+                <td style="padding:0px">
+                    <div id="userAdvancedOptions" style="display:none">
+                        <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                        <table class="tab_panel" style="background:#e6e8ed;">
+                            <tr>
+                                <td width=20%><strong>Username</strong></td>
+                                <td>{{ user_search_form.username }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>First name</strong></td>
+                                <td>{{ user_search_form.first_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Last name</strong></td>
+                                <td>{{ user_search_form.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Entered BOPs</strong></td>
+                                <td>{{ user_search_form.bop }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ user_search_form.bop_options }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Entered Models</strong></td>
+                                <td>{{ user_search_form.model }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ user_search_form.model_options }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Entered SEDs</strong></td>
+                                <td>{{ user_search_form.sed }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ user_search_form.sed_options }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Entered SSRs</strong></td>
+                                <td>{{ user_search_form.ssr }}&nbsp;
+                                    <strong>Phrase combination:</strong>&nbsp;{{ user_search_form.ssr_options }}</td>
+                            </tr>
+                        </table>
+                        <b class="d4f"></b><b class="d3f"></b><b class="d2f"></b><b class="d1f"></b>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="myerrors">
+                        {{ user_search_form.errors }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Search criteria combination:</strong> {{ user_search_form.search_options }}
+                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('user_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td>Results</td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="userData" style="display:inline">
+                        {% include 'bodb/admin/user_list_view.html' %}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
