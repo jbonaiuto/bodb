@@ -1,0 +1,43 @@
+{% if literatures|length %}
+    <table class="tab_panel" style="background:#e6e8ed;">
+        {% if not ispopup %}
+            <tr class="col_header">
+                <td colspan=3>
+                    Format:
+                    <select class="lit_export_format" id="id_lit_export_format" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="endnote">Endnote</option>
+                        <option value="bibtex">Bibtex</option>
+                    </select>
+                    <a href="" onclick="return exportReferences('{{ csrf_token }}');">Export</a>
+                </td>
+            </tr>
+        {% endif %}
+        <tr class="col_header">
+            {% if ispopup %}
+                <td style="width:120px">&nbsp;</td>
+            {% endif %}
+            <td>Reference</td>
+            <td style="width:100px">Collator</td>
+        </tr>
+        {% for literature in literatures %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                {% if ispopup %}
+                    <td>
+                        {% if multiple %}
+                            <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
+                        {% else %}
+                            <a href="#" onclick="opener.selectSingleLiterature({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}'], 'lit', 'span_lit', '{% if perms.bodb.change_literature %}/bodb/literature/{{ literature.id }}/edit/?_popup=1{% endif %}&fieldName={{ fieldName }}&spanName={{ spanName }}', '', '');self.close();">Select</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
+                <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/">{{ literature.str }}</a></td>
+                <td>{{ literature.get_collator_str }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+<script type="text/javascript">
+    var $synch = $('.lit_export_format').bind('change', function() {
+        $synch.not(this).get(0).selectedIndex = this.selectedIndex;
+    });
+</script>
