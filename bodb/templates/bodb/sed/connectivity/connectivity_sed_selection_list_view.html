@@ -43,7 +43,7 @@
 <div id="connectivitySEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=6>Connectivity SEDs</td>
+            <td colspan=6>Connectivity SEDs (1-{{ connectivity_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}

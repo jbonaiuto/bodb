@@ -2,7 +2,7 @@
 <div id="genericSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=5>Generic SEDs</td>
+            <td colspan=5>Generic SEDs (1-{{ generic_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
