@@ -1,14 +1,10 @@
-import fileinput
-import os
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-import sys
 from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
-from uscbp import settings
 
 class SED(Document):
     """
