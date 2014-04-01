@@ -19,6 +19,7 @@ Contents:
    search_data
    visualization
    drafts
+   permissions
    favorites
    workspaces
    admin
