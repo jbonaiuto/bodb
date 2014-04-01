@@ -432,14 +432,15 @@ def import_related_brain_regions(new_obj, old_obj):
 
 def import_building_seds(new_obj, old_obj):
     for old_buildsed in old_obj.building_seds.db_manager('legacy').all():
-        new_buildsed = new_sed.BuildSED(
-            id=old_buildsed.id,
-            sed=new_sed.SED.objects.get(id=old_buildsed.sed.id),
-            document=new_obj,
-            relationship=old_buildsed.relationship,
-            relevance_narrative=old_buildsed.relevance_narrative
-        )
-        new_buildsed.save()
+        if new_sed.SED.objects.filter(id=old_buildsed.sed.id).count()>0:
+            new_buildsed = new_sed.BuildSED(
+                id=old_buildsed.id,
+                sed=new_sed.SED.objects.get(id=old_buildsed.sed.id),
+                document=new_obj,
+                relationship=old_buildsed.relationship,
+                relevance_narrative=old_buildsed.relevance_narrative
+            )
+            new_buildsed.save()
 
 
 def import_related_literature(new_obj, old_obj):
@@ -500,24 +501,25 @@ def import_seds(legacy_img_dir, new_media_dir):
     # generic
     old_seds=legacy_document.SED.objects.using('legacy').filter(Q(Q(type='generic') | Q(type='')))
     for old_sed in old_seds:
-        new_sd=new_sed.SED(
-            id=old_sed.id,
-            type='generic',
-            collator = User.objects.get(id=old_sed.collator.id),
-            title = old_sed.title,
-            brief_description = old_sed.brief_description,
-            narrative = old_sed.narrative,
-            draft = old_sed.draft,
-            public = old_sed.public,
-            creation_time = old_sed.creation_time,
-            last_modified_time = old_sed.last_modified_time,
-            last_modified_by=User.objects.get(id=old_sed.collator.id)
-        )
-        new_sd.save()
-        import_figures(old_sed, new_sd, legacy_img_dir, new_media_dir)
-        import_related_literature(new_sd, old_sed)
-        import_related_brain_regions(new_sd, old_sed)
-        import_tags(new_sd, old_sed)
+        if not old_sed.title=='':
+            new_sd=new_sed.SED(
+                id=old_sed.id,
+                type='generic',
+                collator = User.objects.get(id=old_sed.collator.id),
+                title = old_sed.title,
+                brief_description = old_sed.brief_description,
+                narrative = old_sed.narrative,
+                draft = old_sed.draft,
+                public = old_sed.public,
+                creation_time = old_sed.creation_time,
+                last_modified_time = old_sed.last_modified_time,
+                last_modified_by=User.objects.get(id=old_sed.collator.id)
+            )
+            new_sd.save()
+            import_figures(old_sed, new_sd, legacy_img_dir, new_media_dir)
+            import_related_literature(new_sd, old_sed)
+            import_related_brain_regions(new_sd, old_sed)
+            import_tags(new_sd, old_sed)
 
     # connectivity
     print('importing connectivity seds')
@@ -770,7 +772,7 @@ def import_models(legacy_img_dir, new_media_dir):
                 relationship=old_testsed.relationship,
                 relevance_narrative=old_testsed.brief_description
             )
-            if old_testsed.sed is not None:
+            if old_testsed.sed is not None and new_sed.SED.objects.filter(id=old_testsed.sed.id).count()>0:
                 new_testsed.sed=new_sed.SED.objects.get(id=old_testsed.sed.id)
             else:
                 new_sed= new_sed.SED(
