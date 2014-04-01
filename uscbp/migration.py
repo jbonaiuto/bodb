@@ -488,6 +488,7 @@ def import_bops(legacy_img_dir, new_media_dir):
 def import_tags(new_obj, old_obj):
     old_tags=parse_tag_input(old_obj.tags.replace(';,',',').replace(';',','))
     for old_tag in old_tags:
+        old_tag=old_tag.replace('"','')
         if Tag.objects.filter(name=old_tag).count():
             new_obj.tags.add(Tag.objects.get(name=old_tag))
         else:
