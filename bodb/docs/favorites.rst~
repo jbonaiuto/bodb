@@ -1,4 +1,16 @@
-Graphs
+Favorites
 ==============
 
-Lorem ipsum...
+Favorites are a way of keeping track of entries of interest to the user. In any list view (e.g., when a search is conducted) the user can check the star on the far right of an entry to add an entry to their favorites.
+
+.. figure:: images/add_to_favorites.png
+    :align: center
+    :figclass: align-center
+
+    Add an entry to a Favorites
+    
+.. figure:: images/favorites.png
+    :align: center
+    :figclass: align-center
+
+    The Favorites page

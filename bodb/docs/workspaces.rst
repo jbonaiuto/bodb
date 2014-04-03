@@ -33,8 +33,6 @@ Adding an Entry to a Workspace
 
 In any list view (e.g., when a search is conducted) the user can check the second box from the left to add an entry to the currently active Workspace.
 
-Clicking new will allow the user to add a workspace provided a Title and Description.
-
 .. figure:: images/add_to_workspace.png
     :align: center
     :figclass: align-center

@@ -17,8 +17,8 @@ Contents:
    bodb_structure
    insert_data
    search_data
+   view_entry
    visualization
-   drafts
    permissions
    favorites
    workspaces
@@ -26,6 +26,7 @@ Contents:
    user_profile
    tags
    messages
+   benchmarks
    graphs
 
 
