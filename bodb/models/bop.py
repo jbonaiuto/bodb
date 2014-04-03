@@ -79,7 +79,7 @@ class RelatedBOP(models.Model):
         ('involves', 'involves'),
         ('synonym', 'synonym'),
     )
-    document = models.ForeignKey('Document')
+    document = models.ForeignKey('Document', related_name='related_bop_document')
     bop = models.ForeignKey('BOP', related_name='related_bop', null=True)
     # the relationship between two BOPs
     relationship = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES, blank=True, null=True)

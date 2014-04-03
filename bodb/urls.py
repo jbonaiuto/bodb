@@ -8,7 +8,7 @@ from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicReq
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
-from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
+from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
@@ -42,6 +42,8 @@ urlpatterns = patterns('',
     url(r'^api/document/ssr/(?P<pk>[0-9]+)/$', SSRAPIDetailView.as_view()),
     url(r'^api/document/bop$', BOPAPIListView.as_view()),
     url(r'^api/document/bop/(?P<pk>[0-9]+)/$', BOPAPIDetailView.as_view()),
+    url(r'^api/document/model$', ModelAPIListView.as_view()),
+    url(r'^api/document/model/(?P<pk>[0-9]+)/$', ModelAPIDetailView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls',namespace='rest_framework')),
 )
 

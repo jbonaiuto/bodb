@@ -455,7 +455,7 @@ class BuildSED(models.Model):
         ('support', 'support'),
         )
     # document attached to
-    document = models.ForeignKey('Document')
+    document = models.ForeignKey('Document', related_name='related_build_sed_document')
     # the SED
     sed = models.ForeignKey('SED', related_name='build_sed')
     # the relationship between the SED and model or BOP
@@ -526,7 +526,7 @@ class TestSED(models.Model):
         ('explanation', 'explanation'),
         ('contradiction', 'contradiction'),
         )
-    model=models.ForeignKey('Model')
+    model=models.ForeignKey('Model', related_name='related_test_sed_document')
     # the SED
     sed = models.ForeignKey('SED', related_name='test_sed',null=True)
     # the relationship between the SSR and SED

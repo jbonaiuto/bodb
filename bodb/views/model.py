@@ -11,9 +11,17 @@ from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
 from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl
 from bodb.models.ssr import SSR, Prediction
-from bodb.views.document import DocumentDetailView, generate_diagram_from_gxl
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
+
+from bodb.serializers import ModelSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
 
 class EditModelMixin():
     model = Model
@@ -554,6 +562,16 @@ class UpdateModuleView(UpdateView):
 class DeleteModuleView(DeleteView):
     model=Module
     success_url = '/bodb/index.html'
+
+class ModelAPIListView(DocumentAPIListView):
+    queryset = Model.objects.all()[:5]
+    serializer_class = ModelSerializer
+
+class ModelAPIDetailView(DocumentAPIDetailView):
+    queryset = Model.objects.all()
+    serializer_class = ModelSerializer
+    
+    model = Model
 
 
 class ModuleDetailView(DocumentDetailView):

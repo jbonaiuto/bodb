@@ -192,7 +192,7 @@ def compareVariables(a, b):
 
 # The relationship between a Document and a Model
 class RelatedModel(models.Model):
-    document = models.ForeignKey('Document')
+    document = models.ForeignKey('Document', related_name='related_model_document')
     model = models.ForeignKey('Model', related_name='related_model', null=True)
     relationship = models.TextField(blank=True)
 
