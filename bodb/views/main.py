@@ -77,7 +77,7 @@ class DraftListView(BODBView):
 
     def get_context_data(self, **kwargs):
         context=super(DraftListView,self).get_context_data(**kwargs)
-        context['helpPage']='drafts.html'
+        context['helpPage']='view_entry.html#drafts'
         user=self.request.user
         context['models']=Model.get_model_list(Model.objects.filter(collator=user,draft=1),user)
         context['bops']=BOP.get_bop_list(BOP.objects.filter(collator=user,draft=1),user)

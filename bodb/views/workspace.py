@@ -32,7 +32,7 @@ class WorkspaceListView(ListView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceListView,self).get_context_data(object_list=self.get_queryset())
         context['active_workspace']=self.request.user.get_profile().active_workspace
-        context['helpPage']='BODB-Workspace'
+        context['helpPage']='workspaces.html'
         return context
 
 
@@ -148,11 +148,10 @@ class EditWorkspaceMixin():
 
 
 class CreateWorkspaceView(EditWorkspaceMixin, CreateView):
-    help_page='BODB-Insert-Workspace'
 
     def get_context_data(self, **kwargs):
         context=super(CreateWorkspaceView,self).get_context_data(**kwargs)
-        context['helpPage']=self.help_page
+        context['helpPage']='workspaces.html#new-workspace'
         return context
 
     def form_valid(self, form):
@@ -233,7 +232,7 @@ class WorkspaceDetailView(BODBView,FormView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceDetailView,self).get_context_data(**kwargs)
         user=self.request.user
-        context['helpPage']='BODB-View-Workspace'
+        context['helpPage']='workspaces.html#workspace-tabs'
         context['workspace']=self.object
 
         context['connectionGraphId']='connectivitySEDDiagram'
