@@ -11,3 +11,5 @@ bodb/media/figures/*
 bodb/media/export/*
 *.pyc
 bodb/static/bodb/jws/BrainSurfer/lib/.svn
+bodb/static/bodb/jws/BrainSurfer/lib/*
+bodb/static/bodb/jws/BrainSurfer/BrainSurfer.jar
