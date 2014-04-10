@@ -4,12 +4,16 @@ from bodb.models import SED, ERPSED, BrainImagingSED, ConnectivitySED, BuildSED,
 from bodb.serializers.brain_region import RelatedBrainRegionSerializer
 from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.bop import RelatedBOPSerializer
+from bodb.serializers.user import UserSerializer
+
 
 class SEDSerializer(serializers.ModelSerializer):
     references = LiteratureSerializer(source = 'literature', fields = ('id','title','authors','collator'))
     related_brain_region = RelatedBrainRegionSerializer(source = 'related_region_document')
     related_bop = RelatedBOPSerializer(source = 'related_bop_document')
     #related_modeln = RelatedBrainRegionSerializer(source = 'document')
+    collator = UserSerializer()
+    last_modified_by = UserSerializer()
     
     class Meta:
         model = SED
