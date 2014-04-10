@@ -14,18 +14,19 @@
 <div id="imagingSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=6>Brain imaging SEDs</td>
+            <td colspan=7>Brain imaging SEDs (1-{{ imaging_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=6>
+                    <td colspan=7>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Imaging',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Imaging',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
@@ -35,6 +36,7 @@
         </tr>
         {% for selected,is_favorite,subscribed,sed,coords in imaging_seds %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 <td align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
@@ -63,11 +65,11 @@
             </tr>
             {% if coords %}
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <td colspan="4" class="col_header">Coordinates</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <td colspan="4">
                         <table class="tab_panel">
                             <tr>

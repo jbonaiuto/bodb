@@ -79,18 +79,19 @@
 <div id="erpSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=5>ERP SEDs (1-{{ erp_seds|length }})</td>
+            <td colspan=6>ERP SEDs (1-{{ erp_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=5>
+                    <td colspan=6>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
@@ -99,6 +100,7 @@
         </tr>
         {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 <td align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
@@ -124,11 +126,11 @@
             </tr>
             {% if components %}
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <td colspan="3" class="col_header">Components</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <td colspan="3">
                         <table class="tab_panel">
                             <tr>
@@ -163,12 +165,12 @@
         {% endfor %}
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="5">
+                <td colspan="6">
                     <a href="" onclick="return showERPDiagram();">Show ERP Diagram</a>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="5">
+                <td colspan="6">
                     <div id="{{ erpGraphId }}Div" style="display: none;" class="zoomContainer">
                         <div id="positionButtonDiv">
                             <p>Zoom :

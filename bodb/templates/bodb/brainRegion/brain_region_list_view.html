@@ -1,6 +1,7 @@
 {% if brain_regions|length %}
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="col_header">
+            <td>&nbsp;</td>
             {% if ispopup %}
                 <td style="width:120px">&nbsp;</td>
             {% endif %}
@@ -13,6 +14,7 @@
         </tr>
         {% for brain_region in brain_regions %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 {% if ispopup %}
                     <td>
                         {% if multiple %}

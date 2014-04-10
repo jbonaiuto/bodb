@@ -43,18 +43,19 @@
 <div id="connectivitySEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=6>Connectivity SEDs (1-{{ connectivity_seds|length }})</td>
+            <td colspan=7>Connectivity SEDs (1-{{ connectivity_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=6>
+                    <td colspan=7>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
@@ -64,6 +65,7 @@
         </tr>
         {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 <td align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
@@ -95,7 +97,7 @@
         {% endfor %}
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="7">
                     Graph Generation Tool:&nbsp;
                     <select id="{{ connectionGraphId }}Graphtool">
                         <option value="dot">dot</option>
@@ -109,7 +111,7 @@
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="7">
                     <div id="{{ connectionGraphId }}Div" style="display:none" class="zoomContainer">
                         <div id="positionButtonDiv">
                             <p>Zoom :

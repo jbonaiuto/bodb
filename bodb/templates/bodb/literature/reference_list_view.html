@@ -13,6 +13,7 @@
             </tr>
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             {% if ispopup %}
                 <td style="width:120px">&nbsp;</td>
             {% endif %}
@@ -21,6 +22,7 @@
         </tr>
         {% for literature in literatures %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 {% if ispopup %}
                     <td>
                         {% if multiple %}

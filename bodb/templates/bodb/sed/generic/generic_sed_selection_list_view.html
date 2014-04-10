@@ -2,18 +2,19 @@
 <div id="genericSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=5>Generic SEDs (1-{{ generic_seds|length }})</td>
+            <td colspan=6>Generic SEDs (1-{{ generic_seds|length }})</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=5>
+                    <td colspan=6>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Generic',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Generic',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
@@ -22,6 +23,7 @@
         </tr>
         {% for selected,is_favorite,subscribed,sed in generic_seds %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 <td align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup and multiple %}

@@ -270,7 +270,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>Summary of Simulation Results (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
+                    <td>Summary of Simulation Results (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr class="table_header">
                     <td colspan=4>
@@ -300,7 +300,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>Brain Region Results (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
+                    <td>Brain Region Results (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">
@@ -325,7 +325,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>User Results (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
+                    <td>User Results (1-{{ users|length }}) (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">

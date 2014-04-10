@@ -62,15 +62,17 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td colspan=7>Results</td>
+                    <td colspan=7>Results (1-{{ results|length }}{% endif %}</td>
                 </tr>
                 <tr class="col_header">
+                    <td>&nbsp;</td>
                     <td style="width:50px">&nbsp;</td>
                     <td style="width:200px">Title</td>
                     <td>Description</td>
                 </tr>
                 {% for search_result in search_results %}
                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                        <td>{{ forloop.counter }}</td>
                         <td>
                             {% if search_result.exists %}
                                 Import

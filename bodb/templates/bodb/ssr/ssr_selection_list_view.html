@@ -3,7 +3,7 @@
     <table class="tab_panel">
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan=5>
+                <td colspan=6>
                     {% if can_add_entry or can_remove_entry %}
                         Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllSSRSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllSSRSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     {% endif %}
@@ -11,6 +11,7 @@
             </tr>
         {% endif %}
         <tr class="col_header">
+            <td>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
@@ -19,6 +20,7 @@
         </tr>
         {% for selected,is_favorite,subscribed,ssr in ssrs %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>{{ forloop.counter }}</td>
                 <td style="width:{% if ispopup %}120{% else %}45{% endif %}px" align=center>
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
