@@ -16,11 +16,11 @@
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SED Title</td>
                 <td style="width:200px">SED Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SSR Title</td>
                 <td style="width:200px">SSR Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:120px">Relationship</td>
                 <td>Relevance Narrative</td>
             </tr>
@@ -40,10 +40,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/">{{ testsed.sed.title }}</a>
+                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="openInNewTab('/bodb/sed/{{ testsed.sed.id }}/')">{{ testsed.sed.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:100px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
@@ -54,10 +54,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return showPopup('view_ssr_{{ testsed.get_ssr.id }}',900,550,'/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/')">{{ testsed.get_ssr.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:100px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -82,11 +82,11 @@
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SED Title</td>
                 <td style="width:200px">SED Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SSR Title</td>
                 <td style="width:200px">SSR Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:120px">Relationship</td>
                 <td>Relevance Narrative</td>
             </tr>
@@ -106,10 +106,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/">{{ testsed.sed.title }}</a>
+                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="openInNewTab('/bodb/sed/{{ testsed.sed.id }}/')">{{ testsed.sed.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:100px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
@@ -120,10 +120,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return showPopup('view_ssr_{{ testsed.get_ssr.id }}',900,550,'/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/')">{{ testsed.get_ssr.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:100px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -170,11 +170,11 @@
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SED Title</td>
                 <td style="width:200px">SED Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SSR Title</td>
                 <td style="width:200px">SSR Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:120px">Relationship</td>
                 <td>Relevance Narrative</td>
             </tr>
@@ -194,10 +194,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/">{{ testsed.sed.title }}</a>
+                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="openInNewTab('/bodb/sed/{{ testsed.sed.id }}/')">{{ testsed.sed.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:100px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
@@ -208,10 +208,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return showPopup('view_ssr_{{ testsed.get_ssr.id }}',900,550,'/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/')">{{ testsed.get_ssr.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:100px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -236,11 +236,11 @@
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SED Title</td>
                 <td style="width:200px">SED Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
                 <td style="width:125px">SSR Title</td>
                 <td style="width:200px">SSR Description</td>
-                <td style="width:100px">&nbsp;</td>
+                <td style="width:50px">&nbsp;</td>
                 <td style="width:120px">Relationship</td>
                 <td>Relevance Narrative</td>
             </tr>
@@ -260,10 +260,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/">{{ testsed.sed.title }}</a>
+                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="openInNewTab('/bodb/sed/{{ testsed.sed.id }}/')">{{ testsed.sed.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:100px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
@@ -274,10 +274,10 @@
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return showPopup('view_ssr_{{ testsed.get_ssr.id }}',900,550,'/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/')">{{ testsed.get_ssr.title }}</a>
                                     </td>
                                     <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:100px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>

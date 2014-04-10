@@ -9,6 +9,12 @@ function showPopup(windowName, width, height, href)
     return false;
 }
 
+function openInNewTab(url)
+{
+    var win=window.open(url, '_blank');
+    win.focus();
+}
+
 function clearSpan(doc, spanId)
 {
     if(doc.getElementById(spanId)!=null)

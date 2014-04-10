@@ -1,15 +1,17 @@
 {% load staticfiles %}
 <div id="predictionData">
     <table style="background:#e6e8ed;width:100%">
+        <tr class="section_subheader">
+            <td colspan="6">Predictions</td>
+        </tr>
         {% if can_add_entry or can_remove_entry %}
             <tr class="col_header">
-                <td colspan=7>
+                <td colspan=6>
                     Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSSRSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSSRSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                 </td>
             </tr>
         {% endif %}
         <tr class="col_header">
-            <td>&nbsp;</td>
             <td width=175px>Title</td>
             <td>Description</td>
             <td style="width:45px">&nbsp;</td>
@@ -19,7 +21,6 @@
         </tr>
         {% for ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction in predictions %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>{{ forloop.counter }}</td>
                 <td>
                     <a href="/bodb/prediction/{{ prediction.id }}/" onclick="openInNewTab('/bodb/prediction/{{ prediction.id }}/')">{{ prediction.title }}</a>
                 </td>

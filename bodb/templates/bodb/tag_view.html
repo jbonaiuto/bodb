@@ -32,7 +32,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>Models (<a href="javascript:animatedcollapse.toggle('taggedModels')"><span id="taggedModelsLabel">Hide</span></a>)</td>
+                    <td>Models{% if tagged_models|length %} (1-{{ tagged_models|length }}){% endif %} (<a href="javascript:animatedcollapse.toggle('taggedModels')"><span id="taggedModelsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">
@@ -59,7 +59,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>BOPs (<a href="javascript:animatedcollapse.toggle('taggedBOPs')"><span id="taggedBOPsLabel">Hide</span></a>)</td>
+                    <td>BOPs{% if tagged_bops|length %} (1-{{ tagged_bops|length }}){% endif %} (<a href="javascript:animatedcollapse.toggle('taggedBOPs')"><span id="taggedBOPsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">
@@ -111,7 +111,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>Predictions (<a href="javascript:animatedcollapse.toggle('taggedPredictions')"><span id="taggedPredictionsLabel">Hide</span></a>)</td>
+                    <td>Predictions{% if tagged_predictions|length %} (1-{{ tagged_predictions|length }}){% endif %} (<a href="javascript:animatedcollapse.toggle('taggedPredictions')"><span id="taggedPredictionsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">
@@ -138,7 +138,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td>Summaries of Simulation Results (SSRs) (<a href="javascript:animatedcollapse.toggle('taggedSSRs')"><span id="taggedSSRsLabel">Hide</span></a>)</td>
+                    <td>Summaries of Simulation Results (SSRs){% if tagged_ssrs|length %} (1-{{ tagged_ssrs|length }}){% endif %} (<a href="javascript:animatedcollapse.toggle('taggedSSRs')"><span id="taggedSSRsLabel">Hide</span></a>)</td>
                 </tr>
                 <tr>
                     <td style="padding:0px">

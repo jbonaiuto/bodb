@@ -25,7 +25,7 @@
                     </td>
                 {% endif %}
                 <td>
-                    <a href="/bodb/brain_region/{{ brain_region.id }}/">{{ brain_region }}</a>
+                    <a href="/bodb/brain_region/{{ brain_region.id }}/" onclick="openInNewTab('/bodb/brain_region/{{ brain_region.id }}/')">{{ brain_region }}</a>
                 </td>
                 <td>
                     {{ brain_region.abbreviation }}
