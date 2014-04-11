@@ -617,6 +617,7 @@ class BenchmarkModelView(TemplateView):
 
         user=self.request.user
 
+        context['helpPage']='benchmarks.html'
         context['scores']=[]
         sed_info={}
         context['params']=[]
@@ -712,6 +713,7 @@ class ReverseBenchmarkModelView(TemplateView):
 
         user=self.request.user
 
+        context['helpPage']='benchmarks.html'
         context['scores']=[]
         sed_info={}
         context['params']=[]

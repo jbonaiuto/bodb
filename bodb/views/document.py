@@ -41,6 +41,7 @@ class DocumentDetailView(DetailView, generics.RetrieveUpdateDestroyAPIView):
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
         user=self.request.user
+        context['helpPage']='index.html'
         context['figures'] = DocumentFigure.objects.filter(document=self.object)
         context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
         context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
@@ -140,6 +141,7 @@ class ManageDocumentPermissionsView(DetailView):
     def get_context_data(self, **kwargs):
         context=super(DetailView,self).get_context_data(**kwargs)
         context['document']=self.object
+        context['helpPage']='permissions.html'
         context['users']=User.objects.all().exclude(id=self.request.user.id)
         context['groups']=Group.objects.filter(user__id=self.request.user.id)
         context['ispopup']=('_popup' in self.request.GET)

@@ -62,6 +62,11 @@ class IndexView(BODBView):
 class AboutView(BODBView):
     template_name = 'bodb/about.html'
 
+    def get_context_data(self, **kwargs):
+        context=super(BODBView,self).get_context_data(**kwargs)
+        context['helpPage']='index.html'
+        return context
+
 
 class InsertView(BODBView):
     template_name = 'bodb/insert.html'

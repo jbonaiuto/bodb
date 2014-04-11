@@ -16,9 +16,6 @@ from uscbp.views import JSONResponseMixin
 
 @login_required
 def logout_view(request):
-    # unload selected coordinates and saved selection
-    #SavedSEDCoordSelection.objects.filter(user__id=request.user.id, loaded=True).update(loaded=False)
-    #SelectedSEDCoord.objects.filter(user__id=request.user.id, selected=True).update(selected=False)
     # perform logout
     logout(request)
     # redirect to index
@@ -377,7 +374,14 @@ class DeleteGroupView(JSONResponseMixin,BaseUpdateView):
             context = {'id': self.request.POST['id']}
         return context
 
+
 class BodbRegistrationView(RegistrationView):
+
+    def get_context_data(self, **kwargs):
+        context=super(RegistrationView,self).get_context_data(**kwargs)
+        context['helpPage']='login_register.html'
+        return context
+
     def form_valid(self, request, form):
         new_user = self.register(request, **form.cleaned_data)
         profile=new_user.get_profile()
