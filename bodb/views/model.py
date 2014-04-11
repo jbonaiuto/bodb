@@ -631,13 +631,14 @@ class BenchmarkModelView(TemplateView):
         for model in context['selected_models']:
             context['scores'].append(0)
 
-        buildsed_q=Q(Q(build_sed__document__in=context['selected_models']))
+        buildsed_q=Q(Q(related_build_sed_document__document__in=context['selected_models']))
         testsed_q=Q(Q(test_sed__model__in=context['selected_models']))
         related_seds=SED.objects.filter(Q(buildsed_q | testsed_q) & Document.get_security_q(user))
 
         for sed in related_seds:
-            buildsed_q=Q(buildsed__sed__id=sed.id)
-            testsed_q=Q(testsed__sed__id=sed.id)
+            print('got here')
+            buildsed_q=Q(related_build_sed_document__sed__id=sed.id)
+            testsed_q=Q(related_test_sed_document__sed__id=sed.id)
             sed_info[sed.id]=Model.objects.filter(Q(buildsed_q | testsed_q)).count()
 
         # Sort SEDS by number of models they are attached to
@@ -720,16 +721,16 @@ class ReverseBenchmarkModelView(TemplateView):
         for sed_id in self.request.POST.getlist('selectedSED'):
             context['selected_seds'].append(SED.objects.get(id=sed_id))
 
-        buildsed_q=Q(buildsed__sed__in=context['selected_seds'])
-        testsed_q=Q(testsed__sed__in=context['selected_seds'])
+        buildsed_q=Q(related_build_sed_document__sed__in=context['selected_seds'])
+        testsed_q=Q(related_test_sed_document__sed__in=context['selected_seds'])
         context['models']=Model.objects.filter(Q(buildsed_q | testsed_q) & Document.get_security_q(user)).distinct()
         for model in context['models']:
             context['scores'].append(0)
 
         for sed in context['selected_seds']:
             # Update list of Models
-            buildsed_q=Q(buildsed__sed=sed)
-            testsed_q=Q(testsed__sed=sed)
+            buildsed_q=Q(related_build_sed_document__sed=sed)
+            testsed_q=Q(related_test_sed_document__sed=sed)
             sed_info[sed.id]=Model.objects.filter(Q(buildsed_q | testsed_q)).count()
 
         # Sort SEDS by number of models they are attached to

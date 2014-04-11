@@ -83,10 +83,10 @@ class DocumentSearch(object):
             if self.related_bop_options=='all':
                 op=operator.and_
             words=parse_tags(self.related_bop)
-            title_filters=[Q(relatedbop__bop__title__icontains=word) for word in words]
-            description_filters=[Q(relatedbop__bop__brief_description__icontains=word) for word in words]
-            narrative_filters=[Q(relatedbop__bop__narrative__icontains=word) for word in words]
-            relevance_narrative_filters=[Q(relatedbop__relevance_narrative__icontains=word) for word in words]
+            title_filters=[Q(related_bop_document__bop__title__icontains=word) for word in words]
+            description_filters=[Q(related_bop_document__bop__brief_description__icontains=word) for word in words]
+            narrative_filters=[Q(related_bop_document__bop__narrative__icontains=word) for word in words]
+            relevance_narrative_filters=[Q(related_bop_document__relevance_narrative__icontains=word) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) |\
                         reduce(op,relevance_narrative_filters)
             return keyword_q
@@ -99,10 +99,10 @@ class DocumentSearch(object):
             if self.related_model_options=='all':
                 op=operator.and_
             words=parse_tags(self.related_model)
-            title_filters=[Q(relatedmodel__model__title__icontains=word) for word in words]
-            description_filters=[Q(relatedmodel__model__brief_description__icontains=word) for word in words]
-            narrative_filters=[Q(relatedmodel__model__narrative__icontains=word) for word in words]
-            relationship_filters=[Q(relatedmodel__relationship__icontains=word) for word in words]
+            title_filters=[Q(related_model_document__model__title__icontains=word) for word in words]
+            description_filters=[Q(related_model_document__model__brief_description__icontains=word) for word in words]
+            narrative_filters=[Q(related_model_document__model__narrative__icontains=word) for word in words]
+            relationship_filters=[Q(related_model_document__relationship__icontains=word) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) |\
                         reduce(op,relationship_filters)
             return keyword_q

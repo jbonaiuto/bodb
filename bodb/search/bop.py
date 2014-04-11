@@ -69,10 +69,10 @@ class BOPSearch(DocumentWithLiteratureSearch):
             if self.building_sed_options=='all':
                 op=operator.and_
             words=parse_tags(self.building_sed)
-            title_filters=[Q(buildsed__sed__title__icontains=word) for word in words]
-            description_filters=[Q(buildsed__sed__brief_description__icontains=word) for word in words]
-            narrative_filters=[Q(buildsed__sed__narrative__icontains=word) for word in words]
-            relevance_filters=[Q(buildsed__relevance_narrative__icontains=word) for word in words]
+            title_filters=[Q(related_build_sed_document__sed__title__icontains=word) for word in words]
+            description_filters=[Q(related_build_sed_document__sed__brief_description__icontains=word) for word in words]
+            narrative_filters=[Q(related_build_sed_document__sed__narrative__icontains=word) for word in words]
+            relevance_filters=[Q(related_build_sed_document__relevance_narrative__icontains=word) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) | \
                         reduce(op,relevance_filters)
             return keyword_q

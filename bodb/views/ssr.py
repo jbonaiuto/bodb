@@ -88,7 +88,7 @@ class SSRDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
-        context['model']=Model.objects.filter(Q(testsed__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))[0]
+        context['model']=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))[0]
         if self.request.user.is_authenticated() and not self.request.user.is_anonymous():
             context['selected']=self.request.user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
         return context

@@ -62,10 +62,10 @@ class ModelSearch(DocumentWithLiteratureSearch):
             if self.building_sed_options=='all':
                 op=operator.and_
             words=parse_tags(self.building_sed)
-            title_filters=[Q(buildsed__sed__title__icontains=word) for word in words]
-            description_filters=[Q(buildsed__sed__brief_description__icontains=word) for word in words]
-            narrative_filters=[Q(buildsed__sed__narrative__icontains=word) for word in words]
-            relevance_filters=[Q(buildsed__relevance_narrative__icontains=word) for word in words]
+            title_filters=[Q(related_build_sed_document__sed__title__icontains=word) for word in words]
+            description_filters=[Q(related_build_sed_document__sed__brief_description__icontains=word) for word in words]
+            narrative_filters=[Q(related_build_sed_document__sed__narrative__icontains=word) for word in words]
+            relevance_filters=[Q(related_build_sed_document__relevance_narrative__icontains=word) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) | \
                         reduce(op,relevance_filters)
             return keyword_q
@@ -78,9 +78,9 @@ class ModelSearch(DocumentWithLiteratureSearch):
             if self.testing_sed_options=='all':
                 op=operator.and_
             words=parse_tags(self.testing_sed)
-            title_filters=[Q(testsed__sed__title__icontains=word) for word in words]
-            description_filters=[Q(testsed__sed__brief_description__icontains=word) for word in words]
-            narrative_filters=[Q(testsed__sed__narrative__icontains=word) for word in words]
+            title_filters=[Q(related_test_sed_document__sed__title__icontains=word) for word in words]
+            description_filters=[Q(related_test_sed_document__sed__brief_description__icontains=word) for word in words]
+            narrative_filters=[Q(related_test_sed_document__sed__narrative__icontains=word) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters)
             return keyword_q
         return Q()
@@ -106,11 +106,11 @@ class ModelSearch(DocumentWithLiteratureSearch):
             if self.ssr_options=='all':
                 op=operator.and_
             words=parse_tags(self.ssr)
-            title_filters=[Q(Q(testsed__testsedssr__ssr__title__icontains=word) |\
+            title_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__title__icontains=word) |\
                              Q(prediction__predictionssr__ssr__title__icontains=word)) for word in words]
-            description_filters=[Q(Q(testsed__testsedssr__ssr__brief_description__icontains=word) |\
+            description_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__brief_description__icontains=word) |\
                                    Q(prediction__predictionssr__ssr__brief_description__icontains=word)) for word in words]
-            narrative_filters=[Q(Q(testsed__testsedssr__ssr__narrative__icontains=word) |\
+            narrative_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__narrative__icontains=word) |\
                                  Q(prediction__predictionssr__ssr__narrative__icontains=word)) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters)
             return keyword_q

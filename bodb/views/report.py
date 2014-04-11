@@ -289,7 +289,7 @@ class SSRReportView(View):
 
         ssr=get_object_or_404(SSR, id=id)
         # load related entries
-        model=Model.objects.filter(Q(testsed__testsedssr__ssr=ssr) | Q(prediction__predictionssr__ssr=ssr))[0]
+        model=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=ssr) | Q(prediction__predictionssr__ssr=ssr))[0]
         figures=list(DocumentFigure.objects.filter(document=ssr).order_by('order'))
 
         context={
