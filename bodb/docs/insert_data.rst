@@ -445,7 +445,7 @@ This button will only show if the user has permissions to make an entry public. 
 
 Summary of Brain Imaging Summary Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-BODB is intended to serve also as an experimental-data repository. In addition to the generic SED entry form, it provides an explicit storage and user interface for tables of brain imaging data based on Talairach coordinates. Although brain imaging data are often supplied in table format, different articles may differ in the number, labeling and layout of columns, and differ in the freeform description of the experimental conditions of that table. Moreover, article data files are in various formats such as PDF, HTML and Microsoft Word. Therefore, it is difficult to provide a tool that automatically reads the data file, excerpts the whole table and its description, then marshals and puts these data into BODB properly. Our solution for importing the table is to provide a structured input form for pasting the table’s description and data, and specifying metadata (column configuration). The structure of the input form and the metadata will assist the user populate the table data correctly.
+BODB is intended to serve also as a summarized experimental-data repository. In addition to the generic SED entry form, it provides an explicit storage and user interface for tables of brain imaging data based on Talairach coordinates. Although brain imaging data are often supplied in table format, different articles may differ in the number, labeling and layout of columns, and differ in the freeform description of the experimental conditions of that table. Moreover, article data files are in various formats such as PDF, HTML and Microsoft Word. Therefore, it is difficult to provide a tool that automatically reads the data file, excerpts the whole table and its description, then marshals and puts these data into BODB properly. Our solution for importing the table is to provide a structured input form for pasting the table’s description and data, and specifying metadata (column configuration). The structure of the input form and the metadata will assist the user populate the table data correctly.
 
 .. figure:: images/brain_imaging_sed.png
     :align: center
@@ -544,7 +544,7 @@ Lorem ipsum...
 
 Summary of Connectivity Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Lorem ipsum...
+BODB provides a format and user interface for storing data from tract tracing experiments in summary form. These experiments typically use some sort of tracer injected into a brain region which moves in an anterograde (with the axon) or retrograde (against the direction of the axon) direction. This data is summarized here in the form of region X (the source region) projects to region Y (the target region).
 
 .. figure:: images/conn_sed.png
     :align: center
@@ -554,7 +554,7 @@ Lorem ipsum...
     
 *Title*
 
-The name of the SED entry.
+The name of the SED entry (i.e. Projection from AIP to F5)
 
 *Brief Description*
 
@@ -574,11 +574,11 @@ This button will only show if the user has permissions to make an entry public. 
 
 *Source Region*
 
-Lorem ipsum...
+The region that the connection originates from. Click the search button to open up a brain region search window.
 
 *Target Region*
 
-Lorem ipsum...
+The region that the connection terminates at. Click the search button to open up a brain region search window.
     
     
 Figures
