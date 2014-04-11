@@ -32,7 +32,7 @@
                         {% endif %}
                     </td>
                 {% endif %}
-                <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="openInNewTab('/bodb/literature/{{ literature.id }}/')">{{ literature.str }}</a></td>
+                <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
                 <td>{{ literature.get_collator_str }}</td>
             </tr>
         {% endfor %}

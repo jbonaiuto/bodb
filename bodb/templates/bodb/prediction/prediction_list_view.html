@@ -22,7 +22,7 @@
         {% for ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction in predictions %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                 <td>
-                    <a href="/bodb/prediction/{{ prediction.id }}/" onclick="openInNewTab('/bodb/prediction/{{ prediction.id }}/')">{{ prediction.title }}</a>
+                    <a href="/bodb/prediction/{{ prediction.id }}/" onclick="return openInNewTab('/bodb/prediction/{{ prediction.id }}/');">{{ prediction.title }}</a>
                 </td>
                 <td>{{ prediction.brief_description }}</td>
                 <td align=center style="width:45px">

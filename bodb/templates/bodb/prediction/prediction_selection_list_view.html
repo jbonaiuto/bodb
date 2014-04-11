@@ -21,7 +21,7 @@
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                 <td>{{ forloop.counter }}</td>
                 <td>
-                    <a href="/bodb/prediction/{{ prediction.id }}/" onclick="openInNewTab('/bodb/prediction/{{ prediction.id }}/')">{{ prediction.title }}</a>
+                    <a href="/bodb/prediction/{{ prediction.id }}/" onclick="return openInNewTab('/bodb/prediction/{{ prediction.id }}/');">{{ prediction.title }}</a>
                 </td>
                 <td>{{ prediction.brief_description }}</td>
                 <td align=center style="width:45px">

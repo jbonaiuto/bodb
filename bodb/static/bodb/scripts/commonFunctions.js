@@ -13,6 +13,7 @@ function openInNewTab(url)
 {
     var win=window.open(url, '_blank');
     win.focus();
+    return false;
 }
 
 function clearSpan(doc, spanId)

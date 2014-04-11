@@ -81,7 +81,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="/bodb/model/{{ model.id }}/" onclick="openInNewTab('/bodb/model/{{ model.id }}/')">{{ model }}</a>
+                        <a href="/bodb/model/{{ model.id }}/" onclick="return openInNewTab('/bodb/model/{{ model.id }}/');">{{ model }}</a>
                         {% if model.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                     </td>
                     <td>{{ model.get_collator_str }} {% if not model.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.collator.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
