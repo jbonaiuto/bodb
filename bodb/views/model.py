@@ -636,7 +636,6 @@ class BenchmarkModelView(TemplateView):
         related_seds=SED.objects.filter(Q(buildsed_q | testsed_q) & Document.get_security_q(user))
 
         for sed in related_seds:
-            print('got here')
             buildsed_q=Q(related_build_sed_document__sed__id=sed.id)
             testsed_q=Q(related_test_sed_document__sed__id=sed.id)
             sed_info[sed.id]=Model.objects.filter(Q(buildsed_q | testsed_q)).count()
