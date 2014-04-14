@@ -69,7 +69,7 @@ The Entries tab will show all entries that have been added to the Workspace.
 Coordinates
 ^^^^^^^^^^^
 
-Lorem ipsum...
+The Coordinates tab allows users to save and load sets of coordinates from brain imaging SEDs. The Active Coordinate Selection section lists the name and description of the currently active selection along with a list of all coordinates in the selection, grouped by the SED that they belong to. The Saved Coordinate Selections section lists all of the coordinate selections saved in this workspace. Users can click Load next to a selection to make it active, or Delete to delete it. Clicking on the New button will clear the currently active coordinate selection so that a new one can be created.
 
 .. figure:: images/workspace_coordinate_tab.png
     :align: center
@@ -80,7 +80,7 @@ Lorem ipsum...
 Bookmarks
 ^^^^^^^^^
 
-The bookmarks tab allows users to store urls that are relevant to the Workspace by adding a Title, URL, and Description 
+The Bookmarks tab allows users to store urls that are relevant to the Workspace by adding a Title, URL, and Description
 
 .. figure:: images/workspace_bookmarks_tab.png
     :align: center
@@ -101,7 +101,7 @@ The Discussion tab allows users assigned to a workspace to maintain a thread of 
     
 Admin
 ^^^^^
-The Admin tab allows the creator of the Workspace to invite other users to participate in the CoWo.
+The Admin tab allows the creator of the Workspace to invite other users to participate in the CoWo, as well as manage the permissions of users in the CoWo.
 
 .. figure:: images/workspace_admin_tab.png
     :align: center
