@@ -69,7 +69,7 @@ The Entries tab will show all entries that have been added to the Workspace.
 Coordinates
 ^^^^^^^^^^^
 
-The Coordinates tab allows users to save and load sets of coordinates from brain imaging SEDs. The Active Coordinate Selection section lists the name and description of the currently active selection along with a list of all coordinates in the selection, grouped by the SED that they belong to. The Saved Coordinate Selections section lists all of the coordinate selections saved in this workspace. Users can click Load next to a selection to make it active, or Delete to delete it. Clicking on the New button will clear the currently active coordinate selection so that a new one can be created.
+The Coordinates tab allows users to save and load sets of coordinates from brain imaging SEDs. Any time the user clicks on a checkbox next to a coordinate in a Brain Imaging SED search result it is added to the currently active coordinate set. The Active Coordinate Set section lists the name and description of the currently active set along with a list of all coordinates in the set, grouped by the SED that they belong to. The Saved Coordinate Sets section lists all of the coordinate sets saved in this workspace. Users can click Load next to a set to make it active, or Delete to delete it. Clicking on the New button will clear the currently active coordinate set so that a new one can be created.
 
 .. figure:: images/workspace_coordinate_tab.png
     :align: center
