@@ -1,10 +1,13 @@
 <script type="text/javascript">
-    function deleteCoordinateSelection(selectionId)
+    function deleteCoordinateSelection(selectionId, selectionName)
     {
-        var data = { 'id': selectionId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
-        var args = { type: "POST", url: "/bodb/coord_selection/"+selectionId+"/delete/", data: data,
-            complete: doneDeleteCoordinateSelection };
-        $.ajax(args)
+        if(confirm('Are you sure your want to delete the set: '+selectionName))
+        {
+            var data = { 'id': selectionId, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+            var args = { type: "POST", url: "/bodb/coord_selection/"+selectionId+"/delete/", data: data,
+                complete: doneDeleteCoordinateSelection };
+            $.ajax(args)
+        }
         return false;
     }
 
@@ -28,6 +31,7 @@
                 document.getElementById('selectionLoadedButtons').style.display='inline';
                 document.getElementById('id_selectionId').value=data.id;
                 $('textarea:not(.processed)').TextAreaResizer();
+                document.getElementById('id_new_notice').style.display='none';
                 return false;
             }
             else
@@ -69,6 +73,7 @@
             document.getElementById('id_selectionId').value='';
             document.getElementById('id_selectionCollator').innerHTML='';
             document.getElementById('selectionLoadedButtons').style.display='none';
+            document.getElementById('id_new_notice').style.display='inline';
             $('#coords').empty();
         }
     }
@@ -98,6 +103,7 @@
             document.getElementById('id_selectionLastModifiedBy').innerHTML=data.last_modified_by;
             document.getElementById('loadDiv-'+data.id).style.display='none';
             document.getElementById('selectionLoadedButtons').style.display='inline';
+            document.getElementById('id_new_notice').style.display='none';
             $('#coords').empty();
             sed_coords={};
             for(var i=0; i<data.selected_coords.length; i++)
@@ -143,6 +149,7 @@
                 document.getElementById('id_selectionCollator').innerHTML='';
                 document.getElementById('id_selectionLastModifiedBy').innerHTML='';
                 document.getElementById('selectionLoadedButtons').style.display='none';
+                document.getElementById('id_new_notice').style.display='inline';
             }
             document.getElementById('savedCoordSelection-'+data.id).style.display='none';
         }
@@ -180,10 +187,10 @@
 </script>
 <table class="tab_panel">
     <tr>
-        <td valign=top>
+        <td valign=top width=70%>
             <table class="tab_panel">
                 <tr class="section_subheader">
-                    <td colspan=11>Active Coordinate Selection</td>
+                    <td colspan=11>Active Coordinate Set</td>
                 </tr>
                 <tr>
                     <td colspan=11>
@@ -191,7 +198,7 @@
                         <table class="tab_panel">
                             <tr>
                                 <td width=100px>Name:</td>
-                                <td><input type=text name="selectionName" id="id_selectionName" value="{% if loaded_coord_selection %}{{ loaded_coord_selection.name }}{% endif %}" size=50/></td>
+                                <td><input type=text name="selectionName" id="id_selectionName" value="{% if loaded_coord_selection %}{{ loaded_coord_selection.name }}{% endif %}" size=50/><div id="id_new_notice" style="display:{% if loaded_coord_selection %}None{% else %}inline{% endif %};color:red;">(new, unsaved)</div></td>
                             </tr>
                             <tr>
                                 <td valign="top">Collator:</td>
@@ -203,7 +210,7 @@
                             </tr>
                             <tr>
                                 <td valign=top>Description:</td>
-                                <td><textarea name="selectionDescription" id="id_selectionDescription" cols=57>{% if loaded_coord_selection %}{{ loaded_coord_selection.description }}{% endif %}</textarea></td>
+                                <td><textarea name="selectionDescription" id="id_selectionDescription" rows=5 cols=50>{% if loaded_coord_selection %}{{ loaded_coord_selection.description }}{% endif %}</textarea></td>
                             </tr>
                         </table>
                     </td>
@@ -221,7 +228,7 @@
                                 &nbsp;
                             {% endif %}
                             {% if can_delete_coord_selection %}
-                                <input type=button class=btn value="Delete" onclick="return deleteCoordinateSelection(document.getElementById('id_selectionId').value);"/>
+                                <input type=button class=btn value="Delete" onclick="return deleteCoordinateSelection(document.getElementById('id_selectionId').value,document.getElementById('id_selectionName').value);"/>
                             {% endif %}
                         </div>
                     </td>
@@ -232,16 +239,16 @@
                 {% regroup selected_coords|dictsort:"sed_id" by sed_name as sed_list %}
                 <tr class="col_header">
                     <td width=25px>&nbsp;</td>
-                    <td width=200px>Collator</td>
-                    <td width=100px>Brain Region</td>
+                    <td width=100px>Collator</td>
+                    <td width=200px>Brain Region</td>
                     <td width=100px>Hemisphere</td>
                     <td width=50px>x</td>
                     <td width=50px>y</td>
                     <td width=50px>z</td>
                     <td width=50px>rCBF</td>
-                    <td width=60px>Statistic</td>
-                    <td width=80px>Significance</td>
-                    <td>Extra Data</td>
+                    <td width=40px>Stat.</td>
+                    <td width=50px>Sig.</td>
+                    <td width=50px>Extra Data</td>
                 </tr>
                 <tr>
                     <td colspan=11 style="padding:0px">
@@ -257,21 +264,21 @@
                                                 <div id="sed-{{ sed.grouper }}-coords">
                                                     {% for coord in sed.list %}
                                                         <div id="coord-{{ coord.id }}">
-                                                            <table class="tab_panel">
+                                                            <table class="tab_panel" style="width:100%;table-layout:fixed;">
                                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                                     <td width=25px>
                                                                         <input type=checkbox name="sed_{{ sed.grouper|slugify }}_coord_select" value="{{ coord.id }}" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
                                                                     </td>
-                                                                    <td width=200px>{{ coord.collator }}</td>
-                                                                    <td width=100px>{{ coord.brain_region }}</td>
-                                                                    <td width=100px>{{ coord.hemisphere }}</td>
-                                                                    <td width=50px>{{ coord.x }}</td>
-                                                                    <td width=50px>{{ coord.y }}</td>
-                                                                    <td width=50px>{{ coord.z }}</td>
-                                                                    <td width=50px>{{ coord.rCBF|floatformat:2 }}</td>
-                                                                    <td width=60px>{{ coord.statistic }}</td>
-                                                                    <td width=80px>{{ coord.statistic_value|floatformat:2 }}</td>
-                                                                    <td>{{ coord.extra_data }}</td>
+                                                                    <td width=100px style="word-wrap:break-word;">{{ coord.collator }}</td>
+                                                                    <td width=200px style="word-wrap:break-word;">{{ coord.brain_region }}</td>
+                                                                    <td width=100px style="word-wrap:break-word;">{{ coord.hemisphere }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.x }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.y }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.z }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.rCBF|floatformat:2 }}</td>
+                                                                    <td width=40px style="word-wrap:break-word;">{{ coord.statistic }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.statistic_value|floatformat:2 }}</td>
+                                                                    <td width=50px style="word-wrap:break-word;">{{ coord.extra_data }}</td>
                                                                 </tr>
                                                             </table>
                                                         </div>
@@ -295,15 +302,15 @@
         <td valign="top">
             <table class="tab_panel">
                 <tr class="section_subheader">
-                    <td colspan=11>Saved Coordinate Selections</td>
+                    <td colspan=11>Saved Coordinate Sets</td>
                 </tr>
                 <tr>
                     <td colspan=11 style="padding:0px">
                         <table class="tab_panel">
                             <tr class="col_header">
                                 <td width=75px>&nbsp;</td>
-                                <td width=300px>Name</td>
-                                <td width=200px>Collator</td>
+                                <td width=200px>Name</td>
+                                <td width=100px>Collator</td>
                                 <td>Description</td>
                             </tr>
                             <tr>
@@ -311,19 +318,19 @@
                                     <div id="savedCoordSelections">
                                         {% for selection in saved_coord_selections %}
                                             <div id="savedCoordSelection-{{ selection.id }}" name="savedCoordSelection">
-                                                <table class="tab_panel">
+                                                <table class="tab_panel" style="width:100%;table-layout: fixed;">
                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                         <td width=75px>
                                                             <div name="loadDiv" id="loadDiv-{{ selection.id }}" style="display:{% ifequal selection user.get_profile.loaded_coordinate_selection %}none{% else %}inline{% endifequal %}">
                                                                 <a href="" onclick="return loadCoordinateSelection('{{ selection.id }}');">Load</a>
                                                             </div>
                                                             {% if can_delete_coord_selection %}
-                                                                <br><a href="../"onclick="return deleteCoordinateSelection('{{ selection.id }}');">Delete</a>
+                                                                <br><a href="../"onclick="return deleteCoordinateSelection('{{ selection.id }}','{{ selection.name }}');">Delete</a>
                                                             {% endif %}
                                                         </td>
-                                                        <td width=300px><span id="coord-selection-{{ selection.id }}-name">{{ selection.name }}</span></td>
-                                                        <td width=200px>{{ selection.get_collator_str }}</td>
-                                                        <td><span id="coord-selection-{{ selection.id }}-description">{{ selection.description }}</span></td>
+                                                        <td width=200px style="word-wrap: break-word;"><span id="coord-selection-{{ selection.id }}-name">{{ selection.name }}</span></td>
+                                                        <td width=100px style="word-wrap: break-word;">{{ selection.get_collator_str }}</td>
+                                                        <td style="word-wrap: break-word;"><span id="coord-selection-{{ selection.id }}-description">{{ selection.description }}</span></td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -347,41 +354,41 @@
 </table>
 <script type="text/html" id="savedCoordSelection-template">
     <div id="savedCoordSelection-<%= id %>" named="savedCoordSelection">
-        <table class="tab_panel">
+        <table class="tab_panel" style="width:100%;table-layout: fixed;">
             <tr class="<%= getTRTag(idx) %>" valign=top>
-                <td width=100px>
+                <td width=75px>
                     <div name="loadDiv" id="loadDiv-<%= id %>" style="display:<% if(loaded){ %>none<% } else{ %>inline<% } %>">
-                        <a href="/bodb/coord_selection/<%= id %>/">Load</a>
+                        <a href="" onclick="return loadCoordinateSelection('<%= id %>');">Load</a>
                     </div>
                     {% if can_delete_coord_selection %}
-                        <br><a href="../"onclick="return deleteCoordinateSelection('<%= id %>');">Delete</a>
+                        <br><a href="" onclick="return deleteCoordinateSelection('<%= id %>','<%= name %>');">Delete</a>
                     {% endif %}
                 </td>
-                <td width=300px><span id="coord-selection-<%= id %>-name"><%= name %></span></td>
-                <td width=200px><%= collator %></td>
-                <td><span id="coord-selection-<%= id %>-description"><%= description %></span></td>
+                <td width=200px style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-name"><%= name %></span></td>
+                <td width=100px style="word-wrap: break-word;"><%= collator %></td>
+                <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= description %></span></td>
             </tr>
         </table>
     </div>
 </script>
 
 <script type="text/html" id="coord-template">
-    <div id="coord-<%= id %>}}">
-        <table class="tab_panel">
+    <div id="coord-<%= id %>">
+        <table class="tab_panel" style="width:100%;table-layout:fixed;">
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=25px>
                     <input type=checkbox name="sed_<%= sed_id %>_coord_select" value="<%= id %>" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
                 </td>
-                <td width=200px><%= collator %></td>
-                <td width=100px><%= brain_region %></td>
-                <td width=100px><%= hemisphere %></td>
-                <td width=50px><%= x %></td>
-                <td width=50px><%= y %></td>
-                <td width=50px><%= z %></td>
-                <td width=50px><%= rCBF %></td>
-                <td width=60px><%= statistic %></td>
-                <td width=80px><%= statistic_value %></td>
-                <td><%= extra_data %></td>
+                <td width=100px style="word-wrap:break-word;"><%= collator %></td>
+                <td width=200px style="word-wrap:break-word;"><%= brain_region %></td>
+                <td width=100px style="word-wrap:break-word;"><%= hemisphere %></td>
+                <td width=50px style="word-wrap:break-word;"><%= x %></td>
+                <td width=50px style="word-wrap:break-word;"><%= y %></td>
+                <td width=50px style="word-wrap:break-word;"><%= z %></td>
+                <td width=50px style="word-wrap:break-word;"><%= rCBF %></td>
+                <td width=40px style="word-wrap:break-word;"><%= statistic %></td>
+                <td width=50px style="word-wrap:break-word;"><%= statistic_value %></td>
+                <td width=50px style="word-wrap:break-word;"><%= extra_data %></td>
             </tr>
         </table>
     </div>

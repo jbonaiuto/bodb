@@ -145,23 +145,37 @@ class FavoriteListView(BODBView):
 
             context['loaded_coord_selection']=profile.loaded_coordinate_selection
             context['saved_coord_selections']=SavedSEDCoordSelection.objects.filter(user=user)
+            # load selected coordinates
+            selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+
             context['selected_coords']=[]
-            if context['loaded_coord_selection'] is not None:
-                for coord in SelectedSEDCoord.objects.filter(saved_selection=context['loaded_coord_selection']):
-                    coord_array={'sed_id':coord.sed_coordinate.sed.id,
-                                 'sed_name':coord.sed_coordinate.sed.title,
-                                 'collator':coord.sed_coordinate.sed.get_collator_str(),
-                                 'id':coord.id,
-                                 'brain_region':coord.sed_coordinate.named_brain_region,
-                                 'hemisphere':coord.sed_coordinate.hemisphere,
-                                 'x':coord.sed_coordinate.coord.x,
-                                 'y':coord.sed_coordinate.coord.y,
-                                 'z':coord.sed_coordinate.coord.z,
-                                 'rCBF':coord.sed_coordinate.rcbf,
-                                 'statistic':coord.sed_coordinate.statistic,
-                                 'statistic_value':coord.sed_coordinate.statistic_value,
-                                 'extra_data':coord.sed_coordinate.extra_data}
-                    context['selected_coords'].append(coord_array)
+            for coord in selected_coord_objs:
+                coord_array={
+                    'sed_name':coord.sed_coordinate.sed.title,
+                    'sed_id':coord.sed_coordinate.sed.id,
+                    'id':coord.id,
+                    'collator':coord.get_collator_str(),
+                    'brain_region':coord.sed_coordinate.named_brain_region,
+                    'hemisphere':coord.sed_coordinate.hemisphere,
+                    'x':coord.sed_coordinate.coord.x,
+                    'y':coord.sed_coordinate.coord.y,
+                    'z':coord.sed_coordinate.coord.z,
+                    'rCBF':None,
+                    'statistic':coord.sed_coordinate.statistic,
+                    'statistic_value':None,
+                    'extra_data':coord.sed_coordinate.extra_data
+                }
+                if coord.sed_coordinate.rcbf is not None:
+                    coord_array['rCBF']=coord.sed_coordinate.rcbf.__float__()
+                if coord.sed_coordinate.statistic_value is not None:
+                    coord_array['statistic_value']=coord.sed_coordinate.statistic_value.__float__()
+                context['selected_coords'].append(coord_array)
+
+            # load selected coordinate Ids
+            selected_coord_ids=[]
+            for coord in selected_coord_objs:
+                selected_coord_ids.append(coord.sed_coordinate.id)
+            context['selected_coord_ids']=selected_coord_ids
             context['can_delete_coord_selection']=True
             context['can_add_coord_selection']=True
             context['can_change_coord_selection']=True

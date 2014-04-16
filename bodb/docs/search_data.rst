@@ -197,6 +197,13 @@ Results
 ^^^^^^^
 The results of the SED search are displayed here. Clicking "Add new" opens a window to add a new SED entry. Clicking the title of each search result will open a window with the SED view page.
 
+.. figure:: images/imaging_sed_list.png
+    :align: center
+    :figclass: align-center
+
+    The brain imaging SED search results
+
+Brain Imaging SED results include a list of the coordinates for each SED. Clicking on the checkbox to the left of a coordinate will add it to the currently active Coordinate Set.
 
 Summary of Simulation Results
 -----------------------------
