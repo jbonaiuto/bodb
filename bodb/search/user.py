@@ -61,6 +61,16 @@ class UserSearch(object):
             return Q(last_name__icontains=self.last_name)
         return Q()
 
+    def search_admin(self, userId):
+        if self.admin:
+            return Q(is_superuser=True)
+        return Q()
+
+    def search_group(self, userId):
+        if self.group:
+            return Q(groups__name__icontains=self.group)
+        return Q()
+
     def search_bop(self, userId):
         if self.bop:
             # restrict to user's own entries or those of other users that are not drafts

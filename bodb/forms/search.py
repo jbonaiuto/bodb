@@ -62,6 +62,8 @@ class UserSearchForm(SearchForm):
     username = forms.CharField(help_text='Username of the user',required=False)
     first_name = forms.CharField(help_text='First name of the user',required=False)
     last_name = forms.CharField(help_text='Last name of the user',required=False)
+    admin = forms.BooleanField(help_text='User is administrator', required=False)
+    group = forms.CharField(help_text='Group user belongs to', required=False)
     bop = forms.CharField(help_text='BOPs entered by the user', required=False)
     bop_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     model = forms.CharField(help_text='Models entered by the user', required=False)
