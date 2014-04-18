@@ -13,6 +13,11 @@ class BrainRegionRequestListView(ListView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_list_view.html'
 
+    def get_context_data(self, **kwargs):
+        context=super(BrainRegionRequestListView,self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#requesting-a-brain-region'
+        return context
+
     def get_queryset(self):
         return BrainRegionRequest.objects.filter(user=self.request.user)
 
@@ -24,6 +29,7 @@ class CreateBrainRegionRequestView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBrainRegionRequestView,self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#requesting-a-brain-region'
         context['ispopup']=('_popup' in self.request.GET)
         return context
 
@@ -54,6 +60,11 @@ class BrainRegionRequestDenyView(UpdateView):
     template_name = 'bodb/brainRegion/brain_region_request_deny.html'
     pk_url_kwarg='activation_key'
     form_class = BrainRegionRequestDenyForm
+
+    def get_context_data(self, **kwargs):
+        context=super(BrainRegionRequestDenyView,self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
+        return context
 
     def get_form_kwargs(self):
         """
@@ -97,6 +108,7 @@ class BrainRegionRequestApproveView(CreateView):
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestApproveView,self).get_context_data(**kwargs)
         context['request']=BrainRegionRequest.objects.get(activation_key=self.kwargs.get('activation_key'))
+        context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
     def get_initial(self):
@@ -163,7 +175,7 @@ class BrainRegionView(DetailView):
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
         context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
-        context['helpPage']='BODB-View-BrainRegion'
+        context['helpPage']='view_entry.html'
 
         context['can_add_entry']=False
         context['can_remove_entry']=False

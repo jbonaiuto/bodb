@@ -174,6 +174,7 @@ class BOPDetailView(DocumentDetailView):
     
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
+        context['helpPage']='view_entry.html'
         user=self.request.user
         active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():

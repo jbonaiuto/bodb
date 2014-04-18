@@ -1,7 +1,7 @@
 Viewing Entries
 ===============
 
-When selecting to view an entry (e.g. from a search). You can view an already created entry where you have the choice to add it to the currently active workspace or export it as a number of formats (pdf, rtf, json, and xml are currently supported).
+When clicking on an entry to view it (e.g. from a search). From the entry view page you can add the entry to your favorites by clicking on the star to the left of the title. At the bottom of the page, click Edit to modify the entry, Delete to delete it, Workspace Select (Unselect) to add or remove it to the currently active workspace, or Export to export the entry in the chosen format (pdf, rtf, json, and xml are currently supported).
 
 .. figure:: images/detail_view.png
     :align: center
@@ -9,7 +9,7 @@ When selecting to view an entry (e.g. from a search). You can view an already cr
 
     Detail view of an SED
 
-For explainations of the fields of each entry type, see:
+For explanations of the fields of each entry type, see:
 
 * Literature :ref:`insert-literature`
 * Generic BOP :ref:`insert-bop`

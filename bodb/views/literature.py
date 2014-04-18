@@ -244,7 +244,7 @@ class LiteratureDetailView(TemplateView):
         related_brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
 
         user=self.request.user
-        context['helpPage']='index.html'
+        context['helpPage']='view_entry.html'
         context['literature']=literature
         context['literatureType']=literatureType
         context['related_brain_regions']=related_brain_regions

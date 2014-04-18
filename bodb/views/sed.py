@@ -205,6 +205,7 @@ class SEDDetailView(DocumentDetailView):
     def get_context_data(self, **kwargs):
         context = super(SEDDetailView, self).get_context_data(**kwargs)
         user=self.request.user
+        context['helpPage']='view_entry.html'
         context['bop_relationship']=False
         if self.object.type=='event related potential':
             context['erp_components'] = ERPComponent.objects.filter(erp_sed=self.object)

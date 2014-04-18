@@ -78,6 +78,7 @@ class PredictionDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PredictionDetailView, self).get_context_data(**kwargs)
+        context['helpPage']='view_entry.html'
         user=self.request.user
         context['ssrs']=SSR.get_ssr_list(Prediction.get_ssrs(self.object, user), user)
         return context

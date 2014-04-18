@@ -381,6 +381,7 @@ class ModelDetailView(DocumentDetailView):
     def get_context_data(self, **kwargs):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
         user=self.request.user
+        context['helpPage']='view_entry.html'
         context['generic_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_generic_testing_seds(self.object,user),user)
         context['connectivity_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_connectivity_testing_seds(self.object,user),user)
         context['imaging_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_imaging_testing_seds(self.object, user),user)
@@ -580,6 +581,7 @@ class ModuleDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ModuleDetailView, self).get_context_data(**kwargs)
+        context['helpPage']='view_entry.html'
         context['inputs'] = Variable.objects.filter(var_type='Input',module=self.object)
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
