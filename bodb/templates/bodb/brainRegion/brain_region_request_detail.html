@@ -4,6 +4,8 @@
     <script type="text/javascript">
         function check_request()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             name=document.getElementById('id_name').value
             var data = { 'name': name, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
             var args = { type: "POST", url: "/bodb/brain_region/request_exists/", data: data, complete : done_check };
@@ -18,6 +20,8 @@
                 var data = eval('('+txt+')');
                 if(data.requestExists==1)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
                     alert('You have already submitted a request for the region: '+document.getElementById('id_name').value+". Please wait for your request to be reviewed.");
                 }
                 else
@@ -28,9 +32,13 @@
                         url: frm.attr('action'),
                         data: frm.serialize(),
                         success: function (data) {
+                            document.getElementById('savingMsg').style.display = 'none';
+                            document.getElementById('savingOver').style.display = 'none';
                             self.close();
                         },
                         error: function(data) {
+                            document.getElementById('savingMsg').style.display = 'none';
+                            document.getElementById('savingOver').style.display = 'none';
                             $("#errors").html("Something went wrong! Request not submitted");
                         }
                     });
