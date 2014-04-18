@@ -9,6 +9,15 @@ When selecting to view an entry (e.g. from a search). You can view an already cr
 
     Detail view of an SED
 
+For explainations of the fields of each entry type, see:
+
+* Literature :ref:`insert-literature`
+* Generic BOP :ref:`insert-bop`
+* Model :ref:`insert-model`
+* Generic SED :ref:`insert-generic-sed`
+* Brain Imaging SED :ref:`insert-brain-imaging-sed`
+* ERP SED :ref:`insert-erp-sed`
+* Connectivity SED :ref:`insert-connectivity-sed`
 
 
 Drafts

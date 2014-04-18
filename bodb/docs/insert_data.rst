@@ -13,6 +13,8 @@ Inserting Data
 * Model - Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle) 
 * Summary of Experimental Data - A summary of experimental data. 
 
+.. _insert-literature:
+
 Insert Literature
 -----------------
 
@@ -59,6 +61,8 @@ Save
 Clicking on the "Save" button will save the entry in the BODB database and redirect to the Literature view page.
     
     
+.. _insert-bop:
+
 Insert BOP
 -----------------
 
@@ -196,6 +200,8 @@ Clicking "Remove" will remove the Reference from the BOP.
 Save
 ^^^^
 Click on the "Save Draft" button to save a draft of the present entry to the BODB database. The principal draft will also be available to edit at a later time and will be listed in the Workspace for convenience. If the use has permissions to publish the entry, then they can click the "Save" button and publish directly. Without permissions, this button is unavailable and the user must contact the adminstrator to publish the entry. 
+
+.. _insert-model:
 
 Insert Model
 ------------
@@ -413,6 +419,8 @@ BODB allows the user to insert a Summary of Experimental Data (SED) in addition 
 
 To enter an SED of a particular type, click on the corresponding link to populate a form. The form for each type has a set of unique fields along with a set of fields that are the same for all SEDs (Figures, Related BOPs, Related Brain Regions, and References). First we will detail the unique fields for each type and then we will detail the fields that all SEDs have. 
 
+.. _insert-generic-sed:
+
 Generic SED
 ^^^^^^^^^^^
 
@@ -442,6 +450,7 @@ A list of keywords associated with this SED entry.
 
 This button will only show if the user has permissions to make an entry public. If so, then the user can click check this box and the entry will display to the general public and not just logged in users of BODB.
 
+.. _insert-brain-imaging-sed:
 
 Summary of Brain Imaging Summary Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -502,6 +511,8 @@ The user can specify optional "extra" columns by inserting the column names, sep
 
 The user has to paste the data into the text area. Each row should contain the same number of columns specified by the Core Column Header and Extra Header fields. Columns should be separated by a | character.
 
+.. _insert-erp-sed:
+
 Summary of Event Related Potential Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Lorem ipsum...
@@ -541,6 +552,7 @@ Lorem ipsum...
 
 Lorem ipsum...
 
+.. _insert-connectivity-sed:
 
 Summary of Connectivity Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -638,3 +650,63 @@ Clicking "Remove" will remove the Reference from the SED.
 Save
 ^^^^
 Click on the "Save Draft" button to save a draft of the present entry to the BODB database. The principal draft will also be available to edit at a later time and will be listed in the Workspace for convenience. If the use has permissions to publish the entry, then they can click the "Save" button and publish directly. Without permissions, this button is unavailable and the user must contact the adminstrator to publish the entry. 
+
+Brain Regions
+-------------
+
+Requesting a Brain Region
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As Brain Regions need to be available in the Brainsurfer Atlas and adminstered, the user must request a new Brain Region if necessary by clicking the "Request New" link anywhere where a Brain Region can be selected. This opens up a window to enter information for the request to send to the adminstrators.
+
+.. figure:: images/request_brain_region.png
+    :align: center
+    :figclass: align-center
+
+    Brain Region Request
+    
+The following fields are available:
+
+* Name: name of the region
+* Abbreviation: abbreviated name
+* Parent: name of a parent region
+* Children: a list of child regions
+* Nomenclature: ipsum lorem
+* Nomenclature version: ipsum lorem
+* Rationale: give an explaination to the administrators why the region should be added
+
+The administrators will then approve or deny the request. The user can view a list of their Brain Region requests by clicking the "Brain Region Requests" link in the profile information on the top right of any page.
+
+ .. figure:: images/list_brain_region_requests.png
+    :align: center
+    :figclass: align-center
+
+    Brain Region Request list
+
+Approve/Deny a Brain Region (Admin Only)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When a user requests a new Brain Region, a message will be sent to the adminstrator. 
+
+ .. figure:: images/brain_region_request_message.png
+    :align: center
+    :figclass: align-center
+
+    Brain Region Request message
+
+To add the Brain Region, click the "approve" link, which will open a window to insert the data provided a Name, Abbreviation, Brain Region Type, Parent Region, Nomenclature.
+
+ .. figure:: images/brain_region_request_approve.png
+    :align: center
+    :figclass: align-center
+
+    Brain Region approve
+    
+If the Brain Region should not be added (e.g. it is a duplicate of another), click the "deny" link which will open a window to give a reason for denial.
+
+ .. figure:: images/brain_region_request_approve.png
+    :align: center
+    :figclass: align-center
+
+    Brain Region deny
+
