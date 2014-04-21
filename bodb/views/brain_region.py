@@ -9,6 +9,15 @@ from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfi
 from bodb.search.sed import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView
+from bodb.serializers import BrainRegionSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
+
 class BrainRegionRequestListView(ListView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_list_view.html'
@@ -144,6 +153,16 @@ class BrainRegionRequestApproveView(CreateView):
 
         return redirect(self.get_success_url())
 
+class BrainRegionAPIListView(DocumentAPIListView):
+    queryset = BrainRegion.objects.all()
+    serializer_class = BrainRegionSerializer
+    model = BrainRegion
+    
+    
+class BrainRegionAPIDetailView(DocumentAPIDetailView):    
+    queryset = BrainRegion.objects.all()
+    serializer_class = BrainRegionSerializer
+    model = BrainRegion
 
 class BrainRegionView(DetailView):
     model = BrainRegion

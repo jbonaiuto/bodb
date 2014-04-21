@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from bodb.feeds import LatestModels, LatestBOPs, LatestSEDs, LatestSSRs
 from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, CreateGroupView, GroupDetailView, UpdateUserView, UpdateGroupView, UserToggleActiveView, UserToggleStaffView, UserToggleAdminView, DeleteGroupView, GetUserIconUrlView
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPIDetailView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView, BOPDiagramView
-from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView
+from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
@@ -44,6 +44,8 @@ urlpatterns = patterns('',
     url(r'^api/document/bop/(?P<pk>[0-9]+)/$', BOPAPIDetailView.as_view()),
     url(r'^api/document/model$', ModelAPIListView.as_view()),
     url(r'^api/document/model/(?P<pk>[0-9]+)/$', ModelAPIDetailView.as_view()),
+    url(r'^api/document/brainregion$', BrainRegionAPIListView.as_view()),
+    url(r'^api/document/brainregion/(?P<pk>[0-9]+)/$', BrainRegionAPIDetailView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls',namespace='rest_framework')),
 )
 

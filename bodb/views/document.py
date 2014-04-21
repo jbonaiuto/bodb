@@ -23,12 +23,15 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
 
-from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, XMLRenderer
+from rest_framework.renderers import JSONRenderer, XMLRenderer
+from bodb.renderers import BODBBrowsableAPIRenderer
 
 class DocumentAPIListView(generics.ListCreateAPIView):
-    queryset = Document.objects.all()[:5]
+    renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer,)
+    queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    model = Document
     
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -36,7 +39,7 @@ class DocumentAPIListView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
     
-class DocumentDetailView(DetailView, generics.RetrieveUpdateDestroyAPIView):
+class DocumentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
@@ -80,7 +83,7 @@ class DocumentDetailView(DetailView, generics.RetrieveUpdateDestroyAPIView):
     
 class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     
-    #renderer_classes = (TemplateHTMLRenderer, JSONRenderer, XMLRenderer)
+    renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer)
     
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
