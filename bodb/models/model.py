@@ -175,7 +175,7 @@ class Variable(models.Model):
         ('State', 'State')
         )
     # module that variable belongs to
-    module = models.ForeignKey('Module',null=True)
+    module = models.ForeignKey('Module',null=True, related_name='related_module')
     # variable type - can be input, output, or state
     var_type = models.CharField(max_length=20, choices=VAR_TYPE_CHOICES)
     # data type
