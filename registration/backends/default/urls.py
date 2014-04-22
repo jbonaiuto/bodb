@@ -23,6 +23,7 @@ from django.conf.urls import url
 from django.views.generic.base import TemplateView
 from bodb.forms.admin import BodbRegistrationForm
 
+from django.contrib.auth import views as auth_views
 from registration.backends.default.views import ActivationView
 from registration.backends.default.views import RegistrationView
 
@@ -47,5 +48,17 @@ urlpatterns = patterns('',
                        url(r'^register/closed/$',
                            TemplateView.as_view(template_name='registration/registration_closed.html'),
                            name='registration_disallowed'),
+                        url(r'^password/reset/$',
+                            auth_views.password_reset,
+                            name='auth_password_reset'),
+                        url(r'^password/reset/confirm/uidb36/(?P<uidb36>.+)/token/(?P<token>.+)/$',
+                            auth_views.password_reset_confirm,
+                            name='django.contrib.auth.views.password_reset_confirm'),
+                        url(r'^password/reset/done/$',
+                            auth_views.password_reset_done,
+                            name='password_reset_done'),
+                        url(r'^password/reset/complete/$',
+                            auth_views.password_reset_complete,
+                            name='django.contrib.auth.views.password_reset_complete'),
                        (r'', include('registration.auth_urls')),
                        )
