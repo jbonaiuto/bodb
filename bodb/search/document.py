@@ -17,8 +17,12 @@ class DocumentSearch(object):
             description_filters=[Q(brief_description__icontains=word) for word in words]
             narrative_filters=[Q(narrative__icontains=word) for word in words]
             tags_filters=[Q(tags__name__icontains=word)for word in words]
+            username_filters=[Q(collator__username__icontains=word) for word in words]
+            firstname_filters=[Q(collator__first_name__icontains=word) for word in words]
+            lastname_filters=[Q(collator__last_name__icontains=word) for word in words]
             return reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) | \
-                   reduce(op,tags_filters)
+                   reduce(op,tags_filters) | reduce(op,username_filters) | reduce(op,firstname_filters) | \
+                   reduce(op,lastname_filters)
         return Q()
 
     # search by title
