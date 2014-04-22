@@ -72,12 +72,14 @@ class DeleteSSRView(DeleteView):
     success_url = '/bodb/index.html'
 
 class SSRAPIListView(DocumentAPIListView):
-    queryset = SSR.objects.all()[:5]
+    queryset = SSR.objects.all()
     serializer_class = SSRSerializer
+    model = SSR
     
 class SSRAPIDetailView(DocumentAPIDetailView):
     queryset = SSR.objects.all()
     serializer_class = SSRSerializer
+    model = SSR
 
 class SSRDetailView(DocumentDetailView):
     model = SSR

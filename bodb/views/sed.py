@@ -139,22 +139,27 @@ class DeleteSEDView(DeleteView):
     success_url = '/bodb/index.html'
     
 class SEDAPIListView(DocumentAPIListView):
-    queryset = SED.objects.all()[:5]
+    queryset = SED.objects.all()
     serializer_class = SEDSerializer
+    model = SED
     
 class ERPSEDAPIListView(DocumentAPIListView):
-    queryset = ERPSED.objects.all()[:5]
+    queryset = ERPSED.objects.all()
     serializer_class = ERPSEDSerializer
+    model = ERPSED
     
 class BrainImagingSEDAPIListView(DocumentAPIListView):
-    queryset = BrainImagingSED.objects.all()[:5]
+    queryset = BrainImagingSED.objects.all()
     serializer_class = BrainImagingSEDSerializer
+    model = BrainImagingSED
     
 class ConnectivitySEDAPIListView(DocumentAPIListView):
-    queryset = ConnectivitySED.objects.all()[:5]
+    queryset = ConnectivitySED.objects.all()
     serializer_class = ConnectivitySEDSerializer
+    model = ConnectivitySED
     
 class SEDAPIDetailView(DocumentAPIDetailView):
+    
     queryset = SED.objects.all()
     serializer_class = SEDSerializer
     
