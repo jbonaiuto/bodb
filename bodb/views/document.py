@@ -30,15 +30,9 @@ class DocumentAPIListView(generics.ListCreateAPIView):
     renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer,)
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsEditorOrReadOnly,)
     model = Document
-    
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    
 class DocumentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
@@ -87,17 +81,8 @@ class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly,)
-    
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-    
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
-    
+    permission_classes = (IsEditorOrReadOnly,)
+ 
 
 class ManageDocumentPermissionsView(DetailView):
     template_name = 'bodb/document_permissions_detail.html'
