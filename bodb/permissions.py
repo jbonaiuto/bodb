@@ -24,6 +24,10 @@ class IsEditorOrReadOnly(permissions.BasePermission):
                         return True
                 else:
                     return True
+            elif obj.public==1:
+                return True
+            return False
+
 
         elif request.method == "PUT" or request.method == "PATCH":
             return user.is_authenticated() and (obj.collator==user or user.is_superuser or
