@@ -568,7 +568,6 @@ class CleanBrainImagingSEDView(TemplateView):
         return init
 
     def get(self, request, *args, **kwargs):
-        print('cleaning - get')
         id=self.kwargs.get('pk', None)
         init=self.get_initial()
         # create formset with initial data and POST data
@@ -588,7 +587,6 @@ class CleanBrainImagingSEDView(TemplateView):
             return redirect(url)
 
     def post(self, request, *args, **kwargs):
-        print('cleaning - post')
         id=self.kwargs.get('pk', None)
         # create formset with initial data and POST data
         sedCoordCleanFormSet=SEDCoordCleanFormSet(request.POST, initial=self.get_initial())
@@ -822,12 +820,15 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
 class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
-        print(self.request.POST)
         context = super(UpdateERPSEDView,self).get_context_data(**kwargs)
         context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
         context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, instance=self.object,
             queryset=ERPComponent.objects.filter(erp_sed=self.object),prefix='erp_component')
+        for subform in context['erp_component_formset'].forms:
+            if 'electrode_position' in subform.initial and subform.initial['electrode_position'] is not None:
+                position=ElectrodePosition.objects.get(id=subform.initial['electrode_position'])
+                subform.initial['electrode_position_system']=position.position_system.id
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
