@@ -520,10 +520,13 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
                     data_row_str+=' | '+str(coord.statistic_value)
             extra_data=[x.strip() for x in coord.extra_data.split('|')]
             for elem in extra_data:
-                data_row.append(elem)
-                data_row_str+=' | '+elem
+                if len(elem):
+                    data_row.append(elem)
+                    data_row_str+=' | '+elem
 
-            imagingDataStr+=data_row_str+'\n'
+            if len(imagingDataStr)>0:
+                imagingDataStr+='\n'
+            imagingDataStr+=data_row_str
         return {'data': imagingDataStr}
 
     def get_context_data(self, **kwargs):
