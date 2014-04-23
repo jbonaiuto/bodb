@@ -1,7 +1,7 @@
 from django.forms import widgets
 from rest_framework import serializers
 from bodb.models import SED, ERPSED, BrainImagingSED, ConnectivitySED, BuildSED, TestSED
-from bodb.serializers.brain_region import RelatedBrainRegionSerializer
+from bodb.serializers.brain_region import BrainRegionSerializer, RelatedBrainRegionSerializer
 from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.bop import RelatedBOPSerializer
 from bodb.serializers.user import UserSerializer
@@ -54,13 +54,30 @@ class ERPSEDSerializer(SEDSerializer):
     
     class Meta:
         model = ERPSED
+        fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time', 
+                  'brief_description','narrative','tags', 'public',
+                  'cognitive_paradigm','sensory_modality', 'response_modality','control_condition', 'experimental_condition',
+                  'figures','related_bop','related_brain_region', 'references')
+        
         
 class BrainImagingSEDSerializer(SEDSerializer):
     
     class Meta:
         model = BrainImagingSED
+        fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time', 
+                  'brief_description','narrative','tags', 'public',
+                  'method','control_condition','experimental_condition','coord_space',
+                  'core_header_1', 'core_header_2', 'core_header_3', 'core_header_4','extra_header',
+                  'figures','related_bop','related_brain_region', 'references')
+        
+        
         
 class ConnectivitySEDSerializer(SEDSerializer):
+    source_region = BrainRegionSerializer(source = 'source_region')
+    target_region = BrainRegionSerializer(source = 'target_region')
     
     class Meta:
         model = ConnectivitySED
+        fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time', 
+                  'source_region', 'target_region',
+                  'brief_description','narrative','tags', 'public','figures','related_bop','related_brain_region', 'references')
