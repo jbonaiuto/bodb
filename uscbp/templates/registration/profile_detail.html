@@ -51,17 +51,21 @@
                     <td class="myerrors">{% if form.email.errors %}{{ form.email.errors }}{% endif %}</td>
                 </tr>
                 <tr>
-                    <td>Email new message notifications</td>
-                    <td colspan="2">{{ form.new_message_notify }}</td>
-                </tr>
-                <tr>
                     <td>{{ form.affiliation.label_tag }} {% if form.affiliation.field.required %}*{% endif %}</td>
                     <td>{{ form.affiliation }}</td>
                     <td class="myerrors">{% if form.affiliation.errors %}{{ form.affiliation.errors }}{% endif %}</td>
                 </tr>
                 <tr>
+                    <td>Email new message notifications</td>
+                    <td colspan="2">{{ form.new_message_notify }}</td>
+                </tr>
+                <tr>
                     <td>Preferred notification method</td>
                     <td colspan="2">{{ form.notification_preference }}</td>
+                </tr>
+                <tr>
+                    <td>Show tour on login</td>
+                    <td colspan="2">{{ form.show_tour }}</td>
                 </tr>
                 <tr>
                     <td>New password *</td>
