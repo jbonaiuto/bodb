@@ -23,7 +23,7 @@ styles = getSampleStyleSheet()
 def get_sed_report_context(request, sed):
     # load related entries
     figures = list(DocumentFigure.objects.filter(document=sed).order_by('order'))
-    related_bops = list(RelatedBOP.get_related_bops(sed, request.user))
+    related_bops = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(sed,request.user),request.user))
     related_models = RelatedModel.get_sed_related_models(sed, request.user)
     related_brain_regions = list(RelatedBrainRegion.objects.filter(document=sed))
     references = list(sed.literature.all())

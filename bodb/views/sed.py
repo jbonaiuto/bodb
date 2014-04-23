@@ -30,9 +30,8 @@ class EditSEDMixin():
         context = self.get_context_data()
         figure_formset = context['figure_formset']
         related_brain_region_formset = context['related_brain_region_formset']
-        related_bop_formset=context['related_bop_formset']
 
-        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and related_bop_formset.is_valid():
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid():
 
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
@@ -55,19 +54,6 @@ class EditSEDMixin():
             for figure_form in figure_formset.deleted_forms:
                 if figure_form.instance.id:
                     figure_form.instance.delete()
-
-            # save related BOPs
-            related_bop_formset.instance=self.object
-            for related_bop_form in related_bop_formset.forms:
-                if not related_bop_form in related_bop_formset.deleted_forms:
-                    related_bop=related_bop_form.save(commit=False)
-                    related_bop.document=self.object
-                    related_bop.save()
-
-            # delete removed related BOPs
-            for related_bop_form in related_bop_formset.deleted_forms:
-                if related_bop_form.instance.id:
-                    related_bop_form.instance.delete()
 
             # save related brain regions
             related_brain_region_formset.instance=self.object
@@ -103,9 +89,7 @@ class CreateSEDView(EditSEDMixin, CreateView):
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='insert_data.html#insert-generic-sed'
-        context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
@@ -122,11 +106,8 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='insert_data.html#insert-generic-sed'
-        context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
@@ -211,7 +192,6 @@ class SEDDetailView(DocumentDetailView):
         context = super(SEDDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['bop_relationship']=False
         if self.object.type=='event related potential':
             context['erp_components'] = ERPComponent.objects.filter(erp_sed=self.object)
         elif self.object.type=='connectivity':
@@ -277,8 +257,8 @@ class SEDDetailView(DocumentDetailView):
         elif self.model==ConnectivitySED:
             context['url']=self.object.html_url_string()
         context['references'] = self.object.literature.all()
-        context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
-        context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
+        context['related_models'] = RelatedModel.get_reverse_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
+        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
         if user.is_authenticated() and not user.is_anonymous():
             context['selected']=user.get_profile().active_workspace.related_seds.filter(id=self.object.id).count()>0
         context['type']=self.request.GET.get('type',None)
@@ -296,9 +276,8 @@ class EditBrainImagingSEDMixin():
         context=self.get_context_data()
         figure_formset = context['figure_formset']
         related_brain_region_formset = context['related_brain_region_formset']
-        related_bop_formset=context['related_bop_formset']
 
-        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and related_bop_formset.is_valid():
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid():
 
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
@@ -321,19 +300,6 @@ class EditBrainImagingSEDMixin():
             for figure_form in figure_formset.deleted_forms:
                 if figure_form.instance.id:
                     figure_form.instance.delete()
-
-            # save related BOPs
-            related_bop_formset.instance=self.object
-            for related_bop_form in related_bop_formset.forms:
-                if not related_bop_form in related_bop_formset.deleted_forms:
-                    related_bop=related_bop_form.save(commit=False)
-                    related_bop.document=self.object
-                    related_bop.save()
-
-            # delete removed related BOPs
-            for related_bop_form in related_bop_formset.deleted_forms:
-                if related_bop_form.instance.id:
-                    related_bop_form.instance.delete()
 
             # save related brain regions
             related_brain_region_formset.instance=self.object
@@ -507,9 +473,7 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='insert_data.html#summary-of-brain-imaging-summary-data'
-        context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
@@ -569,11 +533,8 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='insert_data.html#summary-of-brain-imaging-summary-data'
-        context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
@@ -675,9 +636,8 @@ class EditConnectivitySEDMixin():
         context=self.get_context_data()
         figure_formset = context['figure_formset']
         related_brain_region_formset = context['related_brain_region_formset']
-        related_bop_formset=context['related_bop_formset']
 
-        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and related_bop_formset.is_valid():
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid():
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
             if self.object.id is None:
@@ -699,19 +659,6 @@ class EditConnectivitySEDMixin():
             for figure_form in figure_formset.deleted_forms:
                 if figure_form.instance.id:
                     figure_form.instance.delete()
-
-            # save related BOPs
-            related_bop_formset.instance=self.object
-            for related_bop_form in related_bop_formset.forms:
-                if not related_bop_form in related_bop_formset.deleted_forms:
-                    related_bop=related_bop_form.save(commit=False)
-                    related_bop.document=self.object
-                    related_bop.save()
-
-            # delete removed related BOPs
-            for related_bop_form in related_bop_formset.deleted_forms:
-                if related_bop_form.instance.id:
-                    related_bop_form.instance.delete()
 
             # save related brain regions
             related_brain_region_formset.instance=self.object
@@ -746,9 +693,7 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
@@ -765,11 +710,8 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
@@ -792,10 +734,8 @@ class EditERPSEDMixin():
         erp_component_formset = context['erp_component_formset']
         figure_formset = context['figure_formset']
         related_brain_region_formset = context['related_brain_region_formset']
-        related_bop_formset=context['related_bop_formset']
 
-        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and related_bop_formset.is_valid() and\
-           erp_component_formset.is_valid():
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and erp_component_formset.is_valid():
 
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
@@ -831,19 +771,6 @@ class EditERPSEDMixin():
             for erp_component_form in erp_component_formset.deleted_forms:
                 if erp_component_form.instance.id:
                     erp_component_form.instance.delete()
-
-            # save related BOPs
-            related_bop_formset.instance=self.object
-            for related_bop_form in related_bop_formset.forms:
-                if not related_bop_form in related_bop_formset.deleted_forms:
-                    related_bop=related_bop_form.save(commit=False)
-                    related_bop.document=self.object
-                    related_bop.save()
-
-            # delete removed related BOPs
-            for related_bop_form in related_bop_formset.deleted_forms:
-                if related_bop_form.instance.id:
-                    related_bop_form.instance.delete()
 
             # save related brain regions
             related_brain_region_formset.instance=self.object
@@ -881,9 +808,7 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, prefix='related_bop')
         context['helpPage']='insert_data.html#summary-of-event-related-potential-data'
-        context['bop_relationship']=False
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
@@ -905,11 +830,8 @@ class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
             prefix='related_brain_region')
-        context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object),prefix='related_bop')
         context['references'] = self.object.literature.all()
         context['helpPage']='insert_data.html#summary-of-event-related-potential-data'
-        context['bop_relationship']=False
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)

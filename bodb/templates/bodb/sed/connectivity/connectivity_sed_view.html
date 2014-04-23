@@ -199,7 +199,7 @@
                     </td>
                 </tr>
             {% endif %}
-            {% if related_bops %}
+            {% if related_bops or reverse_related_bops %}
                 <tr>
                     <td colspan=2 style="padding:0px">
                         <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
@@ -218,12 +218,14 @@
                 <tr>
                     <td colspan="2">
                         {% with related_bops as related_bop_list %}
-                            {% include "bodb/bop/related_bop_list_view.html" %}
+                            {% with reverse_related_bops as reverse_related_bop_list %}
+                                {% include "bodb/bop/related_bop_list_view.html" %}
+                            {% endwith %}
                         {% endwith %}
                     </td>
                 </tr>
             {% endif %}
-            {% if related_models %}
+            {% if related_models or reverse_related_models %}
                 <tr>
                     <td colspan=2 style="padding:0px">
                         <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
@@ -242,7 +244,9 @@
                 <tr>
                     <td colspan="2">
                         {% with related_models as related_model_list %}
-                            {% include "bodb/model/related_model_list_view.html" %}
+                            {% with reverse_related_models as reverse_related_model_list %}
+                                {% include "bodb/model/related_model_list_view.html" %}
+                            {% endwith %}
                         {% endwith %}
                     </td>
                 </tr>
