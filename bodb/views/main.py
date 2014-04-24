@@ -74,6 +74,7 @@ class InsertView(BODBView):
     def get_context_data(self, **kwargs):
         context=super(InsertView,self).get_context_data(**kwargs)
         context['helpPage']='insert_data.html'
+        context['showTour']='show_tour' in self.request.GET
         return context
 
 

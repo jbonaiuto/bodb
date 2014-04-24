@@ -101,7 +101,7 @@
                 <td width="110px" align=right valign="top">
                     {% if user.is_authenticated %}
                         <div id="user_img">
-                            <a href="/bodb/messages/" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
+                            <a href="/bodb/messages/" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img id="messagesLink" src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
                             {% if user.get_profile.avatar %}
                                 <img height=55 src="{{ user.get_profile.avatar.url }}"/>
                             {% endif %}
@@ -113,14 +113,14 @@
         <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b>
         <div id="navbar">
             {% if user.is_authenticated and not user.is_anonymous  %}
-                <li><a href="/bodb/insert/">Insert</a></li>
+                <li id="insert_link"><a href="/bodb/insert/">Insert</a></li>
             {% endif %}
-            <li><a href="/bodb/search/">Search</a></li>
-            <li><script>createWebStartLink('/bodb/brainSurfer/','Visualization',1.6)</script></li>
+            <li id="search_link"><a href="/bodb/search/">Search</a></li>
+            <li id="vis_link"><script>createWebStartLink('/bodb/brainSurfer/','Visualization',1.6)</script></li>
             {% if user.is_authenticated and not user.is_anonymous  %}
-                <li><a href="/bodb/drafts/">Drafts</a></li>
-                <li><a href="/bodb/favorites/">Favorites</a></li>
-                <li><a href="/bodb/workspaces/">Workspaces</a></li>
+                <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
+                <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
+                <li id="workspaces_link"><a href="/bodb/workspaces/">Workspaces</a></li>
             {% endif %}
             {% if user.is_superuser %}
                 <li><a href="/bodb/admin/">Admin</a></li>

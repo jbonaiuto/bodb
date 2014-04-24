@@ -20,6 +20,48 @@
             document.location.href='/bodb/workspaces/';
         }
     </script>
+    {% if showTour %}
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+        <script type="text/javascript">
+            var workspace_page_tour_seen = function(index){
+                $.cookie('workspace_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
+                window.location = '/bodb/';
+            };
+
+            $(window).load(function() {
+                if( $.cookie('insert_page_tour_seen') == 'TRUE'){
+                    $('#joyRideTipContent').joyride({
+                        autoStart : true,
+                        postRideCallback: workspace_page_tour_seen,
+                        preStepCallback : function (index, tip) {
+                            if (index==1) {
+                                switchTab('entry',['activity','coord','bookmark','discussion','admin']);
+                            }
+                            else if (index == 2) {
+                                switchTab('coord',['activity','entry','bookmark','discussion','admin']);
+                            }
+                            else if (index == 3) {
+                                switchTab('bookmark',['activity','entry','coord','discussion','admin']);
+                            }
+                            else if (index == 4) {
+                                switchTab('discussion',['activity','entry','coord','bookmark','admin']);
+                            }
+                            else if (index == 5) {
+                                switchTab('admin',['activity','entry','coord','bookmark','discussion']);
+                            }
+                        },
+                        postStepCallback: function(index, tip) {
+                            if(index == 5) {
+                                switchTab('activity',['entry','coord','bookmark','discussion','admin']);
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div id="list">
@@ -206,39 +248,4 @@
         </li>
     </ol>
 
-    <!-- Run the tour -->
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
-    <script>
-        $(window).load(function() {
-            $('#joyRideTipContent').joyride({
-                autoStart : true,
-                preStepCallback : function (index, tip) {
-                    if (index==1) {
-                        switchTab('entry',['activity','coord','bookmark','discussion','admin']);
-                    }
-                    else if (index == 2) {
-                        switchTab('coord',['activity','entry','bookmark','discussion','admin']);
-                    }
-                    else if (index == 3) {
-                        switchTab('bookmark',['activity','entry','coord','discussion','admin']);
-                    }
-                    else if (index == 4) {
-                        switchTab('discussion',['activity','entry','coord','bookmark','admin']);
-                    }
-                    else if (index == 5) {
-                        switchTab('admin',['activity','entry','coord','bookmark','discussion']);
-                    }
-                },
-                postStepCallback: function(index, tip) {
-                    if(index == 5) {
-                        switchTab('activity',['entry','coord','bookmark','discussion','admin']);
-                    }
-                },
-                localStorage: true,
-                localStorageKey: 'workspace_tour'
-            });
-        });
-    </script>
 {% endblock %}

@@ -312,8 +312,6 @@ class BodbProfile(models.Model):
     affiliation = models.CharField(max_length=200)
     # type of notification to use - email, internal BODB message, or both
     notification_preference = models.CharField(max_length=100, choices=NOTIFICATION_TYPE_CHOICES, default='both')
-    # whether or not to show the tour
-    show_tour=models.BooleanField(default=True)
     # favorite entries
     favorites = models.ManyToManyField('Document')
     class Meta:

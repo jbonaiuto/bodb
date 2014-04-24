@@ -1,6 +1,31 @@
 {% extends "base_generic.html" %}
+{% load staticfiles %}
 {% block extrahead %}
     <title>BODB - Insert</title>
+    <link rel="stylesheet" href="{% static 'bodb/css/joyride-2.1.css' %}">
+    {% if showTour %}
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+        <script>
+            var insert_page_tour_seen = function(index){
+                if (index == $('#joyRideTipContent li').length - 1)
+                {
+                    $.cookie('insert_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
+                    window.location = '/bodb/workspace/active/?show_tour=1';
+                }
+            };
+
+            $(window).load(function() {
+                if( $.cookie('index_page_tour_seen') == 'TRUE'){
+                    $('#joyRideTipContent').joyride({
+                        autoStart : true,
+                        postRideCallback: insert_page_tour_seen
+                    });
+                }
+            });
+        </script>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div id="list">
@@ -8,55 +33,91 @@
         Manually insert entries using the web interface.
         <br>
         <table class="tab_panel">
-            <tr class="section_header">
-                <td>
-                    <strong>{% if perms.bodb.add_literature %}<a href="/bodb/literature/new/">Literature</a>{% else %}Literature{% endif %}</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Literature (Journal Article, Book, Chapter, Conference, Thesis, and Unpublished) Information
-                </td>
-            </tr>
-            <tr><td>&nbsp;</td></tr>
-            <tr class="section_header">
-                <td>
-                    <strong>{% if perms.bodb.add_bop %}<a href="/bodb/bop/new/">Brain Operating Principle</a>{% else %}Brain Operating Principle{% endif %}</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Brain Operating Principle (BOP, e.g. Winner-Take-All)
-                </td>
-            </tr>
-            <tr><td>&nbsp;</td></tr>
-            <tr class="section_header">
-                <td>
-                    <strong>{% if perms.bodb.add_model %}<a href="/bodb/model/new/">Model</a>{% else %}Model{% endif %}</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle)
-                </td>
-            </tr>
-            <tr><td>&nbsp;</td></tr>
-            <tr class="section_header">
-                <td>
-                    <strong>Summary of Experimental Data</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    A summary of experimental data (SED). Currently three types are available for entry:
-                    <ul>
-                        <li>{% if perms.bodb.add_sed %}<a href="/bodb/sed/generic/new/">{% endif %}Generic Summary of Experimental Data{% if perms.bodb.add_sed %}</a>{% endif %}</li>
-                        <li>{% if perms.bodb.add_sed %}<a href="/bodb/sed/imaging/new/">{% endif %}Summary of Brain Imaging Data{% if perms.bodb.add_sed %}</a>{% endif %}</li>
-                        <li>{% if perms.bodb.add_sed %}<a href="/bodb/sed/erp/new/">{% endif %}Summary of Event Related Potential Data{% if perms.bodb.add_sed %}</a>{% endif %}</li>
-                        <li>{% if perms.bodb.add_sed %}<a href="/bodb/sed/connectivity/new/">{% endif %}Summary of Connectivity Data{% if perms.bodb.add_sed %}</a>{% endif %}</li>
-                    </ul>
-                </td>
-            </tr>
+            {% if perms.bodb.add_literature %}
+                <tr class="section_header">
+                    <td id="literatureHeader">
+                        <strong><a href="/bodb/literature/new/">Literature</a></strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Literature (Journal Article, Book, Chapter, Conference, Thesis, and Unpublished) Information
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+            {% endif %}
+            {% if perms.bodb.add_bop %}
+                <tr class="section_header">
+                    <td id="bopHeader">
+                        <strong><a href="/bodb/bop/new/">Brain Operating Principle</a></strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Brain Operating Principle (BOP, e.g. Winner-Take-All)
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+            {% endif %}
+            {% if perms.bodb.add_sed %}
+                <tr class="section_header">
+                    <td id="sedHeader">
+                        <strong>Summary of Experimental Data</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        A summary of experimental data (SED). Currently three types are available for entry:
+                        <ul>
+                            <li><a href="/bodb/sed/generic/new/">Generic Summary of Experimental Data</a></li>
+                            <li><a href="/bodb/sed/imaging/new/">Summary of Brain Imaging Data</a></li>
+                            <li><a href="/bodb/sed/erp/new/">Summary of Event Related Potential Data</a></li>
+                            <li><a href="/bodb/sed/connectivity/new/">Summary of Connectivity Data</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if perms.bodb.add_model %}
+                <tr class="section_header">
+                    <td id="modelHeader">
+                        <strong><a href="/bodb/model/new/">Model</a></strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle)
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+            {% endif %}
         </table>
     </div>
+    <!-- Tip Content -->
+    <ol id="joyRideTipContent">
+        {% if perms.bodb.add_literature %}
+            <li data-id="literatureHeader" data-text="Next" class="custom">
+                <h2>Literature</h2>
+                <p>All entries in BODB can be linked to the literature that they were originally reported in. Users can enter literature information in manually, or import journal article information from PubMed.</p>
+            </li>
+        {% endif %}
+        {% if perms.bodb.add_bop %}
+            <li data-id="bopHeader" data-button="Next" class="custom">
+                <h2>Brain Operating Principles (BOPs)</h2>
+                <p>A BOP is broader and more general than a particular model or module of the brain, and captures the essence of the brain operation investigated, such as "Supervised Learning", for example.</p>
+            </li>
+        {% endif %}
+        {% if perms.bodb.add_sed %}
+            <li data-id="sedHeader" data-button="Next">
+                <h2>Summaries of Experimental Data (SEDs)</h2>
+                <p>SEDs are summaries of experimental results at a level of abstraction appropriate for modeling. There are specialized subtypes for brain imaging, event related potential, and connectivity data.</p>
+            </li>
+        {% endif %}
+        {% if perms.bodb.add_model %}
+            <li data-id="modelHeader" data-button="Next">
+                <h2>Models</h2>
+                <p>Models (conceptual and computational) are documented in a hierarchical manner by decomposing them into modules, each with defined inputs and outputs and which may further be composed of submodules. They are linked to the BOPs they implement, the brain regions they simulate, and the SEDs used to design and test them.</p>
+            </li>
+        {% endif %}
+
+    </ol>
 {% endblock %}

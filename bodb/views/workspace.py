@@ -110,7 +110,10 @@ class WorkspaceTitleAvailableView(JSONResponseMixin,BaseCreateView):
 class ActiveWorkspaceDetailView(View):
     def get(self, request, *args, **kwargs):
         profile=self.request.user.get_profile()
-        return redirect(profile.active_workspace.get_absolute_url())
+        url=profile.active_workspace.get_absolute_url()
+        if 'show_tour' in self.request.GET:
+            url+='?show_tour='+self.request.GET['show_tour']
+        return redirect(url)
 
 
 class WorkspaceInvitationResponseView(TemplateView):
@@ -234,6 +237,7 @@ class WorkspaceDetailView(BODBView,FormView):
         user=self.request.user
         context['helpPage']='workspaces.html#workspace-tabs'
         context['workspace']=self.object
+        context['showTour']='show_tour' in self.request.GET
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
