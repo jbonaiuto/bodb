@@ -31,30 +31,28 @@
             };
 
             $(window).load(function() {
-                if( $.cookie('insert_page_tour_seen') == 'TRUE'){
+                if( $.cookie('search_page_tour_seen') == 'TRUE'){
                     $('#joyRideTipContent').joyride({
                         autoStart : true,
                         postRideCallback: workspace_page_tour_seen,
                         preStepCallback : function (index, tip) {
                             if (index==1) {
+                                switchTab('activity',['entry','coord','bookmark','discussion','admin']);
+                            }
+                            else if (index==2) {
                                 switchTab('entry',['activity','coord','bookmark','discussion','admin']);
                             }
-                            else if (index == 2) {
+                            else if (index == 3) {
                                 switchTab('coord',['activity','entry','bookmark','discussion','admin']);
                             }
-                            else if (index == 3) {
+                            else if (index == 4) {
                                 switchTab('bookmark',['activity','entry','coord','discussion','admin']);
                             }
-                            else if (index == 4) {
+                            else if (index == 5) {
                                 switchTab('discussion',['activity','entry','coord','bookmark','admin']);
                             }
-                            else if (index == 5) {
+                            else if (index == 6) {
                                 switchTab('admin',['activity','entry','coord','bookmark','discussion']);
-                            }
-                        },
-                        postStepCallback: function(index, tip) {
-                            if(index == 5) {
-                                switchTab('activity',['entry','coord','bookmark','discussion','admin']);
                             }
                         }
                     });
@@ -222,6 +220,10 @@
     </div>
 
     <ol id="joyRideTipContent">
+        <li data-id="activeWorkspaceLink" data-button="Next">
+            <h2>Active Workspace</h2>
+            <p>View your currently active workspace.</p>
+        </li>
         <li data-id="activityTab" data-button="Next" data-options="tipLocation:top">
             <h2>Activity timeline</h2>
             <p>View recent events in this workspace.</p>

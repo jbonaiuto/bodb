@@ -23,6 +23,7 @@ class SearchView(FormView):
     def get_context_data(self, **kwargs):
         context = super(SearchView,self).get_context_data(**kwargs)
         context['helpPage']='search_data.html'
+        context['showTour']='show_tour' in self.request.GET
         context['showTabs']=True
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_search_form']=BOPSearchForm(self.request.POST or None,prefix='bop')

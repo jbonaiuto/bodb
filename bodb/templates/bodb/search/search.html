@@ -3,6 +3,50 @@
 {% block extrahead %}
     <title>BODB - Search</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bodb/css/joyride-2.1.css' %}">
+    {% if showTour %}
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/modernizr.mq.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bodb/scripts/jquery.joyride-2.1.js' %}"></script>
+        <script type="text/javascript">
+            var search_page_tour_seen = function(index){
+                $.cookie('search_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
+                {% if user.is_authenticated and not user.is_anonymous %}
+                    window.location = '/bodb/workspace/active/?show_tour=1';;
+                {% else %}
+                    $.cookie('workspace_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
+                    window.location = '/bodb/';
+                {% endif %}
+            };
+
+            $(window).load(function() {
+                if( $.cookie('insert_page_tour_seen') == 'TRUE'){
+                    $('#joyRideTipContent').joyride({
+                        autoStart : true,
+                        postRideCallback: search_page_tour_seen,
+                        preStepCallback : function (index, tip) {
+                            if (index==1) {
+                                switchTab('all',['literature','bop','model','sed','ssr','brainRegion','user']);
+                            }
+                            else if (index==2) {
+                                switchTab('model',['all','literature','bop','sed','ssr','brainRegion','user']);
+                            }
+                            else if (index == 3) {
+                                switchTab('sed',['all','literature','bop','model','ssr','brainRegion','user']);
+                            }
+                            else if (index == 4) {
+                                animatedcollapse.toggle('sedAdvancedOptions')
+                            }
+                            else if (index == 5) {
+                                document.getElementById('id_sed-type').value='brain imaging';
+                                updateSEDSearchOptions('brain imaging');
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div id="list">
@@ -118,4 +162,30 @@
             </tr>
         </table>
     </div>
+    <ol id="joyRideTipContent">
+        <li data-id="search_link" data-text="Next" class="custom">
+            <h2>Search</h2>
+            <p>Search existing BODB entries.</p>
+        </li>
+        <li data-id="allTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Search All</h2>
+            <p>Search all types of entries.</p>
+        </li>
+        <li data-id="modelTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Search Models</h2>
+            <p>Click on a tab to search entries of a particular type like models.</p>
+        </li>
+        <li data-id="sedTab" data-button="Next" data-options="tipLocation:bottom">
+            <h2>Search SEDs</h2>
+            <p>SEDs can be searched within BODB and on federated databases.</p>
+        </li>
+        <li data-id="sedAdvancedOptionsLabel" data-button="Next" data-options="tipLocation:top">
+            <h2>Advanced Options</h2>
+            <p>Click the Show link next to Advanced Options to view other fields an entry type can be searched by.</p>
+        </li>
+        <li data-id="id_sed-type" data-button="Next" data-options="tipLocation:top">
+            <h2>Type-specific fields</h2>
+            <p>Change the SED type to search by fields specific to a certain type experimental data.</p>
+        </li>
+    </ol>
 {% endblock %}

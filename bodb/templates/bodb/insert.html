@@ -12,7 +12,7 @@
                 if (index == $('#joyRideTipContent li').length - 1)
                 {
                     $.cookie('insert_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
-                    window.location = '/bodb/workspace/active/?show_tour=1';
+                    window.location = '/bodb/search/?show_tour=1';
                 }
             };
 
@@ -94,26 +94,30 @@
     </div>
     <!-- Tip Content -->
     <ol id="joyRideTipContent">
+        <li data-id="insert_link" data-text="Next" class="custom">
+            <h2>Insert</h2>
+            <p>Add a new entry.</p>
+        </li>
         {% if perms.bodb.add_literature %}
-            <li data-id="literatureHeader" data-text="Next" class="custom">
+            <li data-id="literatureHeader" data-text="Next">
                 <h2>Literature</h2>
                 <p>All entries in BODB can be linked to the literature that they were originally reported in. Users can enter literature information in manually, or import journal article information from PubMed.</p>
             </li>
         {% endif %}
         {% if perms.bodb.add_bop %}
-            <li data-id="bopHeader" data-button="Next" class="custom">
+            <li data-id="bopHeader" data-button="Next">
                 <h2>Brain Operating Principles (BOPs)</h2>
                 <p>A BOP is broader and more general than a particular model or module of the brain, and captures the essence of the brain operation investigated, such as "Supervised Learning", for example.</p>
             </li>
         {% endif %}
         {% if perms.bodb.add_sed %}
-            <li data-id="sedHeader" data-button="Next">
+            <li data-id="sedHeader" data-button="Next" data-options="tipLocation:top">
                 <h2>Summaries of Experimental Data (SEDs)</h2>
                 <p>SEDs are summaries of experimental results at a level of abstraction appropriate for modeling. There are specialized subtypes for brain imaging, event related potential, and connectivity data.</p>
             </li>
         {% endif %}
         {% if perms.bodb.add_model %}
-            <li data-id="modelHeader" data-button="Next">
+            <li data-id="modelHeader" data-button="Next" data-options="tipLocation:top">
                 <h2>Models</h2>
                 <p>Models (conceptual and computational) are documented in a hierarchical manner by decomposing them into modules, each with defined inputs and outputs and which may further be composed of submodules. They are linked to the BOPs they implement, the brain regions they simulate, and the SEDs used to design and test them.</p>
             </li>
