@@ -136,6 +136,12 @@
                 <h2>Workspaces</h2>
                 <p>View all workspaces you have access to and set your active workspace.</p>
             </li>
+        {% endif %}
+        <li data-id="help_link" data-button="Next" data-options="tipLocation:right">
+            <h2>Help</h2>
+            <p>Click here to view BODB's documentation and user manual.</p>
+        </li>
+        {% if user.is_authenticated and not user.is_anonymous %}
             <li data-id="myProfileLink" data-button="Next" data-options="tipLocation:right">
                 <h2>Edit your profile</h2>
                 <p>Update your contact preferences, manage subscriptions, and add an avatar image.</p>

@@ -89,12 +89,12 @@
                 <td align=left>
                     <div id="user_info">
                         {% if user.is_authenticated and not user.is_anonymous  %}
-                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;{% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
+                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                             <br>[<a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;
                             [<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
                         {% else %}
                             <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
-                            <br>{% if helpPage %}[<a href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
+                            <br>{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                         {% endif %}
                     </div>
                 </td>
