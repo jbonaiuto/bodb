@@ -10,30 +10,32 @@
             document.getElementById('groupForm').submit();
         }
 
-        function deleteGroup()
-        {
-            if(confirm('Do you really want to delete this group?'))
+        {% if form.instance.id%}
+            function deleteGroup()
             {
-                var data = { 'id': {{ group.id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                var args = { type: "POST", url: "/bodb/group/{{ group.id }}/delete/", data: data, complete: doneDeleteGroup };
-                $.ajax(args);
+                if(confirm('Do you really want to delete this group?'))
+                {
+                    var data = { 'id': {{ group.id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                    var args = { type: "POST", url: "/bodb/group/{{ group.id }}/delete/", data: data, complete: doneDeleteGroup };
+                    $.ajax(args);
+                    return false;
+                }
                 return false;
             }
-            return false;
-        }
 
-        function doneDeleteGroup(res, status)
-        {
-            var txt = res.responseText;
-            if (status=="success")
+            function doneDeleteGroup(res, status)
             {
-                var data = eval('('+txt+')');
-                opener.document.getElementById('group-'+data.id).style.display='none';
-                self.close();
+                var txt = res.responseText;
+                if (status=="success")
+                {
+                    var data = eval('('+txt+')');
+                    opener.document.getElementById('group-'+data.id).style.display='none';
+                    self.close();
+                }
+                else
+                    alert(txt);
             }
-            else
-                alert(txt);
-        }
+        {% endif %}
     </script>
 {% endblock %}
 {% block content %}
