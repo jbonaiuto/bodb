@@ -12,7 +12,7 @@ from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, Docum
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
 
-from bodb.serializers import BOPSerializer
+from bodb.serializers.bop import BOPSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response

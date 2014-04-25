@@ -138,7 +138,7 @@ class ERPComponent(models.Model):
         ('window', 'Time Window')
         )
 
-    erp_sed=models.ForeignKey(ERPSED)
+    erp_sed=models.ForeignKey(ERPSED, related_name = 'components')
     component_name=models.CharField(max_length=100)
 
     latency_peak=models.DecimalField(decimal_places=3, max_digits=10, null=False)
@@ -232,7 +232,7 @@ class SEDCoord(models.Model):
         ('right', 'right'),
         )
     # SED that coordinate is from
-    sed = models.ForeignKey('BrainImagingSED')
+    sed = models.ForeignKey('BrainImagingSED', related_name = 'coordinates')
     # three-d coordinate
     coord = models.ForeignKey('ThreeDCoord')
     # rCBF measure
@@ -513,7 +513,7 @@ def compareBuildSEDs(a, b):
     return cmp(a.sed.title.lower(), b.sed.title.lower())
 
 class TestSEDSSR(models.Model):
-    test_sed=models.ForeignKey('TestSED')
+    test_sed=models.ForeignKey('TestSED', related_name = 'test_sed')
     ssr=models.ForeignKey('SSR', null=True)
 
     class Meta:

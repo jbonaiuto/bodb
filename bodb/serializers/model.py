@@ -3,9 +3,10 @@ from rest_framework import serializers
 from bodb.models import Module, Model, RelatedModel, ModelAuthor, Author, Variable
 from bodb.serializers.brain_region import RelatedBrainRegionSerializer
 from bodb.serializers.literature import LiteratureSerializer
-from bodb.serializers.bop import RelatedBOPSerializer
 from bodb.serializers.sed import SEDSerializer, BuildSEDSerializer, TestSEDSerializer
+from bodb.serializers.ssr import PredictionSerializer
 from bodb.serializers.user import UserSerializer
+from bodb.serializers.document import DocumentFigureSerializer
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -49,6 +50,7 @@ class SubmoduleSerializer(serializers.ModelSerializer):
         model = Module
         fields = ('id', 'title','brief_description') 
 
+from bodb.serializers.bop import RelatedBOPSerializer
 
 #need to add Architecture and SSR
 class ModelSerializer(serializers.ModelSerializer):
@@ -60,15 +62,17 @@ class ModelSerializer(serializers.ModelSerializer):
     build_sed = BuildSEDSerializer(source = 'related_build_sed_document')
     test_sed = TestSEDSerializer(source = 'related_test_sed_document')
     related_model = RelatedModelSerializer(source = 'related_model_document')
+    prediction = PredictionSerializer(source = 'prediction')
     authors = ModelAuthorSerializer()
     collator = UserSerializer()
     last_modified_by = UserSerializer()
+    figures = DocumentFigureSerializer()
     
     
     class Meta:
         model = Model
         fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time', 
-                  'authors', 'brief_description', 'narrative', 'tags','public','figures','variables', 'submodules', 'build_sed','test_sed',
+                  'authors', 'brief_description', 'narrative', 'tags','public','figures','variables', 'submodules', 'build_sed','test_sed', 'prediction',
                   'modeldb_accession_number', 'execution_url','documentation_url','description_url','simulation_url', 
                   'related_model','related_bop','related_brain_region','references')
 

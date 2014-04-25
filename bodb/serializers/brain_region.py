@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from bodb.models import BrainRegion, RelatedBrainRegion
+from bodb.models import BrainRegion, RelatedBrainRegion, CoordinateSpace, ThreeDCoord, ElectrodePosition
         
         
 class BrainRegionSerializer(serializers.ModelSerializer):
@@ -17,3 +17,23 @@ class RelatedBrainRegionSerializer(serializers.ModelSerializer):
         model = RelatedBrainRegion
         fields = ('brain_region', 'relationship',)
         
+        
+class ThreeDCoordSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ThreeDCoord
+        fields = ('id','x','y','z')
+        
+        
+class CoordinateSpaceSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = CoordinateSpace
+        fields = ('id','name')
+      
+ 
+class ElectrodePositionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ElectrodePosition
+        fields = ('id','name', 'position_system')

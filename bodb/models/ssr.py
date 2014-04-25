@@ -63,7 +63,7 @@ class SSR(Document):
 
 class Prediction(Document):
     # The model the prediction is linked to
-    model=models.ForeignKey('Model')
+    model=models.ForeignKey('Model', related_name = 'prediction')
 
     class Meta:
         app_label='bodb'

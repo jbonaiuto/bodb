@@ -3,8 +3,10 @@ from rest_framework import serializers
 from bodb.models import BOP, RelatedBOP
 from bodb.serializers.brain_region import RelatedBrainRegionSerializer
 from bodb.serializers.literature import LiteratureSerializer
-#from bodb.serializers.model import RelatedModelSerializer
+from bodb.serializers.model import RelatedModelSerializer
 from bodb.serializers.user import UserSerializer
+from bodb.serializers.sed import BuildSEDSerializer
+from bodb.serializers.document import DocumentFigureSerializer
 
 
 class BOPSimpleSerializer(serializers.ModelSerializer):
@@ -25,18 +27,21 @@ class RelatedBOPSerializer(serializers.ModelSerializer):
 class BOPSerializer(serializers.ModelSerializer):
     references = LiteratureSerializer(source = 'literature', fields = ('id','title','authors','collator'))
     related_brain_region = RelatedBrainRegionSerializer(source = 'related_region_document')
-    #related_model = RelatedModelSerializer(source = 'related_model_document')
+    related_model = RelatedModelSerializer(source = 'related_model_document')
     related_bop = RelatedBOPSerializer(source = 'related_bop_document')
+    seds = BuildSEDSerializer(source = 'related_build_sed_document')
+    parent = BOPSimpleSerializer()
     collator = UserSerializer()
     last_modified_by = UserSerializer()
+    figures = DocumentFigureSerializer()
     
     #related_bop = serializers.SerializerMethodField('get_related_bop')
     
     class Meta:
         model = BOP
-        fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time',
-                  'brief_description','narrative','tags', 'public','figures', 'related_bop',
-        #'related_model',
+        fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time','parent',
+                  'brief_description','narrative','tags', 'public','figures', 'seds','related_bop',
+        'related_model',
         'related_brain_region', 'references')
     
     #def get_related_bop(self, obj):

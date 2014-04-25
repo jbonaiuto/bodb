@@ -7,6 +7,8 @@ from bodb.models import Message, BodbProfile
 from bodb.models.discussion import Forum
 from bodb.signals import document_changed
 from taggit.managers import TaggableManager
+import os
+from uscbp import settings
 
 class Document(models.Model):
     """
@@ -122,6 +124,9 @@ class DocumentFigure(models.Model):
     class Meta:
         app_label='bodb'
         ordering=('order',)
+        
+    def get_absolute_url(self):
+        return os.path.join(settings.MEDIA_ROOT, self.figure.url)
 
 
 class DocumentPublicRequest(models.Model):
