@@ -5,11 +5,12 @@ from pyexpat import ExpatError
 from django.db.models import Q
 import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
+from bodb.search.sed import SEDSearch
 from federation.cocomac.import_data import addNomenclature
 from registration.models import User
 
 def runCoCoMacSearch(search_data, userId):
-    searcher=CoCoMacSearcher(search_data)
+    searcher=CoCoMacSearch(search_data)
     results=[]
     search_local=False
     if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='connectivity'):
@@ -92,7 +93,7 @@ def runCoCoMacSearch(search_data, userId):
             op=operator.and_
 
         # create SED search
-        searcher=LocalCoCoMacSearcher(search_data)
+        searcher=LocalCoCoMacSearch(search_data)
 
         # construct search query
         for key in search_data.iterkeys():
@@ -139,7 +140,7 @@ def importConnectivitySED(source_region, target_region):
     return connSED
 
 
-class CoCoMacSearcher():
+class CoCoMacSearch():
     def __init__(self, search_data):
         self.__dict__.update(search_data)
 
@@ -179,52 +180,9 @@ class CoCoMacSearcher():
         return ""
 
 
-class LocalCoCoMacSearcher():
+class LocalCoCoMacSearch(SEDSearch):
     def __init__(self, search_data):
         self.__dict__.update(search_data)
-
-    # search by title, description, narrative, or tags
-    def search_keywords(self, userId):
-        if self.keywords:
-            words=self.keywords.split()
-            title_q=Q()
-            description_q=Q()
-            source_q=Q()
-            target_q=Q()
-            source_nom_q=Q()
-            target_nom_q=Q()
-            for word in words:
-                title_q = title_q | Q(title__icontains=word)
-                description_q = description_q | Q(brief_description__icontains=word)
-                source_q=Q(source_region__name__icontains=word) |\
-                         Q(source_region__abbreviation__icontains=word)
-                target_q=Q(target_region__name__icontains=word) |\
-                         Q(target_region__abbreviation__icontains=word)
-                source_nom_q=Q(source_region__nomenclature__name__icontains=word)
-                target_nom_q=Q(target_region__nomenclature__name__icontains=word)
-            keyword_q = title_q | description_q | source_q | target_q | source_nom_q | target_nom_q
-            return keyword_q
-        return Q()
-
-    # search by title
-    def search_title(self, userId):
-        if self.title:
-            words=self.title.split()
-            keyword_q=Q()
-            for word in words:
-                keyword_q = keyword_q | Q(title__icontains=word)
-            return keyword_q
-        return Q()
-
-    # search by description
-    def search_description(self, userId):
-        if self.description:
-            words=self.description.split()
-            keyword_q=Q()
-            for word in words:
-                keyword_q = keyword_q | Q(brief_description__icontains=word)
-            return keyword_q
-        return Q()
 
     def search_source_region(self, userId):
         if self.source_region:
