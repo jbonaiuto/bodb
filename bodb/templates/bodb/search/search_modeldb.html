@@ -32,13 +32,6 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr>
-                    <td colspan=7>
-                        <div id="user_info">
-                            [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
-                        </div>
-                    </td>
-                </tr>
-                <tr>
                     <td>
                         <strong>Any field:</strong>
                     </td>
@@ -62,7 +55,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td colspan=7>Results (1-{{ results|length }}{% endif %}</td>
+                    <td colspan=7>Results (1-{{ results|length }}</td>
                 </tr>
                 <tr class="col_header">
                     <td>&nbsp;</td>
@@ -77,7 +70,7 @@
                             {% if search_result.exists %}
                                 Import
                             {% else %}
-                                <a href="" onclick="return importModel('{{ search_result.accession_number }}','{{ search_result.authors|escapejs }}','{{ search_result.title|escapejs }}','{{ search_result.description|escapejs }}','{{ search_result.keywords|escapejs }}',{% if search_result.literature %}{{ search_result.literature.id }}, '{{ search_result.literature.author_names }}', '{{ search_result.literature.year }}','{{ search_result.literature.title }}'{% else %}-1,'','',''{% endif %});">Import</a>
+                                <a href="" onclick="return importModel('{{ search_result.accession_number }}','{{ search_result.authors|escapejs }}','{{ search_result.title|escapejs }}','{{ search_result.description|escapejs }}','{{ search_result.keywords|escapejs }}'{% if search_result.literature %},{{ search_result.literature.id }}, '{{ search_result.literature.author_names }}', '{{ search_result.literature.year }}','{{ search_result.literature.title }}'{% else %}-1,'','',''{% endif %});">Import</a>
                             {% endif %}
                         </td>
                         <td><a href="http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model={{ search_result.accession_number }}">{{ search_result.title }}</a></td>

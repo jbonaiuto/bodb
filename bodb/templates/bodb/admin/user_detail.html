@@ -16,13 +16,6 @@
         <form id="userForm" method="post" action="">
             {% csrf_token %}
             <table class="tab_panel">
-                <tr>
-                    <td colspan=2>
-                        <div id="user_info">
-                            [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
-                        </div>
-                    </td>
-                </tr>
                 <tr valign=top>
                     <td width=40%>{{ form.username.label_tag }}*</td>
                     <td>{{ form.username }}</td>
