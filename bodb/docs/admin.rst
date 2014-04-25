@@ -44,7 +44,9 @@ The User View page displays all of the user's information. The Permissions secti
     :figclass: align-center
 
     The User View page
-    
+
+.. _edit-user:
+
 Edit User
 ^^^^^^^^^
 
@@ -104,6 +106,8 @@ The Group View page displays all of the user group's information. The Permission
 
     The Group View page
 
+.. _edit-group:
+
 Edit Group
 ^^^^^^^^^^
 
@@ -119,7 +123,7 @@ The Group Edit page allows administrators to modify the attributes of an existin
 
 To change the group's name, edit the data in the "Name" text field.
 
-*Security Permissions* 
+*Security Permissions*
 
 The group's security permissions can be set in the Permissions section. Checking or unchecking the "Add", "Change" or "Delete" checkbox for a given entry type grants or removes permissions for user's in this group to perform that action on entries of that type. These security permissions are inherited by each user in this group, but are overridden by each user's personal security permissions.
 

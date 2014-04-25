@@ -129,7 +129,7 @@ class ManageDocumentPermissionsView(DetailView):
     def get_context_data(self, **kwargs):
         context=super(DetailView,self).get_context_data(**kwargs)
         context['document']=self.object
-        context['helpPage']='permissions.html'
+        context['helpPage']='permissions.html#individual-entry-permissions'
         context['users']=User.objects.all().exclude(id=self.request.user.id)
         context['groups']=Group.objects.filter(user__id=self.request.user.id)
         context['ispopup']=('_popup' in self.request.GET)
