@@ -1,6 +1,8 @@
 import urllib
 from Bio import Entrez
+from django.db.models import Q
 from bodb.search.sed import SEDSearch
+from taggit.utils import parse_tags
 
 Entrez.email = 'uscbrainproject@gmail.com'
 import operator
@@ -9,7 +11,7 @@ from django.contrib.auth.models import User
 from bodb.models import BredeBrainImagingSED, Journal, Author, LiteratureAuthor, CoordinateSpace, ThreeDCoord, SEDCoord, importPubmedLiterature, Document
 
 def runBredeSearch(search_data, userId):
-    searcher=BredeSearcher(search_data)
+    searcher=BredeSearch(search_data)
     results=[]
     search_local=False
     if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='brain imaging'):
@@ -65,7 +67,7 @@ def runBredeSearch(search_data, userId):
         if search_data['search_options']=='all':
             op=operator.and_
             
-        searcher=SEDSearch(search_data)
+        searcher=LocalBredeSearch(search_data)
         # construct search query
         for key in search_data.iterkeys():
             # if the searcher can search by this field
@@ -199,7 +201,7 @@ def importLiterature(bib_node):
     return lit
 
 
-class BredeSearcher:
+class BredeSearch:
 
     def __init__(self, search_data):
         self.__dict__.update(search_data)
@@ -358,6 +360,88 @@ class BredeSearcher:
         return xpath_string
 
 
+class LocalBredeSearch(SEDSearch):
+
+    # search by control condition
+    def search_control_condition(self, userId):
+        if self.control_condition:
+            op=operator.or_
+            if self.control_condition_options=='all':
+                op=operator.and_
+            words=parse_tags(self.control_condition)
+            keyword_filters=[Q(control_condition__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by experimental condition
+    def search_experimental_condition(self, userId):
+        if self.experimental_condition:
+            op=operator.or_
+            if self.experimental_condition_options=='all':
+                op=operator.and_
+            words=parse_tags(self.experimental_condition)
+            keyword_filters=[Q(experimental_condition__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    # search by method
+    def search_method(self, userId):
+        if self.method:
+            return Q(method=self.method)
+        return Q()
+
+    # search by coordinate brain region
+    def search_coordinate_brain_region(self, userId):
+        if self.coordinate_brain_region:
+            op=operator.or_
+            if self.coordinate_brain_region_options=='all':
+                op=operator.and_
+
+            words=parse_tags(self.coordinate_brain_region)
+            region_filters=[Q(Q(coordinates__named_brain_region=word) |
+                              Q(coordinates__coord__brainregionvolume__brain_region__name=word) |
+                              Q(coordinates__coord__brainregionvolume__brain_region__parent_region__name=word))
+                            for word in words]
+            return reduce(op,region_filters)
+        return Q()
+
+    # search by coordinate x
+    def search_x_min(self, userId):
+        if self.x_min:
+            return Q(coordinates__coord__x__gte=self.x_min)
+        return Q()
+
+    # search by coordinate x
+    def search_x_max(self, userId):
+        if self.x_max:
+            return Q(coordinates__coord__x__lte=self.x_max)
+        return Q()
+
+    # search by coordinate y
+    def search_y_min(self, userId):
+        if self.y_min:
+            return Q(coordinates__coord__y__gte=self.y_min)
+        return Q()
+
+    # search by coordinate y
+    def search_y_max(self, userId):
+        if self.y_max:
+            return Q(coordinates__coord__y__lte=self.y_max)
+        return Q()
+
+    # search by coordinate z
+    def search_z_min(self, userId):
+        if self.z_min:
+            return Q(coordinates__coord__z__gte=self.z_min)
+        return Q()
+
+    # search by coordinate z
+    def search_z_max(self, userId):
+        if self.z_max:
+            return Q(coordinates__coord__z__lte=self.z_max)
+        return Q()
+
+
 def download(url):
     """Copy the contents of a file from a given URL
     to a local file.
@@ -368,5 +452,5 @@ def download(url):
     return data
 
 if __name__ == '__main__':
-    searcher=BredeSearcher()
+    searcher=BredeSearch()
     searcher.searchString('saccade')

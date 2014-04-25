@@ -143,9 +143,9 @@ class SEDSearch(DocumentWithLiteratureSearch):
                 op=operator.and_
 
             words=parse_tags(self.coordinate_brain_region)
-            region_filters=[Q(Q(brainimagingsed__sedcoord__named_brain_region=word) |
-                              Q(brainimagingsed__sedcoord__coord__brainregionvolume__brain_region__name=word) |
-                              Q(brainimagingsed__sedcoord__coord__brainregionvolume__brain_region__parent_region__name=word))
+            region_filters=[Q(Q(brainimagingsed__coordinates__named_brain_region=word) |
+                              Q(brainimagingsed__coordinates__coord__brainregionvolume__brain_region__name=word) |
+                              Q(brainimagingsed__coordinates__coord__brainregionvolume__brain_region__parent_region__name=word))
                             for word in words]
             return reduce(op,region_filters)
         return Q()
@@ -153,37 +153,37 @@ class SEDSearch(DocumentWithLiteratureSearch):
     # search by coordinate x
     def search_x_min(self, userId):
         if self.type=='brain imaging' and self.x_min:
-            return Q(brainimagingsed__sedcoord__coord__x__gte=self.x_min)
+            return Q(brainimagingsed__coordinates__coord__x__gte=self.x_min)
         return Q()
 
     # search by coordinate x
     def search_x_max(self, userId):
         if self.type=='brain imaging' and self.x_max:
-            return Q(brainimagingsed__sedcoord__coord__x__lte=self.x_max)
+            return Q(brainimagingsed__coordinates__coord__x__lte=self.x_max)
         return Q()
 
     # search by coordinate y
     def search_y_min(self, userId):
         if self.type=='brain imaging' and self.y_min:
-            return Q(brainimagingsed__sedcoord__coord__y__gte=self.y_min)
+            return Q(brainimagingsed__coordinates__coord__y__gte=self.y_min)
         return Q()
 
     # search by coordinate y
     def search_y_max(self, userId):
         if self.type=='brain imaging' and self.y_max:
-            return Q(brainimagingsed__sedcoord__coord__y__lte=self.y_max)
+            return Q(brainimagingsed__coordinates__coord__y__lte=self.y_max)
         return Q()
 
     # search by coordinate z
     def search_z_min(self, userId):
         if self.type=='brain imaging' and self.z_min:
-            return Q(brainimagingsed__sedcoord__coord__z__gte=self.z_min)
+            return Q(brainimagingsed__coordinates__coord__z__gte=self.z_min)
         return Q()
 
     # search by coordinate z
     def search_z_max(self, userId):
         if self.type=='brain imaging' and self.z_max:
-            return Q(brainimagingsed__sedcoord__coord__z__lte=self.z_max)
+            return Q(brainimagingsed__coordinates__coord__z__lte=self.z_max)
         return Q()
 
     def search_cognitive_paradigm(self, userId):
@@ -242,53 +242,53 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.erp_component_name_options=='all':
                 op=operator.and_
             words=parse_tags(self.erp_component_name)
-            keyword_filters=[Q(erpsed__erpcomponent__component_name__icontains=word) for word in words]
+            keyword_filters=[Q(erpsed__components__component_name__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
     def search_latency_peak_min(self, userId):
         if self.type=='event related potential' and self.latency_peak_min:
-            return Q(erpsed__erpcomponent__latency_peak__gte=self.latency_peak_min)
+            return Q(erpsed__components__latency_peak__gte=self.latency_peak_min)
         return Q()
 
     def search_latency_peak_max(self, userId):
         if self.type=='event related potential' and self.latency_peak_max:
-            return Q(erpsed__erpcomponent__latency_peak__lte=self.latency_peak_max)
+            return Q(erpsed__components__latency_peak__lte=self.latency_peak_max)
         return Q()
 
     def search_latency_peak_type(self, userId):
         if self.type=='event related potential' and self.latency_peak_type:
-            return Q(erpsed__erpcomponent__latency_peak_type=self.latency_peak_type)
+            return Q(erpsed__components__latency_peak_type=self.latency_peak_type)
         return Q()
 
     def search_latency_onset_min(self, userId):
         if self.type=='event related potential' and self.latency_onset_min:
-            return Q(erpsed__erpcomponent__latency_onset__gte=self.latency_onset_min)
+            return Q(erpsed__components__latency_onset__gte=self.latency_onset_min)
         return Q()
 
     def search_latency_onset_max(self, userId):
         if self.type=='event related potential' and self.latency_onset_max:
-            return Q(erpsed__erpcomponent__latency_onset__lte=self.latency_onset_max)
+            return Q(erpsed__components__latency_onset__lte=self.latency_onset_max)
         return Q()
 
     def search_amplitude_peak_min(self, userId):
         if self.type=='event related potential' and self.amplitude_peak_min:
-            return Q(erpsed__erpcomponent__amplitude_peak__gte=self.amplitude_peak_min)
+            return Q(erpsed__components__amplitude_peak__gte=self.amplitude_peak_min)
         return Q()
 
     def search_amplitude_peak_max(self, userId):
         if self.type=='event related potential' and self.amplitude_peak_max:
-            return Q(erpsed__erpcomponent__amplitude_peak__lte=self.amplitude_peak_max)
+            return Q(erpsed__components__amplitude_peak__lte=self.amplitude_peak_max)
         return Q()
 
     def search_amplitude_mean_min(self, userId):
         if self.type=='event related potential' and self.amplitude_mean_min:
-            return Q(erpsed__erpcomponent__amplitude_mean__gte=self.amplitude_mean_min)
+            return Q(erpsed__components__amplitude_mean__gte=self.amplitude_mean_min)
         return Q()
 
     def search_amplitude_mean_max(self, userId):
         if self.type=='event related potential' and self.amplitude_mean_max:
-            return Q(erpsed__erpcomponent__amplitude_mean__lte=self.amplitude_mean_max)
+            return Q(erpsed__components__amplitude_mean__lte=self.amplitude_mean_max)
         return Q()
 
     def search_scalp_region(self, userId):
@@ -297,7 +297,7 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.scalp_region_options=='all':
                 op=operator.and_
             words=parse_tags(self.scalp_region)
-            keyword_filters=[Q(erpsed__erpcomponent__scalp_region__icontains=word) for word in words]
+            keyword_filters=[Q(erpsed__components__scalp_region__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
@@ -307,7 +307,7 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.electrode_cap_options=='all':
                 op=operator.and_
             words=parse_tags(self.electrode_cap)
-            keyword_filters=[Q(erpsed__erpcomponent__electrode_cap__icontains=word) for word in words]
+            keyword_filters=[Q(erpsed__components__electrode_cap__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
@@ -317,7 +317,7 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.electrode_name_options=='all':
                 op=operator.and_
             words=parse_tags(self.electrode_name)
-            keyword_filters=[Q(erpsed__erpcomponent__electrode_name__icontains=word) for word in words]
+            keyword_filters=[Q(erpsed__components__electrode_name__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
@@ -327,7 +327,7 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.source_options=='all':
                 op=operator.and_
             words=parse_tags(self.source)
-            keyword_filters=[Q(erpsed__erpcomponent__source__icontains=word) for word in words]
+            keyword_filters=[Q(erpsed__components__source__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 

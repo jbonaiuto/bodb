@@ -203,9 +203,9 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        region_q=Q(sedcoord__named_brain_region=brain_region) | \
-                 Q(sedcoord__coord__brainregionvolume__brain_region__name=brain_region) | \
-                 Q(sedcoord__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
+        region_q=Q(coordinates__named_brain_region=brain_region) | \
+                 Q(coordinates__coord__brainregionvolume__brain_region__name=brain_region) | \
+                 Q(coordinates__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
         return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
