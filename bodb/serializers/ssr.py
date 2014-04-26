@@ -1,4 +1,3 @@
-from django.forms import widgets
 from rest_framework import serializers
 from bodb.models import SSR, Prediction
 from bodb.serializers.user import UserSerializer
