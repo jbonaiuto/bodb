@@ -378,7 +378,7 @@ class PubMedResult:
 
 def importPubmedLiterature(pubmed_id):
     if Literature.objects.filter(pubmed_id=pubmed_id):
-        lit=Literature.objects.get(pubmed_id=pubmed_id)
+        lit=Literature.objects.filter(pubmed_id=pubmed_id)[0]
     else:
         article_handles=Entrez.esummary(db="pubmed", id=pubmed_id)
         article_record=Entrez.read(article_handles)[0]
@@ -404,8 +404,8 @@ def importPubmedLiterature(pubmed_id):
             # list of author ids
             for idx,author in enumerate(authors):
                 full_name = author.split()
-                last_name = unicode(full_name[0].encode('latin1','xmlcharrefreplace'))
-                first_name = full_name[1]
+                last_name = unicode(full_name[0],'utf-8')
+                first_name = unicode(full_name[1],'utf-8')
 
                 # get Id if author exists
                 if Author.objects.filter(first_name=first_name, last_name=last_name):
