@@ -2,8 +2,19 @@ from django.shortcuts import redirect
 from django.views.generic import UpdateView, DeleteView
 from bodb.forms.ssr import PredictionSSRFormSet, PredictionForm
 from bodb.models import Prediction, SSR, PredictionSSR
-from bodb.views.document import DocumentDetailView
+from bodb.serializers import PredictionSerializer
+from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.main import BODBView
+
+class PredictionAPIListView(DocumentAPIListView):
+    queryset = Prediction.objects.all()
+    serializer_class = PredictionSerializer
+    model = Prediction
+
+class PredictionAPIDetailView(DocumentAPIDetailView):
+    queryset = Prediction.objects.all()
+    serializer_class = PredictionSerializer
+    model = Prediction
 
 class UpdatePredictionView(UpdateView):
     model = Prediction

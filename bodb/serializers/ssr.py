@@ -1,11 +1,14 @@
 from django.forms import widgets
 from rest_framework import serializers
 from bodb.models import SSR, Prediction
-from bodb.serializers.document import DocumentFigureSerializer
+from bodb.serializers.user import UserSerializer
+from bodb.serializers.document import DocumentFigureSerializer, DocumentTagSerializer
 
 class SSRSerializer(serializers.ModelSerializer):
-    
+    collator = UserSerializer()
+    last_modified_by = UserSerializer()
     figures = DocumentFigureSerializer()
+    tags=DocumentTagSerializer()
     
     class Meta:
         model = SSR
@@ -28,8 +31,11 @@ class SSRSerializer(serializers.ModelSerializer):
 
 
 class PredictionSerializer(serializers.ModelSerializer):
+    collator = UserSerializer()
+    last_modified_by = UserSerializer()
     ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title','brief_description','type'))
+    tags=DocumentTagSerializer()
     
     class Meta:
         model = Prediction
-        fields = ('id', 'title','brief_description', 'ssr')
+        fields = ('id', 'title','collator','last_modified_by','last_modified_time','brief_description', 'tags','public','ssr')
