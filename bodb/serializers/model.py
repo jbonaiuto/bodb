@@ -6,7 +6,7 @@ from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.sed import SEDSerializer, BuildSEDSerializer, TestSEDSerializer
 from bodb.serializers.ssr import PredictionSerializer
 from bodb.serializers.user import UserSerializer
-from bodb.serializers.document import DocumentFigureSerializer
+from bodb.serializers.document import DocumentFigureSerializer, DocumentTagSerializer
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -67,7 +67,7 @@ class ModelSerializer(serializers.ModelSerializer):
     collator = UserSerializer()
     last_modified_by = UserSerializer()
     figures = DocumentFigureSerializer()
-    
+    tags=DocumentTagSerializer()
     
     class Meta:
         model = Model

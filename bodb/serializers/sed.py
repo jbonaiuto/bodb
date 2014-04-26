@@ -5,7 +5,7 @@ from bodb.serializers.brain_region import BrainRegionSerializer, RelatedBrainReg
 from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.user import UserSerializer
 from bodb.serializers.ssr import SSRSerializer
-from bodb.serializers.document import DocumentFigureSerializer
+from bodb.serializers.document import DocumentFigureSerializer, DocumentTagSerializer
 
 
 class SEDSerializer(serializers.ModelSerializer):
@@ -14,6 +14,7 @@ class SEDSerializer(serializers.ModelSerializer):
     collator = UserSerializer()
     last_modified_by = UserSerializer()
     figures = DocumentFigureSerializer()
+    tags=DocumentTagSerializer()
     
     class Meta:
         model = SED

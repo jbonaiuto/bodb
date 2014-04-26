@@ -6,7 +6,7 @@ from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.model import RelatedModelSerializer
 from bodb.serializers.user import UserSerializer
 from bodb.serializers.sed import BuildSEDSerializer
-from bodb.serializers.document import DocumentFigureSerializer
+from bodb.serializers.document import DocumentFigureSerializer, DocumentTagSerializer
 
 
 class BOPSimpleSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class RelatedBOPSerializer(serializers.ModelSerializer):
     class Meta:
         model = RelatedBOP
         fields = ('bop', 'relationship','relevance_narrative')
-        
+
 
 class BOPSerializer(serializers.ModelSerializer):
     references = LiteratureSerializer(source = 'literature', fields = ('id','title','authors','collator'))
@@ -34,6 +34,7 @@ class BOPSerializer(serializers.ModelSerializer):
     collator = UserSerializer()
     last_modified_by = UserSerializer()
     figures = DocumentFigureSerializer()
+    tags=DocumentTagSerializer()
     
     #related_bop = serializers.SerializerMethodField('get_related_bop')
     
