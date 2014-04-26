@@ -1,7 +1,7 @@
 from django.forms import widgets
 from rest_framework import serializers
 from bodb.models import SED, ERPSED, BrainImagingSED, ConnectivitySED, BuildSED, TestSED, SEDCoord, ERPComponent, ElectrodeCap
-from bodb.serializers.brain_region import BrainRegionSerializer, RelatedBrainRegionSerializer, CoordinateSpaceSerializer, ThreeDCoordSerializer
+from bodb.serializers.brain_region import BrainRegionSerializer, RelatedBrainRegionSerializer, CoordinateSpaceSerializer, ThreeDCoordSerializer, ElectrodePositionSerializer
 from bodb.serializers.literature import LiteratureSerializer
 from bodb.serializers.user import UserSerializer
 from bodb.serializers.ssr import SSRSerializer
@@ -45,7 +45,7 @@ class BuildSEDSerializer(serializers.ModelSerializer):
     
 class TestSEDSerializer(serializers.ModelSerializer):
     sed = SEDSerializer(fields = ('id','title', 'type', 'brief_description',))
-    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title', 'brief_description',))
+    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title', 'brief_description','type'))
     
     class Meta:
         model = TestSED
@@ -62,6 +62,7 @@ class ElectrodeCapSerializer(serializers.ModelSerializer):
 class ERPComponentSerializer(serializers.ModelSerializer):
 
     electrode_cap = ElectrodeCapSerializer()
+    electrode_position = ElectrodePositionSerializer()
     
     class Meta:
         model = ERPComponent
@@ -89,7 +90,7 @@ class SEDCoordSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SEDCoord
-        fields = ('id','named_brain_region', 'hemisphere','coord','rcbf','statistic')
+        fields = ('id','named_brain_region', 'hemisphere','coord','rcbf','statistic','statistic_value','extra_data')
         
           
 class BrainImagingSEDSerializer(SEDSerializer):

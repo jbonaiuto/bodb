@@ -10,7 +10,7 @@ class SSRSerializer(serializers.ModelSerializer):
     class Meta:
         model = SSR
         fields = ('id', 'title', 'collator', 'last_modified_by', 'last_modified_time', 
-                  'brief_description','narrative','tags', 'public','figures')
+                  'brief_description','type','narrative','tags', 'public','figures')
         
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
@@ -28,7 +28,7 @@ class SSRSerializer(serializers.ModelSerializer):
 
 
 class PredictionSerializer(serializers.ModelSerializer):
-    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title','brief_description'))
+    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title','brief_description','type'))
     
     class Meta:
         model = Prediction
