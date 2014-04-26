@@ -213,7 +213,19 @@ A form for populating BODB with Models will be described here that is shown afte
     :figclass: align-center
 
     The input form for Model entries
-    
+
+Search ModelDB
+^^^^^^^^^^^^^^
+Clicking on this link will open a form for searching ModelDB, a database dedicated to documenting and storing model code (http://senselab.med.yale.edu/ModelDB/).
+
+.. figure:: images/search_modeldb.png
+    :align: center
+    :figclass: align-center
+
+    The form for searching and importing entries from ModelDB
+
+Clicking search on this form will return a list of entries in ModelDB whose name or description contains the keywords entered. Clicking on the "Import" link to the left of a search result will populate the model insert form with the model title, authors, brief description, tags, ModelDB accession number, and references.
+
 Title
 ^^^^^
 The name of the Model, e.g. "Mirror Neuron System (MNS) Model". The text field has a maximum length of 200 characters. It is very important to first search for existing Models to ensure that duplicate entries aren't added.
@@ -332,7 +344,7 @@ Clicking on the “Show” link in the “URLs” section will expand the sectio
 
 The URLs section allows the user to add the following hyperlinks:
 
-* ModelDB Accession Number - The accession number in ModelDB
+* ModelDB Accession Number - The accession number in ModelDB, used to link to the corresponding ModelDB entry
 * Execution URL - A URL that points to downloadable code for the present model’s executable implementation. 
 * Documentation URL - A URL that points to the present model’s documentation. 
 * Description URL - A URL that points to the description of the present model. 

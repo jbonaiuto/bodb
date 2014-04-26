@@ -359,7 +359,7 @@ class ModelDBSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context=super(ModelDBSearchView,self).get_context_data(**kwargs)
-        context['helpPage']='BODB-Insert-Model#ModelDB_Search'
+        context['helpPage']='insert_data.html#search-modeldb'
         context['ispopup']=('_popup' in self.request.GET)
         return context
 
