@@ -560,7 +560,7 @@ class CleanBrainImagingSEDView(TemplateView):
             if (coord.hemisphere=='left' and atof(coord.coord.x)>=0) or (coord.hemisphere=='right' and atof(coord.coord.x)<=0) or (coord.hemisphere=='interhemispheric' and atof(coord.coord.x)!=0):
                 row['hemisphere_error']='1'
                 error=True
-                # add new SEDCoordForm data to initial
+            # add new SEDCoordForm data to initial
             if error:
                 row['sed_coord_id']=coord.id
                 row['coord_space']=coord.sed.coord_space
@@ -575,7 +575,8 @@ class CleanBrainImagingSEDView(TemplateView):
         if len(init):
             # forward to sed clean view
             return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
-                                            'ispopup': ('_popup' in request.GET)})
+                                            'ispopup': ('_popup' in request.GET),
+                                            'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
         else:
             url='/bodb/sed/%s/' % id
             params='?type='+request.GET.get('type',None)+'&action='+request.GET.get('action',None)
@@ -620,7 +621,8 @@ class CleanBrainImagingSEDView(TemplateView):
             return redirect(url)
         # forward to sed clean view
         return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
-                                        'ispopup': ('_popup' in request.GET)})
+                                        'ispopup': ('_popup' in request.GET),
+                                        'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
 
 
 class DeleteBrainImagingSEDView(DeleteView):

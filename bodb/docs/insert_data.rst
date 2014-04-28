@@ -523,6 +523,14 @@ The user can specify optional "extra" columns by inserting the column names, sep
 
 The user has to paste the data into the text area. Each row should contain the same number of columns specified by the Core Column Header and Extra Header fields. Columns should be separated by a | character.
 
+After saving, BODB will check each coordinate for consistency with the named hemisphere (x<0 in left hemisphere, x>0 in right). If any errors are found, the Clean SED page will be shown, allowing the user to update either the coordinate value or the named hemisphere.
+
+.. figure:: images/clean_brain_imaging_sed.png
+    :align: center
+    :figclass: align-center
+
+    Cleaning Brain Imaging SED coordinates
+
 .. _insert-erp-sed:
 
 Summary of Event Related Potential Data
