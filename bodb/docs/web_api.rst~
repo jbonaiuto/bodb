@@ -1,4 +1,63 @@
-Benchmarks
+Web API
 ==============
 
-Lorem ipsum...
+URL Protocol
+------------
+
+The BODB web API allows entries and sets of entries to be returned in JSON and XML format through a simple URL protocol.
+
+* bodb.usc.edu/bodb/api/
+    * document/
+        * bop/
+        * model/
+        * sed/
+            * erp_sed/
+            * brain_imaging_sed/
+            * connectivity_sed/
+        * ssr/
+        * prediction/
+* brain_region/
+
+
+Using the API in a Browser
+--------------------------
+
+By entering one of the possible url given above into a browser, you will get a human readible view of the first 20 entries of a given type.
+
+.. figure:: images/model_api.png
+    :align: center
+    :figclass: align-center
+
+    Using the API in a browser
+    
+Then you can append the primary key with a trailing slash to show an individual entry.
+
+.. figure:: images/fars_api.png
+    :align: center
+    :figclass: align-center
+
+    Accessing a single entry with the API
+    
+URL Extensions and Using the API Programatically 
+------------------------------------------------
+
+By default, the API returns an html document for readability in a browser. When working programatically, it is best to strickly return JSON or XML. This can simply be done by adding the extention '.json' or '.xml' to the URL.
+
+.. code-block:: json
+
+    curl http://bodb.usc.edu/bodb/api/document/bop/617/.json
+    
+    {"id": 617, "title": "Population coding", "collator": {"id": 19, "username": "jbonaiuto"}, "last_modified_by": {"id": 489, "username": "mwinter80"}, "last_modified_time": "2014-04-24T18:25:07Z", "parent": {"id": 821, "title": "Incremental grouping", "brief_description": "Incremental grouping is a flexible mechanism for perceptual grouping, labeling  a  population  of  neurons  that  encode  features  to  be  grouped  perceptually  by  adjusting  their  firing  rates, using   recurrent  processing  to  fine  linkages for such tasks as  object  recognition  or  path  finding."}, "brief_description": "Information encoding scheme widely used in the brain where information is represented in the activities of whole populations of units. It is believed that this allow unambiguous interpretation of the encoded information.", "narrative": "", "tags": [], "public": 1, "figures": [], "seds": [{"sed": {"id": 652, "title": "AIP Motor Properties", "type": "generic", "brief_description": "Motor-related cells in AIP fire during grasping even without visual stimuli."}, "relationship": "scene setting", "relevance_narrative": "test"}], "related_bop": [{"bop": {"id": 828, "title": "Localist Coding", "brief_description": "In localist coding (cx. the BOP: Population coding) a specific item of knowledge is encoded by the action of a single cell (a cardinal cell or grandmother cell -- as in a cell that fires if and only if you see or imagine your grandmother) activated irrespective of the low-level features associated with a specific occurrence"}, "relationship": "involves", "relevance_narrative": "test"}], "related_model": [{"related_model": {"id": 620, "title": "FARS", "brief_description": "A model of cortical control of grasping that focuses on the interaction between anterior intraparietal area (AIP) and ventral premotor area F5. Based on input from the dorsal visual stream, area AIP represents the possible affordances for grasping. Area F5 uses this information along with task constraints to select and program a grasp to an affordance."}, "relationship": "test"}], "related_brain_region": [], "references": []}
+    
+Pagination
+----------
+
+When calling the API on several entries (that is, without appending a primary key at the end), only twenty entries are returned by default. This can be changed by appending '?page_size=xxx' where 'xxx' is the number of entries to be returned.
+
+For example:
+
+.. code-block:: json
+
+    http://bodb.usc.edu/bodb/api/document/sed/.json?page_size=30
+
+
