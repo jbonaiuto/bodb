@@ -51,7 +51,7 @@
             <tr valign=top>
                 <td colspan=2>{{ module.brief_description }}</td>
             </tr>
-            {% if input_ports or output_ports or states or figures or modules %}
+            {% if inputs or outputs or states or figures or modules %}
                 <tr>
                     <td colspan="2">
                         {% include "bodb/model/architecture_view.html" %}
