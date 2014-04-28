@@ -513,7 +513,7 @@ def compareBuildSEDs(a, b):
     return cmp(a.sed.title.lower(), b.sed.title.lower())
 
 class TestSEDSSR(models.Model):
-    test_sed=models.ForeignKey('TestSED', related_name = 'test_sed')
+    test_sed=models.ForeignKey('TestSED')
     ssr=models.ForeignKey('SSR', null=True)
 
     class Meta:
