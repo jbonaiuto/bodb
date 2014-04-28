@@ -154,9 +154,11 @@ class BrainRegionRequestApproveView(CreateView):
         return redirect(self.get_success_url())
 
 class BrainRegionAPIListView(DocumentAPIListView):
-    queryset = BrainRegion.objects.all()
     serializer_class = BrainRegionSerializer
     model = BrainRegion
+
+    def get_queryset(self):
+        return BrainRegion.objects.all()
     
     
 class BrainRegionAPIDetailView(DocumentAPIDetailView):    

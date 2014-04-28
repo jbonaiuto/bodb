@@ -33,6 +33,11 @@ class DocumentAPIListView(generics.ListCreateAPIView):
     permission_classes = (IsEditorOrReadOnly,)
     model = Document
 
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return Document.objects.filter(security_q)
+
 class DocumentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):

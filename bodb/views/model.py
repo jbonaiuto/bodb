@@ -565,9 +565,13 @@ class DeleteModuleView(DeleteView):
     success_url = '/bodb/index.html'
 
 class ModelAPIListView(DocumentAPIListView):
-    queryset = Model.objects.all()
     serializer_class = ModelSerializer
     model = Model
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return Model.objects.filter(security_q)
 
 class ModelAPIDetailView(DocumentAPIDetailView):
     queryset = Model.objects.all()

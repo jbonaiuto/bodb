@@ -161,9 +161,13 @@ class DeleteBOPView(DeleteView):
     success_url = '/bodb/index.html'
 
 class BOPAPIListView(DocumentAPIListView):
-    queryset = BOP.objects.all()
     serializer_class = BOPSerializer
     model = BOP
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=BOP.get_security_q(user)
+        return BOP.objects.filter(security_q)
     
 class BOPAPIDetailView(DocumentAPIDetailView):    
     queryset = BOP.objects.all()

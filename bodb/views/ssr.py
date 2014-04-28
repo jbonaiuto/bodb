@@ -4,7 +4,7 @@ from django.views.generic import UpdateView, DeleteView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
-from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem
+from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -72,9 +72,13 @@ class DeleteSSRView(DeleteView):
     success_url = '/bodb/index.html'
 
 class SSRAPIListView(DocumentAPIListView):
-    queryset = SSR.objects.all()
     serializer_class = SSRSerializer
     model = SSR
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return SSR.objects.filter(security_q)
     
 class SSRAPIDetailView(DocumentAPIDetailView):
     queryset = SSR.objects.all()

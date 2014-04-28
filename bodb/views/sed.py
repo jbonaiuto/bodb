@@ -7,7 +7,7 @@ from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
@@ -120,24 +120,40 @@ class DeleteSEDView(DeleteView):
     success_url = '/bodb/index.html'
     
 class SEDAPIListView(DocumentAPIListView):
-    queryset = SED.objects.all()
     serializer_class = SEDSerializer
     model = SED
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return SED.objects.filter(security_q)
     
 class ERPSEDAPIListView(DocumentAPIListView):
-    queryset = ERPSED.objects.all()
     serializer_class = ERPSEDSerializer
     model = ERPSED
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return ERPSED.objects.filter(security_q)
     
 class BrainImagingSEDAPIListView(DocumentAPIListView):
-    queryset = BrainImagingSED.objects.all()
     serializer_class = BrainImagingSEDSerializer
     model = BrainImagingSED
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return BrainImagingSED.objects.filter(security_q)
     
 class ConnectivitySEDAPIListView(DocumentAPIListView):
-    queryset = ConnectivitySED.objects.all()
     serializer_class = ConnectivitySEDSerializer
     model = ConnectivitySED
+
+    def get_queryset(self):
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        return ConnectivitySED.objects.filter(security_q)
     
 class SEDAPIDetailView(DocumentAPIDetailView):
     
