@@ -466,7 +466,15 @@ This button will only show if the user has permissions to make an entry public. 
 
 Summary of Brain Imaging Summary Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-BODB is intended to serve also as a summarized experimental-data repository. In addition to the generic SED entry form, it provides an explicit storage and user interface for tables of brain imaging data based on Talairach coordinates. Although brain imaging data are often supplied in table format, different articles may differ in the number, labeling and layout of columns, and differ in the freeform description of the experimental conditions of that table. Moreover, article data files are in various formats such as PDF, HTML and Microsoft Word. Therefore, it is difficult to provide a tool that automatically reads the data file, excerpts the whole table and its description, then marshals and puts these data into BODB properly. Our solution for importing the table is to provide a structured input form for pasting the table’s description and data, and specifying metadata (column configuration). The structure of the input form and the metadata will assist the user populate the table data correctly.
+BODB is intended to serve also as a summarized experimental-data repository. In addition to the generic SED entry form,
+it provides an explicit storage and user interface for tables of brain imaging data based on Talairach coordinates.
+Although brain imaging data are often supplied in table format, different articles may differ in the number, labeling
+and layout of columns, and differ in the freeform description of the experimental conditions of that table. Moreover,
+article data files are in various formats such as PDF, HTML and Microsoft Word. Therefore, it is difficult to provide a
+tool that automatically reads the data file, excerpts the whole table and its description, then marshals and puts these
+data into BODB properly. Our solution for importing the table is to provide a structured input form for pasting the
+table’s description and data, and specifying metadata (column configuration). The structure of the input form and the
+metadata will assist the user populate the table data correctly.
 
 .. figure:: images/brain_imaging_sed.png
     :align: center
@@ -535,7 +543,8 @@ After saving, BODB will check each coordinate for consistency with the named hem
 
 Summary of Event Related Potential Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Lorem ipsum...
+BODB provides a specialized data format for representing event-related potential (ERP) data in terms of a single event,
+to which multiple components can be associated.
 
 .. figure:: images/erp_sed.png
     :align: center
@@ -564,13 +573,78 @@ A list of keywords associated with this SED entry.
 
 This button will only show if the user has permissions to make an entry public. If so, then the user can click check this box and the entry will display to the general public and not just logged in users of BODB.
 
-*ERP Experiment Desciption*
+*ERP Experiment Description*
 
-Lorem ipsum...
+Cognitive Paradigm
+
+The cognitive paradigm of the task used (i.e. working memory, decision-making, etc.)
+
+Sensory Modality
+
+The sensory modality used to elicit the ERP (i.e. visual, auditory, etc)
+
+Response Modality
+
+The response modality used in the task (i.e. button press, saccade, etc.)
+
+Control Condition
+
+A description of the control condition (if applicable) that the activity in the experimental condition is being compared to.
+
+Experimental Condition
+
+A description of the task in the experimental condition.
 
 *ERP Components*
 
-Lorem ipsum...
+.. figure:: images/erp_component.png
+    :align: center
+    :figclass: align-center
+
+    ERP SED Component
+
+Name
+
+Each component has a name that should be taken from a predefined list such as P1 visual, P1 auditory, C, P600 language,
+N400 language, etc. Note however that the name cannot be only P1 or N1 for example. Indeed, this nomenclature, although
+referring to similar waveform components, cover processes that cannot sometimes be compared. For example a P1 triggered
+by visual stimuli cannot really be compared to a P1 triggered by auditory stimuli. Therefore, it is important to give
+names such as P1 visual, N2 auditory,…
+
+Peak latency
+
+The latency is the latency of the component. It can be either a given delay in ms or a general time bin [100-200]ms.
+Multiple methods can be used to derive the latency of a component.
+
+Amplitude
+
+The amplitude is optional. Once again, there are multiple methods to compute these amplitudes.
+
+Electrode position system
+
+The positioning system used to describe the location of electrodes (10-5, 10-10, or 10-20)
+
+Electrode position
+
+The position of the electrode. The options for this field are populated once an electrode position system is selected.
+
+Electrode cap
+
+The electrode cap used.
+
+Channel
+
+If the electrode where the ERP was recorded is available, then it can be optionally entered. This requires however,
+also specifying the type of EEG cap used since the name/place of electrodes depends on the cap.
+
+Source
+
+More and more ERP studies give possible sources for the component. Although this is often vague and speculative,
+an optional field for source is offered.
+
+Interpretation
+
+Finally, the Interpretation field requires the user to give a few lines of interpretation of the component.
 
 .. _insert-connectivity-sed:
 
