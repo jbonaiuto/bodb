@@ -1,5 +1,5 @@
 Visualization
-==============
+=============
 
 Graphs
 ------
@@ -45,11 +45,25 @@ page for the connectivity SED representing that connection.
 
     An example of a SED Connectivity Graph
 
+ERP SEDs
+--------
+Visualizations of ERP SED locations can be generated from lists of ERP SEDs by clicking on the link at the bottom of lists
+of these entries. Hovering the mouse over an electrode location will display a tooltip with the ERP components in the list
+at that location.
 
+.. figure:: images/erp_sed_list.png
+    :align: center
+    :figclass: align-center
+
+    An example of a visualization of ERP SEDs
 
 BrainSurfer
 -----------
-Sets of selected SED coordinates can be visualized in BrainSurfer, the latest in a series of efforts to visualize neuroscientific data from various experiments. BrainSurfer combines three-dimensional visualization functionality with features such as region search, export functionality, and integration with BODB for data management. Crucially, it adds extensibility for multiple brain atlases: it can be used to search and view any brain for which a coordinate space and nomenclature is provided in an appropriate framework.
+Sets of selected SED coordinates can be visualized in BrainSurfer, the latest in a series of efforts to visualize
+neuroscientific data from various experiments. BrainSurfer combines three-dimensional visualization functionality with
+features such as region search, export functionality, and integration with BODB for data management. Crucially, it adds
+extensibility for multiple brain atlases: it can be used to search and view any brain for which a coordinate space and
+nomenclature is provided in an appropriate framework.
 
 .. figure:: images/brain_surfer_slices.png
     :align: center
