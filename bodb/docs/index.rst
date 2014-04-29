@@ -27,7 +27,6 @@ Contents:
    tags
    messages
    benchmarks
-   graphs
    web_api
 
 

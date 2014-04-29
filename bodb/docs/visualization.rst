@@ -1,6 +1,54 @@
 Visualization
 ==============
 
+Graphs
+------
+
+BODB allows users to graph connections between BOPs, Models, and Connectivity SEDs. A link to create these relational
+graphs is given in the list view of any such entries. BODB current supports dot, neato, fdp, sfdp, twopi, and circo
+graph formats.
+
+BOP Relationship Graph
+^^^^^^^^^^^^^^^^^^^^^^
+The BOP relationship graph shows parent-child, "involves" and "synonym" relationships between BOPs. Clicking on a BOP
+node in the graph will navigate to the view page for that BOP.
+
+.. figure:: images/bop_graph.png
+    :align: center
+    :figclass: align-center
+
+    An example of a BOP Relationship Graph
+
+Model Relationship Graph
+^^^^^^^^^^^^^^^^^^^^^^^^
+Model relationship graphs show models as rectangular nodes and the SEDs used to build or test them as round nodes. Edges
+between SED and model nodes are labeled with the SED-Model relationship ("scene setting" or "support" for building SEDs,
+"explanation" or "contradiction" for testing SEDs). Clicking on a model or SED node will navigate to the view page for
+that entry.
+
+.. figure:: images/model_rel_graph.png
+    :align: center
+    :figclass: align-center
+
+    An example of a Model Relationship Graph
+
+Connectivity SED Graph
+^^^^^^^^^^^^^^^^^^^^^^
+Connectivity SED graphs show the connections between brain regions defined by a set of connectivity SEDs. Each brain region
+is represented by a round node labeled with the brain region abbreviation and abbreviated nomenclature in parenthesis. Clicking
+on a brain region node will navigate to the view page for that region, and clicking on an edge will navigate to the view
+page for the connectivity SED representing that connection.
+
+.. figure:: images/conn_graph.png
+    :align: center
+    :figclass: align-center
+
+    An example of a SED Connectivity Graph
+
+
+
+BrainSurfer
+-----------
 Sets of selected SED coordinates can be visualized in BrainSurfer, the latest in a series of efforts to visualize neuroscientific data from various experiments. BrainSurfer combines three-dimensional visualization functionality with features such as region search, export functionality, and integration with BODB for data management. Crucially, it adds extensibility for multiple brain atlases: it can be used to search and view any brain for which a coordinate space and nomenclature is provided in an appropriate framework.
 
 .. figure:: images/brain_surfer_slices.png
