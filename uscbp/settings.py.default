@@ -185,6 +185,12 @@ LOGGING = {
         }
 }
 
+FILE_UPLOAD_HANDLERS=("uscbp.uploadhandlers.ConvertImageUploadHandler",
+                      "django.core.files.uploadhandler.MemoryFileUploadHandler",
+                      "django.core.files.uploadhandler.TemporaryFileUploadHandler")
+
+FILE_UPLOAD_MAX_MEMORY_SIZE=10000000
+
 AUTH_PROFILE_MODULE = 'bodb.BodbProfile'
 
 RECAPTCHA_PRIVATE_KEY='6LcsfdgSAAAAANgA3ph1RrYQeSvV-ZzGHIjMbl5b'
