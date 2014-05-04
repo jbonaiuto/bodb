@@ -946,7 +946,8 @@ def import_workspaces():
         for bop in old_workspace.related_bops.db_manager('legacy').all():
             new_space.related_bops.add(new_bop.BOP.objects.get(id=bop.id))
         for sed in old_workspace.related_seds.db_manager('legacy').all():
-            new_space.related_seds.add(new_sed.SED.objects.get(id=sed.id))
+            if new_sed.SED.objects.filter(id=sed.id).count()>0:
+                new_space.related_seds.add(new_sed.SED.objects.get(id=sed.id))
         for ssr in old_workspace.related_ssrs.db_manager('legacy').all():
             new_space.related_ssrs.add(new_ssr.SSR.objects.get(id=ssr.id))
         new_space.admin_users.add(new_space.created_by)
