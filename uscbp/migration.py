@@ -158,8 +158,6 @@ def import_users(legacy_img_dir, new_media_dir):
                         os.path.join(new_media_dir,'avatars',photo.image_filename()))
                     new_profile.avatar.name=os.path.join('avatars',photo.image_filename())
                     new_profile.save()
-        else:
-            new_workspace.create_user_profile(new_user)
 
 
 def import_authors():
@@ -775,7 +773,7 @@ def import_models(legacy_img_dir, new_media_dir):
             if old_testsed.sed is not None and new_sed.SED.objects.filter(id=old_testsed.sed.id).count()>0:
                 new_testsed.sed=new_sed.SED.objects.get(id=old_testsed.sed.id)
             else:
-                new_sed= new_sed.SED(
+                new_sd= new_sed.SED(
                     type='generic',
                     collator = User.objects.get(id=old_testsed.collator.id),
                     title = old_testsed.title,
@@ -787,7 +785,7 @@ def import_models(legacy_img_dir, new_media_dir):
                     last_modified_time = old_testsed.last_modified_time,
                     last_modified_by=User.objects.get(id=old_testsed.collator.id)
                 )
-                new_testsed.sed=new_sed
+                new_testsed.sed=new_sd
 
 
             new_testsed.save()
