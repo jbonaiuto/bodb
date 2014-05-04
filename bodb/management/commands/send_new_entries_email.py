@@ -11,38 +11,44 @@ class Command(BaseCommand):
         
         how_many_days = datetime.now()-timedelta(days=int(args[0]))
                 
-        message = "this is a list of the new entries created in the past " + args[0] + " days .\n"
+        message = "This is a list of the new entries created in the past " + args[0] + " days .\n"
         
         #bops = BOP.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
-        bops = BOP.objects.filter(creation_time__gte=how_many_days, draft=0, public=1).order_by('-creation_time')
+        bops = BOP.objects.filter(creation_time__gte=how_many_days, draft=0).order_by('-creation_time')
         message += "New BOPs\n\n"
         for bop in bops:
             message += bop.title + ' (' + settings.URL_BASE + bop.get_absolute_url() + ')\n'
             message += bop.get_collator_str() + '\n'
+            message += 'public: %d\n' % bop.public
             message += bop.brief_description + '\n\n'
             
         #models = Model.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
-        models = Model.objects.filter(creation_time__gte=how_many_days, draft=0, public=1).order_by('-creation_time')
+        models = Model.objects.filter(creation_time__gte=how_many_days, draft=0).order_by('-creation_time')
         message += "\nNew Models\n\n"
         for model in models:
             message += model.title + ' (' + settings.URL_BASE + model.get_absolute_url() + ')\n'
             message += model.get_collator_str() + '\n'
+            message += 'public: %d\n' % model.public
             message += model.brief_description + '\n\n'
             
         #seds = SED.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
-        seds = SED.objects.filter(creation_time__gte=how_many_days, draft=0, public=1).order_by('-creation_time')
+        seds = SED.objects.filter(creation_time__gte=how_many_days, draft=0).order_by('-creation_time')
         message += "\nNew SEDs\n\n"
         for sed in seds:
             message += sed.title + ' (' + settings.URL_BASE + sed.get_absolute_url() + ')\n'
             message += sed.get_collator_str() + '\n'
+            message += 'public: %d\n' % sed.public
+            message += 'type: %s\n' % sed.type
             message += sed.brief_description + '\n\n'
             
         #ssrs = SSR.objects.filter(draft=0, public=1, creation_time__gte=datetime.now()-timedelta(days=14)).order_by('-creation_time')
-        ssrs = SSR.objects.filter(creation_time__gte=how_many_days, draft=0, public=1).order_by('-creation_time')
+        ssrs = SSR.objects.filter(creation_time__gte=how_many_days, draft=0).order_by('-creation_time')
         message += "\nNew SSRs\n\n"
         for ssr in ssrs:
             message += ssr.title + ' (' + settings.URL_BASE + ssr.get_absolute_url() + ')\n'
             message += ssr.get_collator_str() + '\n'
+            message += 'public: %d\n' % ssr.public
+            message += 'type: %s\n' % ssr.type
             message += ssr.brief_description + '\n\n'
         
         superusers=User.objects.filter(is_superuser=True)
