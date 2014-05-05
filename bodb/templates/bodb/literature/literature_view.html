@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View {{ literature }} Literature</title>
     <script type="text/javascript">
@@ -7,6 +8,37 @@
         animatedcollapse.addDiv('sedData', 'fade=1');
         animatedcollapse.addDiv('ssrData', 'fade=1');
         animatedcollapse.addDiv('brainRegionData', 'fade=1');
+
+        function toggleSingleLiteratureSelect(literatureId, csrf_token)
+        {
+            var data = { 'literatureId': literatureId, 'csrfmiddlewaretoken': csrf_token };
+            var args = { type: "POST", url: "/bodb/literature/"+literatureId+"/toggle_select/", data: data, complete: doneToggleSingleLiteratureSelect };
+            $.ajax(args);
+            return false;
+        }
+
+        function doneToggleSingleLiteratureSelect(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                if(data.selected)
+                {
+                    document.getElementById('selectButton').value='Workspace Unselect';
+                    document.getElementById('literature_message').innerHTML='Literature added to the '+data['workspace']+' workspace.';
+                }
+                else
+                {
+                    document.getElementById('selectButton').value='Workspace Select';
+                    document.getElementById('literature_message').innerHTML='Literature removed from the '+data['workspace']+' workspace.';
+                }
+                document.getElementById('literature_message').style.display='block';
+                $('#literature_message').fadeOut(5000, function(){});
+            }
+            else
+                alert(res.responseText);
+        }
 
         function deleteLiterature()
         {
@@ -29,7 +61,13 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>{{ literature }}</h2>
+        <h2>
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature({{ literature.id }},'favIconLiterature','{{ csrf_token }}');">
+                    <img id="favIconLiterature" name="favIconLiterature" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                </a>
+            {% endif %}
+            {{ literature }}</h2>
         <table class="tab_panel">
             <tr valign=top>
                 <td width=20%><strong>Title:</strong></td>
@@ -305,12 +343,18 @@
                 </tr>
             {% endif %}
         </table>
+        <span id="literature_message" class="messages"></span>
         {% if perms.bodb.change_literature or user.is_superuser %}
             <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/literature/{{ literature.id }}/edit/?literatureType={{ literatureType }}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% endif %}
         {% if perms.bodb.delete_literature or user.is_superuser %}
             {% if not ispopup  %}
                 <input class="btn" type="button" value="Delete" onclick="deleteLiterature()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            {% endif %}
+        {% endif %}
+        {% if user.is_authenticated and not user.is_anonymous  %}
+            {% if not selected and can_add_entry or selected and can_remove_entry %}
+                <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="return toggleSingleLiteratureSelect('{{literature.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
     </div>

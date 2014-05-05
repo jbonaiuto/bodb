@@ -267,13 +267,18 @@ class LiteratureDetailView(TemplateView):
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
+        context['is_favorite']=False
+        context['selected']=False
         context['can_add_entry']=False
         context['can_remove_entry']=False
         context['selected_coord_ids']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
+            context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).count()>0
+
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
                 user=user).count()>0
+
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
@@ -281,6 +286,7 @@ class LiteratureDetailView(TemplateView):
             active_workspace=user.get_profile().active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+            context['selected']=active_workspace.related_literature.filter(id=literature.id).count()>0
 
         return context
 

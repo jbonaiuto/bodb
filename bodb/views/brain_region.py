@@ -202,15 +202,21 @@ class BrainRegionView(DetailView):
         context['can_add_entry']=False
         context['can_remove_entry']=False
         context['selected_coord_ids']=[]
+        context['is_favorite']=False
+        context['selected']=False
 
         if user.is_authenticated() and not user.is_anonymous():
+            context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).count()>0
+
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
             active_workspace=user.get_profile().active_workspace
+            context['selected']=active_workspace.related_regions.filter(id=self.object.id).count()>0
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
         return context
 
 

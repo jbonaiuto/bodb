@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View Brain Region - {{ brainregion.name }}</title>
     <script type="text/javascript">
@@ -6,13 +7,50 @@
         animatedcollapse.addDiv('sedData', 'fade=1');
         animatedcollapse.addDiv('relatedBopData', 'fade=1');
         animatedcollapse.addDiv('relatedModelData', 'fade=1');
+
+        function toggleSingleBrainRegionSelect(regionId, csrf_token)
+        {
+            var data = { 'regionId': regionId, 'csrfmiddlewaretoken': csrf_token };
+            var args = { type: "POST", url: "/bodb/brain_region/"+regionId+"/toggle_select/", data: data, complete: doneToggleSingleBrainRegionSelect };
+            $.ajax(args);
+            return false;
+        }
+
+        function doneToggleSingleBrainRegionSelect(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                if(data.selected)
+                {
+                    document.getElementById('selectButton').value='Workspace Unselect';
+                    document.getElementById('region_message').innerHTML='Brain region added to the '+data['workspace']+' workspace.';
+                }
+                else
+                {
+                    document.getElementById('selectButton').value='Workspace Select';
+                    document.getElementById('region_message').innerHTML='Brain region removed from the '+data['workspace']+' workspace.';
+                }
+                document.getElementById('region_message').style.display='block';
+                $('#region_message').fadeOut(5000, function(){});
+            }
+            else
+                alert(res.responseText);
+        }
     </script>
-    {% load staticfiles %}
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>Brain Region: {{ brainregion.name }}</h2>
+        <h2>
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <a id="favLinkRegion" href="" onclick="return toggleFavoriteBrainRegion({{ brainregion.id }},'favIconRegion','{{ csrf_token }}');">
+                    <img id="favIconRegion" name="favIconRegion" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                </a>
+            {% endif %}
+            Brain Region: {{ brainregion.name }}
+        </h2>
         <table class="tab_panel">
             <tr valign="top">
                 <td style="width:100px">
@@ -159,5 +197,11 @@
                 </tr>
             {% endif %}
         </table>
+        <span id="region_message" class="messages"></span>
+        {% if user.is_authenticated and not user.is_anonymous  %}
+            {% if not selected and can_add_entry or selected and can_remove_entry %}
+                <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="return toggleSingleBrainRegionSelect('{{brainregion.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+        {% endif %}
     </div>
 {% endblock %}
