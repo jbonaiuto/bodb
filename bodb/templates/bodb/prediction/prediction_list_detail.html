@@ -112,6 +112,7 @@
                                                 <td style="width:120px">&nbsp;</td>
                                                 <td class="col_header" style="width:200px"><i>Title*</i></td>
                                                 <td class="col_header"><i>Description</i>*</td>
+                                                <td class="col_header" style="width:100px"><i>Type</i>*</td>
                                             </tr>
                                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                                 <td colspan=4>
@@ -128,6 +129,7 @@
                                                                 {{ predictionssr_form.ssr_collator }}
                                                                 {{ predictionssr_form.ssr_draft }}
                                                                 {{ predictionssr_form.ssr_public }}
+                                                                {{ predictionssr_form.ssr_type }}
                                                                 <table class="tab_panel">
                                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                                         <td style="width:120px">&nbsp;</td>
@@ -137,7 +139,12 @@
                                                                         <td>
                                                                             {{ predictionssr_form.ssr_brief_description }}
                                                                         </td>
-                                                                        <td class="myerrors">
+                                                                        <td style="width:100px">
+                                                                            {{ predictionssr_form.instance.ssr.type }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                        <td class="myerrors" colspan="4">
                                                                             <span id="prediction-{{ forloop.parentloop.counter0 }}-predictionssr_set_{{ forloop.counter0 }}_errors">
                                                                                 {{ predictionssr_form.errors }}
                                                                             </span>
@@ -195,6 +202,7 @@
                             <td style="width:120px">&nbsp;</td>
                             <td class="col_header" style="width:200px"><i>Title*</i></td>
                             <td class="col_header"><i>Description</i>*</td>
+                            <td class="col_header" style="width:100px"><i>Type</i>*</td>
                         </tr>
                         <tr class="<%= getTRTag(id) %>">
                             <td colspan=4>
@@ -208,6 +216,7 @@
                                     <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_collator" name="prediction-<%= id %>-predictionssr_set-0-ssr_collator" type="hidden" />
                                     <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_draft" name="prediction-<%= id %>-predictionssr_set-0-ssr_draft" type="hidden" />
                                     <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_public" name="prediction-<%= id %>-predictionssr_set-0-ssr_public" type="hidden" />
+                                    <input id="id_prediction-<%= id %>-predictionssr_set-0-ssr_type" name="prediction-<%= id %>-predictionssr_set-0-ssr_type" type="hidden" value="generic" />
                                     <table class="tab_panel">
                                         <tr class="<%= getTRTag(id) %>" valign=top>
                                             <td style="width:120px">&nbsp;</td>
@@ -217,7 +226,12 @@
                                             <td>
                                                 <textarea cols="50" id="id_prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" name="prediction-<%= id %>-predictionssr_set-0-ssr_brief_description" rows="3"></textarea>
                                             </td>
-                                            <td class="myerrors">
+                                            <td style="width:100px">
+                                                generic
+                                            </td>
+                                        </tr>
+                                        <tr class="<%= getTRTag(id) %>" valign=top>
+                                            <td class="myerrors" colspan="4">
                                                 <span id="prediction-<%= id %>-predictionssr_set_0_errors">
                                                 </span>
                                             </td>

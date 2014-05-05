@@ -127,7 +127,8 @@ class EditModelMixin():
                             predictionssr=predictionssr_form.save(commit=False)
                             predictionssr.prediction=prediction
                             ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                                brief_description=predictionssr_form.cleaned_data['ssr_brief_description'])
+                                brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
+                                type=predictionssr_form.cleaned_data['ssr_type'])
                             # Update ssr if editing existing one
                             if 'ssr' in predictionssr_form.cleaned_data and\
                                predictionssr_form.cleaned_data['ssr'] is not None:
@@ -168,7 +169,8 @@ class EditModelMixin():
                             testsedssr=testsedssr_form.save(commit=False)
                             testsedssr.test_sed=test_sed
                             ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
-                                brief_description=testsedssr_form.cleaned_data['ssr_brief_description'])
+                                brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
+                                type=testsedssr_form.cleaned_data['ssr_type'])
                             # Update ssr if editing existing one
                             if 'ssr' in testsedssr_form.cleaned_data and\
                                testsedssr_form.cleaned_data['ssr'] is not None:

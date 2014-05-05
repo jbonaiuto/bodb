@@ -86,6 +86,7 @@
                                                 <td style="width:120px">&nbsp;</td>
                                                 <td class="col_header" style="width:200px"><i>Title*</i></td>
                                                 <td class="col_header"><i>Description</i>*</td>
+                                                <td class="col_header" style="width:100px"><i>Type*</i></td>
                                             </tr>
                                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                                 <td colspan=4>
@@ -102,21 +103,27 @@
                                                                 {{ testsedssr_form.ssr_collator }}
                                                                 {{ testsedssr_form.ssr_draft }}
                                                                 {{ testsedssr_form.ssr_public }}
+                                                                {{ testsedssr_form.ssr_type }}
                                                                 <table class="tab_panel">
                                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                                         <td style="width:120px">&nbsp;</td>
-                                                                        <td style="width:150px">
+                                                                        <td style="width:200px">
                                                                             {{ testsedssr_form.ssr_title }}
                                                                         </td>
                                                                         <td>
                                                                             {{ testsedssr_form.ssr_brief_description }}
                                                                         </td>
+                                                                        <td style="width:100px">
+                                                                            {{ testsedssr_form.instance.ssr.type }}
+                                                                        </td>
                                                                     </tr>
-                                                                    <td class="myerrors">
-                                                                        <span id="test_sed-{{ forloop.parentloop.counter0 }}-testsedssr_set_{{ forloop.counter0 }}_errors">
-                                                                            {{ testsedssr_form.errors }}
-                                                                        </span>
-                                                                    </td>
+                                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                                        <td class="myerrors" colspan="4">
+                                                                            <span id="test_sed-{{ forloop.parentloop.counter0 }}-testsedssr_set_{{ forloop.counter0 }}_errors">
+                                                                                {{ testsedssr_form.errors }}
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
                                                                 </table>
                                                             </div>
                                                         {% endfor %}
@@ -199,6 +206,7 @@
                             <td style="width:120px">&nbsp;</td>
                             <td class="col_header" style="width:200px"><i>Title*</i></td>
                             <td class="col_header"><i>Description</i>*</td>
+                            <td class="col_header" style="width:100px"><i>Type*</i></td>
                         </tr>
                         <tr class="<%= getTRTag(id) %>">
                             <td colspan=4>
@@ -215,6 +223,7 @@
                                         <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_collator" name="test_sed-<%= id %>-testsedssr_set-0-ssr_collator" type="hidden" />
                                         <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_draft" name="test_sed-<%= id %>-testsedssr_set-0-ssr_draft" type="hidden" />
                                         <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_public" name="test_sed-<%= id %>-testsedssr_set-0-ssr_public" type="hidden" />
+                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_type" name="test_sed-<%= id %>-testsedssr_set-0-ssr_type" type="hidden" value="generic"/>
                                         <table class="tab_panel">
                                             <tr class="<%= getTRTag(id) %>" valign=top>
                                                 <td style="width:120px">&nbsp;</td>
@@ -224,7 +233,11 @@
                                                 <td>
                                                     <textarea cols="50" id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" name="test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" rows="3"></textarea>
                                                 </td>
-                                                <td class="myerrors">
+                                                <td style="width:100px">
+                                                    generic
+                                                </td>
+                                            <tr class="<%= getTRTag(id) %>" valign=top>
+                                                <td class="myerrors" colspan="4">
                                                     <span id="test_sed-<%= id %>-testsedssr_set_0_errors">
                                                         {{ testsedssr_form.errors }}
                                                     </span>
