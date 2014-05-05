@@ -4,6 +4,7 @@
     animatedcollapse.addDiv('sedData', 'fade=1');
     animatedcollapse.addDiv('ssrData', 'fade=1');
     animatedcollapse.addDiv('brainRegionData', 'fade=1');
+    animatedcollapse.addDiv('literatureData', 'fade=1');
 </script>
 
 <table class="tab_panel">
@@ -123,6 +124,30 @@
             <td>
                 <div id="brainRegionData" style="display:none">
                     {% include 'bodb/brainRegion/brain_region_selection_list_view.html' %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% if literatures|length %}
+        <tr>
+            <td style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td>
+                Literature (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureData')"><span id="literatureDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="literatureData" style="display:none">
+                    {% include 'bodb/literature/reference_selection_list_view.html' %}
                 </div>
             </td>
         </tr>

@@ -118,7 +118,7 @@ class FavoriteListView(BODBView):
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-        context['references']=[]
+        context['literatures']=[]
         context['brain_regions']=[]
         context['models']=[]
         context['bops']=[]
@@ -131,7 +131,7 @@ class FavoriteListView(BODBView):
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
 
-            context['references']=Literature.get_reference_list(Literature.objects.filter(id__in=profile.favorite_literature.all()),user)
+            context['literatures']=Literature.get_reference_list(Literature.objects.filter(id__in=profile.favorite_literature.all()),user)
             context['brain_regions']=BrainRegion.get_region_list(BrainRegion.objects.filter(id__in=profile.favorite_regions.all()),user)
             context['models']=Model.get_model_list(Model.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['bops']=BOP.get_bop_list(BOP.objects.filter(document_ptr__in=profile.favorites.all()),user)
@@ -227,6 +227,29 @@ class ToggleFavoriteBrainRegionView(JSONResponseMixin,BaseCreateView):
                         context['action']='added'
                     else:
                         profile.favorite_regions.remove(brain_region)
+                        context['action']='removed'
+                    profile.save()
+            return context
+
+
+class ToggleFavoriteLiteratureView(JSONResponseMixin,BaseCreateView):
+    model = Literature
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            user=self.request.user
+            if user.is_authenticated() and not user.is_anonymous():
+                profile=user.get_profile()
+                lit_id=self.request.POST['id']
+                context['icon_id']=self.request.POST['icon_id']
+                if Literature.objects.filter(id=lit_id).count():
+                    lit=Literature.objects.get(id=lit_id)
+                    if not profile.favorite_literature.filter(id=lit_id).count():
+                        profile.favorite_literature.add(lit)
+                        context['action']='added'
+                    else:
+                        profile.favorite_literature.remove(lit)
                         context['action']='removed'
                     profile.save()
             return context

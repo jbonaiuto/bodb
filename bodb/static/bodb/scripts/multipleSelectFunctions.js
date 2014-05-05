@@ -148,6 +148,56 @@ function doneToggleBrainRegionSelect(res, status)
     }
 }
 
+function toggleAllLiteratureSelect(checked, csrf_token)
+{
+    var boxes=document.getElementsByName('selectedLiteratureCheckbox');
+    for(var i=0; i<boxes.length; i++)
+    {
+        boxes[i].checked=checked;
+        setLiteratureSelect(boxes[i].value, checked, csrf_token);
+    }
+    return false;
+}
+
+function setLiteratureSelect(literatureId, checked, csrf_token)
+{
+    var data = { 'literatureId': literatureId, 'select':checked, 'csrfmiddlewaretoken': csrf_token };
+    var args = { type: "POST", url: "/bodb/literature/"+literatureId+"/toggle_select/", data: data, complete: doneToggleLiteratureSelect };
+    $.ajax(args)
+    return false;
+}
+
+function toggleLiteratureSelect(literatureId, csrf_token)
+{
+    var data = { 'literatureId': literatureId, 'csrfmiddlewaretoken': csrf_token };
+    var args = { type: "POST", url: "/bodb/literature/"+literatureId+"/toggle_select/", data: data, complete: doneToggleLiteratureSelect };
+    $.ajax(args)
+    return false;
+}
+
+function doneToggleLiteratureSelect(res, status)
+{
+    var txt = res.responseText;
+    if(status!="success")
+    {
+        alert(txt);
+    }
+    else
+    {
+        var data = eval('('+txt+')');
+        var elems=document.getElementsByName('literature_'+data.literature_id+'_message');
+        for(var i=0; i<elems.length; i++)
+        {
+            if(data.selected)
+                elems[i].innerHTML='Literature added to the workspace.';
+            else
+                elems[i].innerHTML='Literature removed from the workspace.';
+            elems[i].style.display='block';
+            $('#'+elems[i].id).fadeOut(5000, function(){});
+        }
+    }
+}
+
 function toggleAllSEDSelect(type, checked, csrf_token)
 {
     var boxes=$('.selected'+type+'SEDCheckbox');

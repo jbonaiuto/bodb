@@ -136,7 +136,7 @@ class SearchView(FormView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
         context['ssrs']=SSR.get_ssr_list(ssrs, user)
-        context['literatures']=literature
+        context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['users']=BodbProfile.get_user_list(users,user)
         context['can_add_entry']=False
@@ -240,8 +240,8 @@ class LiteratureSearchView(FormView):
 
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
-        context['literatures']=literatures
         user=self.request.user
+        context['literatures']=Literature.get_reference_list(literatures,user)
         context['can_add_entry']=False
         context['can_remove_entry']=False
         if user.is_authenticated() and not user.is_anonymous():

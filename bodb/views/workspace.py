@@ -281,7 +281,7 @@ class WorkspaceDetailView(BODBView,FormView):
         # Visibility query filter
         visibility = Document.get_security_q(user)
 
-        context['references']=Literature.get_reference_list(self.object.related_literature.distinct(),user)
+        context['literatures']=Literature.get_reference_list(self.object.related_literature.distinct(),user)
         context['brain_regions']=BrainRegion.get_region_list(self.object.related_regions.distinct(),user)
         context['models']=Model.get_model_list(self.object.related_models.filter(visibility).distinct(),user)
         context['bops']=BOP.get_bop_list(self.object.related_bops.filter(visibility).distinct(),user)

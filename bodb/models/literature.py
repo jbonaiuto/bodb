@@ -1,11 +1,14 @@
 from Bio import Entrez
 from django.contrib.auth.models import User
-from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
+from bodb.models.messaging import UserSubscription
 
-# The result of a pubmed search. These objects are not saved from the database, they are
-# basically just used as data structures to return search results
 class PubMedResult:
+    """
+    The result of a pubmed search. These objects are not saved from the database, they are
+    basically just used as data structures to return search results
+    """
     def __init__(self):
         self.pubmedId=''
         # Whether or not result already exists in database
@@ -95,6 +98,9 @@ class Literature(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.author_names(),str(self.year))
 
+    def get_absolute_url(self):
+        return reverse('lit_view', kwargs={'pk': self.pk})
+
     def str(self):
         if Journal.objects.filter(id=self.id):
             return Journal.objects.get(id=self.id).str()
@@ -132,6 +138,24 @@ class Literature(models.Model):
     # function for getting bibtex format - should be implemented by child classes
     def bibtex_format(self):
         return ''
+
+    @staticmethod
+    def get_reference_list(references, user):
+        profile=None
+        active_workspace=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+            active_workspace=profile.active_workspace
+        reference_list=[]
+        for reference in references:
+            selected=active_workspace is not None and\
+                     active_workspace.related_literature.filter(id=reference.id).count()>0
+            is_favorite=profile is not None and profile.favorite_literature.filter(id=reference.id).count()>0
+            subscribed_to_user=profile is not None and\
+                               UserSubscription.objects.filter(subscribed_to_user=reference.collator, user=user,
+                                   model_type='Model').count()>0
+            reference_list.append([selected,is_favorite,subscribed_to_user,reference])
+        return reference_list
 
 
 # Journal article - inherits from Literature

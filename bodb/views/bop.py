@@ -7,7 +7,7 @@ from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
-from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl
+from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -186,7 +186,7 @@ class BOPDetailView(DocumentDetailView):
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
         context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
-        context['references'] = self.object.literature.all()
+        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
         if active_workspace is not None:
             context['selected']=active_workspace.related_bops.filter(id=self.object.id).count()>0
         context['bop_relationship']=True

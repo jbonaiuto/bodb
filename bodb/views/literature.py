@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -304,4 +304,40 @@ class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
             context={
                 'file_name':file_name
             }
+        return context
+
+
+class ToggleSelectLiteratureView(JSONResponseMixin,BaseUpdateView):
+    model = Literature
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            lit=Literature.objects.get(id=self.kwargs.get('pk', None))
+            # Load active workspace
+            active_workspace=self.request.user.get_profile().active_workspace
+
+            context={
+                'literature_id': lit.id,
+                'workspace': active_workspace.title
+            }
+            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            remove=False
+            if 'select' in self.request.POST:
+                remove=self.request.POST['select']=='false'
+            else:
+                remove=lit in active_workspace.related_literature.all()
+            if remove:
+                active_workspace.related_literature.remove(lit)
+                context['selected']=False
+                activity.text='%s removed the literature: <a href="%s">%s</a> from the workspace' % \
+                              (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
+            else:
+                active_workspace.related_literature.add(lit)
+                context['selected']=True
+                activity.text='%s added the literature: <a href="%s">%s</a> to the workspace' % \
+                              (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
+            activity.save()
+            active_workspace.save()
+
         return context

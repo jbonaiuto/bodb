@@ -5,8 +5,8 @@ from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPI
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
-from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
-from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView
+from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView
+from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
@@ -96,11 +96,13 @@ urlpatterns = urlpatterns + patterns('',
 
     url(r'^favorite/toggle/$', ToggleFavoriteView.as_view(), {}, 'toggle_favorite'),
     url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {}, 'toggle_favorite_brain_region'),
+    url(r'^favorite/literature/toggle/$', ToggleFavoriteLiteratureView.as_view(), {}, 'toggle_favorite_literature'),
     url(r'^favorites/$', FavoriteListView.as_view(), {}, 'favorites'),
 
     url(r'^literature/(?P<pk>\d+)/$', LiteratureDetailView.as_view(), {}, 'lit_view'),
     url(r'^literature/(?P<pk>\d+)/delete/$', DeleteLiteratureView.as_view(), {}, 'lit_delete'),
     url(r'^literature/(?P<pk>\d+)/edit/$', UpdateLiteratureView.as_view(), {}, 'lit_edit'),
+    url(r'^literature/(?P<pk>\d+)/toggle_select/$', ToggleSelectLiteratureView.as_view(), {}, 'lit_toggle_select'),
     url(r'^literature/export/$', ExportLiteratureView.as_view(), {}, 'lit_export'),
     url(r'^literature/new/$', CreateLiteratureView.as_view(), {}, 'lit_add'),
     url(r'^literature/search/$', LiteratureSearchView.as_view(), {}, 'lit_search'),
