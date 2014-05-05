@@ -122,7 +122,7 @@
                                          <a href="/bodb/user/{{ u.id }}/edit/" onclick="return showPopup('edit_user_{{ u.id }}', 700, 550, '/bodb/user/{{ u.id }}/edit/');">Edit</a>
                                      </td>
                                      <td style="width:120px">
-                                         <a href="/bodb/user/{{ u.id }}/" onclick="return showPopup('view_user_{{ u.id }}', 700, 550, '/bodb/user/{{ u.id }}/');">{{ u.username }}</a>
+                                         <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
                                      </td>
                                      <td style="width:40px" align=center>
                                          <input type=checkbox name="activeCheckbox" id="activeCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_active %}checked=True{% endif %} onclick="toggleActive(this.value, this.checked);"/>
