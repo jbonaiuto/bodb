@@ -321,6 +321,7 @@ class WorkspaceDetailView(BODBView,FormView):
                 'sed_id':coord.sed_coordinate.sed.id,
                 'id':coord.id,
                 'collator':coord.get_collator_str(),
+                'collator_id':coord.user.id,
                 'brain_region':coord.sed_coordinate.named_brain_region,
                 'hemisphere':coord.sed_coordinate.hemisphere,
                 'x':coord.sed_coordinate.coord.x,

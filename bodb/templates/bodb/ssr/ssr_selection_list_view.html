@@ -41,7 +41,7 @@
                     <a href="/bodb/ssr/{{ ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ ssr.id }}/');">{{ ssr.title }}</a>
                     {% if ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                 </td>
-                <td>{{ ssr.get_collator_str }} {% if not ssr.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ ssr.collator.id }}&type=SSR');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td><a href="/bodb/user/{{ ssr.collator.id }}/">{{ ssr.get_collator_str }}</a> {% if not ssr.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ ssr.collator.id }}&type=SSR');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
                 <td>{{ssr.brief_description }}</td>
                 <td><span id="ssr_{{ ssr.id }}_message" name="ssr_{{ ssr.id }}_message" class="messages"></span></td>
             </tr>

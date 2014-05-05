@@ -120,7 +120,7 @@
                     <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
                     {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                 </td>
-                <td>{{ sed.get_collator_str }} {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td><a href="/bodb/user/{{ sed.collator.id }}/">{{ sed.get_collator_str }}</a> {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
                 <td>{{sed.brief_description }}</td>
                 <td><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
             </tr>

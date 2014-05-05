@@ -102,13 +102,13 @@
         </h2>
         <table class="tab_panel">
             <tr valign="top">
-                <td colspan="2"><strong>Collator:</strong> {{ model.get_collator_str }} {% if not model.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.collator.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td colspan="2"><strong>Collator:</strong> <a href="/bodb/user/{{ model.collator.id }}/">{{ model.get_collator_str }}</a> {% if not model.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.collator.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Created:</strong> {{ model.get_created_str }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Last modified by:</strong> {{ model.get_modified_by_str }} {% if not model.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.last_modified_by.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td colspan="2"><strong>Last modified by:</strong> <a href="/bodb/user/{{ model.last_modified_by.id }}/">{{ model.get_modified_by_str }}</a> {% if not model.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.last_modified_by.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Last modified:</strong> {{ model.get_modified_str }}</td>

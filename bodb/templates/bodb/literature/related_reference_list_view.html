@@ -36,7 +36,7 @@
                     {% endif %}
                 </td>
                 <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/">{{ literature.str }}</a></td>
-                <td>{{ literature.get_collator_str }}</td>
+                <td><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
                 <td><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
             </tr>
         {% endfor %}

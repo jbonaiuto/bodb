@@ -25,9 +25,11 @@
                 var count = $('#savedCoordSelections').children().length;
                 var tmplMarkup = $('#savedCoordSelection-template').html();
                 var compiledTmpl = _.template(tmplMarkup, { idx: count, id : data.id, name: data.name,
-                    collator: data.collator, description: data.description, loaded: true });
+                    collator: data.collator, collator_id: data.collator_id, description: data.description,
+                    loaded: true });
                 $('#savedCoordSelections').append(compiledTmpl);
-                document.getElementById('id_selectionCollator').innerHTML=data.collator;
+                document.getElementById('id_selectionCollator').innerHTML='<a href="/bodb/user/'+data.collator_id+'/">'+data.collator+'</a>';
+                document.getElementById('id_selectionLastModifiedBy').innerHTML='<a href="/bodb/user/'+data.collator_id+'/">'+data.collator+'</a>';
                 document.getElementById('selectionLoadedButtons').style.display='inline';
                 document.getElementById('id_selectionId').value=data.id;
                 $('textarea:not(.processed)').TextAreaResizer();
@@ -72,6 +74,7 @@
             document.getElementById('id_selectionDescription').value='';
             document.getElementById('id_selectionId').value='';
             document.getElementById('id_selectionCollator').innerHTML='';
+            document.getElementById('id_selectionLastModifiedBy').innerHTML='';
             document.getElementById('selectionLoadedButtons').style.display='none';
             document.getElementById('id_new_notice').style.display='inline';
             $('#coords').empty();
@@ -99,8 +102,8 @@
             document.getElementById('id_selectionName').value=data.name;
             document.getElementById('id_selectionDescription').value=data.description;
             document.getElementById('id_selectionId').value=data.id;
-            document.getElementById('id_selectionCollator').innerHTML=data.collator;
-            document.getElementById('id_selectionLastModifiedBy').innerHTML=data.last_modified_by;
+            document.getElementById('id_selectionCollator').innerHTML='<a href="/bodb/user/'+data.collator_id+'/">'+data.collator+'</a>';
+            document.getElementById('id_selectionLastModifiedBy').innerHTML='<a href="/bodb/user/'+data.last_modified_by_id+'/">'+data.last_modified_by+'</a>';
             document.getElementById('loadDiv-'+data.id).style.display='none';
             document.getElementById('selectionLoadedButtons').style.display='inline';
             document.getElementById('id_new_notice').style.display='none';
@@ -123,7 +126,8 @@
                     coord_array=sed_coords[sed_id][i];
                     var tmplMarkup = $('#coord-template').html();
                     var compiledTmpl = _.template(tmplMarkup, { idx: i, id: coord_array['id'], sed_id: sed_id,
-                        collator: coord_array['collator'], brain_region: coord_array['brain_region'],
+                        collator: coord_array['collator'], collator_id: coord_array['collator_id'],
+                        brain_region: coord_array['brain_region'],
                         hemisphere: coord_array['hemisphere'], x: coord_array['x'], y: coord_array['y'],
                         z: coord_array['z'], rCBF: coord_array['rCBF'], statistic: coord_array['statistic'],
                         statistic_value: coord_array['statistic_value'], extra_data: coord_array['extra_data']});
@@ -202,11 +206,11 @@
                             </tr>
                             <tr>
                                 <td valign="top">Collator:</td>
-                                <td><span id="id_selectionCollator">{% if loaded_coord_selection %}{{ loaded_coord_selection.get_collator_str }}{% endif %}</span></td>
+                                <td><span id="id_selectionCollator">{% if loaded_coord_selection %}<a href="/bodb/user/{{ loaded_coord_selection.user.id }}/">{{ loaded_coord_selection.get_collator_str }}</a>{% endif %}</span></td>
                             </tr>
                             <tr>
                                 <td valign="top">Last modified by:</td>
-                                <td><span id="id_selectionLastModifiedBy">{% if loaded_coord_selection %}{{ loaded_coord_selection.get_modified_by_str }}{% endif %}</span> </td>
+                                <td><span id="id_selectionLastModifiedBy">{% if loaded_coord_selection %}<a href="/bodb/user/{{ loaded_coord_selection.last_modified_by.id }}/">{{ loaded_coord_selection.get_modified_by_str }}</a>{% endif %}</span> </td>
                             </tr>
                             <tr>
                                 <td valign=top>Description:</td>
@@ -269,7 +273,7 @@
                                                                     <td width=25px>
                                                                         <input type=checkbox name="sed_{{ sed.grouper|slugify }}_coord_select" value="{{ coord.id }}" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
                                                                     </td>
-                                                                    <td width=100px style="word-wrap:break-word;">{{ coord.collator }}</td>
+                                                                    <td width=100px style="word-wrap:break-word;"><a href="/bodb/user/{{ coord.collator_id }}/">{{ coord.collator }}</a></td>
                                                                     <td width=200px style="word-wrap:break-word;">{{ coord.brain_region }}</td>
                                                                     <td width=100px style="word-wrap:break-word;">{{ coord.hemisphere }}</td>
                                                                     <td width=50px style="word-wrap:break-word;">{{ coord.x }}</td>
@@ -329,7 +333,7 @@
                                                             {% endif %}
                                                         </td>
                                                         <td width=200px style="word-wrap: break-word;"><span id="coord-selection-{{ selection.id }}-name">{{ selection.name }}</span></td>
-                                                        <td width=100px style="word-wrap: break-word;">{{ selection.get_collator_str }}</td>
+                                                        <td width=100px style="word-wrap: break-word;"><a href="/bodb/user/{{ selection.user.id }}/">{{ selection.get_collator_str }}</a></td>
                                                         <td style="word-wrap: break-word;"><span id="coord-selection-{{ selection.id }}-description">{{ selection.description }}</span></td>
                                                     </tr>
                                                 </table>
@@ -365,7 +369,7 @@
                     {% endif %}
                 </td>
                 <td width=200px style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-name"><%= name %></span></td>
-                <td width=100px style="word-wrap: break-word;"><%= collator %></td>
+                <td width=100px style="word-wrap: break-word;"><a href="/bodb/user/<%= collator_id %>"><%= collator %></a></td>
                 <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= description %></span></td>
             </tr>
         </table>
@@ -379,7 +383,7 @@
                 <td width=25px>
                     <input type=checkbox name="sed_<%= sed_id %>_coord_select" value="<%= id %>" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
                 </td>
-                <td width=100px style="word-wrap:break-word;"><%= collator %></td>
+                <td width=100px style="word-wrap:break-word;"><a href="/bodb/user/<%= collator_id %>"><%= collator %></a></td>
                 <td width=200px style="word-wrap:break-word;"><%= brain_region %></td>
                 <td width=100px style="word-wrap:break-word;"><%= hemisphere %></td>
                 <td width=50px style="word-wrap:break-word;"><%= x %></td>

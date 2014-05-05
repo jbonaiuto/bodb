@@ -1050,7 +1050,9 @@ class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
                 'name':selection.name,
                 'description':selection.description,
                 'collator':selection.get_collator_str(),
-                'last_modified_by':selection.get_modified_by_str()
+                'collator_id':selection.user.id,
+                'last_modified_by':selection.get_modified_by_str(),
+                'last_modified_by_id':selection.last_modified_by.id,
             }
 
             selected_coord_objs=SelectedSEDCoord.objects.filter(saved_selection=selection)
@@ -1063,6 +1065,7 @@ class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
                              'sed_id':coord.sed_coordinate.sed.id,
                              'id':coord.id,
                              'collator':coord.get_collator_str(),
+                             'collator_id':coord.user.id,
                              'brain_region':coord.sed_coordinate.named_brain_region,
                              'hemisphere':coord.sed_coordinate.hemisphere,
                              'x':coord.sed_coordinate.coord.x,
@@ -1173,6 +1176,7 @@ class SaveCoordinateSelectionView(JSONResponseMixin, BaseUpdateView):
                 'id': coordSelection.id,
                 'name': coordSelection.name,
                 'collator': coordSelection.get_collator_str(),
+                'collator_id': coordSelection.user.id,
                 'description': coordSelection.description,
                 'action': action
             }
