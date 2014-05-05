@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import UpdateView, DeleteView
 from bodb.forms.ssr import PredictionSSRFormSet, PredictionForm
-from bodb.models import Prediction, SSR, PredictionSSR, Document
+from bodb.models import Prediction, SSR, PredictionSSR, Document, UserSubscription
 from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.main import BODBView
@@ -97,6 +97,11 @@ class PredictionDetailView(DocumentDetailView):
         context['helpPage']='view_entry.html'
         user=self.request.user
         context['ssrs']=SSR.get_ssr_list(Prediction.get_ssrs(self.object, user), user)
+        if user.is_authenticated() and not user.is_anonymous():
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
+                user=user, model_type='Prediction').count()>0
+            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
+                user=user, model_type='Prediction').count()>0
         return context
 
 

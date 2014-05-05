@@ -9,7 +9,7 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl, Literature
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl, Literature, UserSubscription
 from bodb.models.ssr import SSR, Prediction
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
@@ -394,6 +394,10 @@ class ModelDetailView(DocumentDetailView):
         context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
+                user=user, model_type='Model').count()>0
+            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
+                user=user, model_type='Model').count()>0
             context['selected']=user.get_profile().active_workspace.related_models.filter(id=self.object.id).count()>0
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
@@ -564,6 +568,7 @@ class DeleteModuleView(DeleteView):
     model=Module
     success_url = '/bodb/index.html'
 
+
 class ModelAPIListView(DocumentAPIListView):
     serializer_class = ModelSerializer
     model = Model
@@ -572,6 +577,7 @@ class ModelAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return Model.objects.filter(security_q)
+
 
 class ModelAPIDetailView(DocumentAPIDetailView):
     queryset = Model.objects.all()
@@ -586,12 +592,18 @@ class ModuleDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ModuleDetailView, self).get_context_data(**kwargs)
+        user=self.request.user
         context['helpPage']='view_entry.html'
         context['inputs'] = Variable.objects.filter(var_type='Input',module=self.object)
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
         context['hierarchy_html']=Model.objects.get(id=self.object.get_root().id).hierarchy_html(self.object.id)
+        if user.is_authenticated() and not user.is_anonymous():
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
+                user=user, model_type='Model').count()>0
+            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
+                user=user, model_type='Model').count()>0
         return context
 
 

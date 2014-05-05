@@ -4,7 +4,7 @@ from django.views.generic import UpdateView, DeleteView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
-from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document
+from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -94,10 +94,15 @@ class SSRDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
+        user=self.request.usr
         context['helpPage']='view_entry.html'
         context['model']=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))[0]
-        if self.request.user.is_authenticated() and not self.request.user.is_anonymous():
-            context['selected']=self.request.user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
+        if user.is_authenticated() and not user.is_anonymous():
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
+                user=user, model_type='SSR').count()>0
+            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
+                user=user, model_type='SSR').count()>0
+            context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
         return context
 
 

@@ -104,13 +104,13 @@
             {%if erpsed.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</h2>
         <table class="tab_panel">
             <tr valign="top">
-                <td colspan="3"><strong>Collator:</strong> <a href="/bodb/user/{{ erpsed.collator.id }}/">{{ erpsed.get_collator_str }}</a> {% if not erpsed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ erpsed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td colspan="3"><strong>Collator:</strong> <a href="/bodb/user/{{ erpsed.collator.id }}/">{{ erpsed.get_collator_str }}</a> {% if not erpsed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_collator %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ erpsed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="3"><strong>Created:</strong> {{ erpsed.get_created_str }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Last modified by:</strong> <a href="/bodb/user/{{ erpsed.last_modified_by.id }}/">{{ erpsed.get_modified_by_str }}</a> {% if not erpsed.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_user %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ erpsed.last_modified_by.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td colspan="2"><strong>Last modified by:</strong> <a href="/bodb/user/{{ erpsed.last_modified_by.id }}/">{{ erpsed.get_modified_by_str }}</a> {% if not erpsed.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_last_modified_by %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ erpsed.last_modified_by.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="3"><strong>Last modified:</strong> {{ erpsed.get_modified_str }}</td>

@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -272,6 +272,8 @@ class LiteratureDetailView(TemplateView):
         context['selected_coord_ids']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
+                user=user).count()>0
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)

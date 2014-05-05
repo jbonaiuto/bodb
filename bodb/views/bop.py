@@ -7,7 +7,7 @@ from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
-from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature
+from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -185,6 +185,10 @@ class BOPDetailView(DocumentDetailView):
         active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
+            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
+                user=user, model_type='BOP').count()>0
+            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
+                user=user, model_type='BOP').count()>0
         context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
         context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
         if active_workspace is not None:
