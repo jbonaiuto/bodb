@@ -132,7 +132,6 @@ class BrainRegion(models.Model):
                      active_workspace.related_regions.filter(id=region.id).count()>0
             is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).count()>0
             region_list.append([selected,is_favorite,region])
-        print(region_list)
         return region_list
 
 
