@@ -25,6 +25,8 @@ class Workspace(models.Model):
     related_bops = models.ManyToManyField('BOP')
     related_seds = models.ManyToManyField('SED')
     related_ssrs = models.ManyToManyField('SSR')
+    related_literature = models.ManyToManyField('Literature')
+    related_regions = models.ManyToManyField('BrainRegion')
     saved_coordinate_selections = models.ManyToManyField('SavedSEDCoordSelection')
     created_date = models.DateTimeField(auto_now_add=True,blank=True)
 
@@ -314,6 +316,8 @@ class BodbProfile(models.Model):
     notification_preference = models.CharField(max_length=100, choices=NOTIFICATION_TYPE_CHOICES, default='both')
     # favorite entries
     favorites = models.ManyToManyField('Document')
+    favorite_literature = models.ManyToManyField('Literature')
+    favorite_regions = models.ManyToManyField('BrainRegion')
     class Meta:
         app_label='bodb'
 

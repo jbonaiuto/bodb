@@ -2,10 +2,10 @@ from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView
-from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin
+from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent
+from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem
 from bodb.search.sed import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
@@ -166,6 +166,7 @@ class BrainRegionAPIDetailView(DocumentAPIDetailView):
     serializer_class = BrainRegionSerializer
     model = BrainRegion
 
+
 class BrainRegionView(DetailView):
     model = BrainRegion
     template_name='bodb/brainRegion/brain_region_view.html'
@@ -210,4 +211,38 @@ class BrainRegionView(DetailView):
             active_workspace=user.get_profile().active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        return context
+
+
+class ToggleSelectBrainRegionView(JSONResponseMixin,BaseUpdateView):
+    model = BrainRegion
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            region=BrainRegion.objects.get(id=self.kwargs.get('pk', None))
+            # Load active workspace
+            active_workspace=self.request.user.get_profile().active_workspace
+
+            context={
+                'region_id': region.id,
+                'workspace': active_workspace.title
+            }
+            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            remove=False
+            if 'select' in self.request.POST:
+                remove=self.request.POST['select']=='false'
+            else:
+                remove=region in active_workspace.related_regions.all()
+            if remove:
+                active_workspace.related_regions.remove(region)
+                context['selected']=False
+                activity.text='%s removed the brain region: <a href="%s">%s</a> from the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
+            else:
+                active_workspace.related_regions.add(region)
+                context['selected']=True
+                activity.text='%s added the brain region: <a href="%s">%s</a> to the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
+            activity.save()
+            active_workspace.save()
+
         return context

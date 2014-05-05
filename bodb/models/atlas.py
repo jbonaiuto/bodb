@@ -6,7 +6,7 @@ from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
 from bodb.models.workspace import BodbProfile
-from bodb.models.messaging import Message
+from bodb.models.messaging import Message, UserSubscription
 from bodb.models.literature import Literature
 
 class Atlas(models.Model):
@@ -119,6 +119,22 @@ class BrainRegion(models.Model):
     def get_absolute_url(self):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 
+    @staticmethod
+    def get_region_list(regions, user):
+        profile=None
+        active_workspace=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+            active_workspace=profile.active_workspace
+        region_list=[]
+        for region in regions:
+            selected=active_workspace is not None and\
+                     active_workspace.related_regions.filter(id=region.id).count()>0
+            is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).count()>0
+            region_list.append([selected,is_favorite,region])
+        print(region_list)
+        return region_list
+
 
 # Brain region volume
 class BrainRegionVolume(models.Model):
@@ -152,6 +168,20 @@ class RelatedBrainRegion(models.Model):
         app_label='bodb'
         ordering=['brain_region__nomenclature', 'brain_region__name']
 
+    @staticmethod
+    def get_related_brain_region_list(rregions, user):
+        profile=None
+        active_workspace=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+            active_workspace=profile.active_workspace
+        related_region_list=[]
+        for rregion in rregions:
+            selected=active_workspace is not None and\
+                     active_workspace.related_regions.filter(id=rregion.brain_region.id).count()>0
+            is_favorite=profile is not None and profile.favorite_regions.filter(id=rregion.brain_region.id).count()>0
+            related_region_list.append([selected,is_favorite,rregion])
+        return related_region_list
 
 def compareRelatedBrainRegions(a, b):
     if a.brain_region.abbreviation and len(a.brain_region.abbreviation)>0:

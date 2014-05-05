@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -118,6 +118,8 @@ class FavoriteListView(BODBView):
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
+        context['references']=[]
+        context['brain_regions']=[]
         context['models']=[]
         context['bops']=[]
         context['generic_seds']=[]
@@ -128,8 +130,9 @@ class FavoriteListView(BODBView):
 
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
 
+            context['references']=Literature.get_reference_list(Literature.objects.filter(id__in=profile.favorite_literature.all()),user)
+            context['brain_regions']=BrainRegion.get_region_list(BrainRegion.objects.filter(id__in=profile.favorite_regions.all()),user)
             context['models']=Model.get_model_list(Model.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['bops']=BOP.get_bop_list(BOP.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',document_ptr__in=profile.favorites.all()),user)
@@ -201,6 +204,29 @@ class ToggleFavoriteView(JSONResponseMixin,BaseCreateView):
                         context['action']='added'
                     else:
                         profile.favorites.remove(document)
+                        context['action']='removed'
+                    profile.save()
+            return context
+
+
+class ToggleFavoriteBrainRegionView(JSONResponseMixin,BaseCreateView):
+    model = BrainRegion
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            user=self.request.user
+            if user.is_authenticated() and not user.is_anonymous():
+                profile=user.get_profile()
+                region_id=self.request.POST['id']
+                context['icon_id']=self.request.POST['icon_id']
+                if BrainRegion.objects.filter(id=region_id).count():
+                    brain_region=BrainRegion.objects.get(id=region_id)
+                    if not profile.favorite_regions.filter(id=region_id).count():
+                        profile.favorite_regions.add(brain_region)
+                        context['action']='added'
+                    else:
+                        profile.favorite_regions.remove(brain_region)
                         context['action']='removed'
                     profile.save()
             return context

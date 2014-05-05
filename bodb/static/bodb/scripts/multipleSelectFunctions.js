@@ -98,6 +98,56 @@ function doneToggleModelSelect(res, status)
     }
 }
 
+function toggleAllBrainRegionSelect(checked, csrf_token)
+{
+    var boxes=document.getElementsByName('selectedBrainRegionCheckbox');
+    for(var i=0; i<boxes.length; i++)
+    {
+        boxes[i].checked=checked;
+        setBrainRegionSelect(boxes[i].value, checked, csrf_token);
+    }
+    return false;
+}
+
+function setBrainRegionSelect(regionId, checked, csrf_token)
+{
+    var data = { 'regionId': regionId, 'select':checked, 'csrfmiddlewaretoken': csrf_token };
+    var args = { type: "POST", url: "/bodb/brain_region/"+regionId+"/toggle_select/", data: data, complete: doneToggleBrainRegionSelect };
+    $.ajax(args)
+    return false;
+}
+
+function toggleBrainRegionSelect(regionId, csrf_token)
+{
+    var data = { 'regionId': regionId, 'csrfmiddlewaretoken': csrf_token };
+    var args = { type: "POST", url: "/bodb/brain_region/"+regionId+"/toggle_select/", data: data, complete: doneToggleBrainRegionSelect };
+    $.ajax(args)
+    return false;
+}
+
+function doneToggleBrainRegionSelect(res, status)
+{
+    var txt = res.responseText;
+    if(status!="success")
+    {
+        alert(txt);
+    }
+    else
+    {
+        var data = eval('('+txt+')');
+        var elems=document.getElementsByName('brain_region_'+data.region_id+'_message');
+        for(var i=0; i<elems.length; i++)
+        {
+            if(data.selected)
+                elems[i].innerHTML='Brain region added to the workspace.';
+            else
+                elems[i].innerHTML='Brain region removed from the workspace.';
+            elems[i].style.display='block';
+            $('#'+elems[i].id).fadeOut(5000, function(){});
+        }
+    }
+}
+
 function toggleAllSEDSelect(type, checked, csrf_token)
 {
     var boxes=$('.selected'+type+'SEDCheckbox');

@@ -2,11 +2,11 @@ from django.conf.urls import patterns, url
 from bodb.feeds import LatestModels, LatestBOPs, LatestSEDs, LatestSSRs
 from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, CreateGroupView, GroupDetailView, UpdateUserView, UpdateGroupView, UserToggleActiveView, UserToggleStaffView, UserToggleAdminView, DeleteGroupView, GetUserIconUrlView
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPIDetailView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView, BOPDiagramView
-from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView
+from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView
-from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView
+from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
@@ -52,7 +52,7 @@ urlpatterns = patterns('',
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
-  
+
 urlpatterns = urlpatterns + patterns('',
     (r'^feeds/latestModels/$', LatestModels()),
     url(r'^docs/', include('documentation.urls')),
@@ -72,6 +72,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^bop/tag/(?P<name>[^/]+)/$', BOPTaggedView.as_view(), {}, 'bop_tagged'),
 
     url(r'^brain_region/(?P<pk>\d+)/$', BrainRegionView.as_view(), {}, 'brain_region_view'),
+    url(r'^brain_region/(?P<pk>\d+)/toggle_select/$', ToggleSelectBrainRegionView.as_view(), {}, 'brain_region_toggle_select'),
     url(r'^brain_region/requests/$', BrainRegionRequestListView.as_view(), {}, 'brain_region_requests'),
     url(r'^brain_region/request/$', CreateBrainRegionRequestView.as_view(), {}, 'brain_region_request'),
     url(r'^brain_region/request/deny/(?P<activation_key>\w+)/$', BrainRegionRequestDenyView.as_view(),
@@ -90,12 +91,11 @@ urlpatterns = urlpatterns + patterns('',
 
     url(r'^document/(?P<pk>\d+)/permissions/$', ManageDocumentPermissionsView.as_view(), {}, 'manage_permissions'),
     url(r'^document/public_request/$', DocumentPublicRequestView.as_view(), {}, 'public_request'),
-               
-    
 
     url(r'^drafts/$', DraftListView.as_view(), {}, 'drafts_view'),
 
     url(r'^favorite/toggle/$', ToggleFavoriteView.as_view(), {}, 'toggle_favorite'),
+    url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {}, 'toggle_favorite_brain_region'),
     url(r'^favorites/$', FavoriteListView.as_view(), {}, 'favorites'),
 
     url(r'^literature/(?P<pk>\d+)/$', LiteratureDetailView.as_view(), {}, 'lit_view'),

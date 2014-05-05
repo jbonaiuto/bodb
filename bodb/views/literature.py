@@ -241,13 +241,13 @@ class LiteratureDetailView(TemplateView):
             literature=Unpublished.objects.get(id=id)
         else:
             raise Http404
-        related_brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
+        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
 
         user=self.request.user
         context['helpPage']='view_entry.html'
         context['literature']=literature
         context['literatureType']=literatureType
-        context['related_brain_regions']=related_brain_regions
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'

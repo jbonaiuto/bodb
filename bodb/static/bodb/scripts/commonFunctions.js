@@ -282,6 +282,14 @@ function doneToggleFavorite(res, status)
     return false;
 }
 
+function toggleFavoriteBrainRegion(id, iconId, csrf_token)
+{
+    var data = { 'id': id, 'icon_id': iconId, 'csrfmiddlewaretoken': csrf_token };
+    var args = { type: "POST", url: "/bodb/favorite/brain_region/toggle/", data: data, complete: doneToggleFavorite };
+    $.ajax(args);
+    return false;
+}
+
 function sedCoordSelect(selected, coordId, csrf_token)
 {
     var data = { 'coordId': coordId, 'csrfmiddlewaretoken': csrf_token };

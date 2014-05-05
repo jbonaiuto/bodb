@@ -6,7 +6,7 @@ from django.views.generic import ListView, View, TemplateView, UpdateView, Detai
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import BaseUpdateView, FormView, CreateView, BaseCreateView, DeleteView, ProcessFormView
 from bodb.forms.workspace import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm, WorkspaceBookmarkForm
-from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent
+from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import BODBView
@@ -281,6 +281,8 @@ class WorkspaceDetailView(BODBView,FormView):
         # Visibility query filter
         visibility = Document.get_security_q(user)
 
+        context['references']=Literature.get_reference_list(self.object.related_literature.distinct(),user)
+        context['brain_regions']=BrainRegion.get_region_list(self.object.related_regions.distinct(),user)
         context['models']=Model.get_model_list(self.object.related_models.filter(visibility).distinct(),user)
         context['bops']=BOP.get_bop_list(self.object.related_bops.filter(visibility).distinct(),user)
         context['generic_seds']=SED.get_sed_list(self.object.related_seds.filter(Q(type='generic') & visibility).distinct(),

@@ -51,7 +51,7 @@ class DocumentDetailView(DetailView):
         context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
         context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
-        context['related_brain_regions'] = RelatedBrainRegion.objects.filter(document=self.object)
+        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(RelatedBrainRegion.objects.filter(document=self.object), user)
         context['canEdit']=user.is_authenticated() and (self.object.collator==user or user.is_superuser or
                                                         user.has_perm('edit',Document.objects.get(id=self.object.id)))
         context['canDelete']=user.is_authenticated() and (self.object.collator==user or user.is_superuser or
