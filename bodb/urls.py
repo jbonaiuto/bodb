@@ -8,7 +8,7 @@ from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicReq
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
-from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
+from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView, CreateModelWizardView, MODEL_WIZARD_FORMS
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
@@ -72,7 +72,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^bop/tag/(?P<name>[^/]+)/$', BOPTaggedView.as_view(), {}, 'bop_tagged'),
 
     url(r'^brain_region/(?P<pk>\d+)/$', BrainRegionView.as_view(), {}, 'brain_region_view'),
-    url(r'^brain_region/(?P<pk>\d+)/toggle_select/$', ToggleSelectBrainRegionView.as_view(), {}, 'brain_region_toggle_select'),
+    url(r'^brain_region/(?P<pk>\d+)/toggle_select/$', ToggleSelectBrainRegionView.as_view(), {},
+        'brain_region_toggle_select'),
     url(r'^brain_region/requests/$', BrainRegionRequestListView.as_view(), {}, 'brain_region_requests'),
     url(r'^brain_region/request/$', CreateBrainRegionRequestView.as_view(), {}, 'brain_region_request'),
     url(r'^brain_region/request/deny/(?P<activation_key>\w+)/$', BrainRegionRequestDenyView.as_view(),
@@ -95,7 +96,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^drafts/$', DraftListView.as_view(), {}, 'drafts_view'),
 
     url(r'^favorite/toggle/$', ToggleFavoriteView.as_view(), {}, 'toggle_favorite'),
-    url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {}, 'toggle_favorite_brain_region'),
+    url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {},
+        'toggle_favorite_brain_region'),
     url(r'^favorite/literature/toggle/$', ToggleFavoriteLiteratureView.as_view(), {}, 'toggle_favorite_literature'),
     url(r'^favorites/$', FavoriteListView.as_view(), {}, 'favorites'),
 
@@ -115,6 +117,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^model/(?P<pk>\d+)/toggle_select/$', ToggleSelectModelView.as_view(), {}, 'model_toggle_select'),
     url(r'^model/benchmark/$', BenchmarkModelView.as_view(), {}, 'model_benchmark'),
     url(r'^model/new/$', CreateModelView.as_view(), {}, 'model_add'),
+    url(r'^model/new/wizard/$', CreateModelWizardView.as_view(MODEL_WIZARD_FORMS), {}, 'model_add_wizard'),
     url(r'^model/reverse_benchmark/$', ReverseBenchmarkModelView.as_view(), {}, 'model_reverse_benchmark'),
     url(r'^model/similar/$', SimilarModelView.as_view(), {}, 'model_similar'),
     url(r'^model/search/$', ModelSearchView.as_view(), {}, 'model_search'),
@@ -197,7 +200,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^workspace/(?P<pk>\d+)/$', WorkspaceDetailView.as_view(), {}, 'workspace_view'),
     url(r'^workspace/(?P<pk>\d+)/activate/$', ActivateWorkspaceView.as_view(), {}, 'workspace_activate'),
     url(r'^workspace/(?P<pk>\d+)/bookmark/new/$', CreateWorkspaceBookmarkView.as_view(), {}, 'workspace_bookmark_add'),
-    url(r'^workspace/(?P<pk>\d+)/bookmark/(?P<pk2>\d+)/delete/$', DeleteWorkspaceBookmarkView.as_view(), {}, 'workspace_bookmark_delete'),
+    url(r'^workspace/(?P<pk>\d+)/bookmark/(?P<pk2>\d+)/delete/$', DeleteWorkspaceBookmarkView.as_view(), {},
+        'workspace_bookmark_delete'),
     url(r'^workspace/(?P<pk>\d+)/delete/$', DeleteWorkspaceView.as_view(), {}, 'workspace_activate'),
     url(r'^workspace/(?P<pk>\d+)/edit/$', UpdateWorkspaceView.as_view(), {}, 'workspace_edit'),
     url(r'^workspace/(?P<pk>\d+)/invitation/$', WorkspaceInvitationView.as_view(), {}, 'workspace_invitation'),
