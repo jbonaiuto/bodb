@@ -119,7 +119,7 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_modeldb_accession_number').poshytip({
+            $('#id_step1-modeldb_accession_number').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter the accession number from ModelDB for this model to link to the code.',
                 showOn: 'focus',
@@ -131,7 +131,7 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_execution_url').poshytip({
+            $('#id_step1-execution_url').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter the URL for the page containing model execution code.',
                 showOn: 'focus',
@@ -143,7 +143,7 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_documentation_url').poshytip({
+            $('#id_step1-documentation_url').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter the URL for the page containing documentation of the model.',
                 showOn: 'focus',
@@ -155,7 +155,7 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_description_url').poshytip({
+            $('#id_step1-description_url').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter the URL for the page containing a description of the model.',
                 showOn: 'focus',
@@ -167,7 +167,7 @@
                 timeOnScreen: 5000
             });
 
-            $('#id_simulation_url').poshytip({
+            $('#id_step1-simulation_url').poshytip({
                 className: 'tip-skyblue',
                 content: 'Enter the URL for the page containing a model simulation results.',
                 showOn: 'focus',
@@ -203,7 +203,7 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>Add Model: Step 1 of {{ wizard.steps.count }}</h2>
+        <h2>Add Model: Step 1 of {{ wizard.steps.count }} - Basic model information</h2>
         <form id="modelForm" method="post" action="" enctype="multipart/form-data">
             {{ wizard.management_form }}
             {% csrf_token %}
@@ -337,18 +337,10 @@
             {{ wizard.form.collator }}
             <br>
             {% if wizard.steps.prev %}
-                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>
+                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>&nbsp;
                 <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">Previous</button>
             {% endif %}
             <input class="btn" type="button" value="Next" onclick="checkSimilarModels();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% if ispopup %}
-                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% endif %}
-            {% if form.instance.id %}
-                {% if not ispopup %}
-                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/model/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-                {% endif %}
-            {% endif %}
         </form>
     </div>
 {% endblock %}

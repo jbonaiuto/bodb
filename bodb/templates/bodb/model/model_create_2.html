@@ -54,7 +54,7 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>Add Model: Step 2 of {{ wizard.steps.count }}</h2>
+        <h2>Add Model: Step 2 of {{ wizard.steps.count }} - Model structure</h2>
         <form id="modelForm" method="post" action="" enctype="multipart/form-data">
             {{ wizard.management_form }}
             {% csrf_token %}
@@ -91,18 +91,10 @@
             {{ wizard.form.collator }}
             <br>
             {% if wizard.steps.prev %}
-                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>
+                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>&nbsp;
                 <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.prev }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">Previous</button>
             {% endif %}
             <input class="btn" type="button" value="Next" onclick="save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% if ispopup %}
-                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% endif %}
-            {% if form.instance.id %}
-                {% if not ispopup %}
-                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/model/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-                {% endif %}
-            {% endif %}
         </form>
     </div>
 {% endblock %}

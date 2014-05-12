@@ -38,7 +38,9 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>Add Model: Step 6 of {{ wizard.steps.count }}</h2>
+        <h2>Add Model: Step 6 of {{ wizard.steps.count }} - Related models, BOPs and brain regions</h2>
+        Link the model to related models, the brain operating principles (BOPs) that it implements, and the brain regions it simulates.
+        <br><br>
         <form id="modelForm" method="post" action="" enctype="multipart/form-data">
             {{ wizard.management_form }}
             {% csrf_token %}
@@ -111,20 +113,12 @@
             {{ wizard.form.collator }}
             <br>
             {% if wizard.steps.prev %}
-                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>
-                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.prev }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">Previous</button>
+                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>&nbsp;
+                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.prev }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">Previous</button>&nbsp;
             {% endif %}
             <input class="btn" type="button" value="Save Draft" onclick="isDraft=1; save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% if perms.bodb.save_model or user.is_superuser %}
                 <input class="btn" type="button" value="Save" onclick="isDraft=0; save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% endif %}
-            {% if ispopup %}
-                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            {% endif %}
-            {% if form.instance.id %}
-                {% if not ispopup %}
-                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/model/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-                {% endif %}
             {% endif %}
         </form>
     </div>
