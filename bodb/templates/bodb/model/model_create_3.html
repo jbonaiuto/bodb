@@ -1,0 +1,69 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Add Model</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bodb/css/tip-skyblue/tip-skyblue.css' %}" type="text/css" media="all" />
+    <script type="text/javascript">
+        function validateForm()
+        {
+            var errors=0;
+            clearSpan(document, 'form_errors');
+            var buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+            errors+=buildSEDErrors;
+            if(errors>0)
+                document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
+            return errors==0;
+        }
+
+        /**
+         * Validate and save the form
+         * @param isDraft - 1 if draft, 0 if not
+         */
+        function save()
+        {
+            document.getElementById('modelForm').submit();
+        }
+
+    </script>
+    {{ wizard.form.media }}
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Add Model: Step 3 of {{ wizard.steps.count }}</h2>
+        <form id="modelForm" method="post" action="" enctype="multipart/form-data">
+            {{ wizard.management_form }}
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr class="section_subheader">
+                    <td>
+                        SEDs used to build the model
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {% include "bodb/sed/build_sed_list_detail.html" %}
+                    </td>
+                </tr>
+            </table>
+            <span class="myerrors" id="form_errors">
+                {{ wizard.form.errors }}
+            </span>
+            {{ wizard.form.collator }}
+            <br>
+            {% if wizard.steps.prev %}
+                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.first }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">First</button>
+                <button name="wizard_goto_step" class="btn" type="submit" value="{{ wizard.steps.prev }}" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'">Previous</button>
+            {% endif %}
+            <input class="btn" type="button" value="Next" onclick="save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if ispopup %}
+                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if form.instance.id %}
+                {% if not ispopup %}
+                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/model/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

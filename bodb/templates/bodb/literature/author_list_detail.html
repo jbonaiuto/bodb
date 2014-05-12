@@ -11,7 +11,7 @@
         return false;
     }
 </script>
-<div id="{{ groupName }}Authors" style="display:block">
+<div id="{{ groupName }}Authors" style="display:{% if showAuthors %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">
             <td colspan=5>
