@@ -14,50 +14,49 @@ def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='brain imaging'):
-        if hasattr(searcher,'search_brede') and searcher.search_brede:
-            print('Trying to search Brede')
-            woBibsDoc=None
-            try:
-                woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
-            except etree.XMLSyntaxError as e:
-                print ("PARSING ERROR", e)
+    if hasattr(searcher,'search_brede') and searcher.search_brede:
+        print('Trying to search Brede')
+        woBibsDoc=None
+        try:
+            woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
+        except etree.XMLSyntaxError as e:
+            print ("PARSING ERROR", e)
 
-            if not woBibsDoc is None:
-                xpathStrings=[]
-                # construct search query
-                for key in search_data.iterkeys():
-                    # if the searcher can search by this field
-                    if hasattr(searcher, 'search_%s' % key):
-                        # add field to query
-                        dispatch=getattr(searcher, 'search_%s' % key)
-                        xpathStrings.append(dispatch(userId))
+        if not woBibsDoc is None:
+            xpathStrings=[]
+            # construct search query
+            for key in search_data.iterkeys():
+                # if the searcher can search by this field
+                if hasattr(searcher, 'search_%s' % key):
+                    # add field to query
+                    dispatch=getattr(searcher, 'search_%s' % key)
+                    xpathStrings.append(dispatch(userId))
 
-                xpathString='//Exp'
-                
-                if len(xpathStrings):
-                    if search_data['search_options']=='all':
-                        xpathString=' & '.join(xpathStrings)
-                    else:
-                        xpathString=' | '.join(xpathStrings)
+            xpathString='//Exp'
 
-                exp_nodes=woBibsDoc.xpath(xpathString)
-                for exp_node in exp_nodes:
-                    wo_exp=int(exp_node.xpath('./woexp')[0].text)
-                    if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
-                        bib_node=exp_node.getparent()
-                        try:
-                            lit=importLiterature(bib_node)
-                            sed=importSED(exp_node, lit, wo_exp)
-                            results.append(sed)
-                        except:
-                            pass
-                    else:
-                        results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
-            else:
-                search_local=True
+            if len(xpathStrings):
+                if search_data['search_options']=='all':
+                    xpathString=' & '.join(xpathStrings)
+                else:
+                    xpathString=' | '.join(xpathStrings)
+
+            exp_nodes=woBibsDoc.xpath(xpathString)
+            for exp_node in exp_nodes:
+                wo_exp=int(exp_node.xpath('./woexp')[0].text)
+                if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
+                    bib_node=exp_node.getparent()
+                    try:
+                        lit=importLiterature(bib_node)
+                        sed=importSED(exp_node, lit, wo_exp)
+                        results.append(sed)
+                    except:
+                        pass
+                else:
+                    results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
         else:
             search_local=True
+    else:
+        search_local=True
 
     if search_local:
         print('Searching locally')
