@@ -197,6 +197,14 @@ class BOPSearchView(FormView):
         context['exclude']=self.request.GET.get('exclude',None)
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
         return context
 
     def form_valid(self, form):
@@ -207,14 +215,12 @@ class BOPSearchView(FormView):
 
         context['bops']=BOP.get_bop_list(bops, user)
 
-        user=self.request.user
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-
+        if self.request.is_ajax():
+            ajax_context={
+                'bops': [(selected,is_favorite,subscribed_to_user,bop.as_json())
+                         for (selected,is_favorite,subscribed_to_user,bop) in context['bops']],
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 
@@ -224,6 +230,7 @@ class BrainRegionSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionSearchView,self).get_context_data(**kwargs)
+        user=self.request.user
         context['helpPage']='search_data.html#brain-regions'
         context['brain_region_search_form']=context.get('form')
         context['searchType']='brain_regions'
@@ -232,6 +239,12 @@ class BrainRegionSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         if 'fieldName' in self.request.GET:
             context['fieldName']=self.request.GET['fieldName']
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return context
 
     def form_valid(self, form):
@@ -241,12 +254,12 @@ class BrainRegionSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        if self.request.is_ajax():
+            ajax_context={
+                'brain_regions': [(selected,is_favorite,region.as_json())
+                                  for (selected,is_favorite,region) in context['brain_regions']],
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 
@@ -256,12 +269,19 @@ class LiteratureSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(LiteratureSearchView,self).get_context_data(**kwargs)
+        user=self.request.user
         context['helpPage']='search_data.html#literature'
         context['literature_search_form']=context.get('form')
         context['searchType']='literature'
         context['searchLabel']='Literature'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return context
 
     def form_valid(self, form):
@@ -271,12 +291,12 @@ class LiteratureSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
         context['literatures']=Literature.get_reference_list(literatures,user)
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        if self.request.is_ajax():
+            ajax_context={
+                'literatures': [(selected,is_favorite,subscribed_to_user,reference.as_json())
+                                for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']],
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 
@@ -294,6 +314,13 @@ class ModelSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         context['exclude']=self.request.GET.get('exclude',None)
         context['modelGraphId']='modelRelationshipDiagram'
+        user=self.request.user
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
         return context
 
     def form_valid(self, form):
@@ -303,14 +330,12 @@ class ModelSearchView(FormView):
         models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
         context['models']=Model.get_model_list(models, user)
 
-        user=self.request.user
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-
+        if self.request.is_ajax():
+            ajax_context={
+                'models': [(selected,is_favorite,subscribed_to_user,model.as_json())
+                           for (selected,is_favorite,subscribed_to_user,model) in context['models']],
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 
@@ -320,6 +345,7 @@ class SEDSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SEDSearchView,self).get_context_data(**kwargs)
+        user=self.request.user
         context['helpPage']='search_data.html#summary-of-experimental-data'
         context['sed_search_form']=context.get('form')
         context['searchType']='seds'
@@ -329,6 +355,13 @@ class SEDSearchView(FormView):
         context['type']=self.request.GET.get('type',None)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
         return context
 
     def form_valid(self, form):
@@ -367,18 +400,26 @@ class SEDSearchView(FormView):
         context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
         context['selected_coord_ids']=[]
         if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
             for coord in selected_coords:
                 context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
+        if self.request.is_ajax():
+            ajax_context={
+                'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                 for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+                'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                              [component.as_json() for component in components])
+                             for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+                'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                      for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                  [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                 for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 
