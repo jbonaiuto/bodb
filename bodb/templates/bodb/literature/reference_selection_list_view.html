@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% if literatures|length %}
+<div id="literature_list" name="literature_list" style="display:{% if literatures|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         {% if not ispopup %}
             <tr class="col_header">
@@ -21,41 +21,78 @@
             </tr>
         {% endif %}
         <tr class="col_header">
-            <td>&nbsp;</td>
+            <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td>Reference</td>
-            <td style="width:100px">Collator</td>
+            <td width=100px>Collator</td>
             <td width=100px>&nbsp;</td>
         </tr>
-        {% for selected,is_favorite,subscribed,literature in literatures %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>{{ forloop.counter }}</td>
-                <td align=center>
+        <tr>
+            <td colspan="5">
+                <div id="literatures" name="literatures">
+                    {% for selected,is_favorite,subscribed,literature in literatures %}
+                        <div id="literature-{{ forloop.counter0 }}" name="literature">
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=25px>{{ forloop.counter }}</td>
+                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            {% if ispopup %}
+                                                {% if multiple %}
+                                                    <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
+                                                {% else %}
+                                                    <a href="#" onclick="opener.selectSingleLiterature({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}'], 'lit', 'span_lit', '{% if perms.bodb.change_literature %}/bodb/literature/{{ literature.id }}/edit/?_popup=1{% endif %}&fieldName={{ fieldName }}&spanName={{ spanName }}', '', '');self.close();">Select</a>
+                                                {% endif %}
+                                            {% else %}
+                                                <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature({{ literature.id }},'favIconLiterature-{{ literature.id }}','{{ csrf_token }}');">
+                                                    <img id="favIconLiterature-{{ literature.id }}" name="favIconLiterature-{{ literature.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                                </a>
+                                                <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
+                                                <input type=hidden name="selectedLiterature" id="selectedLiterature_{{ literature.id }}" value="{{ literature.id }}"/>
+                                            {% endif %}
+                                        {% else %}
+                                            <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" style="display: none;"/>
+                                        {% endif %}
+                                    </td>
+                                    <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
+                                    <td width=100px><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                                    <td width=100px><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/html" id="literature-template">
+    <div id="literature-<%= idx %>" name="literature">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=25px><%= idx %></td>
+                <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
-                            {% if multiple %}
-                                <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
-                            {% else %}
-                                <a href="#" onclick="opener.selectSingleLiterature({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}'], 'lit', 'span_lit', '{% if perms.bodb.change_literature %}/bodb/literature/{{ literature.id }}/edit/?_popup=1{% endif %}&fieldName={{ fieldName }}&spanName={{ spanName }}', '', '');self.close();">Select</a>
-                            {% endif %}
+                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= authors %>', '<%= year %>', '<%= title %>']);">Select</a>
                         {% else %}
-                            <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature({{ literature.id }},'favIconLiterature-{{ literature.id }}','{{ csrf_token }}');">
-                                <img id="favIconLiterature-{{ literature.id }}" name="favIconLiterature-{{ literature.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                            <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature(<%= id %>,'favIconLiterature-<%= id %>','{{ csrf_token }}');">
+                                <img id="favIconLiterature-<%= id %>" name="favIconLiterature-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
-                            <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedLiterature" id="selectedLiterature_{{ literature.id }}" value="{{ literature.id }}"/>
+                            <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %>{% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
+                            <input type=hidden name="selectedLiterature" id="selectedLiterature_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
-                        <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" style="display: none;"/>
+                        <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
                 </td>
-                <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
-                <td><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                <td><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
+                <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= string %></a></td>
+                <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
+                <td width=100px><span id="literature_<%= id %>_message" name="literature_<%= id %>_message" class="messages"></span> </td>
             </tr>
-        {% endfor %}
-    </table>
-{% endif %}
+        </table>
+    </div>
+</script>
 <script type="text/javascript">
     var $synch = $('.lit_export_format').bind('change', function() {
         $synch.not(this).get(0).selectedIndex = this.selectedIndex;

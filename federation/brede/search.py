@@ -14,49 +14,50 @@ def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'search_brede') and searcher.search_brede:
-        print('Trying to search Brede')
-        woBibsDoc=None
-        try:
-            woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
-        except etree.XMLSyntaxError as e:
-            print ("PARSING ERROR", e)
+    if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='imaging'):
+        if hasattr(searcher,'search_brede') and searcher.search_brede:
+            print('Trying to search Brede')
+            woBibsDoc=None
+            try:
+                woBibsDoc = etree.fromstring(download('http://neuro.imm.dtu.dk/services/brededatabase/wobibs.xml'))
+            except etree.XMLSyntaxError as e:
+                print ("PARSING ERROR", e)
 
-        if not woBibsDoc is None:
-            xpathStrings=[]
-            # construct search query
-            for key in search_data.iterkeys():
-                # if the searcher can search by this field
-                if hasattr(searcher, 'search_%s' % key):
-                    # add field to query
-                    dispatch=getattr(searcher, 'search_%s' % key)
-                    xpathStrings.append(dispatch(userId))
+            if not woBibsDoc is None:
+                xpathStrings=[]
+                # construct search query
+                for key in search_data.iterkeys():
+                    # if the searcher can search by this field
+                    if hasattr(searcher, 'search_%s' % key):
+                        # add field to query
+                        dispatch=getattr(searcher, 'search_%s' % key)
+                        xpathStrings.append(dispatch(userId))
 
-            xpathString='//Exp'
+                xpathString='//Exp'
 
-            if len(xpathStrings):
-                if search_data['search_options']=='all':
-                    xpathString=' & '.join(xpathStrings)
-                else:
-                    xpathString=' | '.join(xpathStrings)
+                if len(xpathStrings):
+                    if search_data['search_options']=='all':
+                        xpathString=' & '.join(xpathStrings)
+                    else:
+                        xpathString=' | '.join(xpathStrings)
 
-            exp_nodes=woBibsDoc.xpath(xpathString)
-            for exp_node in exp_nodes:
-                wo_exp=int(exp_node.xpath('./woexp')[0].text)
-                if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
-                    bib_node=exp_node.getparent()
-                    try:
-                        lit=importLiterature(bib_node)
-                        sed=importSED(exp_node, lit, wo_exp)
-                        results.append(sed)
-                    except:
-                        pass
-                else:
-                    results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
+                exp_nodes=woBibsDoc.xpath(xpathString)
+                for exp_node in exp_nodes:
+                    wo_exp=int(exp_node.xpath('./woexp')[0].text)
+                    if not BredeBrainImagingSED.objects.filter(woexp=wo_exp):
+                        bib_node=exp_node.getparent()
+                        try:
+                            lit=importLiterature(bib_node)
+                            sed=importSED(exp_node, lit, wo_exp)
+                            results.append(sed)
+                        except:
+                            pass
+                    else:
+                        results.append(BredeBrainImagingSED.objects.get(woexp=wo_exp))
+            else:
+                search_local=True
         else:
             search_local=True
-    else:
-        search_local=True
 
     if search_local:
         print('Searching locally')
@@ -82,6 +83,7 @@ def runBredeSearch(search_data, userId):
             user=User.get_anonymous()
             
         q = reduce(op,filters) & Document.get_security_q(user)
+        print(q)
         
         # get results
         if q and len(q):

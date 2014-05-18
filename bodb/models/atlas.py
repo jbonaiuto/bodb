@@ -116,6 +116,20 @@ class BrainRegion(models.Model):
         else:
             return u"%s" % self.name
 
+    def as_json(self):
+        json={
+            'id': self.id,
+            'name': self.name,
+            'abbreviation': self.abbreviation,
+            'type': self.brain_region_type,
+            'parent_region': '',
+            'nomenclature': self.nomenclature.__unicode__(),
+            'species': ','.join([species.__unicode__() for species in self.nomenclature.species.all()])
+        }
+        if self.parent_region is not None:
+            json['parent_region']=self.parent_region.__unicode__()
+        return json
+
     def get_absolute_url(self):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 

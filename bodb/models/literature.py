@@ -139,6 +139,16 @@ class Literature(models.Model):
     def bibtex_format(self):
         return ''
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'authors': self.author_names(),
+            'year': self.year,
+            'title': self.title,
+            'collator_id': self.collator.id,
+            'collator': self.get_collator_str(),
+            'string': self.str()
+        }
     @staticmethod
     def get_reference_list(references, user):
         profile=None

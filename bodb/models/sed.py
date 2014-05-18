@@ -49,6 +49,11 @@ class SED(Document):
             # send notifications to subscribed users
             sendNotifications(self, 'SED')
 
+    def as_json(self):
+        json=super(SED,self).as_json()
+        json['type']=self.type
+        return json
+
     @staticmethod
     def get_literature_seds(literature, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(literature=literature) &
@@ -159,6 +164,20 @@ class ERPComponent(models.Model):
     class Meta:
         app_label='bodb'
 
+    def as_json(self):
+        json={
+            'id': self.id,
+            'name': self.component_name,
+            'latency_peak': self.latency_peak.__str__(),
+            'latency_peak_type': self.latency_peak_type,
+            'position_system': '',
+            'position': ''
+        }
+        if self.electrode_position is not None:
+            json['position_system']=self.electrode_position.position_system.name
+            json['position']=self.electrode_position.name
+        return json
+
 
 # A summary of brain imaging data: inherits from SED
 class BrainImagingSED(SED):
@@ -196,6 +215,11 @@ class BrainImagingSED(SED):
 
     def html_url_string(self):
         return ''
+
+    def as_json(self):
+        json=super(BrainImagingSED,self).as_json()
+        json['url_str']=self.html_url_string()
+        return json
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -247,8 +271,19 @@ class SEDCoord(models.Model):
     named_brain_region = models.CharField(max_length=200)
     # extra data (for extra headers)
     extra_data = models.TextField(blank=True, null=True)
+
     class Meta:
         app_label='bodb'
+
+    def as_json(self):
+        return {
+            'id': self.id,
+            'brain_region': self.named_brain_region,
+            'hemisphere': self.hemisphere,
+            'x': self.coord.x,
+            'y': self.coord.y,
+            'z': self.coord.z
+        }
 
 
 class BredeBrainImagingSED(BrainImagingSED):
@@ -361,6 +396,11 @@ class ConnectivitySED(SED):
 
     def html_url_string(self):
         return ''
+
+    def as_json(self):
+        json=super(ConnectivitySED,self).as_json()
+        json['url_str']=self.html_url_string()
+        return json
 
     @staticmethod
     def get_literature_seds(literature, user):

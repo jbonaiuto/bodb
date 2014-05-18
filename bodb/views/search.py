@@ -1,6 +1,10 @@
 import datetime
+import json
 from Bio import Entrez
+from django.core import serializers
+
 Entrez.email = 'uscbrainproject@gmail.com'
+from django.http import HttpResponse
 from bodb.search.user import runUserSearch
 from registration.models import User
 from bodb.search.atlas import runBrainRegionSearch
@@ -42,6 +46,18 @@ class SearchView(FormView):
         context['bopBOPGraphId']='bopRelationshipDiagram'
         context['allModelGraphId']='allModelRelationshipDiagram'
         context['modelModelGraphId']='modelRelationshipDiagram'
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
+        context['selected_coord_ids']=[]
+        user=self.request.user
+        if user.is_authenticated() and not user.is_anonymous():
+            active_workspace=user.get_profile().active_workspace
+            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
+            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
+            for coord in selected_coords:
+                context['selected_coord_ids'].append(coord.sed_coordinate.id)
         return context
 
     def form_valid(self, form):
@@ -139,18 +155,31 @@ class SearchView(FormView):
         context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['users']=BodbProfile.get_user_list(users,user)
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
-
+        if self.request.is_ajax():
+            ajax_context={
+                'bops': [(selected,is_favorite,subscribed_to_user,bop.as_json())
+                         for (selected,is_favorite,subscribed_to_user,bop) in context['bops']],
+                'models': [(selected,is_favorite,subscribed_to_user,model.as_json())
+                           for (selected,is_favorite,subscribed_to_user,model) in context['models']],
+                'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                 for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+                'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                              [component.as_json() for component in components])
+                             for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+                'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                      for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                  [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                 for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                'ssrs': [(selected,is_favorite,subscribed_to_user,ssr.as_json())
+                         for (selected,is_favorite,subscribed_to_user,ssr) in context['ssrs']],
+                'literatures': [(selected,is_favorite,subscribed_to_user,reference.as_json())
+                                for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']],
+                'brain_regions': [(selected,is_favorite,region.as_json())
+                                  for (selected,is_favorite,region) in context['brain_regions']],
+                'users': [(subscribed_to_user,BodbProfile.as_json(u)) for (subscribed_to_user,u) in context['users']]
+            }
+            return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
 

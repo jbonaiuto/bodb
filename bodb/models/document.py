@@ -93,6 +93,17 @@ class Document(models.Model):
 
         document_changed.send(sender=self)
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'collator_id': self.collator.id,
+            'collator': self.get_collator_str(),
+            'title': self.title,
+            'title_str': self.__unicode__(),
+            'draft': self.draft,
+            'brief_description': self.brief_description
+        }
+
     @staticmethod
     def get_security_q(user, field=None):
         q=Q()

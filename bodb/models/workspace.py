@@ -332,6 +332,15 @@ class BodbProfile(models.Model):
             user_list.append([subscribed_to_user,u])
         return user_list
 
+    @staticmethod
+    def as_json(user):
+        return {
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
+        }
 
 # create a new profile for the given user
 def create_user_profile(user):
