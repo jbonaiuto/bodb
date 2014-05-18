@@ -14,7 +14,7 @@ def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
     search_local=False
-    if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='imaging'):
+    if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='brain imaging'):
         if hasattr(searcher,'search_brede') and searcher.search_brede:
             print('Trying to search Brede')
             woBibsDoc=None
