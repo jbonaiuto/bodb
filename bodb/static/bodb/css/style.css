@@ -200,6 +200,23 @@ input.btnhov{
     border-right-color:#930;
     border-bottom-color:#930;
 }
+button.btn{
+    color:#0d3f74;
+    font-family:'trebuchet ms',helvetica,sans-serif;
+    font-size:84%;
+    font-weight:bold;
+    border:1px solid;
+    border-top-color:#0d3f74;
+    border-left-color:#0d3f74;
+    border-right-color:#0d3f74;
+    border-bottom-color:#0d3f74
+}
+button.btnhov{
+    border-top-color:#c63;
+    border-left-color:#c63;
+    border-right-color:#930;
+    border-bottom-color:#930;
+}
 
 
 /* List

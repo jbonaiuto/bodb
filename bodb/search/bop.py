@@ -38,7 +38,7 @@ def runBOPSearch(search_data, userId, exclude=None):
     else:
         results = BOP.objects.all().select_related()
 
-    if exclude is not None and not exclude=='None':
+    if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))
 
     return results.order_by('title')

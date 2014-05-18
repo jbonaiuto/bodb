@@ -1,4 +1,8 @@
+import os
+from django.core.files.storage import FileSystemStorage
+from django.contrib.formtools.wizard.views import SessionWizardView
 from django.db.models import Q
+from django.forms.forms import Form
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
@@ -6,13 +10,16 @@ from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, De
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm
+from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm, ModelForm1, ModelForm2, ModelForm6
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
 from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl, Literature, UserSubscription
 from bodb.models.ssr import SSR, Prediction
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
+from taggit.models import Tag
+from taggit.utils import parse_tags
+from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import ModelSerializer
@@ -333,6 +340,266 @@ class CreateModelView(EditModelMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
         return context
+
+
+MODEL_WIZARD_FORMS = [("step1", ModelForm1),
+                      ("step2", ModelForm2),
+                      ("step3", Form),
+                      ("step4", Form),
+                      ("step5", Form),
+                      ('step6', ModelForm6)
+                     ]
+
+MODEL_WIZARD_TEMPLATES = {"step1": 'bodb/model/model_create_1.html',
+                          "step2": 'bodb/model/model_create_2.html',
+                          "step3": 'bodb/model/model_create_3.html',
+                          "step4": 'bodb/model/model_create_4.html',
+                          "step5": 'bodb/model/model_create_5.html',
+                          "step6": 'bodb/model/model_create_6.html'
+                         }
+
+class CreateModelWizardView(SessionWizardView):
+
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'figures'))
+
+    def get_template_names(self):
+        return [MODEL_WIZARD_TEMPLATES[self.steps.current]]
+
+    def get_context_data(self, form, **kwargs):
+        context=super(CreateModelWizardView,self).get_context_data(form, **kwargs)
+        context['helpPage']='insert_data.html#insert-model'
+        context['showFigure']=True
+        context['showAuthors']=True
+        context['showReferences']=True
+        context['showBuildSEDs']=True
+        context['showTestSEDs']=True
+        context['showPredictions']=True
+        context['showRelatedModels']=True
+        context['showRelatedBOPs']=True
+        context['showRelatedBrainRegions']=True
+        context['ispopup']=('_popup' in self.request.GET)
+        if self.steps.current=='step1':
+            context['model_author_formset'] = ModelAuthorFormSet(queryset=ModelAuthor.objects.none(),
+                prefix='model_author')
+        elif self.steps.current=='step2':
+            self.storage.data['step1_data']=self.request.POST
+            self.storage.data['literature']=self.request.POST.getlist('literature')
+            print(self.storage.data['literature'])
+            context['figure_formset']=DocumentFigureFormSet(prefix='figure')
+            context['input_formset']=VariableFormSet(prefix='input')
+            context['output_formset']=VariableFormSet(prefix='output')
+            context['state_formset']=VariableFormSet(prefix='state')
+            context['module_formset'] = ModuleFormSet(prefix='module')
+        elif self.steps.current=='step3':
+            self.storage.data['step2_data']=self.request.POST
+            for key,file_list in self.request.FILES.iteritems():
+                self.storage.data[key]=file_list.name
+            context['build_sed_formset']=BuildSEDFormSet(prefix='build_sed')
+        elif self.steps.current=='step4':
+            self.storage.data['step3_data']=self.request.POST
+            context['test_sed_formset']=TestSEDFormSet(prefix='test_sed')
+        elif self.steps.current=='step5':
+            self.storage.data['step4_data']=self.request.POST
+            context['prediction_formset']=PredictionFormSet(prefix='prediction')
+        elif self.steps.current=='step6':
+            self.storage.data['step5_data']=self.request.POST
+            context['related_bop_formset']=RelatedBOPFormSet(prefix='related_bop')
+            context['related_model_formset']=RelatedModelFormSet(prefix='related_model')
+            context['related_brain_region_formset']=RelatedBrainRegionFormSet(prefix='related_brain_region')
+        return context
+
+    def done(self, form_list, **kwargs):
+        model=Model(collator=self.request.user, last_modified_by=self.request.user,
+            title=form_list[0].cleaned_data['title'], brief_description=form_list[0].cleaned_data['brief_description'],
+            narrative=form_list[1].cleaned_data['narrative'], execution_url=form_list[0].cleaned_data['execution_url'],
+            documentation_url=form_list[0].cleaned_data['documentation_url'],
+            description_url=form_list[0].cleaned_data['description_url'],
+            simulation_url=form_list[0].cleaned_data['simulation_url'],
+            modeldb_accession_number=form_list[0].cleaned_data['modeldb_accession_number'],
+            draft=form_list[5].cleaned_data['draft'], public=form_list[0].cleaned_data['public'])
+        model.save()
+        for tag in form_list[0].cleaned_data['tags']:
+            model.tags.add(tag)
+        for lit_id in self.storage.data['literature']:
+            print(lit_id)
+            model.literature.add(Literature.objects.get(id=lit_id))
+
+        # save authors
+        author_formset=ModelAuthorFormSet(self.storage.data['step1_data'], queryset=ModelAuthor.objects.none(),
+            prefix='model_author')
+        for author_form in author_formset.forms:
+            model_author=author_form.save(commit=False)
+            author=Author(first_name=author_form.cleaned_data['author_first_name'],
+                middle_name=author_form.cleaned_data['author_middle_name'],
+                last_name=author_form.cleaned_data['author_last_name'],
+                alias=author_form.cleaned_data['author_alias'],
+                email=author_form.cleaned_data['author_email'],
+                homepage=author_form.cleaned_data['author_homepage'])
+            if 'author' in author_form.cleaned_data and author_form.cleaned_data['author'] is not None:
+                author=author_form.cleaned_data['author']
+                author.first_name=author_form.cleaned_data['author_first_name']
+                author.middle_name=author_form.cleaned_data['author_middle_name']
+                author.last_name=author_form.cleaned_data['author_last_name']
+                author.alias=author_form.cleaned_data['author_alias']
+                author.email=author_form.cleaned_data['author_email']
+                author.homepage=author_form.cleaned_data['author_homepage']
+            author.save()
+            model_author.author=author
+            model_author.save()
+            model.authors.add(model_author)
+
+        # save figures
+        figure_formset=DocumentFigureFormSet(self.storage.data['step2_data'], self.request.FILES or None, prefix='figure')
+        figure_formset.instance = model
+        for idx,figure_form in enumerate(figure_formset.forms):
+            file_name=os.path.join('figures',self.storage.data['figure-%d-figure' % idx])
+            figure=DocumentFigure(caption=figure_form.data['figure-%d-caption' % idx], title=figure_form.data['figure-%d-title' % idx],
+                order=figure_form.data['figure-%d-order' % idx], document=model)
+            figure.figure.name=file_name
+            figure.document=model
+            figure.save()
+
+        # save inputs
+        input_formset=VariableFormSet(self.storage.data['step2_data'], prefix='input')
+        input_formset.instance=model
+        for input_form in input_formset.forms:
+            input=input_form.save(commit=False)
+            input.module=model
+            input.save()
+
+        # save outputs
+        output_formset=VariableFormSet(self.storage.data['step2_data'], prefix='output')
+        output_formset.instance=model
+        for output_form in output_formset.forms:
+            output=output_form.save(commit=False)
+            output.module=model
+            output.save()
+
+        # save states
+        state_formset=VariableFormSet(self.storage.data['step2_data'], prefix='state')
+        state_formset.instance=model
+        for state_form in state_formset.forms:
+            state=state_form.save(commit=False)
+            state.module=model
+            state.save()
+
+        # save modules
+        module_formset = ModuleFormSet(self.storage.data['step2_data'], prefix='module')
+        for module_form in module_formset.forms:
+            module=module_form.save(commit=False)
+            # Set module parent and collator if this is a new module
+            if module.id is None:
+                module.parent=model
+                module.collator=model.collator
+            module.last_modified_by=self.request.user
+            module.draft=model.draft
+            module.public=model.public
+            module.save()
+
+        # save build SEDs
+        build_sed_formset=BuildSEDFormSet(self.storage.data['step3_data'], prefix='build_sed')
+        build_sed_formset.instance=model
+        for build_sed_form in build_sed_formset.forms:
+            build_sed=build_sed_form.save(commit=False)
+            build_sed.document=model
+            build_sed.save()
+
+        # save test SEDs
+        test_sed_formset=TestSEDFormSet(self.storage.data['step4_data'], prefix='test_sed')
+        test_sed_formset.instance = model
+        for test_sed_form in test_sed_formset.forms:
+            test_sed=test_sed_form.save(commit=False)
+            test_sed.model=model
+            test_sed.save()
+
+            # save testSED SSRs
+            for testsedssr_form in test_sed_form.nested.forms:
+                testsedssr=testsedssr_form.save(commit=False)
+                testsedssr.test_sed=test_sed
+                ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
+                    brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
+                    type=testsedssr_form.cleaned_data['ssr_type'])
+                # Update ssr if editing existing one
+                if 'ssr' in testsedssr_form.cleaned_data and\
+                   testsedssr_form.cleaned_data['ssr'] is not None:
+                    ssr=testsedssr_form.cleaned_data['ssr']
+                    ssr.title=testsedssr_form.cleaned_data['ssr_title']
+                    ssr.brief_description=testsedssr_form.cleaned_data['ssr_brief_description']
+                # Set collator if this is a new SSR
+                else:
+                    ssr.collator=model.collator
+                ssr.last_modified_by=self.request.user
+                ssr.draft=model.draft
+                ssr.public=model.public
+                ssr.save()
+                testsedssr.ssr=ssr
+                testsedssr.save()
+
+        # save predictions
+        prediction_formset=PredictionFormSet(self.storage.data['step5_data'], prefix='prediction')
+        prediction_formset.instance = model
+        for prediction_form in prediction_formset.forms:
+            prediction=prediction_form.save(commit=False)
+            # Set prediction model and collator if this is a new prediction
+            if prediction.id is None:
+                prediction.model=model
+                prediction.collator=model.collator
+            prediction.last_modified_by=self.request.user
+            prediction.draft=model.draft
+            prediction.public=model.public
+            prediction.save()
+
+            # save prediction SSRs
+            for predictionssr_form in prediction_form.nested.forms:
+                predictionssr=predictionssr_form.save(commit=False)
+                predictionssr.prediction=prediction
+                ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
+                    brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
+                    type=predictionssr_form.cleaned_data['ssr_type'])
+                # Update ssr if editing existing one
+                if 'ssr' in predictionssr_form.cleaned_data and\
+                   predictionssr_form.cleaned_data['ssr'] is not None:
+                    ssr=predictionssr_form.cleaned_data['ssr']
+                    ssr.title=predictionssr_form.cleaned_data['ssr_title']
+                    ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
+                # Set collator if this is a new SSR
+                else:
+                    ssr.collator=model.collator
+                ssr.last_modified_by=self.request.user
+                ssr.draft=model.draft
+                ssr.public=model.public
+                ssr.save()
+                predictionssr.ssr=ssr
+                predictionssr.save()
+
+        # save related BOPs
+        related_bop_formset=RelatedBOPFormSet(self.request.POST, prefix='related_bop')
+        related_bop_formset.instance=model
+        for related_bop_form in related_bop_formset.forms:
+            if not related_bop_form in related_bop_formset.deleted_forms:
+                related_bop=related_bop_form.save(commit=False)
+                related_bop.document=model
+                related_bop.save()
+
+        # save related Models
+        related_model_formset=RelatedModelFormSet(self.request.POST, prefix='related_model')
+        related_model_formset.instance=model
+        for related_model_form in related_model_formset.forms:
+            if not related_model_form in related_model_formset.deleted_forms:
+                related_model=related_model_form.save(commit=False)
+                related_model.document=model
+                related_model.save()
+
+        # save related brain regions
+        related_brain_region_formset=RelatedBrainRegionFormSet(self.request.POST, prefix='related_brain_region')
+        related_brain_region_formset.instance=model
+        for related_brain_region_form in related_brain_region_formset.forms:
+            if not related_brain_region_form in related_brain_region_formset.deleted_forms:
+                related_brain_region=related_brain_region_form.save(commit=False)
+                related_brain_region.document=model
+                related_brain_region.save()
+
+        return redirect(model.get_absolute_url())
 
 
 class UpdateModelView(EditModelMixin, UpdateView):

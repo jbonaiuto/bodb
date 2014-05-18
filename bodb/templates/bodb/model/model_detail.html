@@ -261,6 +261,27 @@
                 timeOnScreen: 5000
             });
         });
+
+        function importModel(accession_number, authors, title, description, keywords, lit_id, lit_authors, lit_year, lit_title)
+        {
+            author_list=authors.split(', ');
+            for(var i=0; i<author_list.length; i++)
+            {
+                author_name=author_list[i];
+                names=author_name.split(' ');
+                addmodelAuthor(names[1], names[0]);
+            }
+            document.getElementById('id_modeldb_accession_number').value=accession_number;
+            document.getElementById('id_title').value=title;
+            document.getElementById('id_brief_description').value=description;
+            document.getElementById('id_tags').value=keywords;
+            animatedcollapse.show(['urlData']);
+            if(lit_id>-1)
+            {
+                addLiteratureMultiple(lit_id, [lit_authors,lit_year,lit_title]);
+                animatedcollapse.show('referenceData');
+            }
+        }
     </script>
 {% endblock %}
 {% block content %}
