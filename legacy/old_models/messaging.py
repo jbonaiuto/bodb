@@ -53,9 +53,7 @@ def sendNotifications(document, model_type):
     type_q=Q(Q(model_type=model_type) | Q(model_type='All'))
     full_q=type_q
     if not document.public:
-        print('document is not public')
         if not int(document.draft):
-            print('document is not a draft')
             full_q=Q(type_q & Q(Q(user__is_superuser=1) | Q(user__groups__in=list(document.collator.groups.all()))))
         else:
             full_q=Q(type_q & Q(user__is_superuser=1))

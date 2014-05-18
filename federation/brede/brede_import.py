@@ -195,7 +195,6 @@ class BredeImporter:
             lit.save()
             if 'AuthorList' in article_record:
                 authorList=", ".join(article_record['AuthorList']).replace('\'', '\\\'')
-                print(authorList)
                 authors=authorList.split(', ')
                 # list of author ids
                 for idx,author in enumerate(authors):

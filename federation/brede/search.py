@@ -83,8 +83,7 @@ def runBredeSearch(search_data, userId):
             user=User.get_anonymous()
             
         q = reduce(op,filters) & Document.get_security_q(user)
-        print(q)
-        
+
         # get results
         if q and len(q):
             return list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())
