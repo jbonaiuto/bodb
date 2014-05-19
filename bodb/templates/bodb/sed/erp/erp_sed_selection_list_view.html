@@ -29,8 +29,8 @@
         function load{{ erpGraphId }}Popups()
         {
             var map=document.getElementById('{{ erpGraphId }}Map');
-            $('map[name="{{ erpGraphId }}Map"]').find('area').each(function() {
-                $('#'+this.id).poshytip({
+            $('map[name="{{ erpGraphId }}Map"]').find('area').each(function(index, element) {
+                $(element).poshytip({
                     className: 'tip-skyblue',
                     content: show{{ erpGraphId }}ComponentPopup(this.id),
                     showTimeout: 0,
