@@ -466,25 +466,28 @@
  		var originalSize = smartData.originalSize; // target original size
  		
  		// get the zoomable container position from settings
- 		var parentOffset = containerDiv.parent().offset(); 
- 		var containerDivNewLeft = getContainerDivPositionFromSettings(smartData.settings.left, parentOffset.left, containerDiv.parent().width());
- 		var containerDivNewTop = getContainerDivPositionFromSettings(smartData.settings.top, parentOffset.top, containerDiv.parent().height());
- 		
- 		containerDiv.offset({left: containerDivNewLeft, top: containerDivNewTop}); // apply position find
-  		containerDiv.width(getContainerDivSizeFromSettings(smartData.settings.width, containerDiv.parent().width(), containerDivNewLeft - parentOffset.left)); // apply size found to zoomablecontainer 
-		containerDiv.height(getContainerDivSizeFromSettings(smartData.settings.height, containerDiv.parent().height(), containerDivNewTop - parentOffset.top));
-		
-	  	var containerRect = getRect(containerDiv); // get the rectangle from the new containerDiv position and size
-	  	var scaleToFit = Math.min(Math.min(containerRect.width/originalSize.width, containerRect.height/originalSize.height), 1).toFixed(2); // scale to use to include the target into containerRect
-	  	var newWidth = originalSize.width * scaleToFit; // we could now find the new size
-	  	var newHeight = originalSize.height * scaleToFit;
+        if(containerDiv.parent().width()>0 && containerDiv.parent().height())
+        {
+ 		    var parentOffset = containerDiv.parent().offset();
+ 		    var containerDivNewLeft = getContainerDivPositionFromSettings(smartData.settings.left, parentOffset.left, containerDiv.parent().width());
+ 		    var containerDivNewTop = getContainerDivPositionFromSettings(smartData.settings.top, parentOffset.top, containerDiv.parent().height());
 
-	    // store the position and size information in adjustedPosInfos object
-	  	smartData.adjustedPosInfos = {"left":(containerRect.width - newWidth)/2 + parentOffset.left, "top": (containerRect.height - newHeight)/2 + parentOffset.top, "width": newWidth, "height" : newHeight, "scale":scaleToFit};
-	  	stopAnim();
-	  	// call animate method with 10 ms duration to apply new target position and size
-	  	animate(targetElement,  smartData.adjustedPosInfos.left , smartData.adjustedPosInfos.top, newWidth, newHeight, 0);
-	  	updateMouseMoveCursor(); 
+     		containerDiv.offset({left: containerDivNewLeft, top: containerDivNewTop}); // apply position find
+  	    	containerDiv.width(getContainerDivSizeFromSettings(smartData.settings.width, containerDiv.parent().width(), containerDivNewLeft - parentOffset.left)); // apply size found to zoomablecontainer
+		    containerDiv.height(getContainerDivSizeFromSettings(smartData.settings.height, containerDiv.parent().height(), containerDivNewTop - parentOffset.top));
+
+            var containerRect = getRect(containerDiv); // get the rectangle from the new containerDiv position and size
+	  	    var scaleToFit = Math.min(Math.min(containerRect.width/originalSize.width, containerRect.height/originalSize.height), 1).toFixed(2); // scale to use to include the target into containerRect
+	  	    var newWidth = originalSize.width * scaleToFit; // we could now find the new size
+	  	    var newHeight = originalSize.height * scaleToFit;
+
+	        // store the position and size information in adjustedPosInfos object
+	  	    smartData.adjustedPosInfos = {"left":(containerRect.width - newWidth)/2 + parentOffset.left, "top": (containerRect.height - newHeight)/2 + parentOffset.top, "width": newWidth, "height" : newHeight, "scale":scaleToFit};
+	  	    stopAnim();
+	  	    // call animate method with 10 ms duration to apply new target position and size
+	  	    animate(targetElement,  smartData.adjustedPosInfos.left , smartData.adjustedPosInfos.top, newWidth, newHeight, 0);
+	  	    updateMouseMoveCursor();
+        }
     }
     
     /**
