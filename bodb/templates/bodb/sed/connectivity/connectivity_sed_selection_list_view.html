@@ -77,6 +77,7 @@
         <tr>
             <td colspan="7">
                 <div id="connectivity_seds" name="connectivity_seds">
+                    <input type="hidden" id="groupName" value="{{ connectionGraphId }}"/>
                     {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
                         <div id="connectivity_sed-{{ forloop.counter0 }}" name="connectivity_sed">
                             <input type="hidden" id="connectivity_sed_{{ connectionGraphId }}_{{ sed.id }}" name="connectivity_sed_{{ connectionGraphId }}" value="{{ sed.id }}"/>
@@ -165,7 +166,7 @@
     </table>
 </div>
 
-<script type="text/html" id="connectivity_sed-template">
+<script type="text/html" id="connectivity_sed_{{ connectionGraphId }}-template">
     <div id="connectivity_sed-<%= idx %>" name="connectivity_sed">
         <input type="hidden" id="connectivity_sed_{{ connectionGraphId }}_<%= id %>" name="connectivity_sed_{{ connectionGraphId }}" value="<%= id %>"/>
         <table class="tab_panel">

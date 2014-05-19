@@ -12,6 +12,15 @@ function processModelResults(data)
             $( this ).html(data['models'].length);
         });
     }
+    else
+    {
+        $('[name=model_section]').each(function(index, element){
+            $( this ).attr('style','display:none');
+        });
+        $('[name=model_list]').each(function(index, element){
+            $( this ).attr('style','display:none');
+        });
+    }
     $('[name=models]').each(function(index, element){
         $( this ).empty();
         for(var i=0; i<data['models'].length; i++)
@@ -44,6 +53,15 @@ function processBOPResults(data)
         });
         $('[name=numBOPResults]').each(function(index, element){
             $(this).html(data['bops'].length)
+        });
+    }
+    else
+    {
+        $('[name=bop_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=bop_list]').each(function(index, element){
+            $( this).attr('style','display:none');
         });
     }
     $('[name=bops]').each(function(index, element){
@@ -80,6 +98,12 @@ function processSEDResults(data)
             $(this).html(data['generic_seds'].length)
         });
     }
+    else
+    {
+        $('[name=generic_sed_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
     $('[name=generic_seds]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['generic_seds'].length; i++)
@@ -112,12 +136,20 @@ function processSEDResults(data)
             $(this).html(data['erp_seds'].length)
         });
     }
+    else
+    {
+        $('[name=erp_sed_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
     $('[name=erp_seds]').each(function(index, element){
+        var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
+        $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
         for(var i=0; i<data['erp_seds'].length; i++)
         {
             var count = $(this).children().length;
-            var tmplMarkup = $('#erp_sed-template').html();
+            var tmplMarkup = $('#erp_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['erp_seds'][i][3]['id'], title: data['erp_seds'][i][3]['title'],
                     type: data['erp_seds'][i][3]['type'],
@@ -128,6 +160,7 @@ function processSEDResults(data)
                     collator: data['erp_seds'][i][3]['collator'], subscribed_to_user: data['erp_seds'][i][2]});
             $(this).append(compiledTmpl);
         }
+        eval('load'+groupName+'Popups();');
     });
 
     // Connectivity SED results
@@ -143,12 +176,20 @@ function processSEDResults(data)
             $(this).html(data['connectivity_seds'].length)
         });
     }
+    else
+    {
+        $('[name=connectivity_sed_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
     $('[name=connectivity_seds]').each(function(index, element){
+        var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
+        $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
         for(var i=0; i<data['connectivity_seds'].length; i++)
         {
             var count = $(this).children().length;
-            var tmplMarkup = $('#connectivity_sed-template').html();
+            var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['connectivity_seds'][i][3]['id'],
                     title: data['connectivity_seds'][i][3]['title'], type: data['connectivity_seds'][i][3]['type'],
@@ -174,6 +215,12 @@ function processSEDResults(data)
         });
         $('[name=numImagingSEDResults]').each(function(index, element){
             $(this).html(data['imaging_seds'].length)
+        });
+    }
+    else
+    {
+        $('[name=imaging_sed_list]').each(function(index, element){
+            $( this).attr('style','display:none');
         });
     }
     $('[name=imaging_seds]').each(function(index, element){
@@ -213,6 +260,15 @@ function processSSRResults(data)
             $(this).html(data['ssrs'].length)
         });
     }
+    else
+    {
+        $('[name=ssr_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=ssr_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
     $('[name=ssrs]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['ssrs'].length; i++)
@@ -246,6 +302,15 @@ function processLiteratureResults(data)
         });
         $('[name=numLiteratureResults]').each(function(index, element){
             $(this).html(data['literatures'].length)
+        });
+    }
+    else
+    {
+        $('[name=literature_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=literature_list]').each(function(index, element){
+            $( this).attr('style','display:none');
         });
     }
     $('[name=literatures]').each(function(index, element){
@@ -283,6 +348,15 @@ function processBrainRegionResults(data)
             $(this).html(data['brain_regions'].length)
         });
     }
+    else
+    {
+        $('[name=brain_region_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=brain_region_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
     $('[name=brain_regions]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['brain_regions'].length; i++)
@@ -318,6 +392,15 @@ function processUserResults(data)
         });
         $('[name=numUserResults]').each(function(index, element){
             $(this).html(data['users'].length)
+        });
+    }
+    else
+    {
+        $('[name=user_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=user_list]').each(function(index, element){
+            $( this).attr('style','display:none');
         });
     }
     $('[name=users]').each(function(index, element){

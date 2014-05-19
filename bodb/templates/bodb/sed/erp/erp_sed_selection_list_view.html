@@ -7,10 +7,10 @@
 <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
     <script type="text/javascript">
 
-        function showComponentPopup(electrode_name)
+        function show{{ erpGraphId }}ComponentPopup(electrode_name)
         {
             var txt=electrode_name;
-            var elems=document.getElementsByName('position_'+electrode_name);
+            var elems=document.getElementsByName('{{ erpGraphId }}_position_'+electrode_name);
             for(var i=0; i<elems.length; i++)
             {
                 txt+='<hr>'+elems[i].innerHTML;
@@ -32,7 +32,7 @@
             $('map[name="{{ erpGraphId }}Map"]').find('area').each(function() {
                 $('#'+this.id).poshytip({
                     className: 'tip-skyblue',
-                    content: showComponentPopup(this.id),
+                    content: show{{ erpGraphId }}ComponentPopup(this.id),
                     showTimeout: 0,
                     alignTo: 'cursor',
                     alignX: 'right'
@@ -103,6 +103,7 @@
         <tr>
             <td colspan="6">
                 <div id="erp_seds" name="erp_seds">
+                    <input type="hidden" id="groupName" value="{{ erpGraphId }}"/>
                     {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
                         <div id="erp_sed-{{ forloop.counter0 }}" name="erp_sed">
                             <table class="tab_panel">
@@ -159,7 +160,7 @@
                                                 {% endfor %}
                                             </table>
                                             {% for component in components %}
-                                                <div name="position_{{ component.electrode_position }}" style="display: none;">
+                                                <div name="{{ erpGraphId }}_position_{{ component.electrode_position }}" style="display: none;">
                                                     {{ sed.title }}
                                                     <br>{{ component.component_name }}
                                                     <br>{{ component.latency_peak }} ms
@@ -356,7 +357,7 @@
     </table>
 </div>
 
-<script type="text/html" id="erp_sed-template">
+<script type="text/html" id="erp_sed_{{ erpGraphId }}-template">
     <div id="erp_sed-<%= idx %>" name="erp_sed">
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>" valign=top>
@@ -412,7 +413,7 @@
                             <% } %>
                         </table>
                         <% for(var comp_idx=0; comp_idx<components.length; comp_idx++){ %>
-                            <div name="position_<%= components[comp_idx]['position'] %>" style="display: none;">
+                            <div name="{{ erpGraphId }}_position_<%= components[comp_idx]['position'] %>" style="display: none;">
                                 <%= title %>
                                 <br><%= components[comp_idx]['name'] %>
                                 <br><%= components[comp_idx]['latency_peak'] %> ms
