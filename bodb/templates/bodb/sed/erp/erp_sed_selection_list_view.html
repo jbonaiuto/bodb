@@ -40,6 +40,23 @@
             });
         }
 
+        function toggleAll{{ erpGraphId }}ERPSEDSelect(type, checked, csrf_token)
+        {
+            $('[name=erp_seds]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                if(groupName=='{{ erpGraphId }}')
+                {
+                    var boxes=$(this).find('.selected'+type+'SEDCheckbox');
+                    for(var i=0; i<boxes.length; i++)
+                    {
+                        boxes[i].checked=checked;
+                        setSEDSelect(boxes[i].value, checked, csrf_token);
+                    }
+                }
+            });
+            return false;
+        }
+
         $(document).ready(function()
         {
             $('#{{ erpGraphId }}topPositionMap,#{{ erpGraphId }}leftPositionMap,#{{ erpGraphId }}rightPositionMap,#{{ erpGraphId }}bottomPositionMap').bind("click", {{ erpGraphId }}moveButtonClickHandler);
@@ -87,7 +104,7 @@
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
                     <td colspan=6>
-                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
