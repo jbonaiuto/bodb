@@ -39,13 +39,35 @@
                                 animatedcollapse.toggle('sedAdvancedOptions')
                             }
                             else if (index == 5) {
-                                document.getElementById('id_sed-type').value='brain imaging';
-                                updateSEDSearchOptions('brain imaging');
+                                document.getElementById('id_sed-type').value='connectivity';
+                                updateSEDSearchOptions('connectivity');
+                            }
+                            else if (index == 6) {
+                                document.getElementById('id_sed-connection_region_nomenclature').value='LMGM';
+                                submitSearchSEDs();
+                                setTimeout(waitFunc,100);
                             }
                         }
                     });
                 }
             });
+
+            function waitFunc()
+            {
+                $('.joyride-tip-guide')[6].style.display='none';
+                if(!searchFinished)
+                {
+                    setTimeout(waitFunc,100);
+                }
+                else
+                {
+                    generateConnDiagram(getsedConnectivitySEDDiagramConnectivitySEDIds(),document.getElementById('sedConnectivitySEDDiagramGraphtool').value,'sedConnectivitySEDDiagram','{{ csrf_token }}');
+                    $('.joyride-tip-guide')[6].style.display='block';
+                    $('html, body').animate({
+                        scrollTop: $("#{{ sedConnectionGraphId }}Link").offset().top
+                    }, 1500);
+                }
+            }
         </script>
     {% endif %}
 {% endblock %}
@@ -187,6 +209,10 @@
         <li data-id="id_sed-type" data-button="Next" data-options="tipLocation:top">
             <h2>Type-specific fields</h2>
             <p>Change the SED type to search by fields specific to a certain type experimental data.</p>
+        </li>
+        <li data-id="{{ sedConnectionGraphId }}Link" data-button="Next" data-options="tipLocation:bottom">
+            <h2>Connectivity diagrams</h2>
+            <p>Generate connectivity diagrams from lists of connectivity SEDs. Click on brain region nodes to navigate to the brain region view page. Click on edges to navigate to connectivity SED view pages.</p>
         </li>
     </ol>
 {% endblock %}

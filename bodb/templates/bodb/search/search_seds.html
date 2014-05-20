@@ -16,12 +16,16 @@
             animatedcollapse.hide(['sedERPTypeOptions']);
     }
 
+    var searchFinished=false;
+
     function submitSearchSEDs()
     {
+        searchFinished=false;
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#sed_search_form');
         $.ajax({
+            aysnc: false,
             type: frm.attr('method'),
             url: frm.attr('action'),
             data: frm.serialize(),
@@ -36,6 +40,7 @@
     {
         processSEDResults(data);
         load{{ erpGraphId }}Popups();
+        searchFinished=true;
     }
 
     animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
@@ -45,6 +50,7 @@
 
     $( document ).ready(function() {
         document.getElementById('sedData').style.display='inline';
+        searchFinished=true;
     });
 </script>
 <div id="sedDiv" style="display:{%ifequal searchType 'seds'%}block{% else %}none{% endifequal %}">
