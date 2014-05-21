@@ -156,10 +156,11 @@ class SearchView(FormView):
         context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['users']=BodbProfile.get_user_list(users,user)
+
         if self.request.is_ajax():
             bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
                       for (selected,is_favorite,subscribed_to_user,bop) in context['bops']]
-            bop_paginator=Paginator(bop_list,int(bop_form.cleaned_data['results_per_page']))
+            bop_paginator=Paginator(bop_list,int(self.request.POST.get('bop-results_per_page','10')))
             bop_page=self.request.POST.get('bop_page')
             try:
                 bops=bop_paginator.page(bop_page)
@@ -170,7 +171,7 @@ class SearchView(FormView):
 
             model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
                         for (selected,is_favorite,subscribed_to_user,model) in context['models']]
-            model_paginator=Paginator(model_list,int(model_form.cleaned_data['results_per_page']))
+            model_paginator=Paginator(model_list,int(self.request.POST.get('model-results_per_page','10')))
             model_page=self.request.POST.get('model_page')
             try:
                 models=model_paginator.page(model_page)
@@ -181,7 +182,7 @@ class SearchView(FormView):
 
             ssr_list=[(selected,is_favorite,subscribed_to_user,ssr.as_json())
                       for (selected,is_favorite,subscribed_to_user,ssr) in context['ssrs']]
-            ssr_paginator=Paginator(ssr_list,int(ssr_form.cleaned_data['results_per_page']))
+            ssr_paginator=Paginator(ssr_list,int(self.request.POST.get('ssr-results_per_page','10')))
             ssr_page=self.request.POST.get('ssr_page')
             try:
                 ssrs=ssr_paginator.page(ssr_page)
@@ -192,7 +193,7 @@ class SearchView(FormView):
 
             literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
                              for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
-            literature_paginator=Paginator(literature_list,int(literature_form.cleaned_data['results_per_page']))
+            literature_paginator=Paginator(literature_list,int(self.request.POST.get('literature-results_per_page','10')))
             literature_page=self.request.POST.get('literature_page')
             try:
                 literatures=literature_paginator.page(literature_page)
@@ -203,7 +204,7 @@ class SearchView(FormView):
                 
             brain_region_list=[(selected,is_favorite,region.as_json())
                                for (selected,is_favorite,region) in context['brain_regions']]
-            brain_region_paginator=Paginator(brain_region_list,int(brain_region_form.cleaned_data['results_per_page']))
+            brain_region_paginator=Paginator(brain_region_list,int(self.request.POST.get('brain_region-results_per_page','10')))
             brain_region_page=self.request.POST.get('brain_region_page')
             try:
                 brain_regions=brain_region_paginator.page(brain_region_page)
@@ -213,7 +214,7 @@ class SearchView(FormView):
                 brain_regions=brain_region_paginator.page(brain_region_paginator.num_pages)
             
             user_list=[(subscribed_to_user,BodbProfile.as_json(u)) for (subscribed_to_user,u) in context['users']]
-            user_paginator=Paginator(user_list,int(user_form.cleaned_data['results_per_page']))
+            user_paginator=Paginator(user_list,int(self.request.POST.get('user-results_per_page','10')))
             user_page=self.request.POST.get('user_page')
             try:
                 users=user_paginator.page(user_page)
