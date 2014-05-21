@@ -1,6 +1,6 @@
 import operator
 from django.db.models import Q
-from bodb.models import Literature
+from bodb.models.literature import *
 from taggit.utils import parse_tags
 
 def runLiteratureSearch(search_data, userId):
