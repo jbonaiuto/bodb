@@ -2,6 +2,12 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
 
+    function bopJumpPage(page)
+    {
+        document.getElementById('id_bop_page').value=page;
+        submitSearchBOPs();
+    }
+
     function submitSearchBOPs()
     {
         document.getElementById('searchingMsg').style.display = 'block';
@@ -182,10 +188,12 @@
             <tr>
                 <td colspan=8>
                     <strong>Search criteria combination:</strong> {{ bop_search_form.search_options }}
+                    <br><strong>Results per page:</strong> {{ bop_search_form.results_per_page }}
                     <br><input class="btn" type="button" value="Search" onclick="submitSearchBOPs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>
+        <input type="hidden" id="id_bop_page" name="bop_page" value="1"/>
     </form>
     <div id="bop_section" name="bop_section" style="display:{% if bops %}block{% else %}none{% endif %}">
         <table class="tab_panel">
@@ -198,7 +206,7 @@
                 </td>
             </tr>
             <tr class="section_header">
-                <td colspan=8>Results (1-<span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>)</td>
+                <td colspan=8>Results (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>)</td>
             </tr>
             <tr class="table_header">
                 <td colspan=8>
@@ -210,6 +218,11 @@
                     <div id="bopData" style="display:inline">
                         {% include 'bodb/bop/bop_selection_list_view.html' %}
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <div id="bops_previous"><a href="" onclick="bopJumpPage()">previous</a></div> Page <span id="bop_current_page">1</span> of <span id="bop_total_pages">1</span> <div id="bops_next"><a href="" onclick="bopJumpPage()">next</a></div>
                 </td>
             </tr>
             <tr>

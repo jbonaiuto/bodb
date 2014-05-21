@@ -2,6 +2,7 @@ import datetime
 import json
 from Bio import Entrez
 from django.core import serializers
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.http import HttpResponse
@@ -156,29 +157,194 @@ class SearchView(FormView):
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['users']=BodbProfile.get_user_list(users,user)
         if self.request.is_ajax():
-            ajax_context={
-                'bops': [(selected,is_favorite,subscribed_to_user,bop.as_json())
-                         for (selected,is_favorite,subscribed_to_user,bop) in context['bops']],
-                'models': [(selected,is_favorite,subscribed_to_user,model.as_json())
-                           for (selected,is_favorite,subscribed_to_user,model) in context['models']],
-                'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                 for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
-                'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                              [component.as_json() for component in components])
-                             for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
-                'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                      for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
-                'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                  [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
-                                 for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
-                'ssrs': [(selected,is_favorite,subscribed_to_user,ssr.as_json())
-                         for (selected,is_favorite,subscribed_to_user,ssr) in context['ssrs']],
-                'literatures': [(selected,is_favorite,subscribed_to_user,reference.as_json())
-                                for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']],
-                'brain_regions': [(selected,is_favorite,region.as_json())
-                                  for (selected,is_favorite,region) in context['brain_regions']],
-                'users': [(subscribed_to_user,BodbProfile.as_json(u)) for (subscribed_to_user,u) in context['users']]
-            }
+            bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
+                      for (selected,is_favorite,subscribed_to_user,bop) in context['bops']]
+            bop_paginator=Paginator(bop_list,int(bop_form.cleaned_data['results_per_page']))
+            bop_page=self.request.POST.get('bop_page')
+            try:
+                bops=bop_paginator.page(bop_page)
+            except PageNotAnInteger:
+                bops=bop_paginator.page(1)
+            except EmptyPage:
+                bops=bop_paginator.page(bop_paginator.num_pages)
+
+            model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
+                        for (selected,is_favorite,subscribed_to_user,model) in context['models']]
+            model_paginator=Paginator(model_list,int(model_form.cleaned_data['results_per_page']))
+            model_page=self.request.POST.get('model_page')
+            try:
+                models=model_paginator.page(model_page)
+            except PageNotAnInteger:
+                models=model_paginator.page(1)
+            except EmptyPage:
+                models=model_paginator.page(model_paginator.num_pages)
+
+            ssr_list=[(selected,is_favorite,subscribed_to_user,ssr.as_json())
+                      for (selected,is_favorite,subscribed_to_user,ssr) in context['ssrs']]
+            ssr_paginator=Paginator(ssr_list,int(ssr_form.cleaned_data['results_per_page']))
+            ssr_page=self.request.POST.get('ssr_page')
+            try:
+                ssrs=ssr_paginator.page(ssr_page)
+            except PageNotAnInteger:
+                ssrs=ssr_paginator.page(1)
+            except EmptyPage:
+                ssrs=ssr_paginator.page(ssr_paginator.num_pages)
+
+            literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
+                             for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
+            literature_paginator=Paginator(literature_list,int(literature_form.cleaned_data['results_per_page']))
+            literature_page=self.request.POST.get('literature_page')
+            try:
+                literatures=literature_paginator.page(literature_page)
+            except PageNotAnInteger:
+                literatures=literature_paginator.page(1)
+            except EmptyPage:
+                literatures=literature_paginator.page(literature_paginator.num_pages)
+                
+            brain_region_list=[(selected,is_favorite,region.as_json())
+                               for (selected,is_favorite,region) in context['brain_regions']]
+            brain_region_paginator=Paginator(brain_region_list,int(brain_region_form.cleaned_data['results_per_page']))
+            brain_region_page=self.request.POST.get('brain_region_page')
+            try:
+                brain_regions=brain_region_paginator.page(brain_region_page)
+            except PageNotAnInteger:
+                brain_regions=brain_region_paginator.page(1)
+            except EmptyPage:
+                brain_regions=brain_region_paginator.page(brain_region_paginator.num_pages)
+            
+            user_list=[(subscribed_to_user,BodbProfile.as_json(u)) for (subscribed_to_user,u) in context['users']]
+            user_paginator=Paginator(user_list,int(user_form.cleaned_data['results_per_page']))
+            user_page=self.request.POST.get('user_page')
+            try:
+                users=user_paginator.page(user_page)
+            except PageNotAnInteger:
+                users=user_paginator.page(1)
+            except EmptyPage:
+                users=user_paginator.page(user_paginator.num_pages)
+
+            if searchType=='all':
+                ajax_context={
+                    'bops': bop_list,
+                    'bops_count': len(bop_list),
+                    'bops_start_index':1,
+                    'bops_end_index': len(bop_list),
+                    'models': model_list,
+                    'models_count': len(model_list),
+                    'models_start_index':1,
+                    'models_end_index': len(model_list),
+                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                  [component.as_json() for component in components])
+                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                      [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'ssrs': ssr_list,
+                    'ssrs_count': len(ssr_list),
+                    'ssrs_start_index':1,
+                    'ssrs_end_index': len(ssr_list),
+                    'literatures': literature_list,
+                    'literatures_count': len(literature_list),
+                    'literatures_start_index':1,
+                    'literatures_end_index': len(literature_list),
+                    'brain_regions': brain_region_list,
+                    'brain_regions_count': len(brain_region_list),
+                    'brain_regions_start_index':1,
+                    'brain_regions_end_index': len(brain_region_list),
+                    'users': user_list,
+                    'users_count': len(user_list),
+                    'users_start_index':1,
+                    'users_end_index': len(user_list),
+                }
+            else:
+                ajax_context={
+                    'bops': bops.object_list,
+                    'bops_count': bop_paginator.count,
+                    'bops_num_pages': bop_paginator.num_pages,
+                    'bops_page_number': bops.number,
+                    'bops_has_next': bops.has_next(),
+                    'bops_has_previous': bops.has_previous(),
+                    'bops_start_index':bops.start_index(),
+                    'bops_end_index': bops.end_index(),
+                    'models': models.object_list,
+                    'models_count': model_paginator.count,
+                    'models_num_pages': model_paginator.num_pages,
+                    'models_page_number': models.number,
+                    'models_has_next': models.has_next(),
+                    'models_has_previous': models.has_previous(),
+                    'models_start_index':models.start_index(),
+                    'models_end_index': models.end_index(),
+                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                  [component.as_json() for component in components])
+                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                      [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'ssrs': ssrs.object_list,
+                    'ssrs_count': ssr_paginator.count,
+                    'ssrs_num_pages': ssr_paginator.num_pages,
+                    'ssrs_page_number': ssrs.number,
+                    'ssrs_has_next': ssrs.has_next(),
+                    'ssrs_has_previous': ssrs.has_previous(),
+                    'ssrs_start_index':ssrs.start_index(),
+                    'ssrs_end_index': ssrs.end_index(),
+                    'literatures': literatures.object_list,
+                    'literatures_count': literature_paginator.count,
+                    'literatures_num_pages': literature_paginator.num_pages,
+                    'literatures_page_number': literatures.number,
+                    'literatures_has_next': literatures.has_next(),
+                    'literatures_has_previous': literatures.has_previous(),
+                    'literatures_start_index':literatures.start_index(),
+                    'literatures_end_index': literatures.end_index(),
+                    'brain_regions': brain_regions.object_list,
+                    'brain_regions_count': brain_region_paginator.count,
+                    'brain_regions_num_pages': brain_region_paginator.num_pages,
+                    'brain_regions_page_number': brain_regions.number,
+                    'brain_regions_has_next': brain_regions.has_next(),
+                    'brain_regions_has_previous': brain_regions.has_previous(),
+                    'brain_regions_start_index':brain_regions.start_index(),
+                    'brain_regions_end_index': brain_regions.end_index(),
+                    'users': users.object_list,
+                    'users_count': user_paginator.count,
+                    'users_num_pages': user_paginator.num_pages,
+                    'users_page_number': users.number,
+                    'users_has_next': users.has_next(),
+                    'users_has_previous': users.has_previous(),
+                    'users_start_index':users.start_index(),
+                    'users_end_index': users.end_index(),
+                }
+                if bops.has_next():
+                    ajax_context['bops_next_page_number']=bops.next_page_number()
+                if bops.has_previous():
+                    ajax_context['bops_previous_page_number']=bops.previous_page_number()
+                if models.has_next():
+                    ajax_context['models_next_page_number']=models.next_page_number()
+                if models.has_previous():
+                    ajax_context['models_previous_page_number']=models.previous_page_number()
+                if ssrs.has_next():
+                    ajax_context['ssrs_next_page_number']=ssrs.next_page_number()
+                if ssrs.has_previous():
+                    ajax_context['ssrs_previous_page_number']=ssrs.previous_page_number()
+                if literatures.has_next():
+                    ajax_context['literatures_next_page_number']=literatures.next_page_number()
+                if literatures.has_previous():
+                    ajax_context['literatures_previous_page_number']=literatures.previous_page_number()
+                if brain_regions.has_next():
+                    ajax_context['brain_regions_next_page_number']=brain_regions.next_page_number()
+                if brain_regions.has_previous():
+                    ajax_context['brain_regions_previous_page_number']=brain_regions.previous_page_number()
+                if users.has_next():
+                    ajax_context['users_next_page_number']=users.next_page_number()
+                if users.has_previous():
+                    ajax_context['users_previous_page_number']=users.previous_page_number()
+
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
@@ -216,10 +382,31 @@ class BOPSearchView(FormView):
         context['bops']=BOP.get_bop_list(bops, user)
 
         if self.request.is_ajax():
+            bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
+                      for (selected,is_favorite,subscribed_to_user,bop) in context['bops']]
+            bop_paginator=Paginator(bop_list,10)
+            bop_page=self.request.POST.get('bop_page')
+            try:
+                bops=bop_paginator.page(bop_page)
+            except PageNotAnInteger:
+                bops=bop_paginator.page(1)
+            except EmptyPage:
+                bops=bop_paginator.page(bop_paginator.num_pages)
+
             ajax_context={
-                'bops': [(selected,is_favorite,subscribed_to_user,bop.as_json())
-                         for (selected,is_favorite,subscribed_to_user,bop) in context['bops']],
+                'bops': bops.object_list,
+                'bops_count': bop_paginator.count,
+                'bops_num_pages': bop_paginator.num_pages,
+                'bops_page_number': bops.number,
+                'bops_has_next': bops.has_next(),
+                'bops_has_previous': bops.has_previous(),
+                'bops_start_index':bops.start_index(),
+                'bops_end_index': bops.end_index(),
             }
+            if bops.has_next():
+                ajax_context['bops_next_page_number']=bops.next_page_number()
+            if bops.has_previous():
+                ajax_context['bops_previous_page_number']=bops.previous_page_number()
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
@@ -255,10 +442,30 @@ class BrainRegionSearchView(FormView):
         user=self.request.user
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         if self.request.is_ajax():
+            brain_region_list=[(selected,is_favorite,region.as_json())
+                               for (selected,is_favorite,region) in context['brain_regions']]
+            brain_region_paginator=Paginator(brain_region_list,10)
+            brain_region_page=self.request.POST.get('brain_region_page')
+            try:
+                brain_regions=brain_region_paginator.page(brain_region_page)
+            except PageNotAnInteger:
+                brain_regions=brain_region_paginator.page(1)
+            except EmptyPage:
+                brain_regions=brain_region_paginator.page(brain_region_paginator.num_pages)
             ajax_context={
-                'brain_regions': [(selected,is_favorite,region.as_json())
-                                  for (selected,is_favorite,region) in context['brain_regions']],
+                'brain_regions': brain_regions.object_list,
+                'brain_regions_count': brain_region_paginator.count,
+                'brain_regions_num_pages': brain_region_paginator.num_pages,
+                'brain_regions_page_number': brain_regions.number,
+                'brain_regions_has_next': brain_regions.has_next(),
+                'brain_regions_has_previous': brain_regions.has_previous(),
+                'brain_regions_start_index':brain_regions.start_index(),
+                'brain_regions_end_index': brain_regions.end_index(),
             }
+            if brain_regions.has_next():
+                ajax_context['brain_regions_next_page_number']=brain_regions.next_page_number()
+            if brain_regions.has_previous():
+                ajax_context['brain_regions_previous_page_number']=brain_regions.previous_page_number()
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
@@ -292,10 +499,30 @@ class LiteratureSearchView(FormView):
         user=self.request.user
         context['literatures']=Literature.get_reference_list(literatures,user)
         if self.request.is_ajax():
+            literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
+                             for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
+            literature_paginator=Paginator(literature_list,10)
+            literature_page=self.request.POST.get('literature_page')
+            try:
+                literatures=literature_paginator.page(literature_page)
+            except PageNotAnInteger:
+                literatures=literature_paginator.page(1)
+            except EmptyPage:
+                literatures=literature_paginator.page(literature_paginator.num_pages)
             ajax_context={
-                'literatures': [(selected,is_favorite,subscribed_to_user,reference.as_json())
-                                for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']],
+                'literatures': literatures.object_list,
+                'literatures_count': literature_paginator.count,
+                'literatures_num_pages': literature_paginator.num_pages,
+                'literatures_page_number': literatures.number,
+                'literatures_has_next': literatures.has_next(),
+                'literatures_has_previous': literatures.has_previous(),
+                'literatures_start_index':literatures.start_index(),
+                'literatures_end_index': literatures.end_index(),
             }
+            if literatures.has_next():
+                ajax_context['literatures_next_page_number']=literatures.next_page_number()
+            if literatures.has_previous():
+                ajax_context['literatures_previous_page_number']=literatures.previous_page_number()
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
@@ -331,10 +558,30 @@ class ModelSearchView(FormView):
         context['models']=Model.get_model_list(models, user)
 
         if self.request.is_ajax():
+            model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
+                        for (selected,is_favorite,subscribed_to_user,model) in context['models']]
+            model_paginator=Paginator(model_list,10)
+            model_page=self.request.POST.get('model_page')
+            try:
+                models=model_paginator.page(model_page)
+            except PageNotAnInteger:
+                models=model_paginator.page(1)
+            except EmptyPage:
+                models=model_paginator.page(model_paginator.num_pages)
             ajax_context={
-                'models': [(selected,is_favorite,subscribed_to_user,model.as_json())
-                           for (selected,is_favorite,subscribed_to_user,model) in context['models']],
+                'models': models.object_list,
+                'models_count': model_paginator.count,
+                'models_num_pages': model_paginator.num_pages,
+                'models_page_number': models.number,
+                'models_has_next': models.has_next(),
+                'models_has_previous': models.has_previous(),
+                'models_start_index':models.start_index(),
+                'models_end_index': models.end_index(),
             }
+            if models.has_next():
+                ajax_context['models_next_page_number']=models.next_page_number()
+            if models.has_previous():
+                ajax_context['models_previous_page_number']=models.previous_page_number()
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 

@@ -11,11 +11,17 @@ SEARCH_CHOICES = (
     ('all', 'all'),
     ('any', 'any')
 )
-
+NUM_RESULTS_CHOICES = (
+    ('10','10'),
+    ('25','25'),
+    ('50','50'),
+    ('100','100'),
+)
 class SearchForm(forms.Form):
     keywords = forms.CharField(help_text="Keyword search", required=False)
     keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    results_per_page = forms.ChoiceField(choices=NUM_RESULTS_CHOICES, help_text='Number of results to show on one page', required=False)
 
 
 class DocumentSearchForm(SearchForm):

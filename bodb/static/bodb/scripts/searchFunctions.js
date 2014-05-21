@@ -9,8 +9,30 @@ function processModelResults(data)
             $( this ).attr('style','display:block');
         });
         $('[name=numModelResults]').each(function(index, element){
-            $( this ).html(data['models'].length);
+            $( this ).html(data['models_count']);
         });
+        $('[name=modelResultStartIndex]').each(function(index, element){
+            $(this).html(data['models_start_index']);
+        });
+        $('[name=modelResultEndIndex]').each(function(index, element){
+            $(this).html(data['models_end_index']);
+        });
+        $('#model_current_page').html(data['models_page_number']);
+        $('#model_total_pages').html(data['models_num_pages']);
+        if(data['models_has_previous'])
+        {
+            $('#models_previous').attr('style','display:inline');
+            $('#models_previous').html('<a href="" onclick="modelJumpPage('+data['models_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#models_previous').attr('style','display:none');
+        if(data['models_has_next'])
+        {
+            $('#models_next').attr('style','display:inline');
+            $('#models_next').html('<a href="" onclick="modelJumpPage('+data['models_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#models_next').attr('style','display:none');
     }
     else
     {
@@ -28,7 +50,7 @@ function processModelResults(data)
             var count = $( this ).children().length;
             var tmplMarkup = $('#model-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['models'][i][3]['id'], title: data['models'][i][3]['title'],
+                { idx : count+data['models_start_index'], id: data['models'][i][3]['id'], title: data['models'][i][3]['title'],
                     brief_description: data['models'][i][3]['brief_description'], is_favorite: data['models'][i][1],
                     selected: data['models'][i][0], title_str: data['models'][i][3]['title_str'],
                     draft: data['models'][i][3]['draft'], collator_id: data['models'][i][3]['collator_id'],
@@ -52,8 +74,30 @@ function processBOPResults(data)
             $( this).attr('style','display:block');
         });
         $('[name=numBOPResults]').each(function(index, element){
-            $(this).html(data['bops'].length)
+            $(this).html(data['bops_count']);
         });
+        $('[name=bopResultStartIndex]').each(function(index, element){
+            $(this).html(data['bops_start_index']);
+        });
+        $('[name=bopResultEndIndex]').each(function(index, element){
+            $(this).html(data['bops_end_index']);
+        });
+        $('#bop_current_page').html(data['bops_page_number']);
+        $('#bop_total_pages').html(data['bops_num_pages']);
+        if(data['bops_has_previous'])
+        {
+            $('#bops_previous').attr('style','display:inline');
+            $('#bops_previous').html('<a href="" onclick="bopJumpPage('+data['bops_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#bops_previous').attr('style','display:none');
+        if(data['bops_has_next'])
+        {
+            $('#bops_next').attr('style','display:inline');
+            $('#bops_next').html('<a href="" onclick="bopJumpPage('+data['bops_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#bops_next').attr('style','display:none');
     }
     else
     {
@@ -71,7 +115,7 @@ function processBOPResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#bop-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['bops'][i][3]['id'], title: data['bops'][i][3]['title'],
+                { idx : count+data['bops_start_index'], id: data['bops'][i][3]['id'], title: data['bops'][i][3]['title'],
                     brief_description: data['bops'][i][3]['brief_description'], is_favorite: data['bops'][i][1],
                     selected: data['bops'][i][0], title_str: data['bops'][i][3]['title_str'],
                     draft: data['bops'][i][3]['draft'], collator_id: data['bops'][i][3]['collator_id'],
@@ -257,8 +301,30 @@ function processSSRResults(data)
             $( this).attr('style','display:block');
         });
         $('[name=numSSRResults]').each(function(index, element){
-            $(this).html(data['ssrs'].length)
+            $(this).html(data['ssrs_count'])
         });
+        $('[name=ssrResultStartIndex]').each(function(index, element){
+            $(this).html(data['ssrs_start_index']);
+        });
+        $('[name=ssrResultEndIndex]').each(function(index, element){
+            $(this).html(data['ssrs_end_index']);
+        });
+        $('#ssr_current_page').html(data['ssrs_page_number']);
+        $('#ssr_total_pages').html(data['ssrs_num_pages']);
+        if(data['ssrs_has_previous'])
+        {
+            $('#ssrs_previous').attr('style','display:inline');
+            $('#ssrs_previous').html('<a href="" onclick="ssrJumpPage('+data['ssrs_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#ssrs_previous').attr('style','display:none');
+        if(data['ssrs_has_next'])
+        {
+            $('#ssrs_next').attr('style','display:inline');
+            $('#ssrs_next').html('<a href="" onclick="ssrJumpPage('+data['ssrs_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#ssrs_next').attr('style','display:none');
     }
     else
     {
@@ -276,7 +342,7 @@ function processSSRResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#ssr-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['ssrs'][i][3]['id'], title: data['ssrs'][i][3]['title'],
+                { idx : count+data['ssrs_start_index'], id: data['ssrs'][i][3]['id'], title: data['ssrs'][i][3]['title'],
                     brief_description: data['ssrs'][i][3]['brief_description'], is_favorite: data['ssrs'][i][1],
                     selected: data['ssrs'][i][0], title_str: data['ssrs'][i][3]['title_str'],
                     draft: data['ssrs'][i][3]['draft'], collator_id: data['ssrs'][i][3]['collator_id'],
@@ -301,8 +367,30 @@ function processLiteratureResults(data)
             $( this).attr('style','display:block');
         });
         $('[name=numLiteratureResults]').each(function(index, element){
-            $(this).html(data['literatures'].length)
+            $(this).html(data['literatures_count'])
         });
+        $('[name=literatureResultStartIndex]').each(function(index, element){
+            $(this).html(data['literatures_start_index']);
+        });
+        $('[name=literatureResultEndIndex]').each(function(index, element){
+            $(this).html(data['literatures_end_index']);
+        });
+        $('#literature_current_page').html(data['literatures_page_number']);
+        $('#literature_total_pages').html(data['literatures_num_pages']);
+        if(data['literatures_has_previous'])
+        {
+            $('#literatures_previous').attr('style','display:inline');
+            $('#literatures_previous').html('<a href="" onclick="literatureJumpPage('+data['literatures_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#literatures_previous').attr('style','display:none');
+        if(data['literatures_has_next'])
+        {
+            $('#literatures_next').attr('style','display:inline');
+            $('#literatures_next').html('<a href="" onclick="literatureJumpPage('+data['literatures_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#literatures_next').attr('style','display:none');
     }
     else
     {
@@ -320,7 +408,7 @@ function processLiteratureResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#literature-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['literatures'][i][3]['id'], authors: data['literatures'][i][3]['authors'],
+                { idx : count+data['literatures_start_index'], id: data['literatures'][i][3]['id'], authors: data['literatures'][i][3]['authors'],
                     year: data['literatures'][i][3]['year'], is_favorite: data['literatures'][i][1],
                     selected: data['literatures'][i][0], title: data['literatures'][i][3]['title'],
                     string: data['literatures'][i][3]['string'], collator_id: data['literatures'][i][3]['collator_id'],
@@ -345,8 +433,30 @@ function processBrainRegionResults(data)
             $( this).attr('style','display:block');
         });
         $('[name=numBrainRegionResults]').each(function(index, element){
-            $(this).html(data['brain_regions'].length)
+            $(this).html(data['brain_regions_count'])
         });
+        $('[name=brainRegionResultStartIndex]').each(function(index, element){
+            $(this).html(data['brain_regions_start_index']);
+        });
+        $('[name=brainRegionResultEndIndex]').each(function(index, element){
+            $(this).html(data['brain_regions_end_index']);
+        });
+        $('#brain_region_current_page').html(data['brain_regions_page_number']);
+        $('#brain_region_total_pages').html(data['brain_regions_num_pages']);
+        if(data['brain_regions_has_previous'])
+        {
+            $('#brain_regions_previous').attr('style','display:inline');
+            $('#brain_regions_previous').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#brain_regions_previous').attr('style','display:none');
+        if(data['brain_regions_has_next'])
+        {
+            $('#brain_regions_next').attr('style','display:inline');
+            $('#brain_regions_next').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#brain_regions_next').attr('style','display:none');
     }
     else
     {
@@ -364,7 +474,7 @@ function processBrainRegionResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#brain_region-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['brain_regions'][i][2]['id'], name: data['brain_regions'][i][2]['name'],
+                { idx : count+data['brain_regions_start_index'], id: data['brain_regions'][i][2]['id'], name: data['brain_regions'][i][2]['name'],
                     abbreviation: data['brain_regions'][i][2]['abbreviation'],
                     is_favorite: data['brain_regions'][i][1], selected: data['brain_regions'][i][0],
                     type: data['brain_regions'][i][2]['type'],
@@ -391,8 +501,30 @@ function processUserResults(data)
             $( this).attr('style','display:block');
         });
         $('[name=numUserResults]').each(function(index, element){
-            $(this).html(data['users'].length)
+            $(this).html(data['users_count'])
         });
+        $('[name=userResultStartIndex]').each(function(index, element){
+            $(this).html(data['users_start_index']);
+        });
+        $('[name=userResultEndIndex]').each(function(index, element){
+            $(this).html(data['users_end_index']);
+        });
+        $('#user_current_page').html(data['users_page_number']);
+        $('#user_total_pages').html(data['users_num_pages']);
+        if(data['users_has_previous'])
+        {
+            $('#users_previous').attr('style','display:inline');
+            $('#users_previous').html('<a href="" onclick="userJumpPage('+data['users_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#users_previous').attr('style','display:none');
+        if(data['users_has_next'])
+        {
+            $('#users_next').attr('style','display:inline');
+            $('#users_next').html('<a href="" onclick="userJumpPage('+data['users_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#users_next').attr('style','display:none');
     }
     else
     {
@@ -410,7 +542,7 @@ function processUserResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#user-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['users'][i][1]['id'], username: data['users'][i][1]['username'],
+                { idx : count+data['users_start_index'], id: data['users'][i][1]['id'], username: data['users'][i][1]['username'],
                     first_name: data['users'][i][1]['first_name'], last_name: data['users'][i][1]['last_name'],
                     email: data['users'][i][1]['email'], subscribed_to_user: data['users'][i][0]});
             $(this).append(compiledTmpl);

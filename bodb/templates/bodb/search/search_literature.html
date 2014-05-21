@@ -1,6 +1,12 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
 
+    function literatureJumpPage(page)
+    {
+        document.getElementById('id_literature_page').value=page;
+        submitSearchLiterature();
+    }
+
     function submitSearchLiterature()
     {
         document.getElementById('searchingMsg').style.display = 'block';
@@ -145,6 +151,7 @@
             <tr>
                 <td colspan=5>
                     <strong>Search criteria combination:</strong> {{ literature_search_form.search_options }}
+                    <br><strong>Results per page:</strong> {{ literature_search_form.results_per_page }}
                     <br><input class="btn" type="button" value="Search" onclick="submitSearchLiterature();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
@@ -160,7 +167,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td colspan=5>Results (1-<span id="numLiteratureResults" name="numLiteratureResults">{{ literatures|length }}</span>)</td>
+                    <td colspan=5>Results (<span id="literatureResultStartIndex" name="literatureResultStartIndex">1</span>-<span id="literatureResultEndIndex" name="literatureResultEndIndex">1</span> of <span id="numLiteratureResults" name="numLiteratureResults">{{ literatures|length }}</span>)</td>
                 </tr>
                 <tr class="table_header">
                     <td colspan=5>
@@ -168,10 +175,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding:0px">
+                    <td style="padding:0px" colspan="5">
                         <div id="literatureResults" style="display:block">
                             {% include 'bodb/literature/reference_selection_list_view.html' %}
                         </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <div id="literatures_previous"><a href="" onclick="literatureJumpPage()">previous</a></div> Page <span id="literature_current_page">1</span> of <span id="literature_total_pages">1</span> <div id="literatures_next"><a href="" onclick="literatureJumpPage()">next</a></div>
                     </td>
                 </tr>
                 <tr>
@@ -181,6 +193,7 @@
                 </tr>
             </table>
         </div>
+        <input type="hidden" id="id_literature_page" name="literature_page" value="1"/>
     </form>
     <form id="fileForm" action=""></form>
 </div>

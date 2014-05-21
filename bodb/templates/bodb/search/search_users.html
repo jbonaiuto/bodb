@@ -1,6 +1,12 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('userAdvancedOptions', 'fade=1');
 
+    function userJumpPage(page)
+    {
+        document.getElementById('id_user_page').value=page;
+        submitSearchUsers();
+    }
+    
     function submitSearchUsers()
     {
         document.getElementById('searchingMsg').style.display = 'block';
@@ -102,10 +108,12 @@
             <tr>
                 <td>
                     <strong>Search criteria combination:</strong> {{ user_search_form.search_options }}
+                    <br><strong>Results per page:</strong> {{ user_search_form.results_per_page }}
                     <br><input class="btn" type="button" value="Search" onclick="submitSearchUsers();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>
+        <input type="hidden" id="id_user_page" name="user_page" value="1"/>
     </form>
     <div id="user_section" name="user_section" style="display:{% if users %}block{% else %}none{% endif %}">
         <table class="tab_panel">
@@ -118,7 +126,7 @@
                 </td>
             </tr>
             <tr class="section_header">
-                <td>Results (1-<span id="numUserResults" name="numUserResults">{{ users|length }}</span>)</td>
+                <td>Results (<span id="userResultStartIndex" name="userResultStartIndex">1</span>-<span id="userResultEndIndex" name="userResultEndIndex">1</span> of <span id="numUserResults" name="numUserResults">{{ users|length }}</span>)</td>
             </tr>
             <tr>
                 <td>
@@ -128,10 +136,15 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <div id="users_previous"><a href="" onclick="userJumpPage()">previous</a></div> Page <span id="user_current_page">1</span> of <span id="user_total_pages">1</span> <div id="users_next"><a href="" onclick="userJumpPage()">next</a></div>
+                </td>
+            </tr>
+            <tr>
                 <td style="padding:0px">
                     <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
                 </td>
             </tr>
         </table>
-    </form>
+    </div>
 </div>

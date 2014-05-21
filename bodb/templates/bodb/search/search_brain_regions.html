@@ -1,6 +1,12 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('brainRegionAdvancedOptions', 'fade=1');
 
+    function brainRegionJumpPage(page)
+    {
+        document.getElementById('id_brain_region_page').value=page;
+        submitSearchBrainRegions();
+    }
+
     function submitSearchBrainRegions()
     {
         document.getElementById('searchingMsg').style.display = 'block';
@@ -91,10 +97,12 @@
             <tr>
                 <td>
                     <strong>Search criteria combination:</strong> {{ brain_region_search_form.search_options }}
+                    <br><strong>Results per page:</strong> {{ brain_region_search_form.results_per_page }}
                     <br><input class="btn" type="button" value="Search" onclick="submitSearchBrainRegions();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>
+        <input type="hidden" id="id_brain_region_page" name="brain_region_page" value="1"/>
     </form>
     <div id="brain_region_section" name="brain_region_section" style="display:{% if brain_regions %}block{% else %}none{% endif %}">
         <table class="tab_panel">
@@ -107,13 +115,18 @@
                 </td>
             </tr>
             <tr class="section_header">
-                <td>Results (1-<span id="numBrainRegionResults" name="numBrainRegionResults">{{ brain_regions|length }}</span>)</td>
+                <td>Results (<span id="brainRegionResultStartIndex" name="brainRegionResultStartIndex">1</span>-<span id="brainRegionResultEndIndex" name="brainRegionResultEndIndex">1</span> of <span id="numBrainRegionResults" name="numBrainRegionResults">{{ bops|length }}</span>)</td>
             </tr>
             <tr>
                 <td>
                     <div id="brainRegionData" style="display:inline">
                         {% include 'bodb/brainRegion/brain_region_selection_list_view.html' %}
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="brain_regions_previous"><a href="" onclick="brainRegionJumpPage()">previous</a></div> Page <span id="brain_region_current_page">1</span> of <span id="brain_region_total_pages">1</span> <div id="brain_regions_next"><a href="" onclick="brainRegionJumpPage()">next</a></div>
                 </td>
             </tr>
             <tr>

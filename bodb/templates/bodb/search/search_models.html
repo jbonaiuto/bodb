@@ -2,6 +2,12 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
 
+    function modelJumpPage(page)
+    {
+        document.getElementById('id_model_page').value=page;
+        submitSearchModels();
+    }
+    
     function submitSearchModels()
     {
         document.getElementById('searchingMsg').style.display = 'block';
@@ -196,10 +202,12 @@
             <tr>
                 <td colspan=8>
                     <strong>Search criteria combination:</strong> {{ model_search_form.search_options }}
+                    <br><strong>Results per page:</strong> {{ model_search_form.results_per_page }}
                     <br><input class="btn" type="button" value="Search" onclick="submitSearchModels()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>
+        <input type="hidden" id="id_model_page" name="model_page" value="1"/>
     </form>
     <div id="model_section" name="model_section" style="display:{% if models %}block{% else %}none{% endif %}">
         <table class="tab_panel">
@@ -212,7 +220,7 @@
                 </td>
             </tr>
             <tr class="section_header">
-                <td colspan=8>Results (1-<span id="numModelResults" name="numModelResults">{{ models|length }}</span>)</td>
+                <td colspan=8>Results (<span id="modelResultStartIndex" name="modelResultStartIndex">1</span>-<span id="modelResultEndIndex" name="modelResultEndIndex">1</span> of <span id="numModelResults" name="numModelResults">{{ models|length }}</span>)</td>
             </tr>
             <tr class="table_header">
                 <td colspan=8>
@@ -228,8 +236,13 @@
                 </td>
             </tr>
             <tr>
+                <td colspan="8">
+                    <div id="models_previous"><a href="" onclick="modelJumpPage()">previous</a></div> Page <span id="model_current_page">1</span> of <span id="model_total_pages">1</span> <div id="models_next"><a href="" onclick="modelJumpPage()">next</a></div>
+                </td>
+            </tr>
+            <tr>
                 <td colspan=8 style="padding:0px">
-                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
                 </td>
             </tr>
         </table>
