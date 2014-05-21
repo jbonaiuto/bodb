@@ -75,8 +75,8 @@ class DocumentSearch(object):
             if self.related_brain_region_options=='all':
                 op=operator.and_
             words=parse_tags(self.related_brain_region)
-            keyword_filters=[Q(Q(relatedbrainregion__brain_region__name__icontains=word) |
-                               Q(relatedbrainregion__brain_region__abbreviation__icontains=word)) for word in words]
+            keyword_filters=[Q(Q(related_region_document__brain_region__name__icontains=word) |
+                               Q(related_region_document__brain_region__abbreviation__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
