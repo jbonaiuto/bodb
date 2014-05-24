@@ -1,6 +1,15 @@
+import json
+import urllib
 from bodb.models import Literature, Journal, Book, Chapter, Author, LiteratureAuthor, Nomenclature, Species, BrainRegion, CoCoMacBrainRegion
-from federation.cocomac.search import perform_query
 from registration.models import User
+
+def perform_query(sql, values):
+    base_url='http://cocomac.g-node.org/cocomac2/services/custom_sql_query.php?sql='
+    url='%s%s' % (base_url, urllib.quote_plus(sql))
+    for key,val in values.iteritems():
+        url+='&%s=%s' % (key,urllib.quote_plus(val))
+    url+='&format=json'
+    return json.load(urllib.urlopen(url))
 
 def addNomenclature2(id):
     sql='SELECT * FROM BrainMaps WHERE BrainMap=$map'

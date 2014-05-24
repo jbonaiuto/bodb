@@ -9,7 +9,7 @@ import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
 from bodb.search.sed import SEDSearch
 from federation.cocomac.import_data import addNomenclature
-from federation.cocomac.import_data2 import addNomenclature2
+from federation.cocomac.import_data2 import addNomenclature2, perform_query
 from registration.models import User
 from taggit.utils import parse_tags
 
@@ -97,10 +97,12 @@ def runCoCoMacSearch2(search_data, userId):
                         # Import connectivity SEDs
                         if not already_imported_seds.count() :
                             sed=importConnectivitySED(source_region, target_region)
-                            results.append(sed)
+                            if not sed in results:
+                                results.append(sed)
                         else:
                             for sed in already_imported_seds:
-                                results.append(sed)
+                                if not sed in results:
+                                    results.append(sed)
             except:
                 print('Error connecting to cocomac')
                 search_local=True
@@ -140,15 +142,6 @@ def runCoCoMacSearch2(search_data, userId):
         return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
 
     return results
-
-
-def perform_query(sql, values):
-    base_url='http://cocomac.g-node.org/cocomac2/services/custom_sql_query.php?sql='
-    url='%s%s' % (base_url, urllib.quote_plus(sql))
-    for key,val in values.iteritems():
-        url+='&%s=%s' % (key,urllib.quote_plus(val))
-    url+='&format=json'
-    return json.load(urllib.urlopen(url))
 
 
 def runCoCoMacSearch(search_data, userId):
@@ -265,6 +258,7 @@ def runCoCoMacSearch(search_data, userId):
 def importConnectivitySED(source_region, target_region):
     connSED=CoCoMacConnectivitySED(type='connectivity', source_region=source_region, target_region=target_region)
     connSED.collator=User.objects.get(username='jbonaiuto')
+    connSED.last_modified_by=User.objects.get(username='jbonaiuto')
     connSED.public=1
     connSED.title='Projection from '+source_region.__unicode__()+' to '+target_region.__unicode__()
     connSED.brief_description='CoCoMac describes a projection from the region '+source_region.__unicode__()+' ('+source_region.nomenclature.name
