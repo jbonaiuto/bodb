@@ -17,7 +17,7 @@ from bodb.search.ssr import runSSRSearch
 from federation.modeldb.search import runModelDBSearch
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
-from federation.cocomac.search import runCoCoMacSearch
+from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm
 from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile
 
@@ -102,7 +102,7 @@ class SearchView(FormView):
                     connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
-            cococmacConnSEDs=runCoCoMacSearch(sed_form.cleaned_data, user.id)
+            cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
             for connSED in cococmacConnSEDs:
                 connectivitySEDs.append(connSED)
             bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
@@ -130,7 +130,7 @@ class SearchView(FormView):
                     connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
-            cocomacConnSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
+            cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
             for connSED in cocomacConnSEDs:
                 connectivitySEDs.append(connSED)
             bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
@@ -631,7 +631,7 @@ class SEDSearchView(FormView):
                 connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
             elif sedObj.type=='generic':
                 genericSEDs.append(sedObj)
-        cocomacConnSEDs=runCoCoMacSearch(form.cleaned_data, user.id)
+        cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
         for connSED in cocomacConnSEDs:
             connectivitySEDs.append(connSED)
         bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
