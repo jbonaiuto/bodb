@@ -34,7 +34,7 @@ def runWorkspaceSearch(search_data, userId):
         visibility_q=Q(visibility_q & Q(group__in=user.groups.all()))
 
     q=reduce(op,filters) & visibility_q
-    print(q)
+
     # get results
     if q and len(q):
         results = Workspace.objects.filter(q).select_related().distinct()
