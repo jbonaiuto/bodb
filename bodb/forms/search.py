@@ -24,6 +24,37 @@ class SearchForm(forms.Form):
     results_per_page = forms.ChoiceField(choices=NUM_RESULTS_CHOICES, help_text='Number of results to show on one page', required=False)
 
 
+class WorkspaceSearchForm(SearchForm):
+    title = forms.CharField(help_text="Title", required=False)
+    title_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    description = forms.CharField(help_text="Description", required=False)
+    description_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    created_from = forms.DateTimeField(help_text="Earliest creation date", widget=forms.DateTimeInput, required=False)
+    created_to = forms.DateTimeField(help_text="Latest creation date", widget=forms.DateTimeInput, required=False)
+    created_by = forms.BooleanField(help_text="Only search your entries", required=False)
+    username = forms.CharField(help_text='Username of the creator',required=False)
+    first_name = forms.CharField(help_text='First name of the creator',required=False)
+    last_name = forms.CharField(help_text='Last name of the creator',required=False)
+    related_brain_region = forms.CharField(help_text='Related brain region', required=False)
+    related_brain_region_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_bop = forms.CharField(help_text="Related BOP", required=False)
+    related_bop_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_model = forms.CharField(help_text="Related Model", required=False)
+    related_model_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_sed = forms.CharField(help_text="Related SED", required=False)
+    related_sed_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_ssr = forms.CharField(help_text="Related SSR", required=False)
+    related_ssr_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_title = forms.CharField(help_text="Related literature title", required=False)
+    related_literature_title_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_author = forms.CharField(help_text="Related literature author", required=False)
+    related_literature_author_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_year_min = forms.CharField(help_text="Related literature min year", required=False)
+    related_literature_year_max = forms.CharField(help_text="Related literature max year", required=False)
+    related_literature_annotation = forms.CharField(help_text="Related literature annotation", required=False)
+    related_literature_annotation_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+
+
 class DocumentSearchForm(SearchForm):
     public = forms.ChoiceField(choices=PUBLIC_CHOICES, help_text='Public entries', required=False)
     title = forms.CharField(help_text="Title", required=False)

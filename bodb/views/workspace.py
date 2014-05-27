@@ -19,23 +19,6 @@ workspace_permissions=['add_post','add_entry','remove_entry',
                        'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
                        'add_bookmark','delete_bookmark']
 
-class WorkspaceListView(ListView):
-    template_name = 'bodb/workspace/workspace_list_view.html'
-
-    def get_queryset(self):
-        visibility_q=Q(created_by__is_active=True)
-        if not self.request.user.is_superuser:
-            visibility_q=Q(visibility_q & Q(group__in=self.request.user.groups.all()))
-        return Workspace.objects.filter(visibility_q).order_by('title')
-
-
-    def get_context_data(self, **kwargs):
-        context=super(WorkspaceListView,self).get_context_data(object_list=self.get_queryset())
-        context['active_workspace']=self.request.user.get_profile().active_workspace
-        context['helpPage']='workspaces.html'
-        return context
-
-
 class ActivateWorkspaceView(JSONResponseMixin,BaseUpdateView):
     model = Workspace
 

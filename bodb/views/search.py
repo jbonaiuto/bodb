@@ -3,6 +3,7 @@ import json
 from Bio import Entrez
 from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from bodb.search.workspace import runWorkspaceSearch
 
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.http import HttpResponse
@@ -18,8 +19,8 @@ from federation.modeldb.search import runModelDBSearch
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
-from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile
+from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -31,6 +32,8 @@ class SearchView(FormView):
         context['showTour']='show_tour' in self.request.GET
         context['showTabs']=True
         context['ispopup']=('_popup' in self.request.GET)
+        context['active_workspace']=self.request.user.get_profile().active_workspace
+        
         context['bop_search_form']=BOPSearchForm(self.request.POST or None,prefix='bop')
         context['model_search_form']=ModelSearchForm(self.request.POST or None,prefix='model')
         context['sed_search_form']=SEDSearchForm(self.request.POST or None,prefix='sed')
@@ -38,6 +41,8 @@ class SearchView(FormView):
         context['literature_search_form']=LiteratureSearchForm(self.request.POST or None,prefix='literature')
         context['brain_region_search_form']=BrainRegionSearchForm(self.request.POST or None,prefix='brain_region')
         context['user_search_form']=UserSearchForm(self.request.POST or None,prefix='user')
+        context['workspace_search_form']=WorkspaceSearchForm(self.request.POST or None, prefix='workspace')
+        
         context['searchType']=self.request.POST.get('searchType','all')
         context['allConnectionGraphId']='allConnectivitySEDDiagram'
         context['allErpGraphId']='allErpSEDDiagram'
@@ -70,6 +75,7 @@ class SearchView(FormView):
         literature_form = context['literature_search_form']
         brain_region_form = context['brain_region_search_form']
         user_form=context['user_search_form']
+        workspace_form=context['workspace_search_form']
 
         user=self.request.user
 
@@ -85,6 +91,7 @@ class SearchView(FormView):
         ssrs=SSR.objects.none()
         brain_regions=BrainRegion.objects.none()
         users=User.objects.none()
+        workspaces=Workspace.objects.none()
 
         searchType=self.request.POST['searchType']
         if searchType=='bops' and bop_form.is_valid():
@@ -117,6 +124,8 @@ class SearchView(FormView):
             brain_regions=runBrainRegionSearch(brain_region_form.cleaned_data)
         elif searchType=='users' and user_form.is_valid():
             users=runUserSearch(user_form.cleaned_data, user.id)
+        elif searchType=='workspaces' and workspace_form.is_valid():
+            workspaces=runWorkspaceSearch(workspace_form.cleaned_data, user.id)
         else:
             bops=runBOPSearch(form.cleaned_data, user.id)
             models=runModelSearch(form.cleaned_data, user.id)
@@ -141,6 +150,7 @@ class SearchView(FormView):
             literature=runLiteratureSearch(form.cleaned_data, user.id)
             brain_regions=runBrainRegionSearch(form.cleaned_data)
             users=runUserSearch(form.cleaned_data, user.id)
+            workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
 
         context['bops']=BOP.get_bop_list(bops, user)
         context['models']=Model.get_model_list(models, user)
@@ -156,6 +166,7 @@ class SearchView(FormView):
         context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['users']=BodbProfile.get_user_list(users,user)
+        context['workspaces']=Workspace.get_workspace_list(workspaces,user)
 
         if self.request.is_ajax():
             bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
@@ -223,6 +234,16 @@ class SearchView(FormView):
             except EmptyPage:
                 users=user_paginator.page(user_paginator.num_pages)
 
+            workspace_list=[(subscribed_to_user,w.as_json()) for (subscribed_to_user,w) in context['workspaces']]
+            workspace_paginator=Paginator(workspace_list,int(self.request.POST.get('workspace-results_per_page','10')))
+            workspace_page=self.request.POST.get('workspace_page')
+            try:
+                workspaces=workspace_paginator.page(workspace_page)
+            except PageNotAnInteger:
+                workspaces=workspace_paginator.page(1)
+            except EmptyPage:
+                workspaces=workspace_paginator.page(workspace_paginator.num_pages)
+
             if searchType=='all':
                 ajax_context={
                     'bops': bop_list,
@@ -259,6 +280,10 @@ class SearchView(FormView):
                     'users_count': len(user_list),
                     'users_start_index':1,
                     'users_end_index': len(user_list),
+                    'workspaces': workspace_list,
+                    'workspaces_count': len(workspace_list),
+                    'workspaces_start_index':1,
+                    'workspaces_end_index':len(workspace_list)
                 }
             else:
                 ajax_context={
@@ -320,6 +345,14 @@ class SearchView(FormView):
                     'users_has_previous': users.has_previous(),
                     'users_start_index':users.start_index(),
                     'users_end_index': users.end_index(),
+                    'workspaces': workspaces.object_list,
+                    'workspaces_count': workspace_paginator.count,
+                    'workspaces_num_pages': workspace_paginator.num_pages,
+                    'workspaces_page_number': workspaces.number,
+                    'workspaces_has_next': workspaces.has_next(),
+                    'workspaces_has_previous': workspaces.has_previous(),
+                    'workspaces_start_index': workspaces.start_index(),
+                    'workspaces_end_index': workspaces.end_index()
                 }
                 if bops.has_next():
                     ajax_context['bops_next_page_number']=bops.next_page_number()
@@ -345,6 +378,10 @@ class SearchView(FormView):
                     ajax_context['users_next_page_number']=users.next_page_number()
                 if users.has_previous():
                     ajax_context['users_previous_page_number']=users.previous_page_number()
+                if workspaces.has_next():
+                    ajax_context['workspaces_next_page_number']=workspaces.next_page_number()
+                if workspaces.has_previous():
+                    ajax_context['workspaces_previous_page_number']=workspaces.previous_page_number()
 
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)

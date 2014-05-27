@@ -552,3 +552,69 @@ function processUserResults(data)
     document.getElementById('searchingMsg').style.display = 'none';
     document.getElementById('searchingOver').style.display = 'none';
 }
+
+function processWorkspaceResults(data)
+{
+    // Workspace results
+    if(data['workspaces'].length>0)
+    {
+        $('[name=workspace_section]').each(function(index, element){
+            $( this).attr('style','display:block');
+        });
+        $('[name=workspace_list]').each(function(index, element){
+            $( this).attr('style','display:block');
+        });
+        $('[name=numWorkspaceResults]').each(function(index, element){
+            $(this).html(data['workspaces_count'])
+        });
+        $('[name=workspaceResultStartIndex]').each(function(index, element){
+            $(this).html(data['workspaces_start_index']);
+        });
+        $('[name=workspaceResultEndIndex]').each(function(index, element){
+            $(this).html(data['workspaces_end_index']);
+        });
+        $('#workspace_current_page').html(data['workspaces_page_number']);
+        $('#workspace_total_pages').html(data['workspaces_num_pages']);
+        if(data['workspaces_has_previous'])
+        {
+            $('#workspaces_previous').attr('style','display:inline');
+            $('#workspaces_previous').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $('#workspaces_previous').attr('style','display:none');
+        if(data['workspaces_has_next'])
+        {
+            $('#workspaces_next').attr('style','display:inline');
+            $('#workspaces_next').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $('#workspaces_next').attr('style','display:none');
+    }
+    else
+    {
+        $('[name=workspace_section]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+        $('[name=workspace_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
+    $('[name=workspaces]').each(function(index, element){
+        $(this).empty();
+        for(var i=0; i<data['workspaces'].length; i++)
+        {
+            var count = $(this).children().length;
+            var tmplMarkup = $('#workspace-template').html();
+            var compiledTmpl = _.template(tmplMarkup,
+                {
+                    idx : count+data['workspaces_start_index'], id: data['workspaces'][i][1]['id'],
+                    title: data['workspaces'][i][1]['title'], description: data['workspaces'][i][1]['description'],
+                    created_by: data['workspaces'][i][1]['created_by'],
+                    created_by_id: data['workspaces'][i][1]['created_by_id'], subscribed_to_user: data['workspaces'][i][0]});
+            $(this).append(compiledTmpl);
+        }
+    });
+
+    document.getElementById('searchingMsg').style.display = 'none';
+    document.getElementById('searchingOver').style.display = 'none';
+}
