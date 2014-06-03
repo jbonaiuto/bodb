@@ -5,7 +5,7 @@ from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPI
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
-from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView
+from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView, CreateModelWizardView, MODEL_WIZARD_FORMS
@@ -105,6 +105,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^literature/(?P<pk>\d+)/delete/$', DeleteLiteratureView.as_view(), {}, 'lit_delete'),
     url(r'^literature/(?P<pk>\d+)/edit/$', UpdateLiteratureView.as_view(), {}, 'lit_edit'),
     url(r'^literature/(?P<pk>\d+)/toggle_select/$', ToggleSelectLiteratureView.as_view(), {}, 'lit_toggle_select'),
+    url(r'^literature/pubmed/(?P<id>\d+)/$', LiteraturePubmedView.as_view(), {}, 'lit_pubmed_view'),
     url(r'^literature/export/$', ExportLiteratureView.as_view(), {}, 'lit_export'),
     url(r'^literature/new/$', CreateLiteratureView.as_view(), {}, 'lit_add'),
     url(r'^literature/search/$', LiteratureSearchView.as_view(), {}, 'lit_search'),

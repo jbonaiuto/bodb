@@ -1,10 +1,11 @@
+from django.template.loader import render_to_string
 from django.views.generic.edit import BaseUpdateView
 import os
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -214,6 +215,13 @@ class UpdateLiteratureView(EditLiteratureMixin,View):
         return journal,book,chapter,conference,thesis,unpublished,journal_authors,book_authors,chapter_authors,\
                conference_authors,thesis_authors,unpublished_authors
 
+class LiteraturePubmedView(View):
+
+    def get(self, request, *args, **kwargs):
+        literature=Literature.objects.filter(pubmed_id=self.kwargs.get('id', None))[0]
+        return redirect(literature.get_absolute_url())
+
+
 class LiteratureDetailView(TemplateView):
     template_name = 'bodb/literature/literature_view.html'
 
@@ -349,3 +357,23 @@ class ToggleSelectLiteratureView(JSONResponseMixin,BaseUpdateView):
             active_workspace.save()
 
         return context
+
+
+def exportPubmedResources():
+    objList=''
+    pubmed_ids=[]
+    for literature in Literature.objects.all().exclude(pubmed_id=''):
+        related_brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
+        related_bops=BOP.objects.filter(literature=literature)
+        related_models=Model.objects.filter(literature=literature)
+        related_seds=SED.objects.filter(literature=literature)
+        related_ssrs=SSR.objects.filter(literature=literature)
+        if related_brain_regions or related_bops or related_models or related_seds or related_ssrs:
+            if not literature.pubmed_id in pubmed_ids:
+                pubmed_ids.append(literature.pubmed_id)
+    for pubmed_id in pubmed_ids:
+        objList+='<ObjId>'+pubmed_id+'</ObjId>\n'
+    str=render_to_string('pubmed/bodb.xml',{'objList': objList})
+    FILE=open(settings.MEDIA_ROOT+'/pubmed/bodb.xml','w')
+    FILE.write(str)
+    FILE.close()
