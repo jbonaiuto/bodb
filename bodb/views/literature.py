@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -367,13 +367,12 @@ def exportPubmedResources():
         related_bops=BOP.objects.filter(literature=literature)
         related_models=Model.objects.filter(literature=literature)
         related_seds=SED.objects.filter(literature=literature)
-        related_ssrs=SSR.objects.filter(literature=literature)
-        if related_brain_regions or related_bops or related_models or related_seds or related_ssrs:
+        if related_brain_regions or related_bops or related_models or related_seds:
             if not literature.pubmed_id in pubmed_ids:
                 pubmed_ids.append(literature.pubmed_id)
     for pubmed_id in pubmed_ids:
         objList+='<ObjId>'+pubmed_id+'</ObjId>\n'
-    str=render_to_string('pubmed/bodb.xml',{'objList': objList})
-    FILE=open(settings.MEDIA_ROOT+'/pubmed/bodb.xml','w')
+    str=render_to_string('pubmed/pubmed_bodb_resources.xml',{'objList': objList})
+    FILE=open(settings.MEDIA_ROOT+'/pubmed/resources.xml','w')
     FILE.write(str)
     FILE.close()
