@@ -32,7 +32,6 @@ class SearchView(FormView):
         context['showTour']='show_tour' in self.request.GET
         context['showTabs']=True
         context['ispopup']=('_popup' in self.request.GET)
-        context['active_workspace']=self.request.user.get_profile().active_workspace
         
         context['bop_search_form']=BOPSearchForm(self.request.POST or None,prefix='bop')
         context['model_search_form']=ModelSearchForm(self.request.POST or None,prefix='model')
@@ -58,6 +57,7 @@ class SearchView(FormView):
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
+            context['active_workspace']=active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
 
