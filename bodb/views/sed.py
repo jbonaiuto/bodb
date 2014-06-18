@@ -202,6 +202,9 @@ class SEDDetailView(DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).count():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
+        elif type=='gesture':
+            self.model=GestureSED
+            self.template_name = 'bodb/sed/gesture/gesture_sed_view.html'
         return super(SEDDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -213,6 +216,9 @@ class SEDDetailView(DocumentDetailView):
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
+        elif self.object.type=='gesture':
+            context['url']=self.object.html_url_string()
+            context['gesturesed']=self.object
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -1214,9 +1220,14 @@ class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
+        context['gesture_formset']=ERPComponentFormSet(self.request.POST or None, prefix='gesture')
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='figure')
         context['helpPage']='insert_data.html#summary-of-connectivity-data'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
         context['type']=self.request.GET.get('type','')
         return context
+    
+

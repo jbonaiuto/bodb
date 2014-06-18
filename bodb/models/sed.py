@@ -660,15 +660,32 @@ def find_similar_seds(user, title, brief_description):
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
-
 # A summary of gesture data: inherits from SED
 class GestureSED(SED):
     objects = InheritanceManager()
     
     date = models.DateField(blank=True)
     goal = models.TextField(blank=True)
-    signaler = models.ForeignKey('Primate', related_name='signaler')
+    signaller = models.ForeignKey('Primate', related_name='signaller')
     recipient = models.ForeignKey('Primate', related_name = 'recipient')
 
+    class Meta:
+        app_label='bodb'
+        
+# Gesture Model, 1-to-Many relationship with Gesture SED Model objects
+class Gesture(models.Model):
+    GOAL_CHOICES = (
+        ('yes', 'Yes'),
+        ('no', 'No'),
+        )
+
+    gesture_sed=models.ForeignKey(GestureSED, related_name = 'gestures')
+    gesture_name=models.CharField(max_length=100)
+    signaller_body_part=models.CharField(max_length=100)
+    recipient_body_part=models.CharField(max_length=100)
+    recipient_response = models.TextField(blank=True)
+    goal_met = models.CharField(max_length=50, choices=GOAL_CHOICES, default='no')
+    notes = models.TextField(blank=True)
+    
     class Meta:
         app_label='bodb'

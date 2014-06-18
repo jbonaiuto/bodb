@@ -1,0 +1,174 @@
+<script type="text/javascript">
+    function addGestureForm()
+    {
+        var count = $('#gestures').children().length;
+        var tmplMarkup = $('#gesture-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        $('#gestures').append(compiledTmpl);
+        // update form count
+        $('#id_gesture-TOTAL_FORMS').attr('value', count+1);
+        
+        $('#id_gesture-'+count+'-gesture_name').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the name of the Gesture.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignX: 'right',
+            offsetX: 5,
+            offsetY: -45,
+            timeOnScreen: 3000
+        });
+        
+        $('#id_gesture-'+count+'-gesture_signaller_body_part').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the body part used by the Signaller.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignX: 'right',
+            offsetX: 5,
+            offsetY: -60,
+            timeOnScreen: 3000
+        });
+        
+        $('#id_gesture-'+count+'-gesture_recipient_body_part').poshytip({
+            className: 'tip-skyblue',
+            content: 'Enter the body part used by the Recipient.',
+            showOn: 'focus',
+            showTimeout: 100,
+            alignTo: 'target',
+            alignX: 'right',
+            offsetX: 5,
+            offsetY: -60,
+            timeOnScreen: 3000
+        });
+
+        $('textarea:not(.processed)').TextAreaResizer();
+        return false;
+    }
+</script>
+<div id="gestureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
+    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+    <table class="tab_panel" style="background:#e6e8ed;">
+        <tr>
+            <td class="table_header">
+                <a href="#" class="add-gesture" onclick="return addGestureForm();">Add new</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ gesture_formset.management_form }}
+                <div class="myerrors">
+                    {{ gesture_formset.management_form.errors }}
+                </div>
+                <div id="gestures">
+                    {% for gesture_form in gesture_formset.forms %}
+                        <div id="gesture-{{ forloop.counter0 }}" name="gesture">
+                            <input type=hidden id="id_gesture-{{ forloop.counter0 }}-DELETE" name="gesture-{{ forloop.counter0 }}-DELETE"/>
+                            {{ gesture_form.id }}
+                            {{ gesture_form.gesture_sed }}
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td style="width:60px">
+                                        <a href="" onclick="return deleteInlineForm('gesture', {{ forloop.counter0 }});">Delete</a>
+                                    </td>
+                                    <td style="width:120px">Name*</td>
+                                    <td colspan="6">
+                                        {{ gesture_form.gesture_name }}
+                                    </td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=60px>&nbsp;</td>
+                                    <td>Signaller Body Part</td>
+                                    <td style="width:120px">
+                                        {{ gesture_form.signaller_body_part }}
+                                    </td>
+                                    <td style="width:120px;">Recipient Body Part</td>
+                                    <td style="width:120px">
+                                        {{ gesture_form.recipient_body_part }}
+                                    </td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=60px>&nbsp;</td>
+                                    <td>Recipient Response</td>
+                                    <td>
+                                        {{ gesture_form.recipient_response }}
+                                    </td>
+                                    <td>Goal Met</td>
+                                    <td colspan="3">
+                                        {{ gesture_form.goal_met }}
+                                    </td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=60px>&nbsp;</td>
+                                    <td>Notes</td>
+                                    <td>
+                                        {{ gesture_form.notes }}
+                                    </td>
+                                </tr>
+                                
+                            </table>
+                            <div class="myerrors">
+                                {{ gesture_form.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="gesture-template">
+    <div id="gesture-<%= id %>" name="gesture">
+        <input type=hidden id="id_gesture-<%= id %>-DELETE" name="gesture-<%= id %>-DELETE"/>
+        <input id="id_gesture-<%= id %>-id" name="gesture-<%= id %>-id" type="hidden" />
+        <input id="id_gesture-<%= id %>-gesture_sed" name="gesture-<%= id %>-gesture_sed" type="hidden" />
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td style="width:60px">
+                    <a href="" onclick="return deleteInlineForm('gesture', <%= id %>);">Delete</a>
+                </td>
+                <td style="width:120px">Name*</td>
+                <td colspan="6">
+                    <input id="id_gesture-<%= id %>-gesture_name" name="gesture-<%= id %>-gesture_name" size="50" type="text" />
+                </td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td width=120>&nbsp;</td>
+                <td>Signaller Body Part</td>
+                <td style="width:120px">
+                    <input id="id_gesture-<%= id %>-signaller_body_part" name="gesture-<%= id %>-signaller_body_part" size="10" type="text" />
+                </td>
+                <td width=120>&nbsp;</td>
+                <td>Recipient Body Part</td>
+                <td style="width:120px">
+                    <input id="id_gesture-<%= id %>-recipient_body_part" name="gesture-<%= id %>-recipient_body_part" size="10" type="text" />
+                </td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td width=120>&nbsp;</td>
+                <td>Recipient Response</td>
+                <td style="width:120px">
+                    <input id="id_gesture-<%= id %>-recipient_response" name="gesture-<%= id %>-recipient_response" size="10" type="text" />
+                </td>
+                <td width=120>&nbsp;</td>
+                <td>Goal Met</td>
+                <td style="width:120px">
+                    <input id="id_gesture-<%= id %>-goal_met" name="gesture-<%= id %>-goal_met" size="10" type="text" />
+                </td>
+            </tr>
+            <tr class="<%= getTRTag(id) %>" valign=top>
+                <td width=120>&nbsp;</td>
+                <td>Notes</td>
+                <td style="width:120px">
+                    <input id="id_gesture-<%= id %>-notes" name="gesture-<%= id %>-notes" size="10" type="text" />
+                </td>
+            </tr>
+        </table>
+        <div class="myerrors">
+
+        </div>
+    </div>
+</script>
