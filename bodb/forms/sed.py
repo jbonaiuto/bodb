@@ -174,3 +174,6 @@ TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInl
     nested_form=TestSEDSSRInlineForm,fk_name='model',nested_fk_name='test_sed',can_delete=True,
     nested_can_delete=True,extra=0,nested_extra=1,nested_max_num=1)
 
+class GestureSEDForm(SEDForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=False)
+

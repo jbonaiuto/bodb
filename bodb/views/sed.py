@@ -6,9 +6,9 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
+from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, GestureSEDForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, GestureSED
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -1199,4 +1199,24 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
                 'position_ids': position_ids,
                 'position_names': position_names
             }
+        return context
+    
+class EditGestureSEDMixin():
+    model = GestureSED
+    form_class = GestureSEDForm
+    template_name = 'bodb/sed/gesture/gesture_sed_detail.html'
+
+#     def form_valid(self, form):
+#         context=self.get_context_data()
+
+
+class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
+        context['helpPage']='insert_data.html#summary-of-connectivity-data'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type','')
         return context

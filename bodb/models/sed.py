@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, Primate
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
@@ -16,6 +16,7 @@ class SED(Document):
         ('brain imaging', 'imaging'),
         ('connectivity', 'connectivity'),
         ('event related potential', 'erp'),
+        ('gesture', 'gesture'),
         )
     objects = InheritanceManager()
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
@@ -658,3 +659,16 @@ def find_similar_seds(user, title, brief_description):
         similar.append((sed,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
+
+
+# A summary of gesture data: inherits from SED
+class GestureSED(SED):
+    objects = InheritanceManager()
+    
+    date = models.DateField(blank=True)
+    goal = models.TextField(blank=True)
+    signaler = models.ForeignKey('Primate', related_name='signaler')
+    recipient = models.ForeignKey('Primate', related_name = 'recipient')
+
+    class Meta:
+        app_label='bodb'
