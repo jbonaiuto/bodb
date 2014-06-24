@@ -664,13 +664,17 @@ def find_similar_seds(user, title, brief_description):
 class GestureSED(SED):
     objects = InheritanceManager()
     
-    date = models.DateField(blank=True)
+    date = models.DateField(blank=True, null=True)
     goal = models.TextField(blank=True)
-    signaller = models.ForeignKey('Primate', related_name='signaller')
-    recipient = models.ForeignKey('Primate', related_name = 'recipient')
+    signaller = models.ForeignKey('Primate', related_name ='signaller', null = True, blank = True)
+    recipient = models.ForeignKey('Primate', related_name = 'recipient', null = True, blank = True)
 
     class Meta:
         app_label='bodb'
+        
+    def html_url_string(self):
+        return ''
+    
         
 # Gesture Model, 1-to-Many relationship with Gesture SED Model objects
 class Gesture(models.Model):

@@ -1207,6 +1207,10 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
             }
         return context
     
+class DeleteGestureSEDView(DeleteView):
+    model=GestureSED
+    success_url = '/bodb/index.html'
+    
 class EditGestureSEDMixin():
     model = GestureSED
     form_class = GestureSEDForm
@@ -1217,6 +1221,21 @@ class EditGestureSEDMixin():
 
 
 class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
+        context['gesture_formset']=ERPComponentFormSet(self.request.POST or None, prefix='gesture')
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='figure')
+        context['helpPage']='insert_data.html#summary-of-connectivity-data'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type','')
+        return context
+    
+    
+class UpdateGestureSEDView(EditGestureSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
