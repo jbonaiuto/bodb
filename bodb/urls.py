@@ -162,8 +162,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/imaging/(?P<pk>\d+)/edit/$', UpdateBrainImagingSEDView.as_view(), name='imaging_sed_edit'),
     url(r'^sed/imaging/new/$', CreateBrainImagingSEDView.as_view(), {}, 'imaging_sed_add'),
     
-    url(r'^sed/gesture/(?P<pk>\d+)/delete/$', DeleteGestureSEDView.as_view(), {}, 'gesture_sed_delete'),
-    url(r'^sed/gesture/(?P<pk>\d+)/edit/$', UpdateGestureSEDView.as_view(), {}, 'gesture_sed_edit'),
+    url(r'^sed/gesture/(?P<pk>\d+)/delete/$', DeleteGestureSEDView.as_view(), name = 'gesture_sed_delete'),
+    url(r'^sed/gesture/(?P<pk>\d+)/edit/$', UpdateGestureSEDView.as_view(), name = 'gesture_sed_edit'),
     url(r'^sed/gesture/new/$', CreateGestureSEDView.as_view(), {}, 'gesture_sed_add'),
     
     url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),

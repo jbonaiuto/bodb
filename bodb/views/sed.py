@@ -6,9 +6,9 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, GestureSEDForm
+from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, GestureSEDForm, GestureFormSet
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, GestureSED
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, GestureSED, Gesture
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -217,6 +217,7 @@ class SEDDetailView(DocumentDetailView):
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
         elif self.object.type=='gesture':
+            context['gestures'] = Gesture.objects.filter(gesture_sed=self.object)
             context['url']=self.object.html_url_string()
             context['gesturesed']=self.object
         elif self.object.type=='brain imaging':
@@ -1218,9 +1219,10 @@ class EditGestureSEDMixin():
 
     def form_valid(self, form):
         context = self.get_context_data()
+        gesture_formset = context['gesture_formset']
         figure_formset = context['figure_formset']
 
-        if figure_formset.is_valid():
+        if figure_formset.is_valid() and gesture_formset.is_valid():
 
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
@@ -1230,6 +1232,19 @@ class EditGestureSEDMixin():
             self.object.save()
             # Needed for literature and tags
             form.save_m2m()
+            
+            # save gestures
+            gesture_formset.instance=self.object
+            for gesture_form in gesture_formset.forms:
+                if not gesture_form in gesture_formset.deleted_forms:
+                    gesture=gesture_form.save(commit=False)
+                    gesture.gesture_sed=self.object
+                    gesture.save()
+
+            # delete removed gestures
+            for gesture_form in gesture_formset.deleted_forms:
+                if gesture_form.instance.id:
+                    gesture_form.instance.delete()
 
             # save figures
             figure_formset.instance = self.object
@@ -1262,7 +1277,7 @@ class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=ERPComponentFormSet(self.request.POST or None, prefix='gesture')
+        context['gesture_formset']=GestureFormSet(self.request.POST or None, prefix='gesture')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['helpPage']='insert_data.html#summary-of-connectivity-data'
@@ -1277,7 +1292,8 @@ class UpdateGestureSEDView(EditGestureSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=ERPComponentFormSet(self.request.POST or None, prefix='gesture')
+        context['gesture_formset']=GestureFormSet(self.request.POST or None, instance=self.object,
+            queryset=Gesture.objects.filter(gesture_sed=self.object),prefix='gesture')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['helpPage']='insert_data.html#summary-of-connectivity-data'

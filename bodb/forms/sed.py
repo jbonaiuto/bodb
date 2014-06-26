@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import ErrorList, formset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
-from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, TestSEDSSR, GestureSED
+from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, TestSEDSSR, GestureSED, Gesture
 from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
@@ -187,4 +187,13 @@ class GestureSEDForm(SEDForm):
     
     class Meta:
         model=GestureSED
+        
+class GestureInlineForm(forms.ModelForm):
+
+    class Meta:
+        model=Gesture
+
+
+GestureFormSet = inlineformset_factory(GestureSED, Gesture, form=GestureInlineForm, fk_name='gesture_sed',
+    extra=0, can_delete=True)
 
