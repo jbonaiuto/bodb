@@ -183,7 +183,7 @@ TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInl
 
 
 class GestureSEDForm(SEDForm):
-    date = forms.DateField(widget=SelectDateWidget)
+    date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)))
     
     class Meta:
         model=GestureSED
