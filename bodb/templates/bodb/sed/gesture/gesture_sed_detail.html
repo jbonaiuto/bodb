@@ -15,6 +15,10 @@
         {% endif %}
 
         var isDraft=0;
+        
+		$(function() {
+	        $( "#id_date" ).datepicker();
+	    });
 
         function validateForm()
         {
@@ -24,10 +28,8 @@
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            clearSpan(document, 'source_region_errors');
-            errors+=validateField('source_region', 'Source region', 'source_region_errors');
-            clearSpan(document, 'target_region_errors');
-            errors+=validateField('target_region', 'Target region', 'target_region_errors');
+            clearSpan(document, 'date_errors');
+            errors+=validateField('date', 'Date', 'date_errors');
             var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
             if(figureErrors>0)
                 animatedcollapse.show('figureData');

@@ -1216,8 +1216,46 @@ class EditGestureSEDMixin():
     form_class = GestureSEDForm
     template_name = 'bodb/sed/gesture/gesture_sed_detail.html'
 
-#     def form_valid(self, form):
-#         context=self.get_context_data()
+    def form_valid(self, form):
+        context = self.get_context_data()
+        figure_formset = context['figure_formset']
+
+        if figure_formset.is_valid():
+
+            self.object = form.save(commit=False)
+            # Set collator if this is a new SED
+            if self.object.id is None:
+                self.object.collator=self.request.user
+            self.object.last_modified_by=self.request.user
+            self.object.save()
+            # Needed for literature and tags
+            form.save_m2m()
+
+            # save figures
+            figure_formset.instance = self.object
+            for figure_form in figure_formset.forms:
+                if not figure_form in figure_formset.deleted_forms:
+                    figure=figure_form.save(commit=False)
+                    figure.document=self.object
+                    figure.save()
+
+            # delete removed figures
+            for figure_form in figure_formset.deleted_forms:
+                if figure_form.instance.id:
+                    figure_form.instance.delete()
+
+
+            url=self.get_success_url()
+            params='?type='+context['type']+'&action='+context['action']
+            if context['ispopup']:
+                params+='&_popup=1'
+            if context['multiple']:
+                params+='&_multiple=1'
+            url+=params
+
+            return redirect(url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
@@ -1238,7 +1276,7 @@ class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
 class UpdateGestureSEDView(EditGestureSEDMixin, CreateView):
 
     def get_context_data(self, **kwargs):
-        context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
+        context = super(UpdateGestureSEDView, self).get_context_data(**kwargs)
         context['gesture_formset']=ERPComponentFormSet(self.request.POST or None, prefix='gesture')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')

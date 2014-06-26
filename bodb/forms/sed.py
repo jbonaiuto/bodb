@@ -6,6 +6,13 @@ from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
 
+import datetime
+from django.forms.extras.widgets import SelectDateWidget
+from django.forms import ModelForm, Form
+
+from functools import partial
+DateInput = partial(forms.DateInput, {'class': 'datepicker'}) 
+
 class SEDForm(DocumentWithLiteratureForm):
     type=forms.CharField(widget=forms.HiddenInput,required=False)
 
@@ -176,7 +183,7 @@ TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInl
 
 
 class GestureSEDForm(SEDForm):
-    #name = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=False)
+    date = forms.DateField(widget=SelectDateWidget)
     
     class Meta:
         model=GestureSED
