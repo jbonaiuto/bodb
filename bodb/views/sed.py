@@ -1288,7 +1288,7 @@ class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
         return context
     
     
-class UpdateGestureSEDView(EditGestureSEDMixin, CreateView):
+class UpdateGestureSEDView(EditGestureSEDMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGestureSEDView, self).get_context_data(**kwargs)
