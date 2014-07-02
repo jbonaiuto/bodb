@@ -4,10 +4,8 @@
     <title>BODB - View {{ gesturesed.title }} SED</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
-    	animatedcollapse.addDiv('gestureData', 'fade=1');
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
-        animatedcollapse.addDiv('goalData', 'fade=1');
         animatedcollapse.addDiv('referenceData', 'fade=1');
         animatedcollapse.addDiv('discussionData', 'fade=1');
 
@@ -74,9 +72,9 @@
 
         function updateSectionDisplaySettings()
         {
-            var sectionIds=['figureData', 'narrativeData', 'goalData', 'relatedBopData', 'relatedModelData',
+            var sectionIds=['figureData', 'narrativeData', 'relatedBopData', 'relatedModelData',
                 'relatedBrainRegionData', 'referenceData', 'sedData', 'ssrData'];
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'goalData', 'relatedBopDisplay', 'relatedModelDisplay',
+            var displayIds=['figureDisplay', 'narrativeDisplay', 'relatedBopDisplay', 'relatedModelDisplay',
                 'relatedBrainRegionDisplay', 'referenceDisplay', 'sedDisplay', 'ssrDisplay'];
             for(var i=0; i<sectionIds.length; i++)
             {
@@ -140,6 +138,41 @@
                     {% endif %}
                 </td>
             </tr>
+            {% if gesturesed.narrative %}
+             <tr class="section_subheader">
+                <td colspan=2>Narrative</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ gesturesed.narrative }}</td>
+            </tr>
+            {% endif %}
+            {% if gesturesed.goal %}
+             <tr class="section_subheader">
+                <td colspan=2>Goal</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ gesturesed.goal }}</td>
+            </tr>
+            {% endif %}
+            <tr class="section_subheader">
+                <td colspan=2>Gestures</td>
+            </tr>
+            {% for gesture in gestures %}
+				<tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+					<td><strong>Name:</strong> {{ gesture.gesture_name }}</td>
+                </tr>
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td><strong>Signaller Body Part:</strong> {{ gesture.signaller_body_part }}</td>
+                    <td><strong>Recipient Body Part:</strong> {{ gesture.recipient_body_part }}</td>
+                </tr>
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td><strong>Recipient Response:</strong> {{ gesture.recipient_response }}</td>
+                    <td><strong>Goal Met:</strong> {{ gesture.goal_met }}</td>
+                </tr>
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td><strong>Notes:</strong> {{ gesture.notes }}</td>
+                </tr>
+            {% endfor %}
             {% if figures %}
                 <tr class="section_subheader">
                     <td colspan=2>
@@ -152,111 +185,6 @@
                     </td>
                 </tr>
             {% endif %}
-            {% if gesturesed.narrative %}
-                <tr>
-                    <td colspan=2 style="padding:0px">
-                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
-                    </td>
-                </tr>
-                <tr class="section_header">
-                    <td colspan=2>
-                        Narrative (<a href="javascript:animatedcollapse.toggle('narrativeData')"><span id="narrativeDataLabel">Show</span></a>)
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2 style="padding:0px">
-                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                        <div id="narrativeData" style="display:none">
-                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
-                            <table class="tab_panel" style="background:#e6e8ed;">
-                                <tr valign=top>
-                                    <td>{{ gesturesed.narrative }}</td>
-                                <tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endif %}
-            {% if gesturesed.goal %}
-                <tr>
-                    <td colspan=2 style="padding:0px">
-                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
-                    </td>
-                </tr>
-                <tr class="section_header">
-                    <td colspan=2>
-                        Goal (<a href="javascript:animatedcollapse.toggle('goalData')"><span id="goalDataLabel">Show</span></a>)
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2 style="padding:0px">
-                        <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                        <div id="goalData" style="display:none">
-                            <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
-                            <table class="tab_panel" style="background:#e6e8ed;">
-                                <tr valign=top>
-                                    <td>{{ gesturesed.goal }}</td>
-                                <tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endif %}
-            <tr>
-                    <td colspan=2 style="padding:0px">
-                        <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
-                    </td>
-            </tr>
-            <tr class="section_header">
-                    <td colspan=2>
-                        Gestures (<a href="javascript:animatedcollapse.toggle('gestureData')"><span id="gestureDataLabel">Show</span></a>)
-                    </td>
-                </tr>
-            {% for gesture in gestures %}
-				<tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td style="width:120px">Name*</td>
-                    <td colspan="6">
-                        {{ gesture_form.gesture_name }}
-                    </td>
-                </tr>
-                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Signaller Body Part</td>
-                    <td style="width:120px">
-                        {{ gesture_form.signaller_body_part }}
-                    </td>
-                    <td style="width:120px;">Recipient Body Part</td>
-                    <td style="width:120px">
-                        {{ gesture_form.recipient_body_part }}
-                    </td>
-                </tr>
-                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Recipient Response</td>
-                    <td>
-                        {{ gesture_form.recipient_response }}
-                    </td>
-                    <td>Goal Met</td>
-                    <td colspan="3">
-                        {{ gesture_form.goal_met }}
-                    </td>
-                </tr>
-                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Notes</td>
-                    <td>
-                        {{ gesture_form.notes }}
-                    </td>
-                </tr>
-            {% endfor %}
             {% if references %}
                 <tr>
                     <td colspan=2 style="padding:0px">
