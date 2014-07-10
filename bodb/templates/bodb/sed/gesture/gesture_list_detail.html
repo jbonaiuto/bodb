@@ -129,33 +129,33 @@
          <table class="tab_panel">
 	        <tr class="<%= getTRTag(id) %>" valign=top>
 	            <td style="width:60px">
-	                <a href="" onclick="return deleteInlineForm('gesture', 0);">Delete</a>
+	                <a href="" onclick="return deleteInlineForm('gesture',  <%= id %>);">Delete</a>
 	            </td>
 	            <td style="width:120px">Name*</td>
 	            <td colspan="6">
-	                <input id="id_gesture-<%= id %>-gesture_name" maxlength="100" name="id_gesture-<%= id %>-gesture_name" type="text" />
+	                <input id="id_gesture-<%= id %>-gesture_name" maxlength="100" name="gesture-<%= id %>-gesture_name" type="text" />
 	            </td>
 	        </tr>
 	        <tr class="<%= getTRTag(id) %>" valign=top>
 	            <td width=60px>&nbsp;</td>
 	            <td>Signaller Body Part</td>
 	            <td style="width:120px">
-	                <input id="id_gesture-<%= id %>-signaller_body_part" maxlength="100" name="id_gesture-<%= id %>-signaller_body_part" type="text" />
+	                <input id="id_gesture-<%= id %>-signaller_body_part" maxlength="100" name="gesture-<%= id %>-signaller_body_part" type="text" />
 	            </td>
 	            <td style="width:120px;">Recipient Body Part</td>
 	            <td style="width:120px">
-	                <input id="id_gesture-<%= id %>-recipient_body_part" maxlength="100" name="id_gesture-<%= id %>-recipient_body_part" type="text" />
+	                <input id="id_gesture-<%= id %>-recipient_body_part" maxlength="100" name="gesture-<%= id %>-recipient_body_part" type="text" />
 	            </td>
 	        </tr>
 	        <tr class="<%= getTRTag(id) %>" valign=top>
 	            <td width=60px>&nbsp;</td>
 	            <td>Recipient Response</td>
 	            <td>
-	                <textarea cols="40" id="id_gesture-<%= id %>-recipient_response" name="id_gesture-<%= id %>-recipient_response" rows="10"></textarea>
+	                <textarea cols="40" id="id_gesture-<%= id %>-recipient_response" name="gesture-<%= id %>-recipient_response" rows="10"></textarea>
 	            </td>
 	            <td>Goal Met</td>
 	            <td colspan="3">
-	                <select id="id_gesture-<%= id %>-goal_met" name="id_gesture-<%= id %>-goal_met">
+	                <select id="id_gesture-<%= id %>-goal_met" name="gesture-<%= id %>-goal_met">
 	                	<option value="yes">Yes</option>
 	                	<option value="no" selected="selected">No</option></select>
 	            </td>
@@ -164,7 +164,7 @@
 	            <td width=60px>&nbsp;</td>
 	            <td>Notes</td>
 	            <td>
-	                <textarea cols="40" id="id_gesture-<%= id %>-notes" name="id_gesture-<%= id %>-notes" rows="10"></textarea>
+	                <textarea cols="40" id="id_gesture-<%= id %>-notes" name="gesture-<%= id %>-notes" rows="10"></textarea>
 	            </td>
 	        </tr>
 	        

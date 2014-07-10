@@ -30,6 +30,10 @@
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'date_errors');
             errors+=validateField('date', 'Date', 'date_errors');
+            var gestureErrors=validateInlineForm('gesture', ['gesture_name','signaller_body_part','recipient_body_part','recipient_response','goal_met'], ['Name', 'Signaller Body Part', 'Recipient Body Part', 'Recipient Response', 'Goal Met']);
+            if(gestureErrors>0)
+                animatedcollapse.show('gestureData');
+            errors+=gestureErrors;
             var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
