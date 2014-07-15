@@ -250,7 +250,7 @@ def workspace_forum_post_added(sender, **kwargs):
 def workspace_document_changed(sender, **kwargs):
     for workspace in Workspace.objects.filter(related_models=sender):
         activity=WorkspaceActivityItem(workspace=workspace, user=sender.last_modified_by)
-        activity.text='%s modified the model <a href="%s">%s</a>' % (sender.collator.last_modified_by,sender.get_absolute_url(), sender.__unicode__())
+        activity.text='%s modified the model <a href="%s">%s</a>' % (sender.last_modified_by.username,sender.get_absolute_url(), sender.__unicode__())
         activity.save()
 
     for workspace in Workspace.objects.filter(related_bops=sender):
