@@ -146,3 +146,9 @@ class UserSearch(object):
             keyword_q&=Document.get_security_q(user,field='document')
             return keyword_q
         return Q()
+
+    # search by collator
+    def search_collator(self, userId):
+        if self.collator:
+            return Q(id=-2)
+        return Q()
