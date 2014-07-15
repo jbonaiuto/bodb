@@ -127,4 +127,24 @@ class BrainRegionSearch(object):
                 return Q(id=-1)
         return Q()
 
+    # search by collator
+    def search_collator(self):
+        if self.collator:
+            return Q(id=-1)
+        return Q()
+
+    def search_username(self):
+        if self.username:
+            return Q(id=-1)
+        return Q()
+
+    def search_first_name(self):
+        if self.first_name:
+            return Q(id=-1)
+        return Q()
+
+    def search_last_name(self):
+        if self.last_name:
+            return Q(id=-1)
+        return Q()
 
