@@ -1,3 +1,5 @@
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('userAdvancedOptions', 'fade=1');
 
@@ -22,6 +24,18 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#user_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchUsers();
+                    });
+        });
+    });
 </script>
 <div id="userDiv" style="display:{%ifequal searchType 'users'%}block{% else %}none{% endifequal %}">
     <form id="user_search_form" method="post" action="">

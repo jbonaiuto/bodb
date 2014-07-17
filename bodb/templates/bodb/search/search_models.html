@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
 
@@ -23,6 +24,18 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#model_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchModels();
+                    });
+        });
+    });
 </script>
 <div id="modelDiv" style="display:{%ifequal searchType 'models'%}block{% else %}none{% endifequal %}">
     <form id="model_search_form" method="post" action="">

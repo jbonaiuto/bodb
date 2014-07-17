@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     function updateSEDSearchOptions(sedType)
     {
@@ -51,6 +52,15 @@
     $( document ).ready(function() {
         document.getElementById('sedData').style.display='inline';
         searchFinished=true;
+        $('input[type="text"]', $('#sed_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchSEDs();
+                    });
+        });
     });
 </script>
 <div id="sedDiv" style="display:{%ifequal searchType 'seds'%}block{% else %}none{% endifequal %}">

@@ -45,7 +45,7 @@
     }
 </script>
 <div id="allDiv" style="display:{%ifequal searchType 'all'%}block{% else %}none{% endifequal %}">
-    <form id="allSearchForm" method="post" action="">
+    <form id="allSearchForm" method="post" action="" onsubmit="return submitSearchAll()">
         {% csrf_token %}
         <input type="hidden" id="searchType" name="searchType" value="all"/>
         <table class="tab_panel">
@@ -169,7 +169,7 @@
                     <strong>Search criteria combination:</strong> {{ form.search_options }}
                     <br>Search federated databases (warning this may drastically slow the search):
                     <br>CoCoMac {{ form.search_cocomac }} Brede {{ form.search_brede }}
-                    <br><input class="btn" type="button" value="Search" onclick="submitSearchAll();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <br><input id="allSearchButton" class="btn" type="button" value="Search" onclick="submitSearchAll();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
             <tr>
@@ -221,7 +221,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>BOP Results (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>)</td>
+                                <td>BOP Results (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>) (<a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>

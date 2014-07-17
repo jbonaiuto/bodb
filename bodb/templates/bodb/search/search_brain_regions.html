@@ -1,3 +1,5 @@
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('brainRegionAdvancedOptions', 'fade=1');
 
@@ -22,6 +24,18 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#brain_region_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchBrainRegions();
+                    });
+        });
+    });
 </script>
 <div id="brainRegionDiv" style="display:{%ifequal searchType 'brain_regions'%}block{% else %}none{% endifequal %}">
     <form id="brain_region_search_form" method="post" action="">

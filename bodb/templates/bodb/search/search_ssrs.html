@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('ssrAdvancedOptions', 'fade=1');
 
@@ -23,6 +24,18 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#ssr_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchSSRs();
+                    });
+        });
+    });
 </script>
 <div id="ssrDiv" style="display:{%ifequal searchType 'ssrs'%}block{% else %}none{% endifequal %}">
     <form id="ssr_search_form" method="post" action="">

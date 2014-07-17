@@ -1,3 +1,5 @@
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('workspaceAdvancedOptions', 'fade=1');
 
@@ -46,6 +48,18 @@
             $('#workspace_'+data.id+'_message').fadeOut(5000, function(){});
         }
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#workspace_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchWorkspaces();
+                    });
+        });
+    });
 </script>
 <div id="workspaceDiv" style="display:{%ifequal searchType 'workspaces'%}block{% else %}none{% endifequal %}">
     <form id="workspace_search_form" method="post" action="">

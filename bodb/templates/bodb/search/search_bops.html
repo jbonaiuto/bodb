@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
 
@@ -23,6 +24,18 @@
             }
         });
     }
+
+    $( document ).ready(function() {
+        $('input[type="text"]', $('#bop_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchBOPs();
+                    });
+        });
+    });
 </script>
 <div id="bopDiv" style="display:{%ifequal searchType 'bops'%}block{% else %}none{% endifequal %}" class="tab_panel">
     <form id="bop_search_form" method="post" action="">
