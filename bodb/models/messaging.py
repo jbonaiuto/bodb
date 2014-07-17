@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
+from bodb.models import BodbProfile
 
 class Message(models.Model):
     """
@@ -24,6 +25,16 @@ class Message(models.Model):
     class Meta:
         app_label='bodb'
         ordering=['-sent']
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        models.Model.save(self,force_update=force_update, force_insert=force_insert, using=using,
+            update_fields=update_fields)
+        profile=BodbProfile.objects.get(user__id=self.recipient.id)
+        if profile.new_message_notify:
+            msg = EmailMessage(self.subject, self.text, 'uscbrainproject@gmail.com', [self.recipient.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send(fail_silently=True)
 
 
 # A user's subscription to be notified of new entries
@@ -118,7 +129,8 @@ def sendNotification(subscription, document):
     text+='<b>Description</b>: %s' % document.brief_description
 
     # send internal message
-    notification_type=subscription.user.get_profile().notification_preference
+    profile=BodbProfile.objects.get(user__id=subscription.user.id)
+    notification_type=profile.notification_preference
     if notification_type=='message' or notification_type=='both':
         message=Message(recipient=subscription.user, subject=subject, read=False)
         message.text=text
