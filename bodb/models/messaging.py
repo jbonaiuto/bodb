@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
-from bodb.models import BodbProfile
 
 class Message(models.Model):
     """
@@ -30,7 +29,7 @@ class Message(models.Model):
              update_fields=None):
         models.Model.save(self,force_update=force_update, force_insert=force_insert, using=using,
             update_fields=update_fields)
-        profile=BodbProfile.objects.get(user__id=self.recipient.id)
+        profile=self.recipient.get_profile()
         if profile.new_message_notify:
             msg = EmailMessage(self.subject, self.text, 'uscbrainproject@gmail.com', [self.recipient.email])
             msg.content_subtype = "html"  # Main content is now text/html
@@ -129,7 +128,7 @@ def sendNotification(subscription, document):
     text+='<b>Description</b>: %s' % document.brief_description
 
     # send internal message
-    profile=BodbProfile.objects.get(user__id=subscription.user.id)
+    profile=subscription.user.get_profile()
     notification_type=profile.notification_preference
     if notification_type=='message' or notification_type=='both':
         message=Message(recipient=subscription.user, subject=subject, read=False)
