@@ -247,12 +247,16 @@ class BrainRegionRequest(models.Model):
         users=User.objects.all()
         for user in users:
             if user.is_superuser:
-                message=Message(recipient=user, sender=self.user, subject=subject, read=False)
-                message.text=text
-                message.save()
-
+                # send internal message
                 profile=BodbProfile.objects.get(user__id=user.id)
-                if profile.new_message_notify:
+                notification_type=profile.notification_preference
+                if notification_type=='message' or notification_type=='both':
+                    message=Message(recipient=user, sender=self.user, subject=subject, read=False)
+                    message.text=text
+                    message.save()
+
+                # send email message
+                if notification_type=='email' or notification_type=='both':
                     msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [user.email])
                     msg.content_subtype = "html"  # Main content is now text/html
                     msg.send(fail_silently=True)

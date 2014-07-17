@@ -136,7 +136,8 @@ class WorkspaceInvitation(models.Model):
         text += '<a href="%s">Decline</a>' % decline_url
         self.sent=datetime.datetime.now()
         # send internal message
-        notification_type = self.invited_user.get_profile().notification_preference
+        profile=BodbProfile.objects.get(user__id=self.invited_user.id)
+        notification_type = profile.notification_preference
         if notification_type == 'message' or notification_type == 'both':
             message = Message(recipient=self.invited_user, subject=subject, read=False)
             message.text = text

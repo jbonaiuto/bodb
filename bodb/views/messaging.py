@@ -66,15 +66,7 @@ class CreateUserMessageView(CreateView):
     def form_valid(self, form):
         message=form.save()
 
-        if message.recipient.get_profile().new_message_notify:
-            # send email to recipient
-            subject='You have a new message on BODB from '+self.request.user.username
-            text='You have a new message from '+self.request.user.username+'.<br> <a href="'+self.request.build_absolute_uri('/bodb/message/'+str(message.id)+'/')+'">View message</a>'
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [message.recipient.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
-
-            # redirect to the message list page
+        # redirect to the message list page
         return HttpResponseRedirect('/bodb/messages/')
 
 
@@ -108,13 +100,6 @@ class ReadReplyUserMessageView(UpdateView):
     def form_valid(self, form):
         reply=form.save()
 
-        if reply.recipient.get_profile().new_message_notify:
-            # send email to recipient
-            subject='You have a new message on BODB from '+self.request.user.username
-            text='You have a new message from '+self.request.user.username+'.<br> <a href="'+self.request.build_absolute_uri('/bodb/message/'+str(reply.id)+'/')+'">View message</a>'
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [reply.recipient.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
         return HttpResponseRedirect('/bodb/messages/')
 
 

@@ -95,15 +95,20 @@ class BrainRegionRequestDenyView(UpdateView):
         text='Your request for the addition of the region: %s has been denied.<br>' % self.object.name
         text+='Reason for denial: %s' % self.request.POST['reason']
 
-        message=Message(recipient=self.object.user, sender=self.request.user, subject=subject, read=False)
-        message.text=text
-        message.save()
-
+        # send internal message
         profile=BodbProfile.objects.get(user__id=self.object.user.id)
-        if profile.new_message_notify:
+        notification_type = profile.notification_preference
+        if notification_type == 'message' or notification_type == 'both':
+            message = Message(recipient=self.object.user, sender=self.request.user, subject=subject, read=False)
+            message.text = text
+            message.save()
+
+        # send email message
+        if notification_type == 'email' or notification_type == 'both':
             msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.object.user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send(fail_silently=True)
+
         context=self.get_context_data(form=form)
         context['msg']='Brain region request denial sent'
         return self.render_to_response(context)
@@ -141,12 +146,16 @@ class BrainRegionRequestApproveView(CreateView):
             ['http://', get_current_site(None).domain, '/bodb/brain_region/%d/' % self.object.id])
         text='Your request for the addition of the region: <a href="%s">%s</a> has been approved.<br>' % (region_url, self.object.name)
 
-        message=Message(recipient=context['request'].user, sender=self.request.user, subject=subject, read=False)
-        message.text=text
-        message.save()
-
+        # send internal message
         profile=BodbProfile.objects.get(user__id=context['request'].user.id)
-        if profile.new_message_notify:
+        notification_type = profile.notification_preference
+        if notification_type == 'message' or notification_type == 'both':
+            message = Message(recipient=context['request'].user, sender=self.request.user, subject=subject, read=False)
+            message.text = text
+            message.save()
+
+        # send email message
+        if notification_type == 'email' or notification_type == 'both':
             msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [context['request'].user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send(fail_silently=True)
