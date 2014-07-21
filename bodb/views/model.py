@@ -753,7 +753,11 @@ class UpdateModuleView(UpdateView):
         module_formset=context['module_formset']
         if figure_formset.is_valid() and input_formset.is_valid() and output_formset.is_valid() and \
            state_formset.is_valid() and module_formset.is_valid():
-            self.object = form.save()
+            self.object = form.save(commit=False)
+            self.object.last_modified_by=self.request.user
+            self.object.save()
+            # Needed to save literature and tags
+            form.save_m2m()
 
             # save modules
             for module_form in module_formset.forms:
