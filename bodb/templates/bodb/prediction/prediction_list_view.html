@@ -34,7 +34,7 @@
                         <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}"/>
                     {% endif %}
                 </td>
-                <td>{{ prediction.get_ssr.title }}</td>
+                <td><a href="/bodb/ssr/{{ prediction.get_ssr.id }}/" onlick="return openInNewTab('/bodb/ssr/{{ prediction.get_ssr.id }}/');">{{ prediction.get_ssr.title }}</a></td>
                 <td>{{ prediction.get_ssr.brief_description }}</td>
                 <td><span id="ssr_{{ prediction.get_ssr.id }}_message" name="ssr_{{ prediction.get_ssr.id }}_message" class="messages"></span></td>
             </tr>
