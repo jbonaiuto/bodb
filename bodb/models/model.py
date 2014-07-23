@@ -162,7 +162,7 @@ class Model(Module):
 
     @staticmethod
     def get_tagged_models(name, user):
-        return Model.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+        return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
 
 class Variable(models.Model):

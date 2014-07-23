@@ -53,7 +53,7 @@ class BOP(MPTTModel,Document):
 
     @staticmethod
     def get_tagged_bops(name, user):
-        return BOP.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+        return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
     @staticmethod
     def get_bop_list(bops, user):

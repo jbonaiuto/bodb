@@ -81,7 +81,7 @@ class SED(Document):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return SED.objects.filter(Q(type='generic') & Q(tags__name__icontains=name) &
+        return SED.objects.filter(Q(type='generic') & Q(tags__name__iexact=name) &
                                   Document.get_security_q(user)).distinct()
 
 
@@ -113,7 +113,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ERPSED.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
 
 class ElectrodeCap(models.Model):
@@ -217,7 +217,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return BrainImagingSED.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
 
 # SED coordinate
@@ -374,7 +374,7 @@ class ConnectivitySED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ConnectivitySED.objects.filter(Q(tags__name__icontains=name) & Document.get_security_q(user)).distinct()
+        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
 
 class CoCoMacConnectivitySED(ConnectivitySED):

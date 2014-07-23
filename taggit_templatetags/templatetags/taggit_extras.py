@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import Count, Q
 from django.core.exceptions import FieldError
 import math
+import bodb
 from bodb.models import Document
 from registration.models import User
 
@@ -35,35 +36,58 @@ def get_queryset(user, forvar=None):
                 applabel = forvar
 
 
-        q=Q()
-        if isinstance(user,User) and user.is_authenticated() and not user.is_anonymous():
-            if not user.is_superuser:
-                own_entry_q=Q(collator__id=user.id)
-                public_q=Q(public=1)
-                group_q=Q(Q(draft=0) & Q(collator__groups__in=list(user.groups.all())))
-                q=own_entry_q | public_q | group_q
-        else:
-            q=Q(public=1)
+        security_q=Q(public=True)
+        if isinstance(user,User):
+            security_q=Document.get_security_q(user)
 
-        # filter tagged items        
+        # filter tagged items
         if applabel:
             queryset = TaggedItem.objects.filter(content_type__app_label=applabel.lower())
         if model:
             queryset = queryset.filter(content_type__model=model.lower())
-        if len(q):
-            queryset=queryset.filter(object_id__in=Document.objects.filter(q).values_list('id',flat=True))
+        if len(security_q):
+            queryset=queryset.filter(object_id__in=Document.objects.filter(security_q).values_list('id',flat=True))
 
         # get tags
         tag_ids = queryset.values_list('tag_id', flat=True)
-        queryset = Tag.objects.filter(id__in=tag_ids)
+        queryset = Tag.objects.filter(id__in=tag_ids).distinct()
 
     # Retain compatibility with older versions of Django taggit
     # a version check (for example taggit.VERSION <= (0,8,0)) does NOT
     # work because of the version (0,8,0) of the current dev version of django-taggit
     try:
-        return queryset.annotate(num_times=Count('taggeditem_items'))
+        result=[]
+        for tag in queryset:
+            q=Q(Q(tags__name__iexact=tag.name) & security_q)
+            if model=='Model':
+                tag.num_times=bodb.models.Model.objects.filter(q).count()
+            elif model=='BOP':
+                tag.num_times=bodb.models.BOP.objects.filter(q).count()
+            elif model=='SED':
+                tag.num_times=bodb.models.SED.objects.filter(q).count()
+            elif model=='SSR':
+                tag.num_times=bodb.models.SSR.objects.filter(q).count()
+            elif model=='Prediction':
+                tag.num_times=bodb.models.Prediction.objects.filter(q).count()
+            result.append(tag)
+        return result
     except FieldError:
-        return queryset.annotate(num_times=Count('taggit_taggeditem_items'))
+        result=[]
+        for tag in queryset:
+            q=Q(Q(tags__name__iexact=tag.name) & security_q)
+            if model=='Model':
+                tag.num_times=bodb.models.Model.objects.filter(q).count()
+            elif model=='BOP':
+                tag.num_times=bodb.models.BOP.objects.filter(q).count()
+            elif model=='SED':
+                tag.num_times=bodb.models.SED.objects.filter(q).count()
+            elif model=='SSR':
+                tag.num_times=bodb.models.SSR.objects.filter(q).count()
+            elif model=='Prediction':
+                tag.num_times=bodb.models.Prediction.objects.filter(q).count()
+            result.append(tag)
+        return result
+        #return queryset.annotate(num_times=Count('taggit_taggeditem_items'))
 
 def _calculate_thresholds(min_weight, max_weight, steps):
     delta = (max_weight - min_weight) / float(steps)
@@ -114,15 +138,19 @@ def get_taglist(context, asvar, forvar=None):
 
 @tag(register, [Constant('as'), Name(), Variable(), Optional([Constant('for'), Variable()])])
 def get_tagcloud(context, asvar, user, forvar=None):
-    queryset = get_queryset(user, forvar)
-    num_times = queryset.values_list('num_times', flat=True)
+    result = get_queryset(user, forvar)
+    num_times=[x.num_times for x in result]
+    #num_times = queryset.values_list('num_times', flat=True)
     if(len(num_times) == 0):
-        context[asvar] = queryset
+        #context[asvar] = queryset
+        context[asvar] = result
         return ''
     weight_fun = get_weight_fun(2, 24, min(num_times), max(num_times))
-    queryset = queryset.order_by('name')
+    #queryset = queryset.order_by('name')
+    result.sort(key=lambda x:x.name)
     tags=[]
-    for tag in queryset:
+    #for tag in queryset:
+    for tag in result:
         weight=weight_fun(tag.num_times)
         if weight>=8:
             tag.weight =weight
