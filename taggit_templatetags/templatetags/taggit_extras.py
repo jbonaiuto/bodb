@@ -145,16 +145,16 @@ def get_tagcloud(context, asvar, user, forvar=None):
         #context[asvar] = queryset
         context[asvar] = result
         return ''
-    weight_fun = get_weight_fun(2, 24, min(num_times), max(num_times))
+    weight_fun = get_weight_fun(10, 28, min(num_times), max(num_times))
     #queryset = queryset.order_by('name')
     result.sort(key=lambda x:x.name)
     tags=[]
     #for tag in queryset:
     for tag in result:
         weight=weight_fun(tag.num_times)
-        if weight>=8:
-            tag.weight =weight
-            tags.append(tag)
+        #if weight>=8:
+        tag.weight =weight
+        tags.append(tag)
     context[asvar] = tags
     return ''
     
