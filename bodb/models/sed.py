@@ -8,6 +8,7 @@ from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import scipy.io
+import matplotlib.pyplot as plt
 
 class SED(Document):
     """
@@ -827,6 +828,13 @@ def import_spikes_from_matlab(mat_file):
 
 
 def plot_unit_spikes(id):
+    event_colors={
+        'go': 'b',
+        'mo': 'r',
+        'do': 'g',
+        'ho': 'm',
+        'hoff': 'y'
+    }
     unit=Unit.objects.get(id=id)
     fig=Figure()
     ax=fig.add_subplot(2,1,1)
@@ -836,6 +844,10 @@ def plot_unit_spikes(id):
         for spike in spikes:
             rel_spike_time=float(spike)-float(trial.start_time)
             ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+        events=Event.objects.filter(trial=trial)
+        for event in events:
+            rel_event_time=float(event.time)-float(trial.start_time)
+            ax.plot([rel_event_time,rel_event_time],[trial_idx.trial_idx+1],event_colors[event.name])
     ax=fig.add_subplot(2,1,2)
     trials=UnitTrial.objects.filter(unit=unit, type='m')
     for trial_idx, trial in enumerate(trials):
@@ -843,5 +855,9 @@ def plot_unit_spikes(id):
         for spike in spikes:
             rel_spike_time=float(spike)-float(trial.start_time)
             ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+        events=Event.objects.filter(trial=trial)
+        for event in events:
+            rel_event_time=float(event.time)-float(trial.start_time)
+            ax.plot([rel_event_time,rel_event_time],[trial_idx.trial_idx+1],event_colors[event.name])
     plt.show()
 
