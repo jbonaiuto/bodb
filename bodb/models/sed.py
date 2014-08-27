@@ -1,10 +1,13 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, Primate
+from matplotlib.figure import Figure
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
+import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
+import scipy.io
 
 class SED(Document):
     """
@@ -660,36 +663,185 @@ def find_similar_seds(user, title, brief_description):
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
-# A summary of gesture data: inherits from SED
-class GestureSED(SED):
-    objects = InheritanceManager()
-    
-    date = models.DateField(blank=True, null=True)
-    goal = models.TextField(blank=True)
-    signaller = models.ForeignKey('Primate', related_name ='signaller', null = True, blank = True)
-    recipient = models.ForeignKey('Primate', related_name = 'recipient', null = True, blank = True)
+class EventType(models.Model):
+    name=models.CharField(max_length=100)
+    description=models.TextField()
 
     class Meta:
         app_label='bodb'
-        
-    def html_url_string(self):
-        return ''
-    
-        
-# Gesture Model, 1-to-Many relationship with Gesture SED Model objects
-class Gesture(models.Model):
-    GOAL_CHOICES = (
-        ('yes', 'Yes'),
-        ('no', 'No'),
-        )
 
-    gesture_sed=models.ForeignKey(GestureSED, related_name = 'gestures')
-    gesture_name=models.CharField(max_length=100)
-    signaller_body_part=models.CharField(max_length=100)
-    recipient_body_part=models.CharField(max_length=100)
-    recipient_response = models.TextField(blank=True)
-    goal_met = models.CharField(max_length=50, choices=GOAL_CHOICES, default='no')
-    notes = models.TextField(blank=True)
-    
+class Unit(models.Model):
+    type=models.CharField(max_length=50)
+    area=models.ForeignKey('BrainRegion')
+
     class Meta:
         app_label='bodb'
+
+class UnitTrial(models.Model):
+    unit=models.ForeignKey('Unit')
+    type=models.CharField(max_length=50)
+    object=models.CharField(max_length=50)
+    start_time=models.DecimalField(max_digits=10, decimal_places=5)
+    end_time=models.DecimalField(max_digits=10, decimal_places=5)
+    spike_times=models.TextField()
+
+    class Meta:
+        app_label='bodb'
+
+class Event(models.Model):
+    trial=models.ForeignKey('UnitTrial')
+    type=models.ForeignKey('EventType')
+    time=models.DecimalField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        app_label='bodb'
+
+def import_spikes_from_matlab(mat_file):
+    # create event types (if not already exist)
+    if not EventType.objects.filter(name='go').count():
+        go_event_type=EventType(name='go', description='go signal')
+        go_event_type.save()
+    else:
+        go_event_type=EventType.objects.get(name='go')
+    if not EventType.objects.filter(name='mo').count():
+        mo_event_type=EventType(name='mo', description='movement onset')
+        mo_event_type.save()
+    else:
+        mo_event_type=EventType.objects.get(name='mo')
+    if not EventType.objects.filter(name='do').count():
+        do_event_type=EventType(name='do', description='object displacement onset')
+        do_event_type.save()
+    else:
+        do_event_type=EventType.objects.get(name='do')
+    if not EventType.objects.filter(name='ho').count():
+        ho_event_type=EventType(name='ho', description='stable hold onset')
+        ho_event_type.save()
+    else:
+        ho_event_type=EventType.objects.get(name='ho')
+    if not EventType.objects.filter(name='hoff').count():
+        hoff_event_type=EventType(name='hoff', description='hold offset')
+        hoff_event_type.save()
+    else:
+        hoff_event_type=EventType.objects.get(name='hoff')
+
+    # load file
+    mat_file=scipy.io.loadmat(mat_file)
+
+    for i in range(len(mat_file['U'][0])):
+        area_idx=-1
+        unittype_idx=-1
+        index_idx=-1
+        events_idx=-1
+
+        # get indices of area, unit type, index, and events
+        for idx,(dtype,o) in enumerate(mat_file['U'][0][i].dtype.descr):
+            if dtype=='area':
+                area_idx=idx
+            elif dtype=='unittype':
+                unittype_idx=idx
+            elif dtype=='index':
+                index_idx=idx
+            elif dtype=='events':
+                events_idx=idx
+
+        # create unit
+        unit=Unit()
+        area=mat_file['U'][0][i][area_idx][0]
+        region=BrainRegion.objects.filter(Q(Q(name=area) | Q(abbreviation=area)))
+        unit.area=region[0]
+        unit.type=mat_file['U'][0][i][unittype_idx][0]
+        unit.save()
+
+        index=mat_file['U'][0][i][index_idx]
+        events=mat_file['U'][0][i][events_idx]
+
+        trialtype_idx=-1
+        object_idx=-1
+        trial_start_idx=-1
+        go_idx=-1
+        mo_idx=-1
+        do_idx=-1
+        ho_idx=-1
+        hoff_idx=-1
+        trial_end_idx=-1
+        for idx,(dtype,o) in enumerate(events[0].dtype.descr):
+            if dtype=='trialtype':
+                trialtype_idx=idx
+            elif dtype=='object':
+                object_idx=idx
+            elif dtype=='TrialStart':
+                trial_start_idx=idx
+            elif dtype=='Go':
+                go_idx=idx
+            elif dtype=='MO':
+                mo_idx=idx
+            elif dtype=='HO':
+                ho_idx=idx
+            elif dtype=='HOff':
+                hoff_idx=idx
+            elif dtype=='TrialEnd':
+                trial_end_idx=idx
+
+        trial_types=events[0][0][trialtype_idx][0]
+        objects=events[0][0][object_idx][0]
+        trial_start_times=events[0][0][trial_start_idx][0]
+        go_events=events[0][0][go_idx][0]
+        mo_events=events[0][0][mo_idx][0]
+        do_events=events[0][0][do_idx][0]
+        ho_events=events[0][0][ho_idx][0]
+        hoff_events=events[0][0][hoff_idx][0]
+        trial_end_times=events[0][0][trial_end_idx][0]
+
+        # iterate through trials
+        for j in range(len(trial_types)):
+            # create trial
+            trial=UnitTrial(unit=unit)
+            trial.type=trial_types[j]
+            trial.object=objects[j]
+            trial.start_time=trial_start_times[j]
+            trial.end_time=trial_end_times[j]
+
+            # load spikes
+            spike_times=[]
+            for k in range(len(index)):
+                if trial.start_time <= index[k] < trial.end_time:
+                    spike_times.append(str(index[k]))
+            trial.spike_times=','.join(spike_times)
+            trial.save()
+
+            # create trial events
+            go_event=Event(type=go_event_type, trial=trial, time=go_events[j])
+            go_event.save()
+
+            mo_event=Event(type=mo_event_type, trial=trial, time=mo_events[j])
+            mo_event.save()
+
+            do_event=Event(type=do_event_type, trial=trial, time=do_events[j])
+            do_event.save()
+
+            ho_event=Event(type=ho_event_type, trial=trial, time=ho_events[j])
+            ho_event.save()
+
+            hoff_event=Event(type=hoff_event_type, trial=trial, time=hoff_events[j])
+            hoff_event.save()
+
+
+def plot_unit_spikes(id):
+    unit=Unit.objects.get(id=id)
+    fig=Figure()
+    ax=fig.add_subplot(2,1,1)
+    trials=UnitTrial.objects.filter(unit=unit, type='h')
+    for trial_idx, trial in enumerate(trials):
+        spikes=trial.spike_times.split(',')
+        for spike in spikes:
+            rel_spike_time=float(spike)-float(trial.start_time)
+            ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+    ax=fig.add_subplot(2,1,2)
+    trials=UnitTrial.objects.filter(unit=unit, type='m')
+    for trial_idx, trial in enumerate(trials):
+        spikes=trial.spike_times.split(',')
+        for spike in spikes:
+            rel_spike_time=float(spike)-float(trial.start_time)
+            ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+    plt.show()
+
