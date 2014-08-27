@@ -806,7 +806,7 @@ def import_spikes_from_matlab(mat_file):
             spike_times=[]
             for k in range(len(index)):
                 if trial.start_time <= index[k] < trial.end_time:
-                    spike_times.append(str(index[k]))
+                    spike_times.append(str(index[k,0]))
             trial.spike_times=','.join(spike_times)
             trial.save()
 
