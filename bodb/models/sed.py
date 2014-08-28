@@ -1,12 +1,19 @@
+import matplotlib
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+matplotlib.use('Agg')
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from matplotlib.figure import Figure
+from numpy.core.umath import exp
+from numpy.numarray import arange
 from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
 import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
+import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
 
@@ -680,6 +687,7 @@ class Unit(models.Model):
 
 class UnitTrial(models.Model):
     unit=models.ForeignKey('Unit')
+    trial_number=models.IntegerField()
     type=models.CharField(max_length=50)
     object=models.CharField(max_length=50)
     start_time=models.DecimalField(max_digits=10, decimal_places=5)
@@ -776,6 +784,8 @@ def import_spikes_from_matlab(mat_file):
                 go_idx=idx
             elif dtype=='MO':
                 mo_idx=idx
+            elif dtype=='DO':
+                do_idx=idx
             elif dtype=='HO':
                 ho_idx=idx
             elif dtype=='HOff':
@@ -797,17 +807,22 @@ def import_spikes_from_matlab(mat_file):
         for j in range(len(trial_types)):
             # create trial
             trial=UnitTrial(unit=unit)
+            trial.trial_number=j+1
             trial.type=trial_types[j]
             trial.object=objects[j]
             trial.start_time=trial_start_times[j]
             trial.end_time=trial_end_times[j]
 
+            previous_trial=None
+            if j>0:
+                previous_trial=UnitTrial.objects.get(unit=unit, trial_number=j)
+
             # load spikes
             spike_times=[]
             for k in range(len(index)):
-                if trial.start_time <= index[k] < trial.end_time:
-                    spike_times.append(str(index[k,0]))
-            trial.spike_times=','.join(spike_times)
+                if index[k,0] < trial.end_time and (previous_trial is None or index[k,0] >= previous_trial.end_time):
+                    spike_times.append(index[k,0])
+            trial.spike_times=','.join([str(x) for x in sorted(spike_times)])
             trial.save()
 
             # create trial events
@@ -827,37 +842,130 @@ def import_spikes_from_matlab(mat_file):
             hoff_event.save()
 
 
-def plot_unit_spikes(id):
+def instantfr(spike_times):
+    spike_times=np.sorted(np.array(spike_times))
+    epsi = 1e-6
+
+    tt0=np.zeros([2,len(spike_times)])
+    tt0[0,:]=spike_times-epsi
+    tt0[1,:]=spike_times+epsi
+
+    l_padded_times=np.zeros(len(spike_times)+1)
+    l_padded_times[1:]=spike_times
+    r_padded_times=np.zeros(len(spike_times)+1)
+    r_padded_times[0:-1]=spike_times
+    r_padded_times[-1]=1e6
+    idt=np.zeros([2,len(spike_times)])
+    idt[0,:]=l_padded_times[1:]-l_padded_times[:-1]
+    idt[1,:]=r_padded_times[1:]-r_padded_times[:-1]
+
+    tt0=np.reshape(tt0,(1,len(spike_times)*2))
+    idt=np.reshape(idt,(1,len(spike_times)*2))
+
+    ifr = 1./idt[:,1:-1]
+    tt = tt0[:,1:-1]
+    return ifr, tt
+
+def plot_unit_spikes(id, bin_width, align_to=None, filename=None):
+
+    window=exp(-arange(-2 * bin_width, 2 * bin_width + 1) ** 2 * 1. / (2 * (bin_width) ** 2))
+
     event_colors={
         'go': 'b',
         'mo': 'r',
         'do': 'g',
         'ho': 'm',
-        'hoff': 'y'
+        'hoff': 'y',
     }
     unit=Unit.objects.get(id=id)
-    fig=Figure()
-    ax=fig.add_subplot(2,1,1)
+    fig=Figure(figsize=(6,12))
+    ax=fig.add_subplot(4,1,1)
     trials=UnitTrial.objects.filter(unit=unit, type='h')
+    rel_spike_times=[]
     for trial_idx, trial in enumerate(trials):
+        trial_rel_spike_times=[]
+        align_time=trial.start_time
+        if align_to is not None:
+            align_time=Event.objects.get(trial=trial,type__name=align_to).time
+
         spikes=trial.spike_times.split(',')
         for spike in spikes:
-            rel_spike_time=float(spike)-float(trial.start_time)
-            ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+            if len(spike):
+                rel_spike_time=float(spike)-float(align_time)
+                rel_spike_times.append(rel_spike_time)
+                trial_rel_spike_times.append(rel_spike_time)
+                ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1],'k')
+
+        rel_start_time=float(trial.start_time)-float(align_time)
+        ax.plot([rel_start_time,rel_start_time],[trial_idx,trial_idx+1],'c')
+
         events=Event.objects.filter(trial=trial)
         for event in events:
-            rel_event_time=float(event.time)-float(trial.start_time)
-            ax.plot([rel_event_time,rel_event_time],[trial_idx.trial_idx+1],event_colors[event.name])
-    ax=fig.add_subplot(2,1,2)
+            rel_event_time=float(event.time)-float(align_time)
+            ax.plot([rel_event_time,rel_event_time],[trial_idx,trial_idx+1],event_colors[event.type.name])
+
+    ax.set_ylim([0,len(trials)])
+    ax.set_xlim([np.min(rel_spike_times),np.max(rel_spike_times)])
+    ax.set_ylabel('Trial')
+    ax.set_title('Observation')
+
+    num_bins=int((np.max(rel_spike_times)-np.min(rel_spike_times))/bin_width)
+    hist,bins=np.histogram(np.array(rel_spike_times), bins=num_bins)
+    bin_width=bins[1]-bins[0]
+    smoothed_rate=np.core.numeric.convolve(hist/float(trials.count())/bin_width, window * 1. / sum(window), mode='same')
+    ax=fig.add_subplot(4,1,2)
+    ax.plot(bins[:-1],smoothed_rate)
+    ax.set_xlim([np.min(rel_spike_times),np.max(rel_spike_times)])
+    ax.set_ylabel('Firing Rate (Hz)')
+
+    rel_spike_times=[]
+    ax=fig.add_subplot(4,1,3)
     trials=UnitTrial.objects.filter(unit=unit, type='m')
     for trial_idx, trial in enumerate(trials):
+        align_time=trial.start_time
+        if align_to is not None:
+            align_time=Event.objects.get(trial=trial,type__name=align_to).time
         spikes=trial.spike_times.split(',')
         for spike in spikes:
-            rel_spike_time=float(spike)-float(trial.start_time)
-            ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1])
+            if len(spike):
+                rel_spike_time=float(spike)-float(align_time)
+                rel_spike_times.append(rel_spike_time)
+                ax.plot([rel_spike_time,rel_spike_time],[trial_idx,trial_idx+1],'k')
+        rel_start_time=float(trial.start_time)-float(align_time)
+        ax.plot([rel_start_time,rel_start_time],[trial_idx,trial_idx+1],'c')
         events=Event.objects.filter(trial=trial)
         for event in events:
-            rel_event_time=float(event.time)-float(trial.start_time)
-            ax.plot([rel_event_time,rel_event_time],[trial_idx.trial_idx+1],event_colors[event.name])
-    plt.show()
+            rel_event_time=float(event.time)-float(align_time)
+            ax.plot([rel_event_time,rel_event_time],[trial_idx,trial_idx+1],event_colors[event.type.name])
+    ax.set_ylim([0,len(trials)])
+    ax.set_xlim([np.min(rel_spike_times),np.max(rel_spike_times)])
+    ax.set_ylabel('Trial')
+    ax.set_title('Movement')
 
+    num_bins=int((np.max(rel_spike_times)-np.min(rel_spike_times))/bin_width)
+    hist,bins=np.histogram(np.array(rel_spike_times), bins=num_bins)
+    bin_width=bins[1]-bins[0]
+    smoothed_rate=np.core.numeric.convolve(hist/float(trials.count())/bin_width, window * 1. / sum(window), mode='same')
+    ax=fig.add_subplot(4,1,4)
+    ax.plot(bins[:-1],smoothed_rate)
+    ax.set_xlim([np.min(rel_spike_times),np.max(rel_spike_times)])
+    ax.set_ylabel('Firing Rate (Hz)')
+    ax.set_xlabel('Time (s)')
+
+    if filename is not None:
+        save_to_png(fig, '%s.png' % filename)
+        save_to_eps(fig, '%s.eps' % filename)
+        plt.close(fig)
+    else:
+        plt.show()
+
+
+def save_to_png(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(output_file, dpi=72)
+
+def save_to_eps(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_eps(output_file, dpi=72)
