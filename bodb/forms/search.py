@@ -249,6 +249,10 @@ class SEDSearchForm(DocumentWithLiteratureSearchForm):
     electrode_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     source=forms.CharField(help_text='Source', required=False)
     source_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_condition=forms.CharField(help_text='Condition', required=False)
+    neurophys_condition_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_unit_type=forms.CharField(help_text='Unit Type', required=False)
+    neurophys_unit_type_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
     search_brede = forms.BooleanField(help_text='Search Brede', required=False)
 

@@ -15,6 +15,10 @@
             animatedcollapse.show(['sedERPTypeOptions']);
         else
             animatedcollapse.hide(['sedERPTypeOptions']);
+        if(sedType=='neurophysiology')
+            animatedcollapse.show(['sedNeurophysiologyTypeOptions']);
+        else
+            animatedcollapse.hide(['sedNeurophysiologyTypeOptions']);
     }
 
     var searchFinished=false;
@@ -48,6 +52,7 @@
     animatedcollapse.addDiv('sedImagingTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedConnectivityTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedERPTypeOptions', 'fade=1');
+    animatedcollapse.addDiv('sedNeurophysiologyTypeOptions', 'fade=1');
 
     $( document ).ready(function() {
         document.getElementById('sedData').style.display='inline';
@@ -145,6 +150,22 @@
                                             <tr>
                                                 <td><strong>Coordinate Range</strong></td>
                                                 <td>{{ sed_search_form.x_min }} &#8804; x &#8804; {{ sed_search_form.x_max }}, {{ sed_search_form.y_min }} &#8804; y &#8804; {{ sed_search_form.y_max }}, {{ sed_search_form.z_min }} &#8804; z &#8804; {{ sed_search_form.z_max }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div id="sedNeurophysiologyTypeOptions" style="display:{% if sed_search_form.type.value == 'neurophysiology' %}inline{% else %}none{% endif %}">
+                                        <table class="tab_panel">
+                                            <tr>
+                                                <td width=20%><strong>Condition</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Unit type</strong></td>
+                                                <td>{{ sed_search_form.neurophys_unit_type }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_unit_type_options }}
+                                                </td>
                                             </tr>
                                         </table>
                                     </div>
@@ -253,11 +274,6 @@
                                         </table>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Tags</strong></td>
-                                <td>{{ sed_search_form.tags }}&nbsp;
-                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.tags_options }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Public</strong></td>

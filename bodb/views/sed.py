@@ -1,16 +1,18 @@
+import os
 from string import atof
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, GestureSEDForm, GestureFormSet
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, GestureSED, Gesture
+from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
+from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
@@ -202,9 +204,9 @@ class SEDDetailView(DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).count():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
-        elif type=='gesture':
-            self.model=GestureSED
-            self.template_name = 'bodb/sed/gesture/gesture_sed_view.html'
+        elif type=='neurophysiology':
+            self.model=NeurophysiologySED
+            self.template_name = 'bodb/sed/neurophysiology/neurophysiology_sed_view.html'
         return super(SEDDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -216,10 +218,10 @@ class SEDDetailView(DocumentDetailView):
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
-        elif self.object.type=='gesture':
-            context['gestures'] = Gesture.objects.filter(gesture_sed=self.object)
-            context['url']=self.object.html_url_string()
-            context['gesturesed']=self.object
+        elif self.object.type=='neurophysiology':
+            context['neurophysiologysed']=self.object
+            context['conditions']=NeurophysiologyCondition.objects.filter(sed=self.object).distinct()
+            context['units']=Unit.objects.filter(recordingtrial__condition__sed=self.object).distinct()
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -947,6 +949,7 @@ class SEDTaggedView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_tagged_seds(name, user),user)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context
@@ -1193,6 +1196,7 @@ class SaveCoordinateSelectionView(JSONResponseMixin, BaseUpdateView):
             }
         return context
 
+
 class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
     model=ElectrodePositionSystem
     def get_context_data(self, **kwargs):
@@ -1207,100 +1211,94 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
                 'position_names': position_names
             }
         return context
-    
-class DeleteGestureSEDView(DeleteView):
-    model=GestureSED
-    success_url = '/bodb/index.html'
-    
-class EditGestureSEDMixin():
-    model = GestureSED
-    form_class = GestureSEDForm
-    template_name = 'bodb/sed/gesture/gesture_sed_detail.html'
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        gesture_formset = context['gesture_formset']
-        figure_formset = context['figure_formset']
-
-        if figure_formset.is_valid() and gesture_formset.is_valid():
-
-            self.object = form.save(commit=False)
-            # Set collator if this is a new SED
-            if self.object.id is None:
-                self.object.collator=self.request.user
-            self.object.last_modified_by=self.request.user
-            self.object.save()
-            # Needed for literature and tags
-            form.save_m2m()
-            
-            # save gestures
-            gesture_formset.instance=self.object
-            for gesture_form in gesture_formset.forms:
-                if not gesture_form in gesture_formset.deleted_forms:
-                    gesture=gesture_form.save(commit=False)
-                    gesture.gesture_sed=self.object
-                    gesture.save()
-
-            # delete removed gestures
-            for gesture_form in gesture_formset.deleted_forms:
-                if gesture_form.instance.id:
-                    gesture_form.instance.delete()
-
-            # save figures
-            figure_formset.instance = self.object
-            for figure_form in figure_formset.forms:
-                if not figure_form in figure_formset.deleted_forms:
-                    figure=figure_form.save(commit=False)
-                    figure.document=self.object
-                    figure.save()
-
-            # delete removed figures
-            for figure_form in figure_formset.deleted_forms:
-                if figure_form.instance.id:
-                    figure_form.instance.delete()
 
 
-            url=self.get_success_url()
-            params='?type='+context['type']+'&action='+context['action']
-            if context['ispopup']:
-                params+='&_popup=1'
-            if context['multiple']:
-                params+='&_multiple=1'
-            url+=params
-
-            return redirect(url)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-
-
-class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
+class NeurophysiologyConditionView(DetailView):
+    model = NeurophysiologyCondition
+    template_name = 'bodb/sed/neurophysiology/neurophysiology_condition_view.html'
 
     def get_context_data(self, **kwargs):
-        context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=GestureFormSet(self.request.POST or None, prefix='gesture')
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='figure')
-        context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['ispopup']=('_popup' in self.request.GET)
-        context['action']='add'
-        context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type','')
+        context=super(NeurophysiologyConditionView,self).get_context_data(**kwargs)
+        filename='condition_%d.start_aligned.png' % self.object.id
+        path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+        if not os.path.exists(path):
+            self.object.plot_population_mean_firing_rate(0.05, filename=path)
+        context['mean_pop_rate_url']='/media/export/%s' % filename
+        units=Unit.objects.filter(recordingtrial__condition=self.object).distinct()
+        for unit in units:
+            filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,self.object.id)
+            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+            if not os.path.exists(path):
+                unit.plot_condition_spikes([self.object.id], 0.05, filename=path)
+            unit.diagram_url='/media/export/%s' % filename
+        context['units']=units
+        event_names=[]
+        for event in Event.objects.filter(trial__condition=self.object).distinct():
+            if not event.name in event_names:
+                event_names.append(event.name)
+        context['events']=event_names
         return context
-    
-    
-class UpdateGestureSEDView(EditGestureSEDMixin, UpdateView):
+
+class NeurophysiologyUnitView(DetailView):
+    model = Unit
+    template_name = 'bodb/sed/neurophysiology/neurophysiology_unit_view.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=GestureFormSet(self.request.POST or None, instance=self.object,
-            queryset=Gesture.objects.filter(gesture_sed=self.object),prefix='gesture')
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='figure')
-        context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['ispopup']=('_popup' in self.request.GET)
-        context['action']='add'
-        context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type','')
+        context=super(NeurophysiologyUnitView,self).get_context_data(**kwargs)
+        conditions=NeurophysiologyCondition.objects.filter(recordingtrial__unit=self.object).distinct()
+        for condition in conditions:
+            filename='unit_%d.condition_%d.start_aligned.png' % (self.object.id,condition.id)
+            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+            if not os.path.exists(path):
+                self.object.plot_condition_spikes([condition.id], 0.05, filename=path)
+            condition.diagram_url='/media/export/%s' % filename
+        context['conditions']=conditions
+        event_names=[]
+        for event in Event.objects.filter(trial__unit=self.object).distinct():
+            if not event.name in event_names:
+                event_names.append(event.name)
+        context['events']=event_names
         return context
-    
 
+class NeurophysiologyUnitRealignView(JSONResponseMixin, BaseUpdateView):
+    model=Unit
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            unit_id=int(self.request.POST['unit'])
+            condition_id=int(self.request.POST['condition'])
+            unit=Unit.objects.get(id=unit_id)
+            event=self.request.POST['event']
+            align_to=None
+            if not event=='start':
+                align_to=event
+            filename='unit_%d.condition_%d.%s_aligned.png' % (unit_id,condition_id,event)
+            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+            if not os.path.exists(path):
+                unit.plot_condition_spikes([condition_id], 0.05, align_to=align_to, filename=path)
+            context={
+                'unit': unit_id,
+                'condition': condition_id,
+                'diagram_url': '/media/export/%s' % filename,
+            }
+        return context
+
+class NeurophysiologyConditionPopulationRealignView(JSONResponseMixin, BaseUpdateView):
+    model=Unit
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            condition_id=int(self.request.POST['condition'])
+            condition=NeurophysiologyCondition.objects.get(id=condition_id)
+            event=self.request.POST['event']
+            align_to=None
+            if not event=='start':
+                align_to=event
+            filename='condition_%d.%s_aligned.png' % (condition_id,event)
+            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+            if not os.path.exists(path):
+                condition.plot_population_mean_firing_rate(0.05, align_to=align_to, filename=path)
+            context={
+                'diagram_url': '/media/export/%s' % filename,
+                }
+        return context

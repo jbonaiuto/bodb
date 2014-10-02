@@ -8,7 +8,7 @@ from django.views.generic import UpdateView, View, CreateView, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
-from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR
+from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, NeurophysiologySED
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView
 from registration.models import User
@@ -199,6 +199,7 @@ class UserDetailView(DetailView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(collator=self.object),self.request.user)
         context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(collator=self.object),self.request.user)
         return context
 
