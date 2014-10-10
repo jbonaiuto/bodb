@@ -96,7 +96,10 @@ class SSRDetailView(DocumentDetailView):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['model']=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))[0]
+        models=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))
+        context['model']=None
+        if models.count():
+            context['model']=models[0]
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='SSR').count()>0
