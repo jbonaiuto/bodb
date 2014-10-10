@@ -6,9 +6,9 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, GestureSEDForm, GestureFormSet
+from bodb.forms.sed import SEDForm, ERPSEDForm, ERPComponentFormSet, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, GestureSED, Gesture
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from uscbp.views import JSONResponseMixin
@@ -202,9 +202,6 @@ class SEDDetailView(DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).count():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
-        elif type=='gesture':
-            self.model=GestureSED
-            self.template_name = 'bodb/sed/gesture/gesture_sed_view.html'
         return super(SEDDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -216,10 +213,6 @@ class SEDDetailView(DocumentDetailView):
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
-        elif self.object.type=='gesture':
-            context['gestures'] = Gesture.objects.filter(gesture_sed=self.object)
-            context['url']=self.object.html_url_string()
-            context['gesturesed']=self.object
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -1208,99 +1201,3 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
             }
         return context
     
-class DeleteGestureSEDView(DeleteView):
-    model=GestureSED
-    success_url = '/bodb/index.html'
-    
-class EditGestureSEDMixin():
-    model = GestureSED
-    form_class = GestureSEDForm
-    template_name = 'bodb/sed/gesture/gesture_sed_detail.html'
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        gesture_formset = context['gesture_formset']
-        figure_formset = context['figure_formset']
-
-        if figure_formset.is_valid() and gesture_formset.is_valid():
-
-            self.object = form.save(commit=False)
-            # Set collator if this is a new SED
-            if self.object.id is None:
-                self.object.collator=self.request.user
-            self.object.last_modified_by=self.request.user
-            self.object.save()
-            # Needed for literature and tags
-            form.save_m2m()
-            
-            # save gestures
-            gesture_formset.instance=self.object
-            for gesture_form in gesture_formset.forms:
-                if not gesture_form in gesture_formset.deleted_forms:
-                    gesture=gesture_form.save(commit=False)
-                    gesture.gesture_sed=self.object
-                    gesture.save()
-
-            # delete removed gestures
-            for gesture_form in gesture_formset.deleted_forms:
-                if gesture_form.instance.id:
-                    gesture_form.instance.delete()
-
-            # save figures
-            figure_formset.instance = self.object
-            for figure_form in figure_formset.forms:
-                if not figure_form in figure_formset.deleted_forms:
-                    figure=figure_form.save(commit=False)
-                    figure.document=self.object
-                    figure.save()
-
-            # delete removed figures
-            for figure_form in figure_formset.deleted_forms:
-                if figure_form.instance.id:
-                    figure_form.instance.delete()
-
-
-            url=self.get_success_url()
-            params='?type='+context['type']+'&action='+context['action']
-            if context['ispopup']:
-                params+='&_popup=1'
-            if context['multiple']:
-                params+='&_multiple=1'
-            url+=params
-
-            return redirect(url)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-
-
-class CreateGestureSEDView(EditGestureSEDMixin, CreateView):
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=GestureFormSet(self.request.POST or None, prefix='gesture')
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='figure')
-        context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['ispopup']=('_popup' in self.request.GET)
-        context['action']='add'
-        context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type','')
-        return context
-    
-    
-class UpdateGestureSEDView(EditGestureSEDMixin, UpdateView):
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateGestureSEDView, self).get_context_data(**kwargs)
-        context['gesture_formset']=GestureFormSet(self.request.POST or None, instance=self.object,
-            queryset=Gesture.objects.filter(gesture_sed=self.object),prefix='gesture')
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='figure')
-        context['helpPage']='insert_data.html#summary-of-connectivity-data'
-        context['ispopup']=('_popup' in self.request.GET)
-        context['action']='add'
-        context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type','')
-        return context
-    
-

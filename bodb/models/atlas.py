@@ -32,26 +32,6 @@ class Species(models.Model):
         return u"%s %s" % (self.genus_name, self.species_name)
     
     
-class Primate(models.Model):
-    HABITAT_CHOICES = (
-        ('captive', 'Captive'),
-        ('wild', 'Wild'),
-        )
-    name = models.CharField(max_length=200)
-    species = models.ForeignKey(Species)
-    birth_date = models.DateField(blank=True)
-    geographic_location = models.CharField(max_length=200) #this should be some kind of geo model
-    habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
-    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    #creation_time = models.DateTimeField(blank=True)
-    class Meta:
-        app_label='bodb'
-
-    # when printing instances of this class, print "genus species"
-    def __unicode__(self):
-        return u"%s" % (self.name)
-
-
 # Brain nomenclature
 class Nomenclature(models.Model):
     # literature record the nomenclature is published in

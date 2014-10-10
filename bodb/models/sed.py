@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, Primate
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
@@ -16,7 +16,6 @@ class SED(Document):
         ('brain imaging', 'imaging'),
         ('connectivity', 'connectivity'),
         ('event related potential', 'erp'),
-        ('gesture', 'gesture'),
         )
     objects = InheritanceManager()
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
@@ -660,36 +659,3 @@ def find_similar_seds(user, title, brief_description):
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
-# A summary of gesture data: inherits from SED
-class GestureSED(SED):
-    objects = InheritanceManager()
-    
-    date = models.DateField(blank=True, null=True)
-    goal = models.TextField(blank=True)
-    signaller = models.ForeignKey('Primate', related_name ='signaller', null = True, blank = True)
-    recipient = models.ForeignKey('Primate', related_name = 'recipient', null = True, blank = True)
-
-    class Meta:
-        app_label='bodb'
-        
-    def html_url_string(self):
-        return ''
-    
-        
-# Gesture Model, 1-to-Many relationship with Gesture SED Model objects
-class Gesture(models.Model):
-    GOAL_CHOICES = (
-        ('yes', 'Yes'),
-        ('no', 'No'),
-        )
-
-    gesture_sed=models.ForeignKey(GestureSED, related_name = 'gestures')
-    gesture_name=models.CharField(max_length=100)
-    signaller_body_part=models.CharField(max_length=100)
-    recipient_body_part=models.CharField(max_length=100)
-    recipient_response = models.TextField(blank=True)
-    goal_met = models.CharField(max_length=50, choices=GOAL_CHOICES, default='no')
-    notes = models.TextField(blank=True)
-    
-    class Meta:
-        app_label='bodb'
