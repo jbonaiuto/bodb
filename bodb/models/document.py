@@ -85,7 +85,7 @@ class Document(models.Model):
         # test if document already has a forum assigned to it
         if (not hasattr(self, 'forum')) or (self.forum is None):
             doc_forum=Forum()
-            doc_forum.save()
+            doc_forum.save(*args, **kwargs)
             self.forum=doc_forum
 
         # Save document

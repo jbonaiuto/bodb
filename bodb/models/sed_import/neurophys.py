@@ -5,9 +5,9 @@ from registration.models import User
 
 def import_kraskov_data(mat_file, db='default'):
     sed=NeurophysiologySED()
-    sed.collator=User.objects.get(username='jbonaiuto')
+    sed.collator=User.objects.using(db).get(username='jbonaiuto')
     sed.type='neurophysiology'
-    sed.last_modified_by=User.objects.get(username='jbonaiuto')
+    sed.last_modified_by=User.objects.using(db).get(username='jbonaiuto')
     sed.title='M1 PTN - Observation/Execution of Grasps'
     sed.brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
     sed.save(using=db)
@@ -53,6 +53,7 @@ def import_kraskov_data(mat_file, db='default'):
     mat_file=scipy.io.loadmat(mat_file)
 
     for i in range(len(mat_file['U'][0])):
+        print('importing unit %d' % i)
         area_idx=-1
         unittype_idx=-1
         index_idx=-1
@@ -72,7 +73,7 @@ def import_kraskov_data(mat_file, db='default'):
         # create unit
         unit=Unit()
         area=mat_file['U'][0][i][area_idx][0]
-        region=BrainRegion.objects.filter(Q(Q(name=area) | Q(abbreviation=area)))
+        region=BrainRegion.objects.using(db).filter(Q(Q(name=area) | Q(abbreviation=area)))
         unit.area=region[0]
         unit.type=mat_file['U'][0][i][unittype_idx][0]
         unit.save(using=db)
@@ -147,7 +148,7 @@ def import_kraskov_data(mat_file, db='default'):
 
             previous_trial=None
             if j>0:
-                previous_trial=RecordingTrial.objects.get(unit=unit, trial_number=j)
+                previous_trial=RecordingTrial.objects.using(db).get(unit=unit, trial_number=j)
 
             # load spikes
             spike_times=[]
