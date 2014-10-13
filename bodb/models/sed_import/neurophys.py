@@ -3,50 +3,113 @@ from django.db.models import Q
 from bodb.models import NeurophysiologySED, NeurophysiologyCondition, Unit, BrainRegion, RecordingTrial, Event
 from registration.models import User
 
+def remove_all(db='default'):
+    for event in Event.objects.using(db).all():
+        event.delete(using=db)
+    for trial in RecordingTrial.objects.using(db).all():
+        trial.delete(using=db)
+    for unit in Unit.objects.using(db).all():
+        unit.delete(using=db)
+    for condition in NeurophysiologyCondition.objects.using(db).all():
+        condition.delete(using=db)
+    for sed in NeurophysiologySED.objects.using(db).all():
+        sed.delete(using=db)
+        
 def import_kraskov_data(mat_file, db='default'):
-    sed=NeurophysiologySED()
-    sed.collator=User.objects.using(db).get(username='jbonaiuto')
-    sed.type='neurophysiology'
-    sed.last_modified_by=User.objects.using(db).get(username='jbonaiuto')
-    sed.title='M1 PTN - Observation/Execution of Grasps'
-    sed.brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
-    sed.save(using=db)
+    seds={}
+    
+    seds['m1_ptn']=NeurophysiologySED()
+    seds['m1_ptn'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_ptn'].type='neurophysiology'
+    seds['m1_ptn'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_ptn'].title='M1 PTN - Observation/Execution of Grasps'
+    seds['m1_ptn'].brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
+    seds['m1_ptn'].save(using=db)
+    seds['m1_ptn'].tags.add('mirror neurons')
+    seds['m1_ptn'].tags.add('macaque')
+    seds['m1_ptn'].tags.add('monkey')
+    seds['m1_ptn'].tags.add('action observation')
+    seds['m1_ptn'].tags.add('grasping')
 
-    obs_ring_condition=NeurophysiologyCondition()
-    obs_ring_condition.sed=sed
-    obs_ring_condition.name='Observe ring hook grasp'
-    obs_ring_condition.description='Monkeys observed the human experimenter grasping a ring using a hook grip with just the index finger'
-    obs_ring_condition.save(using=db)
+    seds['m1_uid']=NeurophysiologySED()
+    seds['m1_uid'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_uid'].type='neurophysiology'
+    seds['m1_uid'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_uid'].title='M1 Observation/Execution of Grasps'
+    seds['m1_uid'].brief_description='Recording of unidentified M1 neurons while monkeys observed or performed object-directed grasps'
+    seds['m1_uid'].save(using=db)
+    seds['m1_uid'].tags.add('mirror neurons')
+    seds['m1_uid'].tags.add('macaque')
+    seds['m1_uid'].tags.add('monkey')
+    seds['m1_uid'].tags.add('action observation')
+    seds['m1_uid'].tags.add('grasping')
 
-    mov_ring_condition=NeurophysiologyCondition()
-    mov_ring_condition.sed=sed
-    mov_ring_condition.name='Execute ring hook grasp'
-    mov_ring_condition.description='Monkeys grasped a ring using a hook grip with just the index finger'
-    mov_ring_condition.save(using=db)
+    seds['f5_ptn']=NeurophysiologySED()
+    seds['f5_ptn'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_ptn'].type='neurophysiology'
+    seds['f5_ptn'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_ptn'].title='F5 PTN - Observation/Execution of Grasps'
+    seds['f5_ptn'].brief_description='Recording of F5 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
+    seds['f5_ptn'].save(using=db)
+    seds['f5_ptn'].tags.add('mirror neurons')
+    seds['f5_ptn'].tags.add('macaque')
+    seds['f5_ptn'].tags.add('monkey')
+    seds['f5_ptn'].tags.add('action observation')
+    seds['f5_ptn'].tags.add('grasping')
 
-    obs_sphere_condition=NeurophysiologyCondition()
-    obs_sphere_condition.sed=sed
-    obs_sphere_condition.name='Observe sphere whole hand grasp'
-    obs_sphere_condition.description='Monkeys observed the human experimenter grasping a sphere using the whole hand'
-    obs_sphere_condition.save(using=db)
+    seds['f5_uid']=NeurophysiologySED()
+    seds['f5_uid'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_uid'].type='neurophysiology'
+    seds['f5_uid'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_uid'].title='F5 Observation/Execution of Grasps'
+    seds['f5_uid'].brief_description='Recording of unidentified F5 neurons while monkeys observed or performed object-directed grasps'
+    seds['f5_uid'].save(using=db)
+    seds['f5_uid'].tags.add('mirror neurons')
+    seds['f5_uid'].tags.add('macaque')
+    seds['f5_uid'].tags.add('monkey')
+    seds['f5_uid'].tags.add('action observation')
+    seds['f5_uid'].tags.add('grasping')
 
-    mov_sphere_condition=NeurophysiologyCondition()
-    mov_sphere_condition.sed=sed
-    mov_sphere_condition.name='Execute sphere whole hand'
-    mov_sphere_condition.description='Monkeys grasped a sphere using the whole hand'
-    mov_sphere_condition.save(using=db)
-
-    obs_trapezoid_condition=NeurophysiologyCondition()
-    obs_trapezoid_condition.sed=sed
-    obs_trapezoid_condition.name='Observe trapezoid precision grasp'
-    obs_trapezoid_condition.description='Monkeys observed the human experimenter grasping a trapezoid using a precision grasp with the thumb and forefinger'
-    obs_trapezoid_condition.save(using=db)
-
-    mov_trapezoid_condition=NeurophysiologyCondition()
-    mov_trapezoid_condition.sed=sed
-    mov_trapezoid_condition.name='Execute trapezoid precision grasp'
-    mov_trapezoid_condition.description='Monkeys grasped a trapezoid using a precision grasp with the thumb and forefinger'
-    mov_trapezoid_condition.save(using=db)
+    sed_conditions={}
+    for sed_id, sed in seds.iteritems():
+        if not sed_id in sed_conditions:
+            sed_conditions[sed_id]={}
+            
+        sed_conditions[sed_id]['obs_ring']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['obs_ring'].sed=sed
+        sed_conditions[sed_id]['obs_ring'].name='Observe ring hook grasp'
+        sed_conditions[sed_id]['obs_ring'].description='Monkeys observed the human experimenter grasping a ring using a hook grip with just the index finger'
+        sed_conditions[sed_id]['obs_ring'].save(using=db)
+    
+        sed_conditions[sed_id]['mov_ring']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['mov_ring'].sed=sed
+        sed_conditions[sed_id]['mov_ring'].name='Execute ring hook grasp'
+        sed_conditions[sed_id]['mov_ring'].description='Monkeys grasped a ring using a hook grip with just the index finger'
+        sed_conditions[sed_id]['mov_ring'].save(using=db)
+    
+        sed_conditions[sed_id]['obs_sphere']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['obs_sphere'].sed=sed
+        sed_conditions[sed_id]['obs_sphere'].name='Observe sphere whole hand grasp'
+        sed_conditions[sed_id]['obs_sphere'].description='Monkeys observed the human experimenter grasping a sphere using the whole hand'
+        sed_conditions[sed_id]['obs_sphere'].save(using=db)
+    
+        sed_conditions[sed_id]['mov_sphere']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['mov_sphere'].sed=sed
+        sed_conditions[sed_id]['mov_sphere'].name='Execute sphere whole hand'
+        sed_conditions[sed_id]['mov_sphere'].description='Monkeys grasped a sphere using the whole hand'
+        sed_conditions[sed_id]['mov_sphere'].save(using=db)
+    
+        sed_conditions[sed_id]['obs_trapezoid']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['obs_trapezoid'].sed=sed
+        sed_conditions[sed_id]['obs_trapezoid'].name='Observe trapezoid precision grasp'
+        sed_conditions[sed_id]['obs_trapezoid'].description='Monkeys observed the human experimenter grasping a trapezoid using a precision grasp with the thumb and forefinger'
+        sed_conditions[sed_id]['obs_trapezoid'].save(using=db)
+    
+        sed_conditions[sed_id]['mov_trapezoid']=NeurophysiologyCondition()
+        sed_conditions[sed_id]['mov_trapezoid'].sed=sed
+        sed_conditions[sed_id]['mov_trapezoid'].name='Execute trapezoid precision grasp'
+        sed_conditions[sed_id]['mov_trapezoid'].description='Monkeys grasped a trapezoid using a precision grasp with the thumb and forefinger'
+        sed_conditions[sed_id]['mov_trapezoid'].save(using=db)
 
     # create event types (if not already exist)
     # load file
@@ -78,6 +141,24 @@ def import_kraskov_data(mat_file, db='default'):
         unit.type=mat_file['U'][0][i][unittype_idx][0]
         unit.save(using=db)
 
+        sed_id=''
+        if area=='M1':
+            if unit.type=='PTN':
+                sed_id='m1_ptn'
+            elif unit.type=='UID':
+                sed_id='m1_uid'
+            else:
+                print('SED not found: %s, %s' % (area,unit.type))
+        elif area=='F5':
+            if unit.type=='PTN':
+                sed_id='f5_ptn'
+            elif unit.type=='UID':
+                sed_id='f5_uid'
+            else:
+                print('SED not found: %s, %s' % (area,unit.type))
+        else:
+            print('SED not found: %s, %s' % (area,unit.type))
+                
         index=mat_file['U'][0][i][index_idx]
         events=mat_file['U'][0][i][events_idx]
 
@@ -127,18 +208,18 @@ def import_kraskov_data(mat_file, db='default'):
             trial.trial_number=j+1
             if trial_types[j]=='h':
                 if objects[j]==1:
-                    trial.condition=obs_ring_condition
+                    trial.condition=sed_conditions[sed_id]['obs_ring']
                 elif objects[j]==2:
-                    trial.condition=obs_sphere_condition
+                    trial.condition=sed_conditions[sed_id]['obs_sphere']
                 elif objects[j]==4:
-                    trial.condition=obs_trapezoid_condition
+                    trial.condition=sed_conditions[sed_id]['obs_trapezoid']
             elif trial_types[j]=='m':
                 if objects[j]==1:
-                    trial.condition=mov_ring_condition
+                    trial.condition=sed_conditions[sed_id]['mov_ring']
                 elif objects[j]==2:
-                    trial.condition=mov_sphere_condition
+                    trial.condition=sed_conditions[sed_id]['mov_sphere']
                 elif objects[j]==4:
-                    trial.condition=mov_trapezoid_condition
+                    trial.condition=sed_conditions[sed_id]['mov_trapezoid']
             trial.start_time=trial_start_times[j]
             trial.end_time=trial_end_times[j]
 
