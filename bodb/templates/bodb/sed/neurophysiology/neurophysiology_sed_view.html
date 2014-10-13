@@ -4,6 +4,7 @@
 {% block extrahead %}
     <title>BODB - View {{ neurophysiologysed.title }} SED</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
@@ -89,27 +90,6 @@
                 else
                     document.getElementById(displayIds[i]).value=0;
             }
-        }
-
-        function realignUnitConditionPlot(unit_id, condition_id, csrf_token)
-        {
-            var event=document.getElementById('unit_'+unit_id+'_condition_'+condition_id+'_realign').value;
-            var data={'unit': unit_id, 'condition': condition_id, 'event': event, 'csrfmiddlewaretoken': csrf_token};
-            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignUnitConditionPlot };
-            $.ajax(args);
-            return false;
-        }
-
-        function doneRealignUnitConditionPlot(res, status)
-        {
-            var txt = res.responseText;
-            var data = eval('('+txt+')');
-            if (status=="success")
-            {
-                document.getElementById('unit_'+data.unit+'_condition_'+data.condition+'_plot').src=data.diagram_url;
-            }
-            else
-                alert(txt);
         }
     </script>
 {% endblock %}
@@ -384,9 +364,6 @@
     </tr>
     </table>
     <span id="sed_message" class="messages"></span>
-    {% if perms.bodb.change_sed and canEdit %}
-        <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/sed/connectivity/{{neurophysiologysed.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-    {% endif %}
     {% if ispopup %}
         <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
     {% else %}
