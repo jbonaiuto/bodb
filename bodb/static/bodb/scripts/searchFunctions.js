@@ -167,6 +167,44 @@ function processSEDResults(data)
         }
     });
 
+    // Neurophysiology SED results
+    if(data['neurophysiology_seds'].length>0)
+    {
+        $('[name=sed_section]').each(function(index, element){
+            $( this).attr('style','display:block');
+        });
+        $('[name=neurophysiology_sed_list]').each(function(index, element){
+            $( this).attr('style','display:block');
+        });
+        $('[name=numNeurophysiologySEDResults]').each(function(index, element){
+            $(this).html(data['neurophysiology_seds'].length)
+        });
+    }
+    else
+    {
+        $('[name=neurophysiology_sed_list]').each(function(index, element){
+            $( this).attr('style','display:none');
+        });
+    }
+    $('[name=neurophysiology_seds]').each(function(index, element){
+        $(this).empty();
+        for(var i=0; i<data['neurophysiology_seds'].length; i++)
+        {
+            var count = $(this).children().length;
+            var tmplMarkup = $('#neurophysiology_sed-template').html();
+            var compiledTmpl = _.template(tmplMarkup,
+                { idx : count+1, id: data['neurophysiology_seds'][i][3]['id'], title: data['neurophysiology_seds'][i][3]['title'],
+                    type: data['neurophysiology_seds'][i][3]['type'],
+                    brief_description: data['neurophysiology_seds'][i][3]['brief_description'],
+                    is_favorite: data['neurophysiology_seds'][i][1], selected: data['neurophysiology_seds'][i][0],
+                    title_str: data['neurophysiology_seds'][i][3]['title_str'], draft: data['neurophysiology_seds'][i][3]['draft'],
+                    collator_id: data['neurophysiology_seds'][i][3]['collator_id'],
+                    collator: data['neurophysiology_seds'][i][3]['collator'],
+                    subscribed_to_user: data['neurophysiology_seds'][i][2]});
+            $(this).append(compiledTmpl);
+        }
+    });
+
     // ERP SED results
     if(data['erp_seds'].length>0)
     {

@@ -885,6 +885,7 @@ class Event(models.Model):
 def import_kraskov_data(mat_file):
     sed=NeurophysiologySED()
     sed.collator=User.objects.get(username='jbonaiuto')
+    sed.type='neurophysiology'
     sed.last_modified_by=User.objects.get(username='jbonaiuto')
     sed.title='M1 PTN - Observation/Execution of Grasps'
     sed.brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'

@@ -222,6 +222,21 @@ class SEDDetailView(DocumentDetailView):
             context['neurophysiologysed']=self.object
             context['conditions']=NeurophysiologyCondition.objects.filter(sed=self.object).distinct()
             context['units']=Unit.objects.filter(recordingtrial__condition__sed=self.object).distinct()
+            context['unit_diagram_urls']={}
+            event_names=[]
+            for unit in context['units']:
+                if not unit.id in context['unit_diagram_urls']:
+                    context['unit_diagram_urls'][unit.id]={}
+                for condition in context['conditions']:
+                    filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,condition.id)
+                    path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+                    if not os.path.exists(path):
+                        unit.plot_condition_spikes([condition.id], 0.05, filename=path)
+                    context['unit_diagram_urls'][unit.id][condition.id]='/media/export/%s' % filename
+                for event in Event.objects.filter(trial__unit=unit).distinct():
+                    if not event.name in event_names:
+                        event_names.append(event.name)
+            context['events']=event_names
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
