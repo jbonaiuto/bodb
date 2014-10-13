@@ -187,7 +187,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Literature Results (<span id="literatureResultStartIndex" name="literatureResultStartIndex">1</span>-<span id="literatureResultEndIndex" name="literatureResultEndIndex">1</span> of <span id="numLiteratureResults" name="numLiteratureResults">{{ literatures|length }}</span>) (<a href="javascript:animatedcollapse.toggle('literatureResults')"><span id="literatureResultsLabel">Hide</span></a>)</td>
+                                <td>Literature Results (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureResults')"><span id="literatureResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td>
@@ -223,7 +223,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>BOP Results (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>) (<a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
+                                <td>BOP Results (1-{{ bops|length }}) (<a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -259,7 +259,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Model Results (<span id="modelResultStartIndex" name="modelResultStartIndex">1</span>-<span id="modelResultEndIndex" name="modelResultEndIndex">1</span> of <span id="numModelResults" name="numModelResults">{{ models|length }}</span>) (<a href="javascript:animatedcollapse.toggle('modelResults')"><span id="modelResultsLabel">Hide</span></a>)</td>
+                                <td>Model Results (1-{{ models|length }}) (<a href="javascript:animatedcollapse.toggle('modelResults')"><span id="modelResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -284,7 +284,7 @@
             </tr>
             <tr>
                 <td>
-                    <div id="sed_section" name="sed_section" style="display:{% if generic_seds or connectivity_seds or erp_seds or imaging_seds %}block{% else %}none{% endif %}">
+                    <div id="sed_section" name="sed_section" style="display:{% if generic_seds or connectivity_seds or erp_seds or imaging_seds or neurophysiology_seds %}block{% else %}none{% endif %}">
                         <table class="tab_panel">
                             <tr>
                                 <td>&nbsp;</td>
@@ -308,9 +308,7 @@
                             <tr>
                                 <td style="padding:0px">
                                     <div id="sedResults" style="display:block">
-                                        {% with allErpGraphId as erpGraphId %}
-                                            {% include "bodb/sed/sed_selection_list_view.html" %}
-                                        {% endwith %}
+                                        {% include "bodb/sed/sed_selection_list_view.html" %}
                                     </div>
                                 </td>
                             </tr>
@@ -332,11 +330,11 @@
                             </tr>
                             <tr>
                                 <td style="padding:0px">
-                                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Summary of Simulation Results (<span id="ssrResultStartIndex" name="ssrResultStartIndex">1</span>-<span id="ssrResultEndIndex" name="ssrResultEndIndex">1</span> of <span id="numSSRResults" name="numSSRResults">{{ ssrs|length }}</span>) (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
+                                <td>Summary of Simulation Results (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -352,7 +350,7 @@
                             </tr>
                             <tr>
                                 <td style="padding:0px">
-                                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
                                 </td>
                             </tr>
                         </table>
@@ -368,11 +366,11 @@
                             </tr>
                             <tr>
                                 <td style="padding:0px">
-                                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Brain Region Results (<span id="brainRegionResultStartIndex" name="brainRegionResultStartIndex">1</span>-<span id="brainRegionResultEndIndex" name="brainRegionResultEndIndex">1</span> of <span id="numBrainRegionResults" name="numBrainRegionResults">{{ brain_regions|length }}</span>) (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
+                                <td>Brain Region Results (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
@@ -403,43 +401,12 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>User Results (<span id="userResultStartIndex" name="userResultStartIndex">1</span>-<span id="userResultEndIndex" name="userResultEndIndex">1</span> of <span id="numUserResults" name="numUserResults">{{ users|length }}</span>) (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
+                                <td>User Results (1-{{ users|length }}) (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
                                     <div id="userResults" style="display:block">
                                         {% include 'bodb/admin/user_list_view.html' %}
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:0px">
-                                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b></span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div id="workspace_section" name="workspace_section" style="display:{% if workspaces %}block{% else %}none{% endif %}">
-                        <table class="tab_panel">
-                            <tr>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:0px">
-                                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
-                                </td>
-                            </tr>
-                            <tr class="section_header">
-                                <td>Workspace Results (<span id="workspaceResultStartIndex" name="workspaceResultStartIndex">1</span>-<span id="workspaceResultEndIndex" name="workspaceResultEndIndex">1</span> of <span id="numWorkspaceResults" name="numWorkspaceResults">{{ workspaces|length }}</span>) (<a href="javascript:animatedcollapse.toggle('workspaceResults')"><span id="workspaceResultsLabel">Hide</span></a>)</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:0px">
-                                    <div id="workspaceResults" style="display:block">
-                                        {% include 'bodb/workspace/workspace_selection_list_view.html' %}
                                     </div>
                                 </td>
                             </tr>

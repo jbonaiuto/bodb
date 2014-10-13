@@ -1,0 +1,65 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View Neurophysiology Unit: {{ object.id }}</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        function realignConditionPlot(condition_id, csrf_token)
+        {
+            var event=document.getElementById('condition_'+condition_id+'_realign').value;
+            var data={'unit': {{ object.id }}, 'condition': condition_id, 'event': event, 'csrfmiddlewaretoken': csrf_token};
+            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignConditionPlot };
+            $.ajax(args);
+            return false;
+        }
+
+        function doneRealignConditionPlot(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                document.getElementById('condition_'+data.condition+'_plot').src=data.diagram_url;
+            }
+            else
+                alert(txt);
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+    <h2>
+        Neurophysiology Unit: {{ object.id }}
+    </h2>
+    <table class="tab_panel">
+        <tr valign="top">
+            <td colspan="2"><strong>Type:</strong> {{ object.type }}</td>
+        </tr>
+        <tr valign="top">
+            <td colspan=2><strong>Area: </strong>{{ object.area }}</td>
+        </tr>
+        <tr class="section_subheader">
+            <td colspan=2>Conditions</td>
+        </tr>
+        {% for condition in conditions %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td>
+                    <strong>Name:</strong> <a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a>
+                    <br>
+                    <strong>Description:</strong> {{ condition.name }}
+                </td>
+            </tr>
+                <td>
+                    Realign: <select id="condition_{{ condition.id }}_realign" onchange="realignConditionPlot({{ condition.id }}, '{{ csrf_token }}')">
+                    <option value="start">trial start</option>
+                    {% for event in events %}
+                        <option value="{{ event }}">{{ event }}</option>
+                    {% endfor %}
+                </select>
+                    <br><img id="condition_{{ condition.id }}_plot" src="{{ condition.diagram_url }}" width="30%" />
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <span id="sed_message" class="messages"></span>
+{% endblock %}

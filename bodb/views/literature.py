@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
-from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription
+from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR, NeurophysiologySED
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -274,6 +274,7 @@ class LiteratureDetailView(TemplateView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_literature_seds(self.object,user),user)
 
         context['is_favorite']=False
         context['selected']=False

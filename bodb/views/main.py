@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, NeurophysiologySED
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -97,6 +97,7 @@ class DraftListView(BODBView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(collator=user,draft=1),user)
         context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(collator=user,draft=1),user)
 
         context['connectionGraphId']='connectivitySEDDiagram'
@@ -126,6 +127,7 @@ class FavoriteListView(BODBView):
         context['connectivity_seds']=[]
         context['imaging_seds']=[]
         context['erp_seds']=[]
+        context['neurophysiology_seds']=[]
         context['ssrs']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
@@ -145,6 +147,7 @@ class FavoriteListView(BODBView):
             components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
             context['erp_seds']=SED.get_sed_list(erp_seds, user)
             context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+            context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(document_ptr__in=profile.favorites.all()),user)
             context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(document_ptr__in=profile.favorites.all()),user)
 
             context['loaded_coord_selection']=profile.loaded_coordinate_selection
@@ -278,6 +281,7 @@ class TagView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_tagged_seds(name, user), user)
         context['tagged_predictions']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), user)
         context['tagged_ssrs']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), user)
 

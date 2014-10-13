@@ -1,0 +1,100 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View Neurophysiology Condition: {{ object.title }}</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        function realignUnitPlot(unit_id, csrf_token)
+        {
+            var event=document.getElementById('unit_'+unit_id+'_realign').value;
+            var data={'unit': unit_id, 'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
+            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignUnitPlot };
+            $.ajax(args);
+            return false;
+        }
+
+        function doneRealignUnitPlot(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                document.getElementById('unit_'+data.unit+'_plot').src=data.diagram_url;
+            }
+            else
+                alert(txt);
+        }
+
+        function realignPopulationMeanPlot(csrf_token)
+        {
+            var event=document.getElementById('population_realign').value;
+            var data={'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
+            var args={type:"POST", url:"/bodb/sed/neurophysiology/condition_population_realign/", data: data, complete: doneRealignPopulationMeanPlot };
+            $.ajax(args);
+            return false;
+        }
+
+        function doneRealignPopulationMeanPlot(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                document.getElementById('mean_pop_rate_plot').src=data.diagram_url;
+            }
+            else
+                alert(txt);
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+    <h2>
+        Neurophysiology Condition: {{ object.name }}
+    </h2>
+    <table class="tab_panel">
+    <tr valign="top">
+        <td colspan="2"><strong>SED:</strong> <a href="/bodb/sed/{{ object.sed.id }}/">{{ object.sed.title }}</a></td>
+    </tr>
+    <tr valign="top">
+        <td colspan=2><strong>Description: </strong>{{ object.description }}</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="2">
+            <strong>Population Mean Firing Rate</strong>
+            <br>Realign: <select id="population_realign" onchange="realignPopulationMeanPlot('{{ csrf_token }}')">
+            <option value="start">trial start</option>
+            {% for event in events %}
+                <option value="{{ event }}">{{ event }}</option>
+            {% endfor %}
+            </select>
+            <br>
+            <img id="mean_pop_rate_plot" src="{{ mean_pop_rate_url }}" width="30%">
+        </td>
+    </tr>
+    <tr class="section_subheader">
+        <td colspan=2>Units</td>
+    </tr>
+    {% for unit in units %}
+        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+            <td>
+                <strong>ID:</strong> <a href="/bodb/sed/neurophysiology/unit/{{ unit.id }}/">{{ unit.id }}</a>
+                <br>
+                <strong>Type:</strong> {{ unit.type }}
+                <br>
+                <strong>Area:</strong> {{ unit.area }}
+            </td>
+            <td>
+                Realign: <select id="unit_{{ unit.id }}_realign" onchange="realignUnitPlot({{ unit.id }}, '{{ csrf_token }}')">
+                <option value="start">trial start</option>
+                {% for event in events %}
+                    <option value="{{ event }}">{{ event }}</option>
+                {% endfor %}
+            </select>
+                <br><img id="unit_{{ unit.id }}_plot" src="{{ unit.diagram_url }}" width="30%" />
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+    <span id="sed_message" class="messages"></span>
+{% endblock %}

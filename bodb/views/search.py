@@ -20,7 +20,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace, NeurophysiologySED
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -84,6 +84,7 @@ class SearchView(FormView):
         erpSEDs=[]
         imagingSEDs=[]
         sedCoords=[]
+        neurophysiologySEDs=[]
 
         literature=Literature.objects.none()
         bops=BOP.objects.none()
@@ -107,6 +108,8 @@ class SearchView(FormView):
                     imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
                     connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                elif sedObj.type=='neurophysiology':
+                    neurophysiologySEDs.append(NeurophysiologySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
@@ -137,6 +140,8 @@ class SearchView(FormView):
                     imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
                     connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                elif sedObj.type=='neurophysiology':
+                    neurophysiologySEDs.append(NeurophysiologySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
@@ -162,6 +167,7 @@ class SearchView(FormView):
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs, user)
         context['ssrs']=SSR.get_ssr_list(ssrs, user)
         context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
@@ -264,6 +270,8 @@ class SearchView(FormView):
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                             for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                     'ssrs': ssr_list,
                     'ssrs_count': len(ssr_list),
                     'ssrs_start_index':1,
@@ -313,6 +321,8 @@ class SearchView(FormView):
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                             for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                     'ssrs': ssrs.object_list,
                     'ssrs_count': ssr_paginator.count,
                     'ssrs_num_pages': ssr_paginator.num_pages,
@@ -657,6 +667,7 @@ class SEDSearchView(FormView):
         connectivitySEDs=[]
         erpSEDs=[]
         imagingSEDs=[]
+        neurophysiologySEDs=[]
 
         seds=runSEDSearch(form.cleaned_data, user.id)
         for idx,sedObj in enumerate(seds):
@@ -666,6 +677,8 @@ class SEDSearchView(FormView):
                 imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
             elif sedObj.type=='connectivity':
                 connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+            elif sedObj.type=='neurophysiology':
+                neurophysiologySEDs.append(NeurophysiologySED.objects.get(id=sedObj.id))
             elif sedObj.type=='generic':
                 genericSEDs.append(sedObj)
         cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
@@ -685,6 +698,9 @@ class SEDSearchView(FormView):
         context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs,user)
+        context['can_add_entry']=False
+        context['can_remove_entry']=False
         context['selected_coord_ids']=[]
         if user.is_authenticated() and not user.is_anonymous():
             selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
