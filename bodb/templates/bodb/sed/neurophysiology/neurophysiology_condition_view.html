@@ -7,6 +7,8 @@
     <script type="text/javascript">
         function realignPopulationMeanPlot(csrf_token)
         {
+            document.getElementById('realigningMsg').style.display='block';
+            document.getElementById('realigningOver').style.display='block';
             var event=document.getElementById('population_realign').value;
             var data={'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
             var args={type:"POST", url:"/bodb/sed/neurophysiology/condition_population_realign/", data: data, complete: doneRealignPopulationMeanPlot };
@@ -21,6 +23,9 @@
             if (status=="success")
             {
                 document.getElementById('mean_pop_rate_plot').src=data.diagram_url;
+                document.getElementById('realigningMsg').style.display='none';
+                document.getElementById('realigningOver').style.display='none';
+
             }
             else
                 alert(txt);

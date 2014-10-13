@@ -1,6 +1,8 @@
 
 function realignUnitConditionPlot(unit_id, condition_id, csrf_token)
 {
+    document.getElementById('realigningMsg').style.display='block';
+    document.getElementById('realigningOver').style.display='block';
     var event=document.getElementById('unit_'+unit_id+'_condition_'+condition_id+'_realign').value;
     var data={'unit': unit_id, 'condition': condition_id, 'event': event, 'csrfmiddlewaretoken': csrf_token};
     var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignUnitConditionPlot };
@@ -15,6 +17,8 @@ function doneRealignUnitConditionPlot(res, status)
     if (status=="success")
     {
         document.getElementById('unit_'+data.unit+'_condition_'+data.condition+'_plot').src=data.diagram_url;
+        document.getElementById('realigningMsg').style.display='none';
+        document.getElementById('realigningOver').style.display='none';
     }
     else
         alert(txt);

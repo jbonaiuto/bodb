@@ -443,6 +443,33 @@ div#popup_content {
     -khtml-opacity: 0.8;
     opacity: 0.8;
 }
+
+#realigningMsg {
+    color: black;
+    background: #fff;
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 100;
+    margin-right: -50%;
+    margin-bottom: -50%;
+}
+#realigningOver {
+    background: black;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+    -khtml-opacity: 0.8;
+    opacity: 0.8;
+}
+
 div.grippie
 {
     background:#EEEEEE url("../images/grippie.png") no-repeat scroll center 2px;
