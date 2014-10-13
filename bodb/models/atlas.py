@@ -1,6 +1,5 @@
 import hashlib
 import random
-from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
@@ -8,6 +7,7 @@ from django.db import models
 from bodb.models.workspace import BodbProfile
 from bodb.models.messaging import Message, UserSubscription
 from bodb.models.literature import Literature
+from registration.models import User
 
 class Atlas(models.Model):
     file=models.CharField(max_length=200)
