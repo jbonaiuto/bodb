@@ -681,7 +681,7 @@ class NeurophysiologySED(SED):
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        region_q=Q(neurophysiology_condition__recordingtrial__unit__area=brain_region) |\
+        region_q=Q(neurophysiologycondition__recordingtrial__unit__area=brain_region) |\
                  Q(related_region_document__brain_region=brain_region)
         return NeurophysiologySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
