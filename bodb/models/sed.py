@@ -1,15 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from matplotlib.figure import Figure
-from numpy.core.umath import exp
-from numpy.numarray import arange
 from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
-import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
-import numpy as np
 
 class SED(Document):
     """
