@@ -9,6 +9,7 @@ from django.views.generic.edit import FormView
 
 from registration import signals
 from registration.forms import RegistrationForm
+from uscbp import settings
 
 
 class _RequestPassingFormView(FormView):
