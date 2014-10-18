@@ -68,6 +68,11 @@ class RegistrationView(_RequestPassingFormView):
     success_url = None
     template_name = 'registration/registration_form.html'
 
+    def get_context_data(self, **kwargs):
+        context=super(RegistrationView,self).get_context_data(**kwargs)
+        context['recaptcha_key']=settings.RECAPTCHA_PUBLIC_KEY
+        return context
+
     def dispatch(self, request, *args, **kwargs):
         """
         Check that user signup is allowed before even bothering to
