@@ -6,7 +6,7 @@ from django.views.generic import ListView, View, TemplateView, UpdateView, Detai
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import BaseUpdateView, FormView, CreateView, BaseCreateView, DeleteView, ProcessFormView
 from bodb.forms.workspace import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm, WorkspaceBookmarkForm
-from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion, NeurophysiologySED
+from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import BODBView
@@ -280,7 +280,6 @@ class WorkspaceDetailView(BODBView,FormView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in ws_erp_seds]
         context['erp_seds']=SED.get_sed_list(ws_erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct(), user)
         context['ssrs']=SSR.get_ssr_list(self.object.related_ssrs.filter(visibility).distinct(), user)
 
         context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time')

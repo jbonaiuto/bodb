@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED
+from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem
 from bodb.search.sed import runSEDCoordSearch
 from uscbp.views import JSONResponseMixin
 
@@ -204,7 +204,6 @@ class BrainRegionView(DetailView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),user)
         context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
         context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
         context['helpPage']='view_entry.html'
