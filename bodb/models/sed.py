@@ -672,6 +672,8 @@ def find_similar_seds(user, title, brief_description):
 
 # A summary of neurophysiological data: inherits from SED
 class NeurophysiologySED(SED):
+    subject_species=models.ForeignKey('Species', related_name='subject')
+
     class Meta:
         app_label='bodb'
 
@@ -780,6 +782,36 @@ class NeurophysiologyCondition(models.Model):
         else:
             plt.show()
 
+
+class GraspCondition(NeurophysiologyCondition):
+    object=models.CharField(max_length=50)
+    object_distance=models.DecimalField(max_digits=5, decimal_places=3)
+    grasp=models.CharField(max_length=50)
+
+    class Meta:
+        app_label='bodb'
+
+
+class GraspPerformanceCondition(GraspCondition):
+    hand_visible = models.BooleanField()
+    object_visible = models.BooleanField()
+
+    class Meta:
+        app_label='bodb'
+
+
+class GraspObservationCondition(GraspCondition):
+    DEMONSTRATION_CHOICES=(
+        ('live','live'),
+        ('video','video')
+    )
+    demonstrator_species=models.ForeignKey('Species', related_name='demonstrator')
+    demonstration_type=models.CharField(max_length=30, choices=DEMONSTRATION_CHOICES)
+    viewing_angle=models.DecimalField(max_digits=5, decimal_places=2)
+    whole_body_visible = models.BooleanField()
+
+    class Meta:
+        app_label='bodb'
 
 class Unit(models.Model):
     type=models.CharField(max_length=50)
