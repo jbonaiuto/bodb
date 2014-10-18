@@ -14,7 +14,7 @@ def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='brain imaging'):
+    if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='brain imaging'):
         if hasattr(searcher,'search_brede') and searcher.search_brede:
             print('Trying to search Brede')
             woBibsDoc=None
@@ -34,7 +34,7 @@ def runBredeSearch(search_data, userId):
                         xpathStrings.append(dispatch(userId))
 
                 xpathString='//Exp'
-                
+
                 if len(xpathStrings):
                     if search_data['search_options']=='all':
                         xpathString=' & '.join(xpathStrings)
@@ -83,7 +83,7 @@ def runBredeSearch(search_data, userId):
             user=User.get_anonymous()
             
         q = reduce(op,filters) & Document.get_security_q(user)
-        
+
         # get results
         if q and len(q):
             return list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())

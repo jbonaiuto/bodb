@@ -15,7 +15,7 @@ Search for all types of entries.
 
 Figure 34: The input form for searching entries.
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for any entry that contains this string in any field.
 
@@ -52,7 +52,7 @@ Search Literature entries.
 
     The input form for searching Literature entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for Literature entries that contains this string in any field
 
@@ -71,6 +71,10 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the Literature search are displayed here. Clicking "Add new" opens a window to add a new Literature entry. Clicking the title of each search result will open a window with the Literature view page. The results can be exported in either Endnote or Bibtex format by clicking the checkbox next to the desired results and clicking "Export Selected".
@@ -86,7 +90,7 @@ Search BOP entries.
 
     The input form for searching BOP entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for BOP entries that contains this string in any field
 
@@ -110,6 +114,10 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the BOP search are displayed here. Clicking "Add new" opens a window to add a new BOP entry. Clicking the title of each search result will open a window with the BOP view page.
@@ -125,7 +133,7 @@ Search Model entries
 
     The input form for searching Model entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for Model entries that contains this string in any field
 
@@ -152,6 +160,10 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the Model search are displayed here. Clicking "Add new" opens a window to add a new Model entry. Clicking the title of each search result will open a window with the Model view page. Clicking on the checkbox next to each result will add the Model to the current selection in the workspace.
@@ -168,7 +180,7 @@ Search Summary of Experimental Data (SED) entries
 
     The input form for searching SED entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for SED entries that contains this string in any field
 
@@ -215,7 +227,7 @@ Search Summary of Simulation Results (SSR) entries
 
     The input form for searching SSR entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for SSR entries that contains this string in any field
 
@@ -233,6 +245,10 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the SSR search are displayed here. Clicking "Add new" opens a window to add a new SSR entry. Clicking the title of each search result will open a window with the SSR view page.
@@ -248,7 +264,7 @@ Search Brain Region entries
 
     The input form for searching brain region entries
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for Brain Region entries that contains this string in any field
 
@@ -265,46 +281,17 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the Brain Region search are displayed here. If the desired brain region is not found, the user can request that a new region be added to the database by clicking the given link. This will display the New Brain Region Request form.
 
 
-Summary of Simulation Results
------------------------------
-Search Summary of Simulation Results (SSR) entries
-
-.. figure:: images/ssr_search.png
-    :align: center
-    :figclass: align-center
-
-    The input form for searching SSR entries
-
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
-
-* Any Field - Search for SSR entries that contains this string in any field
-
-Advanced Options
-^^^^^^^^^^^^^^^^
-* Title - Search the title field of SSR entries
-* Description - Search the description field of SSR entries
-* Narrative - Search the narrative field of SSR entries
-* Tags - Search the tags field of SSR entries
-* Public - Search only public entries
-* Created - Search entries created within a date rage
-* Collator - Search entries by the Username, First Name, and/or Last Name of the Collator or select to display only the current user's entries
-
-Search Criteria Combination
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Method to use to combine search critera - "any" (OR), or "all" (AND)
-
-Results
-^^^^^^^
-The results of the SSR search are displayed here. Clicking "Add new" opens a window to add a new SSR entry. Clicking the title of each search result will open a window with the SSR view page.
-
-
 Users
--------------
+-----
 Search Users
 
 .. figure:: images/user_search.png
@@ -313,7 +300,7 @@ Search Users
 
     The input form for searching users
 
-Multiples phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
 
 * Any Field - Search for Users that contains this string in any field
 
@@ -331,6 +318,50 @@ Search Criteria Combination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Method to use to combine search critera - "any" (OR), or "all" (AND)
 
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
 Results
 ^^^^^^^
 The results of the User search are displayed here. Clicking the username of each search result will open a window with the User view page.
+
+
+Workspaces
+----------
+Search Workspaces
+
+.. figure:: images/workspace_search.png
+    :align: center
+    :figclass: align-center
+
+    The input form for searching workspaces
+
+Multiple phrases can be entered in each text search field by separating them by commas, or enclosing them in quotes. The corresponding Phrase combination field specifies which method to combine phrases with: "any" combines them using OR, "all" combines them using AND
+
+* Any Field - Search for Workspaces that contains this string in any field
+
+Advanced Options
+^^^^^^^^^^^^^^^^
+* Title - Search the title field of Workspaces
+* Description - Search the description field of Workspaces
+* Related Brain Regions - Search for Workspaces containing the given brain regions
+* Related BOPs - Search for Workspaces with BOPs containing the given text
+* Related Models - Search for Workspaces with Models containing the given text
+* Related SEDs - Search for Workspaces with SEDs containing the given text
+* Related SSRs - Search for Workspaces with SSRs containing the given text
+* Created - Search Workspaces created within a date rage
+* Creator - Search Workspaces by the Username, First Name, and/or Last Name of the user who create them or select to display only the current user's workspaces
+* Related Literature - Search for Workspaces related to Literature by Title, Author, Year, and or Annotation
+
+Search Criteria Combination
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Method to use to combine search critera - "any" (OR), or "all" (AND)
+
+Results Per Page
+^^^^^^^^^^^^^^^^
+Number of results per page to show
+
+Results
+^^^^^^^
+The results of the Workspace search are displayed here. Clicking on the radio button to the left of each search result will make that workspace active. Clicking the title of each search result will open a window with the Workspace view page.

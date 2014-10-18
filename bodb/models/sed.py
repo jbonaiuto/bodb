@@ -1,10 +1,21 @@
+import matplotlib
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+matplotlib.use('Agg')
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition
+from matplotlib.figure import Figure
+from numpy.core.umath import exp
+from numpy.numarray import arange
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
+import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
+import numpy as np
+import scipy.io
+import matplotlib.pyplot as plt
 
 class SED(Document):
     """
@@ -16,6 +27,7 @@ class SED(Document):
         ('brain imaging', 'imaging'),
         ('connectivity', 'connectivity'),
         ('event related potential', 'erp'),
+        ('neurophysiology', 'neurophysiology')
         )
     objects = InheritanceManager()
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
@@ -48,6 +60,11 @@ class SED(Document):
         if notify:
             # send notifications to subscribed users
             sendNotifications(self, 'SED')
+
+    def as_json(self):
+        json=super(SED,self).as_json()
+        json['type']=self.type
+        return json
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -159,6 +176,20 @@ class ERPComponent(models.Model):
     class Meta:
         app_label='bodb'
 
+    def as_json(self):
+        json={
+            'id': self.id,
+            'name': self.component_name,
+            'latency_peak': self.latency_peak.__str__(),
+            'latency_peak_type': self.latency_peak_type,
+            'position_system': '',
+            'position': ''
+        }
+        if self.electrode_position is not None:
+            json['position_system']=self.electrode_position.position_system.name
+            json['position']=self.electrode_position.name
+        return json
+
 
 # A summary of brain imaging data: inherits from SED
 class BrainImagingSED(SED):
@@ -196,6 +227,11 @@ class BrainImagingSED(SED):
 
     def html_url_string(self):
         return ''
+
+    def as_json(self):
+        json=super(BrainImagingSED,self).as_json()
+        json['url_str']=self.html_url_string()
+        return json
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -247,8 +283,19 @@ class SEDCoord(models.Model):
     named_brain_region = models.CharField(max_length=200)
     # extra data (for extra headers)
     extra_data = models.TextField(blank=True, null=True)
+
     class Meta:
         app_label='bodb'
+
+    def as_json(self):
+        return {
+            'id': self.id,
+            'brain_region': self.named_brain_region,
+            'hemisphere': self.hemisphere,
+            'x': self.coord.x,
+            'y': self.coord.y,
+            'z': self.coord.z
+        }
 
 
 class BredeBrainImagingSED(BrainImagingSED):
@@ -361,6 +408,11 @@ class ConnectivitySED(SED):
 
     def html_url_string(self):
         return ''
+
+    def as_json(self):
+        json=super(ConnectivitySED,self).as_json()
+        json['url_str']=self.html_url_string()
+        return json
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -618,3 +670,406 @@ def find_similar_seds(user, title, brief_description):
         similar.append((sed,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
+
+
+# A summary of neurophysiological data: inherits from SED
+class NeurophysiologySED(SED):
+    class Meta:
+        app_label='bodb'
+
+    @staticmethod
+    def get_literature_seds(literature, user):
+        return NeurophysiologySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+
+    @staticmethod
+    def get_brain_region_seds(brain_region, user):
+        region_q=Q(neurophysiology_condition__recordingtrial__unit__area=brain_region) |\
+                 Q(related_region_document__brain_region=brain_region)
+        return NeurophysiologySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
+
+    @staticmethod
+    def get_tagged_seds(name, user):
+        return NeurophysiologySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+
+
+class NeurophysiologyCondition(models.Model):
+    sed=models.ForeignKey('NeurophysiologySED')
+    name=models.CharField(max_length=100)
+    description=models.TextField()
+
+    class Meta:
+        app_label='bodb'
+
+    def plot_trial_spikes(self, unit, ax, event_colors, x_min, x_max, align_to=None):
+        trials=RecordingTrial.objects.filter(unit=unit, condition=self)
+        for trial_idx, trial in enumerate(trials):
+            align_time=trial.start_time
+            if align_to is not None:
+                align_time=Event.objects.get(trial=trial,name=align_to).time
+
+            trial_relative_spike_times=trial.get_relative_spike_times(align_to=align_to)
+            for spike_time in trial_relative_spike_times:
+                ax.plot([spike_time,spike_time],[trial_idx,trial_idx+1],'k')
+
+            rel_start_time=float(trial.start_time)-float(align_time)
+            ax.plot([rel_start_time,rel_start_time],[trial_idx,trial_idx+1],'c')
+
+            events=Event.objects.filter(trial=trial)
+            for event in events:
+                rel_event_time=float(event.time)-float(align_time)
+                ax.plot([rel_event_time,rel_event_time],[trial_idx,trial_idx+1],event_colors[event.name])
+
+        ax.set_ylim([0,len(trials)])
+        ax.set_xlim([x_min,x_max])
+        ax.set_ylabel('Trial')
+        ax.set_title(self.name)
+
+    def get_trial_mean_firing_rate(self, unit, bin_width, align_to=None):
+        trials=RecordingTrial.objects.filter(unit=unit, condition=self)
+        condition_rel_spike_times=[]
+        for trial_idx, trial in enumerate(trials):
+            condition_rel_spike_times.extend(trial.get_relative_spike_times(align_to=align_to))
+
+        window=exp(-arange(-2 * bin_width, 2 * bin_width + 1) ** 2 * 1. / (2 * (bin_width) ** 2))
+        num_bins=int((np.max(condition_rel_spike_times)-np.min(condition_rel_spike_times))/bin_width)
+        hist,bins=np.histogram(np.array(condition_rel_spike_times), bins=num_bins)
+        bin_width=bins[1]-bins[0]
+        smoothed_rate=np.core.numeric.convolve(hist/float(trials.count())/bin_width, window * 1. / sum(window), mode='same')
+        return bins[:-1],smoothed_rate
+
+    def plot_trial_mean_firing_rate(self, unit, bin_width, ax, x_min, x_max, y_max, align_to=None):
+        bins,smoothed_rate=self.get_trial_mean_firing_rate(unit, bin_width, align_to=align_to)
+        ax.plot(bins,smoothed_rate)
+        ax.set_xlim([x_min, x_max])
+        ax.set_ylim([0, y_max])
+        ax.set_ylabel('Firing Rate (Hz)')
+
+    def get_population_mean_firing_rate(self, brain_region, bin_width, align_to=None):
+        condition_rel_spike_times=[]
+        units=Unit.objects.filter(recordingtrial__condition=self, area=brain_region).distinct()
+        trial_count=0
+        for unit in units:
+            trials=RecordingTrial.objects.filter(unit=unit, condition=self).distinct()
+            for trial in trials:
+                condition_rel_spike_times.extend(trial.get_relative_spike_times(align_to=align_to))
+                trial_count+=1
+        window=exp(-arange(-2 * bin_width, 2 * bin_width + 1) ** 2 * 1. / (2 * (bin_width) ** 2))
+        num_bins=int((np.max(condition_rel_spike_times)-np.min(condition_rel_spike_times))/bin_width)
+        hist,bins=np.histogram(np.array(condition_rel_spike_times), bins=num_bins)
+        bin_width=bins[1]-bins[0]
+        smoothed_rate=np.core.numeric.convolve(hist/float(trial_count)/bin_width, window * 1. / sum(window), mode='same')
+        return bins[:-1],smoothed_rate
+
+    def plot_population_mean_firing_rate(self, bin_width, align_to=None, filename=None):
+        regions=BrainRegion.objects.filter(unit__recordingtrial__condition=self).distinct()
+        if regions.count()>2:
+            fig=Figure(figsize=(10,18))
+        else:
+            fig=Figure()
+
+        for idx,region in enumerate(regions):
+            ax=fig.add_subplot(regions.count(),1,idx+1)
+            bins,smoothed_rate=self.get_population_mean_firing_rate(region, bin_width, align_to=align_to)
+            ax.plot(bins,smoothed_rate)
+            #ax.set_xlim([x_min, x_max])
+            #ax.set_ylim([0, y_max])
+            ax.set_title(region.name)
+            ax.set_ylabel('Firing Rate (Hz)')
+        ax.set_xlabel('Time (s)')
+        if filename is not None:
+            save_to_png(fig, filename)
+            plt.close(fig)
+        else:
+            plt.show()
+
+
+class Unit(models.Model):
+    type=models.CharField(max_length=50)
+    area=models.ForeignKey('BrainRegion')
+
+    class Meta:
+        app_label='bodb'
+
+    def plot_condition_spikes(self, condition_ids, bin_width, align_to=None, filename=None):
+
+        if len(condition_ids)>1:
+            fig=Figure(figsize=(10,18))
+        else:
+            fig=Figure()
+
+        event_colors={
+            'go': 'b',
+            'mo': 'r',
+            'do': 'g',
+            'ho': 'm',
+            'hoff': 'y',
+            }
+
+        rate_max=0
+        time_min=1000
+        time_max=-1000
+        for idx,id in enumerate(condition_ids):
+            condition=NeurophysiologyCondition.objects.get(id=id)
+            bins,rate=condition.get_trial_mean_firing_rate(self, bin_width, align_to=align_to)
+            if np.max(rate)>rate_max:
+                rate_max=np.max(rate)
+            if bins[0]<time_min:
+                time_min=bins[0]
+            if bins[-1]>time_max:
+                time_max=bins[-1]
+
+        for idx,id in enumerate(condition_ids):
+            condition=NeurophysiologyCondition.objects.get(id=id)
+
+            ax=fig.add_subplot(len(condition_ids)*2,1,idx*2+1)
+            condition.plot_trial_spikes(self, ax, event_colors, time_min, time_max, align_to=align_to)
+
+            ax=fig.add_subplot(len(condition_ids)*2,1,idx*2+2)
+            condition.plot_trial_mean_firing_rate(self, bin_width, ax, time_min, time_max, rate_max, align_to=align_to)
+
+        ax.set_xlabel('Time (s)')
+
+        if filename is not None:
+            save_to_png(fig, filename)
+            plt.close(fig)
+        else:
+            plt.show()
+
+
+class RecordingTrial(models.Model):
+    unit=models.ForeignKey('Unit')
+    condition=models.ForeignKey('NeurophysiologyCondition')
+    trial_number=models.IntegerField()
+    start_time=models.DecimalField(max_digits=10, decimal_places=5)
+    end_time=models.DecimalField(max_digits=10, decimal_places=5)
+    spike_times=models.TextField()
+
+    class Meta:
+        app_label='bodb'
+
+    def __init__(self, *args, **kwargs):
+        super(RecordingTrial,self).__init__(*args, **kwargs)
+        spikes=self.spike_times.split(',')
+        self.spike_times_array=np.zeros(len(spikes))
+        for idx,spike in enumerate(spikes):
+            if len(spike) and float(spike)>=float(self.start_time)-1.0 and float(spike)<float(self.end_time)+1.0:
+                self.spike_times_array[idx]=float(spike)
+
+    def get_relative_spike_times(self, align_to=None):
+        align_time=self.start_time
+        if align_to is not None:
+            align_time=Event.objects.get(trial=self,name=align_to).time
+
+        return self.spike_times_array-float(align_time)
+
+    def get_smoothed_firing_rate(self, bin_width, align_to=None):
+        window=exp(-arange(-2 * bin_width, 2 * bin_width + 1) ** 2 * 1. / (2 * (bin_width) ** 2))
+        rel_spike_times=self.get_relative_spike_times(align_to=align_to)
+        num_bins=int((np.max(rel_spike_times)-np.min(rel_spike_times))/bin_width)
+        hist,bins=np.histogram(np.array(rel_spike_times), bins=num_bins)
+        bin_width=bins[1]-bins[0]
+        smoothed_rate=np.core.numeric.convolve(hist/bin_width, window * 1. / sum(window), mode='same')
+        return bins[:-1],smoothed_rate
+
+
+class Event(models.Model):
+    trial=models.ForeignKey('RecordingTrial')
+    name=models.CharField(max_length=100)
+    description=models.TextField()
+    time=models.DecimalField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        app_label='bodb'
+
+
+def import_kraskov_data(mat_file):
+    sed=NeurophysiologySED()
+    sed.collator=User.objects.get(username='jbonaiuto')
+    sed.last_modified_by=User.objects.get(username='jbonaiuto')
+    sed.title='M1 PTN - Observation/Execution of Grasps'
+    sed.brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
+    sed.save()
+    
+    obs_ring_condition=NeurophysiologyCondition()
+    obs_ring_condition.sed=sed
+    obs_ring_condition.name='Observe ring hook grasp'
+    obs_ring_condition.description='Monkeys observed the human experimenter grasping a ring using a hook grip with just the index finger'
+    obs_ring_condition.save()
+
+    mov_ring_condition=NeurophysiologyCondition()
+    mov_ring_condition.sed=sed
+    mov_ring_condition.name='Execute ring hook grasp'
+    mov_ring_condition.description='Monkeys grasped a ring using a hook grip with just the index finger'
+    mov_ring_condition.save()
+
+    obs_sphere_condition=NeurophysiologyCondition()
+    obs_sphere_condition.sed=sed
+    obs_sphere_condition.name='Observe sphere whole hand grasp'
+    obs_sphere_condition.description='Monkeys observed the human experimenter grasping a sphere using the whole hand'
+    obs_sphere_condition.save()
+
+    mov_sphere_condition=NeurophysiologyCondition()
+    mov_sphere_condition.sed=sed
+    mov_sphere_condition.name='Execute sphere whole hand'
+    mov_sphere_condition.description='Monkeys grasped a sphere using the whole hand'
+    mov_sphere_condition.save()
+
+    obs_trapezoid_condition=NeurophysiologyCondition()
+    obs_trapezoid_condition.sed=sed
+    obs_trapezoid_condition.name='Observe trapezoid precision grasp'
+    obs_trapezoid_condition.description='Monkeys observed the human experimenter grasping a trapezoid using a precision grasp with the thumb and forefinger'
+    obs_trapezoid_condition.save()
+
+    mov_trapezoid_condition=NeurophysiologyCondition()
+    mov_trapezoid_condition.sed=sed
+    mov_trapezoid_condition.name='Execute trapezoid precision grasp'
+    mov_trapezoid_condition.description='Monkeys grasped a trapezoid using a precision grasp with the thumb and forefinger'
+    mov_trapezoid_condition.save()
+    
+    # create event types (if not already exist)
+    # load file
+    mat_file=scipy.io.loadmat(mat_file)
+
+    for i in range(len(mat_file['U'][0])):
+        area_idx=-1
+        unittype_idx=-1
+        index_idx=-1
+        events_idx=-1
+
+        # get indices of area, unit type, index, and events
+        for idx,(dtype,o) in enumerate(mat_file['U'][0][i].dtype.descr):
+            if dtype=='area':
+                area_idx=idx
+            elif dtype=='unittype':
+                unittype_idx=idx
+            elif dtype=='index':
+                index_idx=idx
+            elif dtype=='events':
+                events_idx=idx
+
+        # create unit
+        unit=Unit()
+        area=mat_file['U'][0][i][area_idx][0]
+        region=BrainRegion.objects.filter(Q(Q(name=area) | Q(abbreviation=area)))
+        unit.area=region[0]
+        unit.type=mat_file['U'][0][i][unittype_idx][0]
+        unit.save()
+
+        index=mat_file['U'][0][i][index_idx]
+        events=mat_file['U'][0][i][events_idx]
+
+        trialtype_idx=-1
+        object_idx=-1
+        trial_start_idx=-1
+        go_idx=-1
+        mo_idx=-1
+        do_idx=-1
+        ho_idx=-1
+        hoff_idx=-1
+        trial_end_idx=-1
+        for idx,(dtype,o) in enumerate(events[0].dtype.descr):
+            if dtype=='trialtype':
+                trialtype_idx=idx
+            elif dtype=='object':
+                object_idx=idx
+            elif dtype=='TrialStart':
+                trial_start_idx=idx
+            elif dtype=='Go':
+                go_idx=idx
+            elif dtype=='MO':
+                mo_idx=idx
+            elif dtype=='DO':
+                do_idx=idx
+            elif dtype=='HO':
+                ho_idx=idx
+            elif dtype=='HOff':
+                hoff_idx=idx
+            elif dtype=='TrialEnd':
+                trial_end_idx=idx
+
+        trial_types=events[0][0][trialtype_idx][0]
+        objects=events[0][0][object_idx][0]
+        trial_start_times=events[0][0][trial_start_idx][0]
+        go_events=events[0][0][go_idx][0]
+        mo_events=events[0][0][mo_idx][0]
+        do_events=events[0][0][do_idx][0]
+        ho_events=events[0][0][ho_idx][0]
+        hoff_events=events[0][0][hoff_idx][0]
+        trial_end_times=events[0][0][trial_end_idx][0]
+
+        # iterate through trials
+        for j in range(len(trial_types)):
+            # create trial
+            trial=RecordingTrial(unit=unit)
+            trial.trial_number=j+1
+            if trial_types[j]=='h':
+                if objects[j]==1:
+                    trial.condition=obs_ring_condition
+                elif objects[j]==2:
+                    trial.condition=obs_sphere_condition
+                elif objects[j]==4:
+                    trial.condition=obs_trapezoid_condition
+            elif trial_types[j]=='m':
+                if objects[j]==1:
+                    trial.condition=mov_ring_condition
+                elif objects[j]==2:
+                    trial.condition=mov_sphere_condition
+                elif objects[j]==4:
+                    trial.condition=mov_trapezoid_condition
+            trial.start_time=trial_start_times[j]
+            trial.end_time=trial_end_times[j]
+
+            next_trial_start_time=None
+            if j<len(trial_types)-1:
+                next_trial_start_time=trial_start_times[j+1]
+
+            previous_trial=None
+            if j>0:
+                previous_trial=RecordingTrial.objects.get(unit=unit, trial_number=j)
+
+            # load spikes
+            spike_times=[]
+            for k in range(len(index)):
+                if previous_trial is None:
+                    if index[k,0]>=trial.start_time-1.0:
+                        if next_trial_start_time is None:
+                            if index[k,0]<trial.end_time+1.0:
+                                spike_times.append(index[k,0])
+                        elif index[k,0]<trial.end_time+1.0 and index[k,0]<next_trial_start_time:
+                            spike_times.append(index[k,0])
+                elif index[k,0]>=trial.start_time-1.0 and index[k,0]>=previous_trial.end_time:
+                    if next_trial_start_time is None:
+                        if index[k,0]<trial.end_time+1.0:
+                            spike_times.append(index[k,0])
+                    elif index[k,0]<trial.end_time+1.0 and index[k,0]<next_trial_start_time:
+                        spike_times.append(index[k,0])
+
+            trial.spike_times=','.join([str(x) for x in sorted(spike_times)])
+            trial.save()
+
+            # create trial events
+            go_event=Event(name='go', description='go signal', trial=trial, time=go_events[j])
+            go_event.save()
+
+            mo_event=Event(name='mo', description='movement onset', trial=trial, time=mo_events[j])
+            mo_event.save()
+
+            do_event=Event(name='do', description='object displacement onset', trial=trial, time=do_events[j])
+            do_event.save()
+
+            ho_event=Event(name='ho', description='stable hold onset', trial=trial, time=ho_events[j])
+            ho_event.save()
+
+            hoff_event=Event(name='hoff', description='hold offset', trial=trial, time=hoff_events[j])
+            hoff_event.save()
+
+
+def save_to_png(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(output_file, dpi=72)
+
+def save_to_eps(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_eps(output_file, dpi=72)

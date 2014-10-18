@@ -1,6 +1,7 @@
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uscbp.settings")
 from django.db.models.query_utils import Q
 from django.db import connection
-import os
 import shutil
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
@@ -85,79 +86,79 @@ def import_users(legacy_img_dir, new_media_dir):
     # Get old users from DB
     old_users=User.objects.using('legacy').all()
     for old_user in old_users:
-
-        # Create new user
-        new_user=User(
-            id=old_user.id,
-            username=old_user.username,
-            first_name=old_user.first_name,
-            last_name=old_user.last_name,
-            email=old_user.email,
-            is_staff=old_user.is_staff,
-            is_active=old_user.is_active,
-            is_superuser=old_user.is_superuser,
-            date_joined=old_user.date_joined,
-            password=old_user.password,
-            last_login=old_user.last_login
-        )
-        new_user.save()
-
-        # Go through old permissions
-        for old_permission in old_user.user_permissions.db_manager('legacy').all():
-
-            # Create permission if doesnt exist
-            if not Permission.objects.filter(codename=old_permission.codename).count():
-                old_ct=old_permission.content_type
-
-                # Create content type if doesnt exist
-                if not ContentType.objects.filter(name = old_ct.name, app_label=old_ct.app_label,
-                    model=old_ct.model).count():
-                    ct=ContentType(name = old_ct.name, app_label=old_ct.app_label, model=old_ct.model)
-                    ct.save()
-                else:
-                    ct=ContentType.objects.get(name = old_ct.name, app_label=old_ct.app_label, model=old_ct.model)
-
-                # Create new permission
-                new_permission=Permission(
-                    name = old_permission.name,
-                    content_type = ct,
-                    codename = old_permission.codename
-                )
-                new_permission.save()
-            else:
-                new_permission=Permission.objects.get(codename=old_permission.codename)
-
-            # Add permission to user
-            new_user.user_permissions.add(new_permission)
-
-        # Add groups to user
-        for old_group in old_user.groups.db_manager('legacy').all():
-            new_group=Group.objects.get(id=old_group.id)
-            new_user.groups.add(new_group)
-
-        # If the user has a profile
-        if legacy_workspace.BodbProfile.objects.using('legacy').filter(user=old_user).count():
-            old_profile=legacy_workspace.BodbProfile.objects.using('legacy').get(user=old_user)
-
-            # Create new profile
-            new_profile=workspace.BodbProfile(
-                id=old_profile.id,
-                user=new_user,
-                new_message_notify=old_profile.new_message_notify,
-                affiliation=old_profile.affiliation,
-                notification_preference=old_profile.notification_preference
+        if not User.objects.filter(id=old_user.id).count():
+            # Create new user
+            new_user=User(
+                id=old_user.id,
+                username=old_user.username,
+                first_name=old_user.first_name,
+                last_name=old_user.last_name,
+                email=old_user.email,
+                is_staff=old_user.is_staff,
+                is_active=old_user.is_active,
+                is_superuser=old_user.is_superuser,
+                date_joined=old_user.date_joined,
+                password=old_user.password,
+                last_login=old_user.last_login
             )
-            new_profile.save()
+            new_user.save()
 
-            # Copy avatar image
-            gallery=old_profile.gallery
-            if gallery.photos.db_manager('legacy').all().count():
-                photo=gallery.photos.db_manager('legacy').all()[0]
-                if os.path.exists(os.path.join(legacy_img_dir,photo.image_filename())):
-                    shutil.copyfile(os.path.join(legacy_img_dir,photo.image_filename()),
-                        os.path.join(new_media_dir,'avatars',photo.image_filename()))
-                    new_profile.avatar.name=os.path.join('avatars',photo.image_filename())
-                    new_profile.save()
+            # Go through old permissions
+            for old_permission in old_user.user_permissions.db_manager('legacy').all():
+
+                # Create permission if doesnt exist
+                if not Permission.objects.filter(codename=old_permission.codename).count():
+                    old_ct=old_permission.content_type
+
+                    # Create content type if doesnt exist
+                    if not ContentType.objects.filter(name = old_ct.name, app_label=old_ct.app_label,
+                        model=old_ct.model).count():
+                        ct=ContentType(name = old_ct.name, app_label=old_ct.app_label, model=old_ct.model)
+                        ct.save()
+                    else:
+                        ct=ContentType.objects.get(name = old_ct.name, app_label=old_ct.app_label, model=old_ct.model)
+
+                    # Create new permission
+                    new_permission=Permission(
+                        name = old_permission.name,
+                        content_type = ct,
+                        codename = old_permission.codename
+                    )
+                    new_permission.save()
+                else:
+                    new_permission=Permission.objects.get(codename=old_permission.codename)
+
+                # Add permission to user
+                new_user.user_permissions.add(new_permission)
+
+            # Add groups to user
+            for old_group in old_user.groups.db_manager('legacy').all():
+                new_group=Group.objects.get(id=old_group.id)
+                new_user.groups.add(new_group)
+
+            # If the user has a profile
+            if legacy_workspace.BodbProfile.objects.using('legacy').filter(user=old_user).count():
+                old_profile=legacy_workspace.BodbProfile.objects.using('legacy').get(user=old_user)
+
+                # Create new profile
+                new_profile=workspace.BodbProfile(
+                    id=old_profile.id,
+                    user=new_user,
+                    new_message_notify=old_profile.new_message_notify,
+                    affiliation=old_profile.affiliation,
+                    notification_preference=old_profile.notification_preference
+                )
+                new_profile.save()
+
+                # Copy avatar image
+                gallery=old_profile.gallery
+                if gallery.photos.db_manager('legacy').all().count():
+                    photo=gallery.photos.db_manager('legacy').all()[0]
+                    if os.path.exists(os.path.join(legacy_img_dir,photo.image_filename())):
+                        shutil.copyfile(os.path.join(legacy_img_dir,photo.image_filename()),
+                            os.path.join(new_media_dir,'avatars',photo.image_filename()))
+                        new_profile.avatar.name=os.path.join('avatars',photo.image_filename())
+                        new_profile.save()
 
 
 def import_authors():
@@ -996,6 +997,5 @@ def import_saved_coord_selections():
         new_selected_coord.save()
 
 if __name__=='__main__':
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uscbp.settings")
     migration('/home/jbonaiuto/Projects/bodb/uscbp/media/photologue/photos',
         '/home/jbonaiuto/Projects/bodb/new_version/bodb/media')

@@ -342,7 +342,7 @@
                 <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="toggleSEDSelect('{{connectivitysed.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
             {% if canManage %}
-                <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{sed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{connectivitysed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
         <br>
@@ -354,7 +354,7 @@
         </select>
     </div>
     <form id="fileForm" action=""></form>
-    <form id="reportForm" name="reportForm" action="/bodb/model/{{model.id}}/report/rtf/" method="post">
+    <form id="reportForm" name="reportForm" action="/bodb/sed/{{connectivitysed.id}}/report/rtf/" method="post">
         {% csrf_token %}
         <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
         <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>

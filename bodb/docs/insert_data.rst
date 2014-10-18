@@ -7,11 +7,12 @@ Inserting Data
 
     BODB insert page
 
-* The insert page provides links for adding new entries:
+The insert page provides links for adding new entries:
 * Literature - Literature (Journal Article, Book, Chapter, Conference, Thesis, and Unpublished) Information 
 * Brain Operating Principle - Brain Operating Principle (e.g. Winner-Take-All) 
-* Model - Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle) 
-* Summary of Experimental Data - A summary of experimental data. 
+* Summary of Experimental Data - A summary of experimental data.
+* Model - Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle)
+
 
 .. _insert-literature:
 
@@ -206,7 +207,7 @@ Click on the "Save Draft" button to save a draft of the present entry to the BOD
 Insert Model
 ------------
 
-A form for populating BODB with Models will be described here that is shown after clicking on the “Model” link in the Insert page.
+Clicking on the “Model” link on the Insert page will start the model creation wizard. Clicking on the “Expert model entry” link will allow experienced users to populate a new model entry using a single form. The expert model entry form is described here, however the model creation wizard contains the same sections and fields, simply broken up into multiple steps.
 
 .. figure:: images/add_model.png
     :align: center

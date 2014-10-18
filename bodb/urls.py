@@ -8,14 +8,14 @@ from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicReq
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
-from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView
+from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, ModelDiagramView, CreateModelWizardView, MODEL_WIZARD_FORMS
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
-from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, ConnectivityDiagramView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
+from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, ConnectivityDiagramView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView
 from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
-from bodb.views.workspace import WorkspaceListView, ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
+from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
 
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.conf.urls import include
@@ -72,7 +72,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^bop/tag/(?P<name>[^/]+)/$', BOPTaggedView.as_view(), {}, 'bop_tagged'),
 
     url(r'^brain_region/(?P<pk>\d+)/$', BrainRegionView.as_view(), {}, 'brain_region_view'),
-    url(r'^brain_region/(?P<pk>\d+)/toggle_select/$', ToggleSelectBrainRegionView.as_view(), {}, 'brain_region_toggle_select'),
+    url(r'^brain_region/(?P<pk>\d+)/toggle_select/$', ToggleSelectBrainRegionView.as_view(), {},
+        'brain_region_toggle_select'),
     url(r'^brain_region/requests/$', BrainRegionRequestListView.as_view(), {}, 'brain_region_requests'),
     url(r'^brain_region/request/$', CreateBrainRegionRequestView.as_view(), {}, 'brain_region_request'),
     url(r'^brain_region/request/deny/(?P<activation_key>\w+)/$', BrainRegionRequestDenyView.as_view(),
@@ -95,7 +96,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^drafts/$', DraftListView.as_view(), {}, 'drafts_view'),
 
     url(r'^favorite/toggle/$', ToggleFavoriteView.as_view(), {}, 'toggle_favorite'),
-    url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {}, 'toggle_favorite_brain_region'),
+    url(r'^favorite/brain_region/toggle/$', ToggleFavoriteBrainRegionView.as_view(), {},
+        'toggle_favorite_brain_region'),
     url(r'^favorite/literature/toggle/$', ToggleFavoriteLiteratureView.as_view(), {}, 'toggle_favorite_literature'),
     url(r'^favorites/$', FavoriteListView.as_view(), {}, 'favorites'),
 
@@ -116,6 +118,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^model/(?P<pk>\d+)/toggle_select/$', ToggleSelectModelView.as_view(), {}, 'model_toggle_select'),
     url(r'^model/benchmark/$', BenchmarkModelView.as_view(), {}, 'model_benchmark'),
     url(r'^model/new/$', CreateModelView.as_view(), {}, 'model_add'),
+    url(r'^model/new/wizard/$', CreateModelWizardView.as_view(MODEL_WIZARD_FORMS), {}, 'model_add_wizard'),
     url(r'^model/reverse_benchmark/$', ReverseBenchmarkModelView.as_view(), {}, 'model_reverse_benchmark'),
     url(r'^model/similar/$', SimilarModelView.as_view(), {}, 'model_similar'),
     url(r'^model/search/$', ModelSearchView.as_view(), {}, 'model_search'),
@@ -158,6 +161,10 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/imaging/(?P<pk>\d+)/delete/$', DeleteBrainImagingSEDView.as_view(), name='imaging_sed_delete'),
     url(r'^sed/imaging/(?P<pk>\d+)/edit/$', UpdateBrainImagingSEDView.as_view(), name='imaging_sed_edit'),
     url(r'^sed/imaging/new/$', CreateBrainImagingSEDView.as_view(), {}, 'imaging_sed_add'),
+    url(r'^sed/neurophysiology/condition/(?P<pk>\d+)/$', NeurophysiologyConditionView.as_view(), {}, 'neurophysiology_condition'),
+    url(r'^sed/neurophysiology/unit/(?P<pk>\d+)/$', NeurophysiologyUnitView.as_view(), {}, 'neurophysiology_unit'),
+    url(r'^sed/neurophysiology/unit_realign/$', NeurophysiologyUnitRealignView.as_view(), {}, 'neurophysiology_unit_realign'),
+    url(r'^sed/neurophysiology/condition_population_realign/$', NeurophysiologyConditionPopulationRealignView.as_view(), {}, 'neurophysiology_unit_realign'),
     url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
     url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
     url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),
@@ -198,7 +205,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^workspace/(?P<pk>\d+)/$', WorkspaceDetailView.as_view(), {}, 'workspace_view'),
     url(r'^workspace/(?P<pk>\d+)/activate/$', ActivateWorkspaceView.as_view(), {}, 'workspace_activate'),
     url(r'^workspace/(?P<pk>\d+)/bookmark/new/$', CreateWorkspaceBookmarkView.as_view(), {}, 'workspace_bookmark_add'),
-    url(r'^workspace/(?P<pk>\d+)/bookmark/(?P<pk2>\d+)/delete/$', DeleteWorkspaceBookmarkView.as_view(), {}, 'workspace_bookmark_delete'),
+    url(r'^workspace/(?P<pk>\d+)/bookmark/(?P<pk2>\d+)/delete/$', DeleteWorkspaceBookmarkView.as_view(), {},
+        'workspace_bookmark_delete'),
     url(r'^workspace/(?P<pk>\d+)/delete/$', DeleteWorkspaceView.as_view(), {}, 'workspace_activate'),
     url(r'^workspace/(?P<pk>\d+)/edit/$', UpdateWorkspaceView.as_view(), {}, 'workspace_edit'),
     url(r'^workspace/(?P<pk>\d+)/invitation/$', WorkspaceInvitationView.as_view(), {}, 'workspace_invitation'),
@@ -216,7 +224,6 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^workspace_invite/(?P<action>\w+)/(?P<activation_key>\w+)/$', WorkspaceInvitationResponseView.as_view(), {},
         'workspace_invitation_response'),
     url(r'^workspace/title_available/$', WorkspaceTitleAvailableView.as_view(), {}, 'workspace_title_available'),
-    url(r'^workspaces/$', WorkspaceListView.as_view(), {}, 'workspaces'),
 
     url(r'', IndexView.as_view(), {}, 'index'),
 )

@@ -6,6 +6,13 @@ from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
 
+import datetime
+from django.forms.extras.widgets import SelectDateWidget
+from django.forms import ModelForm, Form
+
+from functools import partial
+DateInput = partial(forms.DateInput, {'class': 'datepicker'}) 
+
 class SEDForm(DocumentWithLiteratureForm):
     type=forms.CharField(widget=forms.HiddenInput,required=False)
 
@@ -173,4 +180,5 @@ class TestSEDSSRInlineForm(forms.ModelForm):
 TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInlineForm,
     nested_form=TestSEDSSRInlineForm,fk_name='model',nested_fk_name='test_sed',can_delete=True,
     nested_can_delete=True,extra=0,nested_extra=1,nested_max_num=1)
+
 

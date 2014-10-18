@@ -1,5 +1,7 @@
 import re
 import urllib
+import json
+import urllib2
 from xml.dom import minidom
 from pyexpat import ExpatError
 from django.db.models import Q
@@ -7,13 +9,146 @@ import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
 from bodb.search.sed import SEDSearch
 from federation.cocomac.import_data import addNomenclature
+from federation.cocomac.import_data2 import addNomenclature2, perform_query
 from registration.models import User
+from taggit.utils import parse_tags
+
+def runCoCoMacSearch2(search_data, userId):
+    results=[]
+    search_local=False
+    if 'type' not in search_data or search_data['type']=='connectivity':
+        if 'search_cocomac' in search_data and search_data['search_cocomac']:
+            print('Trying to search CoCoMac2')
+            try:
+                origin_search_string=''
+                terminal_search_string=''
+                if 'source_region' in search_data and len(search_data['source_region']):
+                    source_words=parse_tags(search_data['source_region'])
+                    source_sql=' OR '.join(['(BrainSite LIKE $region_%d OR Acronym LIKE $region_%d)' % (x,x) for x in range(len(source_words))])
+                    sql='SELECT BrainMaps_BrainSites.ID, BrainMaps_BrainSites.BrainSite FROM BrainMaps_BrainSites JOIN BrainMaps_BrainSiteAcronyms ON BrainMaps_BrainSiteAcronyms.ID=BrainMaps_BrainSites.ID_BrainMaps_BrainSiteAcronym WHERE %s' % source_sql
+                    query_params={}
+                    for idx,source_word in enumerate(source_words):
+                        query_params['region_%d' % idx]=source_word
+                    result=perform_query(sql, query_params)
+                    brainsite_idx=result['fields'].index('BrainSite')
+                    origin_search_string=','.join([x[brainsite_idx] for x in result['data'].values()])
+                if 'target_region' in search_data and len(search_data['target_region']):
+                    target_words=parse_tags(search_data['target_region'])
+                    target_sql=' OR '.join(['(BrainSite LIKE $region_%d OR Acronym LIKE $region_%d)' % (x,x) for x in range(len(target_words))])
+                    sql='SELECT BrainMaps_BrainSites.ID, BrainMaps_BrainSites.BrainSite FROM BrainMaps_BrainSites JOIN BrainMaps_BrainSiteAcronyms ON BrainMaps_BrainSiteAcronyms.ID=BrainMaps_BrainSites.ID_BrainMaps_BrainSiteAcronym WHERE %s' % target_sql
+                    query_params={}
+                    for idx,target_word in enumerate(target_words):
+                        query_params['region_%d' % idx]=target_word
+                    result=perform_query(sql, query_params)
+                    brainsite_idx=result['fields'].index('BrainSite')
+                    terminal_search_string=','.join([x[brainsite_idx] for x in result['data'].values()])
+
+                searchDict={
+                    'axonOriginList':origin_search_string,
+                    'axonTerminalList': terminal_search_string,
+                    'includeLargeInjections': '0',
+                    'useAM': '1',
+                    'useSORT': '0',
+                    'output': 'temptable',
+                    'fibercourse': 'I?'
+                }
+                query_req = urllib2.Request('http://cocomac.g-node.org/cocomac2/services/axonal_projections.php', urllib.urlencode( searchDict ) )
+                query_response = urllib2.urlopen(query_req)
+                temp_table=query_response.read()
+
+                sql='SELECT * FROM %s' % temp_table
+                result=perform_query(sql,{})
+                axon_origin_idx=result['fields'].index('axon_origin')
+                axon_terminal_idx=result['fields'].index('axon_terminal')
+                axon_origins=[x[axon_origin_idx] for x in result['data'].values()]
+                axon_terminals=[x[axon_terminal_idx] for x in result['data'].values()]
+                region_id_list=[]
+                for axon_origin,axon_terminal in zip(axon_origins,axon_terminals):
+                    if not axon_origin in region_id_list:
+                        region_id_list.append(axon_origin)
+                    if not axon_terminal in region_id_list:
+                        region_id_list.append(axon_terminal)
+
+                region_map={}
+                remaining_regions=region_id_list
+                while len(remaining_regions)>0:
+                    region_block=remaining_regions[-10:]
+                    sql='SELECT BrainMaps_BrainSites.ID, BrainMaps_BrainSites.BrainSite FROM BrainMaps_BrainSites WHERE BrainMaps_BrainSites.ID IN (%s)' % ','.join(region_block)
+                    result=perform_query(sql, {})
+                    brainregion_id_idx=result['fields'].index('ID')
+                    brainregion_name_idx=result['fields'].index('BrainSite')
+                    for x in result['data'].values():
+                        region_map[x[brainregion_id_idx]]=x[brainregion_name_idx]
+                    remaining_regions=remaining_regions[:-10]
+
+                    if not CoCoMacBrainRegion.objects.filter(cocomac_id=x[brainregion_name_idx]):
+                        addNomenclature2(x[brainregion_name_idx].split('-',1)[0])
+
+                for axon_origin,axon_terminal in zip(axon_origins,axon_terminals):
+                    if CoCoMacBrainRegion.objects.filter(cocomac_id=region_map[axon_origin]).count() and\
+                       CoCoMacBrainRegion.objects.filter(cocomac_id=region_map[axon_terminal]).count():
+                        target_region=CoCoMacBrainRegion.objects.get(cocomac_id=region_map[axon_terminal]).brain_region
+                        source_region=CoCoMacBrainRegion.objects.get(cocomac_id=region_map[axon_origin]).brain_region
+
+                        # Look for connectivity SEDs that are already imported
+                        already_imported_seds=CoCoMacConnectivitySED.objects.filter(source_region=source_region,
+                            target_region=target_region).distinct()
+
+                        # Import connectivity SEDs
+                        if not already_imported_seds.count() :
+                            sed=importConnectivitySED(source_region, target_region)
+                            if not sed in results:
+                                results.append(sed)
+                        else:
+                            for sed in already_imported_seds:
+                                if not sed in results:
+                                    results.append(sed)
+            except:
+                print('Error connecting to cocomac')
+                search_local=True
+        else:
+            search_local=True
+
+    if search_local:
+        print('Searching locally')
+        filters=[]
+
+        op=operator.or_
+        if search_data['search_options']=='all':
+            op=operator.and_
+
+        # create SED search
+        searcher=LocalCoCoMacSearch(search_data)
+
+        # construct search query
+        for key in search_data.iterkeys():
+            # if the searcher can search by this field
+            if hasattr(searcher, 'search_%s' % key):
+                # add field to query
+                dispatch=getattr(searcher, 'search_%s' % key)
+                filters.append(dispatch(userId))
+
+        # restrict to user's own entries or those of other users that are not drafts
+        if User.objects.filter(id=userId):
+            user=User.objects.get(id=userId)
+        else:
+            user=User.get_anonymous()
+
+        q = reduce(op,filters) & Document.get_security_q(user)
+
+        # get results
+        if q and len(q):
+            return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
+        return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
+
+    return results
+
 
 def runCoCoMacSearch(search_data, userId):
     searcher=CoCoMacSearch(search_data)
     results=[]
     search_local=False
-    if hasattr(searcher,'type') and (searcher.type=='' or searcher.type=='connectivity'):
+    if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='connectivity'):
         if hasattr(searcher,'search_cocomac') and searcher.search_cocomac:
             print('Trying to search CoCoMac')
             searchStrings=[]
@@ -123,6 +258,7 @@ def runCoCoMacSearch(search_data, userId):
 def importConnectivitySED(source_region, target_region):
     connSED=CoCoMacConnectivitySED(type='connectivity', source_region=source_region, target_region=target_region)
     connSED.collator=User.objects.get(username='jbonaiuto')
+    connSED.last_modified_by=User.objects.get(username='jbonaiuto')
     connSED.public=1
     connSED.title='Projection from '+source_region.__unicode__()+' to '+target_region.__unicode__()
     connSED.brief_description='CoCoMac describes a projection from the region '+source_region.__unicode__()+' ('+source_region.nomenclature.name
@@ -258,3 +394,5 @@ def download(url):
     data=re.sub('<BR>','',data)
     webFile.close()
     return data
+
+

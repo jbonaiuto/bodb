@@ -7,26 +7,53 @@
 <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
     <script type="text/javascript">
 
-        function showComponentPopup(electrode_name)
+        function show{{ erpGraphId }}ComponentPopup(electrode_name)
         {
-            //console.log(electrode_name);
             var txt=electrode_name;
-            var elems=document.getElementsByName('position_'+electrode_name);
-            //console.log(elems.length);
+            var elems=document.getElementsByName('{{ erpGraphId }}_position_'+electrode_name);
             for(var i=0; i<elems.length; i++)
             {
-                //console.log(elems[i].innerHTML);
                 txt+='<hr>'+elems[i].innerHTML;
             }
-            //console.log(txt);
             return txt;
         }
 
-        function showERPDiagram()
+        function show{{ erpGraphId }}Diagram()
         {
             document.getElementById('{{ erpGraphId }}Div').style.display='inline';
             $('#{{ erpGraphId }}').rwdImageMaps();
             $('#{{ erpGraphId }}').smartZoom({'containerClass':'zoomableContainer','maxScale':10});
+            return false;
+        }
+
+        function load{{ erpGraphId }}Popups()
+        {
+            var map=document.getElementById('{{ erpGraphId }}Map');
+            $('map[name="{{ erpGraphId }}Map"]').find('area').each(function(index, element) {
+                $(element).poshytip({
+                    className: 'tip-skyblue',
+                    content: show{{ erpGraphId }}ComponentPopup(this.id),
+                    showTimeout: 0,
+                    alignTo: 'cursor',
+                    alignX: 'right'
+                });
+            });
+        }
+
+        function toggleAll{{ erpGraphId }}ERPSEDSelect(type, checked, csrf_token)
+        {
+            $('[name=erp_seds]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                if(groupName=='{{ erpGraphId }}')
+                {
+                    var boxes=$(this).find('.selected'+type+'SEDCheckbox');
+                    for(var i=0; i<boxes.length; i++)
+                    {
+                        boxes[i].checked=checked;
+                        setSEDSelect(boxes[i].value, checked, csrf_token);
+                    }
+                }
+            });
             return false;
         }
 
@@ -63,110 +90,113 @@
                 $('#{{ erpGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
             }
 
-            var map=document.getElementById('{{ erpGraphId }}Map');
-            $('map[name="{{ erpGraphId }}Map"]').find('area').each(function() {
-                $('#'+this.id).poshytip({
-                    className: 'tip-skyblue',
-                    content: showComponentPopup(this.id),
-                    showTimeout: 0,
-                    alignTo: 'cursor',
-                    alignX: 'right'
-                });
-            });
+            load{{ erpGraphId }}Popups();
+
         });
     </script>
 {% endblock %}
 <div id="erpSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=6>ERP SEDs (1-{{ erp_seds|length }})</td>
+            <td colspan=6>ERP SEDs (1-<span id="numERPSEDResults" name="numERPSEDResults">{{ erp_seds|length }}</span>)</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
                     <td colspan=6>
-                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
             {% endif %}
         {% endif %}
         <tr class="col_header">
-            <td>&nbsp;</td>
+            <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
             <td>Description</td>
             <td width=10px>&nbsp;</td>
         </tr>
-        {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>{{ forloop.counter }}</td>
-                <td align=center>
-                    {% if user.is_authenticated and not user.is_anonymous  %}
-                        {% if ispopup %}
-                            {% if multiple %}
-                                <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);">Select</a>
-                            {% endif %}
-                        {% else %}
-                            <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
-                                <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                            </a>
-                            <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedERPSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
-                        {% endif %}
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
-                    {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                </td>
-                <td><a href="/bodb/user/{{ sed.collator.id }}/">{{ sed.get_collator_str }}</a> {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                <td>{{sed.brief_description }}</td>
-                <td><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
-            </tr>
-            {% if components %}
-                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="3"></td>
-                    <td colspan="3" class="col_header">Components</td>
-                </tr>
-                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="3"></td>
-                    <td colspan="3">
-                        <table class="tab_panel">
-                            <tr>
-                                <td style="width:200px"><strong>Name</strong></td>
-                                <td style="width:100px"><strong>Peak latency (ms)</strong></td>
-                                <td style="width:150px"><strong>Peak latency type</strong></td>
-                                <td style="width:200px"><strong>Electrode position system</strong></td>
-                                <td style="width:150px"><strong>Electrode position</strong></td>
-                                <td></td>
-                            </tr>
-                            {% for component in components %}
+        <tr>
+            <td colspan="6">
+                <div id="erp_seds" name="erp_seds">
+                    <input type="hidden" id="groupName" value="{{ erpGraphId }}"/>
+                    {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
+                        <div id="erp_sed-{{ forloop.counter0 }}" name="erp_sed">
+                            <table class="tab_panel">
                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td>{{ component.component_name }}</td>
-                                    <td>{{ component.latency_peak }}</td>
-                                    <td>{{ component.latency_peak_type }}</td>
-                                    <td>{{ component.electrode_position.position_system }}</td>
-                                    <td>{{ component.electrode_position }}</td>
+                                    <td width=25px>{{ forloop.counter }}</td>
+                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
+                                        {% if user.is_authenticated and not user.is_anonymous  %}
+                                            {% if ispopup %}
+                                                {% if multiple %}
+                                                    <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);">Select</a>
+                                                {% endif %}
+                                            {% else %}
+                                                <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
+                                                    <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                                </a>
+                                                <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedERPSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                                                <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td width=200px>
+                                        <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
+                                        {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                                    </td>
+                                    <td width=200px><a href="/bodb/user/{{ sed.collator.id }}/">{{ sed.get_collator_str }}</a> {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                                    <td>{{sed.brief_description }}</td>
+                                    <td width=100px><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
                                 </tr>
-                            {% endfor %}
-                        </table>
-                        {% for component in components %}
-                            <div name="position_{{ component.electrode_position }}" style="display: none;">
-                                {{ sed.title }}
-                                <br>{{ component.component_name }}
-                                <br>{{ component.latency_peak }} ms
-                                <br>{{ component.latency_peak_type }}
-                            </div>
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endif %}
-        {% endfor %}
+                                {% if components %}
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                        <td colspan="3"></td>
+                                        <td colspan="3" class="col_header">Components</td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                        <td colspan="3"></td>
+                                        <td colspan="3">
+                                            <table class="tab_panel">
+                                                <tr>
+                                                    <td style="width:200px"><strong>Name</strong></td>
+                                                    <td style="width:100px"><strong>Peak latency (ms)</strong></td>
+                                                    <td style="width:150px"><strong>Peak latency type</strong></td>
+                                                    <td style="width:200px"><strong>Electrode position system</strong></td>
+                                                    <td style="width:150px"><strong>Electrode position</strong></td>
+                                                    <td></td>
+                                                </tr>
+                                                {% for component in components %}
+                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                        <td>{{ component.component_name }}</td>
+                                                        <td>{{ component.latency_peak }}</td>
+                                                        <td>{{ component.latency_peak_type }}</td>
+                                                        <td>{{ component.electrode_position.position_system }}</td>
+                                                        <td>{{ component.electrode_position }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                            {% for component in components %}
+                                                <div name="{{ erpGraphId }}_position_{{ component.electrode_position }}" style="display: none;">
+                                                    {{ sed.title }}
+                                                    <br>{{ component.component_name }}
+                                                    <br>{{ component.latency_peak }} ms
+                                                    <br>{{ component.latency_peak_type }}
+                                                </div>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
         {% if not ispopup %}
             <tr class="col_header">
                 <td colspan="6">
-                    <a href="" onclick="return showERPDiagram();">Show ERP Diagram</a>
+                    <a href="" onclick="return show{{ erpGraphId }}Diagram();">Show ERP Diagram</a>
                 </td>
             </tr>
             <tr class="col_header">
@@ -340,6 +370,79 @@
                     </div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="6">Hover the mouse over an electrode position to see a list of ERP SEDs with components at that location.</td>
+            </tr>
         {% endif %}
     </table>
 </div>
+
+<script type="text/html" id="erp_sed_{{ erpGraphId }}-template">
+    <div id="erp_sed-<%= idx %>" name="erp_sed">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=25px><%= idx %></td>
+                <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        {% if ispopup %}
+                            {% if multiple %}
+                                <a href="../../" onclick="return opener.addSEDMultiple('<%= type %>', <%= id %>, ['<%= title %>', '<%= brief_description %>', '<%= type %>']);">Select</a>
+                            {% endif %}
+                        {% else %}
+                            <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
+                                <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
+                            </a>
+                            <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedERPSEDCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                            <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td width=200px>
+                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= title_str %></a>
+                    <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
+                </td>
+                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}){ %> {% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
+                <td><%= brief_description %></td>
+                <td width=100px><span id="sed_<%= id %>_message" name="sed_<%= id %>_message" class="messages"></span></td>
+            </tr>
+            <% if(components.length>0){ %>
+                <tr class="<%= getTRTag(idx) %>" valign=top>
+                    <td colspan="3"></td>
+                    <td colspan="3" class="col_header">Components</td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>" valign=top>
+                    <td colspan="3"></td>
+                    <td colspan="3">
+                        <table class="tab_panel">
+                            <tr>
+                                <td style="width:200px"><strong>Name</strong></td>
+                                <td style="width:100px"><strong>Peak latency (ms)</strong></td>
+                                <td style="width:150px"><strong>Peak latency type</strong></td>
+                                <td style="width:200px"><strong>Electrode position system</strong></td>
+                                <td style="width:150px"><strong>Electrode position</strong></td>
+                                <td></td>
+                            </tr>
+                            <% for(var comp_idx=0; comp_idx<components.length; comp_idx++){ %>
+                                <tr class="<%= getTRTag(comp_idx) %>" valign=top>
+                                    <td><%= components[comp_idx]['name'] %></td>
+                                    <td><%= components[comp_idx]['latency_peak'] %></td>
+                                    <td><%= components[comp_idx]['latency_peak_type'] %></td>
+                                    <td><%= components[comp_idx]['position_system'] %></td>
+                                    <td><%= components[comp_idx]['position'] %></td>
+                                </tr>
+                            <% } %>
+                        </table>
+                        <% for(var comp_idx=0; comp_idx<components.length; comp_idx++){ %>
+                            <div name="{{ erpGraphId }}_position_<%= components[comp_idx]['position'] %>" style="display: none;">
+                                <%= title %>
+                                <br><%= components[comp_idx]['name'] %>
+                                <br><%= components[comp_idx]['latency_peak'] %> ms
+                                <br><%= components[comp_idx]['latency_peak_type'] %>
+                            </div>
+                        <% } %>
+                    </td>
+                </tr>
+            <% } %>
+        </table>
+    </div>
+</script>

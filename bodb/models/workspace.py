@@ -101,6 +101,26 @@ class Workspace(models.Model):
     def get_absolute_url(self):
         return reverse('workspace_view', kwargs={'pk': self.pk})
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'created_by_id': self.created_by.id,
+            'created_by': self.get_created_by_str(),
+            'title': self.title,
+            'description': self.description
+        }
+
+    @staticmethod
+    def get_workspace_list(workspaces, user):
+        profile=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+        workspace_list=[]
+        for w in workspaces:
+            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).count()>0
+            workspace_list.append([subscribed_to_user,w])
+        return workspace_list
+
 
 class WorkspaceInvitation(models.Model):
     STATUS_OPTIONS=(
@@ -333,6 +353,15 @@ class BodbProfile(models.Model):
             user_list.append([subscribed_to_user,u])
         return user_list
 
+    @staticmethod
+    def as_json(user):
+        return {
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
+        }
 
 # create a new profile for the given user
 def create_user_profile(user):

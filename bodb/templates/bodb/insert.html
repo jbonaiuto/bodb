@@ -67,12 +67,13 @@
                 </tr>
                 <tr>
                     <td>
-                        A summary of experimental data (SED). Currently three types are available for entry:
+                        A summary of experimental data (SED). Currently four types are available for entry:
                         <ul>
                             <li><a href="/bodb/sed/generic/new/">Generic Summary of Experimental Data</a></li>
                             <li><a href="/bodb/sed/imaging/new/">Summary of Brain Imaging Data</a></li>
                             <li><a href="/bodb/sed/erp/new/">Summary of Event Related Potential Data</a></li>
                             <li><a href="/bodb/sed/connectivity/new/">Summary of Connectivity Data</a></li>
+                            <li><a href="/bodb/sed/gesture/new/">Summary of Gesture Data</a></li>
                         </ul>
                     </td>
                 </tr>
@@ -80,12 +81,13 @@
             {% if perms.bodb.add_model %}
                 <tr class="section_header">
                     <td id="modelHeader">
-                        <strong><a href="/bodb/model/new/">Model</a></strong>
+                        <strong><a href="/bodb/model/new/wizard/">Model</a></strong>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle)
+                        Structured description of a model with links to related entities. (e.g. Didday Model based on the Winner-Take-All Principle).
+                        <br><a href="/bodb/model/new/   ">Expert model entry</a>
                     </td>
                 </tr>
                 <tr><td>&nbsp;</td></tr>
@@ -117,7 +119,7 @@
             </li>
         {% endif %}
         {% if perms.bodb.add_model %}
-            <li data-id="modelHeader" data-button="Next" data-options="tipLocation:top">
+            <li data-id="modelHeader" data-button="Next" data-options="tipLocation:bottom">
                 <h2>Models</h2>
                 <p>Models (conceptual and computational) are documented in a hierarchical manner by decomposing them into modules, each with defined inputs and outputs and which may further be composed of submodules. They are linked to the BOPs they implement, the brain regions they simulate, and the SEDs used to design and test them.</p>
             </li>

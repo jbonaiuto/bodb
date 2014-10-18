@@ -1,29 +1,6 @@
 {% extends "base_generic.html" %}
 {% block extrahead %}
     <title>BODB - Search ModelDB</title>
-    <script>
-        function importModel(accession_number, authors, title, description, keywords, lit_id, lit_authors, lit_year, lit_title)
-        {
-            author_list=authors.split(', ');
-            for(var i=0; i<author_list.length; i++)
-            {
-                author_name=author_list[i];
-                names=author_name.split(' ');
-                opener.addmodelAuthor(names[1], names[0]);
-            }
-            opener.document.getElementById('id_modeldb_accession_number').value=accession_number;
-            opener.document.getElementById('id_title').value=title;
-            opener.document.getElementById('id_brief_description').value=description;
-            opener.document.getElementById('id_tags').value=keywords;
-            opener.animatedcollapse.show(['urlData']);
-            if(lit_id>-1)
-            {
-                opener.addLiteratureMultiple(lit_id, [lit_authors,lit_year,lit_title]);
-                opener.animatedcollapse.show('referenceData');
-            }
-            self.close();
-        }
-    </script>
 {% endblock %}
 {% block content %}
     <div id="list" width=100%>
@@ -55,7 +32,7 @@
                     </td>
                 </tr>
                 <tr class="section_header">
-                    <td colspan=7>Results (1-{{ results|length }}</td>
+                    <td colspan=7>Results (1-{{ search_results|length }})</td>
                 </tr>
                 <tr class="col_header">
                     <td>&nbsp;</td>
@@ -70,7 +47,7 @@
                             {% if search_result.exists %}
                                 Import
                             {% else %}
-                                <a href="" onclick="return importModel('{{ search_result.accession_number }}','{{ search_result.authors|escapejs }}','{{ search_result.title|escapejs }}','{{ search_result.description|escapejs }}','{{ search_result.keywords|escapejs }}'{% if search_result.literature %},{{ search_result.literature.id }}, '{{ search_result.literature.author_names }}', '{{ search_result.literature.year }}','{{ search_result.literature.title }}'{% else %}-1,'','',''{% endif %});">Import</a>
+                                <a href="" onclick="opener.importModel('{{ search_result.accession_number }}','{{ search_result.authors|escapejs }}','{{ search_result.title|escapejs }}','{{ search_result.description|escapejs }}','{{ search_result.keywords|escapejs }}'{% if search_result.literature %},{{ search_result.literature.id }}, '{{ search_result.literature.author_names }}', '{{ search_result.literature.year }}','{{ search_result.literature.title }}'{% else %}-1,'','',''{% endif %});self.close();">Import</a>
                             {% endif %}
                         </td>
                         <td><a href="http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model={{ search_result.accession_number }}">{{ search_result.title }}</a></td>

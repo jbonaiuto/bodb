@@ -82,6 +82,8 @@
     <div id="backgroundPopup"></div>
     <div id='savingMsg' style='display: none;'>Saving, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='savingOver' style='display: none;'></div>
+    <div id='searchingMsg' style='display: none;'>Searching, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
+    <div id='searchingOver' style='display: none;'></div>
     {% if ispopup %}
         <div id="user_info">
             [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
@@ -126,7 +128,6 @@
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
                 <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
-                <li id="workspaces_link"><a href="/bodb/workspaces/">Workspaces</a></li>
             {% endif %}
             {% if user.is_superuser %}
                 <li><a href="/bodb/admin/">Admin</a></li>

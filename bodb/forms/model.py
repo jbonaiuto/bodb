@@ -1,8 +1,10 @@
+from django.forms import Form
 from django import forms
 from django.forms.models import modelformset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm, DocumentForm
-from bodb.models import ModelAuthor, Model, Module, Author, Variable, Document, RelatedModel
+from bodb.models import ModelAuthor, Model, Module, Author, Variable, Document, RelatedModel, Literature
 from registration.models import User
+from taggit.forms import TagField
 
 
 class ModelForm(DocumentWithLiteratureForm):
@@ -17,6 +19,27 @@ class ModelForm(DocumentWithLiteratureForm):
     class Meta:
         model = Model
 
+class ModelForm1(Form):
+    collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
+    title = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
+    authors = forms.ModelMultipleChoiceField(queryset=ModelAuthor.objects.order_by('order'),
+        widget=forms.MultipleHiddenInput, required=False)
+    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
+    tags = TagField(required=False)
+    public = forms.BooleanField(help_text='Make the entry public', required=False)
+    execution_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    documentation_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    description_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    simulation_url = forms.URLField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
+    modeldb_accession_number = forms.IntegerField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
+    literature = forms.ModelMultipleChoiceField(queryset=Literature.objects.order_by('title'),
+        widget=forms.MultipleHiddenInput, required=False)
+
+class ModelForm2(Form):
+    narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+
+class ModelForm6(Form):
+    draft=forms.CharField(widget=forms.HiddenInput,required=False)
 
 class ModuleForm(DocumentForm):
     parent = forms.ModelChoiceField(queryset=Module.objects.all(), widget=forms.HiddenInput,required=True)

@@ -19,8 +19,7 @@ The toolbar contains the options Insert, Search, Visualization, Drafts, Favorite
 * Visualization opens Brainsurfer, a three-dimensional visualization tool for human and brain atlases where the user can view coordinates associated with Brain Imaging SEDs 
 * Drafts allows users to view and edit current records that they are working on
 * Favorites does something with Active Coordinates
-* Workspace allows users to workon and adminster their Collaborative Workspaces (CoWos)
-* About leads to the page describing the history of BODB and its implementors 
+* About leads to the page describing the history of BODB and its implementors
 * Admin allows administrators to manage other users and brain atlases
 
 User Information

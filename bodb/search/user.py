@@ -46,6 +46,30 @@ class UserSearch(object):
             return reduce(op,username_filters) | reduce(op,first_name_filters) | reduce(op,last_name_filters)
         return Q()
 
+    # search by title
+    def search_title(self, userId):
+        if self.title:
+            return Q(id=-2)
+        return Q()
+
+    # search by description
+    def search_description(self, userId):
+        if self.description:
+            return Q(id=-2)
+        return Q()
+
+    # search by narrative
+    def search_narrative(self, userId):
+        if self.narrative:
+            return Q(id=-2)
+        return Q()
+
+    # search by tags
+    def search_tags(self, userId):
+        if self.tags:
+            return Q(id=-2)
+        return Q()
+
     def search_username(self, userId):
         if self.username:
             return Q(username__icontains=self.username)

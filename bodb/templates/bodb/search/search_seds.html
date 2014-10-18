@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<script type="text/javascript" src="{% static 'bodb/scripts/jquery.safeEnter.js' %}"></script>
 <script type="text/javascript">
     function updateSEDSearchOptions(sedType)
     {
@@ -14,15 +15,57 @@
             animatedcollapse.show(['sedERPTypeOptions']);
         else
             animatedcollapse.hide(['sedERPTypeOptions']);
+        if(sedType=='neurophysiology')
+            animatedcollapse.show(['sedNeurophysiologyTypeOptions']);
+        else
+            animatedcollapse.hide(['sedNeurophysiologyTypeOptions']);
+    }
+
+    var searchFinished=false;
+
+    function submitSearchSEDs()
+    {
+        searchFinished=false;
+        document.getElementById('searchingMsg').style.display = 'block';
+        document.getElementById('searchingOver').style.display = 'block';
+        var frm = $('#sed_search_form');
+        $.ajax({
+            aysnc: false,
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: sedSearchFinished,
+            error: function(data) {
+                alert("Something went wrong!");
+            }
+        });
+    }
+
+    function sedSearchFinished(data)
+    {
+        processSEDResults(data);
+        load{{ erpGraphId }}Popups();
+        searchFinished=true;
     }
 
     animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
     animatedcollapse.addDiv('sedImagingTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedConnectivityTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedERPTypeOptions', 'fade=1');
+    animatedcollapse.addDiv('sedNeurophysiologyTypeOptions', 'fade=1');
 
     $( document ).ready(function() {
         document.getElementById('sedData').style.display='inline';
+        searchFinished=true;
+        $('input[type="text"]', $('#sed_search_form')).each(function()
+        {
+            $(this)
+                    .listenForEnter()
+                    .bind('pressedEnter', function()
+                    {
+                        submitSearchSEDs();
+                    });
+        });
     });
 </script>
 <div id="sedDiv" style="display:{%ifequal searchType 'seds'%}block{% else %}none{% endifequal %}">
@@ -107,6 +150,22 @@
                                             <tr>
                                                 <td><strong>Coordinate Range</strong></td>
                                                 <td>{{ sed_search_form.x_min }} &#8804; x &#8804; {{ sed_search_form.x_max }}, {{ sed_search_form.y_min }} &#8804; y &#8804; {{ sed_search_form.y_max }}, {{ sed_search_form.z_min }} &#8804; z &#8804; {{ sed_search_form.z_max }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div id="sedNeurophysiologyTypeOptions" style="display:{% if sed_search_form.type.value == 'neurophysiology' %}inline{% else %}none{% endif %}">
+                                        <table class="tab_panel">
+                                            <tr>
+                                                <td width=20%><strong>Condition</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Unit type</strong></td>
+                                                <td>{{ sed_search_form.neurophys_unit_type }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_unit_type_options }}
+                                                </td>
                                             </tr>
                                         </table>
                                     </div>
@@ -217,11 +276,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Tags</strong></td>
-                                <td>{{ sed_search_form.tags }}&nbsp;
-                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.tags_options }}</td>
-                            </tr>
-                            <tr>
                                 <td><strong>Public</strong></td>
                                 <td>{{ sed_search_form.public }}</td>
                             </tr>
@@ -307,43 +361,45 @@
                     <strong>Search criteria combination:</strong> {{ sed_search_form.search_options }}
                     <br>Search federated databases (warning this may drastically slow the search):
                     <br>CoCoMac {{ sed_search_form.search_cocomac }} Brede {{ sed_search_form.search_brede }}
-                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('sed_search_form').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <br><input class="btn" type="button" value="Search" onclick="submitSearchSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
         </table>
     </form>
-    <table class="tab_panel">
-        <tr>
-            <td colspan=10>&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan=10 style="padding:0px">
-                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
-            </td>
-        </tr>
-        <tr class="section_header">
-            <td colspan=10>Results</td>
-        </tr>
-        <tr class="table_header">
-            <td colspan=10>
-                <a href="/bodb/sed/generic/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new generic SED</a><br>
-                <a href="/bodb/sed/imaging/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new brain imaging SED</a><br>
-                <a href="/bodb/sed/erp/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new ERP SED</a><br>
-                <a href="/bodb/sed/connectivity/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new connectivity SED</a>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="10">
-                <div id="sedData" style="display:block;">
-                    {% include "bodb/sed/sed_selection_list_view.html" %}
-                </div>
-            </td>
-        </tr>
+    <div id="sed_section" name="sed_section" style="display:{% if generic_seds or connectivity_seds or erp_seds or imaging_seds %}block{% else %}none{% endif %}">
+        <table class="tab_panel">
+            <tr>
+                <td colspan=10>&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan=10 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=10>Results</td>
+            </tr>
+            <tr class="table_header">
+                <td colspan=10>
+                    <a href="/bodb/sed/generic/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new generic SED</a><br>
+                    <a href="/bodb/sed/imaging/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new brain imaging SED</a><br>
+                    <a href="/bodb/sed/erp/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new ERP SED</a><br>
+                    <a href="/bodb/sed/connectivity/new/?type={{ type }}{% if ispopup %}&_popup=1{% endif %}{% if multiple %}&_multiple=1{% endif %}">Add new connectivity SED</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="10">
+                    <div id="sedData" style="display:block;">
+                        {% include "bodb/sed/sed_selection_list_view.html" %}
+                    </div>
+                </td>
+            </tr>
 
-        <tr>
-            <td colspan=10 style="padding:0px">
-                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
-            </td>
-        </tr>
-    </table>
+            <tr>
+                <td colspan=10 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>

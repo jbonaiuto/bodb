@@ -30,6 +30,26 @@ class Species(models.Model):
     # when printing instances of this class, print "genus species"
     def __unicode__(self):
         return u"%s %s" % (self.genus_name, self.species_name)
+    
+    
+class Primate(models.Model):
+    HABITAT_CHOICES = (
+        ('captive', 'Captive'),
+        ('wild', 'Wild'),
+        )
+    name = models.CharField(max_length=200)
+    species = models.ForeignKey(Species)
+    birth_date = models.DateField(blank=True)
+    geographic_location = models.CharField(max_length=200) #this should be some kind of geo model
+    habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
+    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    #creation_time = models.DateTimeField(blank=True)
+    class Meta:
+        app_label='bodb'
+
+    # when printing instances of this class, print "genus species"
+    def __unicode__(self):
+        return u"%s" % (self.name)
 
 
 # Brain nomenclature
@@ -115,6 +135,20 @@ class BrainRegion(models.Model):
             return u"%s" % self.abbreviation
         else:
             return u"%s" % self.name
+
+    def as_json(self):
+        json={
+            'id': self.id,
+            'name': self.name,
+            'abbreviation': self.abbreviation,
+            'type': self.brain_region_type,
+            'parent_region': '',
+            'nomenclature': self.nomenclature.__unicode__(),
+            'species': ','.join([species.__unicode__() for species in self.nomenclature.species.all()])
+        }
+        if self.parent_region is not None:
+            json['parent_region']=self.parent_region.__unicode__()
+        return json
 
     def get_absolute_url(self):
         return reverse('brain_region_view', kwargs={'pk': self.pk})

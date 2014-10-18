@@ -31,6 +31,7 @@ def runSEDSearch(search_data, userId):
 
     q = reduce(op,filters) & Document.get_security_q(user) & Q(connectivitysed__cocomacconnectivitysed__isnull=True) & \
         Q(brainimagingsed__bredebrainimagingsed__isnull=True)
+    print(q)
     results=SED.objects.filter(q).order_by('title').select_related().distinct()
     return results
 
@@ -328,6 +329,27 @@ class SEDSearch(DocumentWithLiteratureSearch):
                 op=operator.and_
             words=parse_tags(self.source)
             keyword_filters=[Q(erpsed__components__source__icontains=word) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    def search_neurophys_condition(self, userId):
+        if self.type=='neurophysiology' and self.neurophys_condition:
+            op=operator.or_
+            if self.neurophys_condition_options=='all':
+                op=operator.and_
+            words=parse_tags(self.neurophys_condition)
+            name_filters=[Q(neurophysiologysed__neurophysiologycondition__name__icontains=word) for word in words]
+            description_filters=[Q(neurophysiologysed__neurophysiologycondition__description__icontains=word) for word in words]
+            return reduce(op,name_filters) | reduce(op,description_filters)
+        return Q()
+
+    def search_neurophys_unit_type(self, userId):
+        if self.type=='neurophysiology' and self.neurophys_unit_type:
+            op=operator.or_
+            if self.neurophys_unit_type_options=='all':
+                op=operator.and_
+            words=parse_tags(self.neurophys_unit_type)
+            keyword_filters=[Q(neurophysiologysed__neurophysiologycondition__recordingtrial__unit__type__icontains=word) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 

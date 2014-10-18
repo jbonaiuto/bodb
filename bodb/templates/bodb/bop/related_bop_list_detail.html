@@ -34,7 +34,7 @@
         return false;
     }
 </script>
-<div id="bopData" style="display:none">
+<div id="bopData" style="display:{% if showRelatedBOPs %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">

@@ -1,26 +1,60 @@
-{% if users|length %}
+<div id="user_list" name="user_list" style="display:{% if users|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="col_header">
+            <td width=25px>&nbsp;</td>
             <td style="width:120px">&nbsp;</td>
             <td style="width:120px">Username</td>
-            <td style="width:150px">Real Name</td>
-            <td style="width:150px">Email</td>
+            <td>Real Name</td>
+            <td style="width:200px">Email</td>
         </tr>
-        {% for subscribed,u in users %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>
-                    {% if not u == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ u.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}
+        <tr>
+            <td colspan="5">
+                <div id="users" name="users">
+                    {% for subscribed,u in users %}
+                        <div id="user-{{ forloop.counter0 }}" name="user">
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                    <td width=25px>{{ forloop.counter }}</td>
+                                    <td style="width:120px">
+                                        {% if not u == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ u.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}
+                                    </td>
+                                    <td style="width:120px">
+                                        <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ u.first_name }} {{ u.last_name }}
+                                    </td>
+                                    <td style="width:200px">
+                                        {{ u.email }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="user-template">
+    <div id="user-<%= idx %>" name="user">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=25px><%= idx %></td>
+                <td style="width:120px">
+                    <% if(id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= id %>');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %>
+                </td>
+                <td style="width:120px">
+                    <a href="/bodb/user/<%= id %>/"><%= username %></a>
                 </td>
                 <td>
-                    <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
+                    <%= first_name %> <%= last_name %>
                 </td>
-                <td>
-                    {{ u.first_name }} {{ u.last_name }}
-                </td>
-                <td>
-                    {{ u.email }}
+                <td style="width:200px">
+                    <%= email %>
                 </td>
             </tr>
-        {% endfor %}
-    </table>
-{% endif %}
+        </table>
+    </div>
+</script>

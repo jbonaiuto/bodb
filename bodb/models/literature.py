@@ -139,6 +139,16 @@ class Literature(models.Model):
     def bibtex_format(self):
         return ''
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'authors': self.author_names(),
+            'year': self.year,
+            'title': self.title,
+            'collator_id': self.collator.id,
+            'collator': self.get_collator_str(),
+            'string': self.str()
+        }
     @staticmethod
     def get_reference_list(references, user):
         profile=None
@@ -428,8 +438,14 @@ def importPubmedLiterature(pubmed_id):
             # list of author ids
             for idx,author in enumerate(authors):
                 full_name = author.split()
-                last_name = unicode(full_name[0],'utf-8')
-                first_name = unicode(full_name[1],'utf-8')
+                try:
+                    last_name = unicode(full_name[0],'utf-8')
+                except:
+                    last_name = full_name[0]
+                try:
+                    first_name = unicode(full_name[1],'utf-8')
+                except:
+                    first_name = full_name[1]
 
                 # get Id if author exists
                 if Author.objects.filter(first_name=first_name, last_name=last_name):

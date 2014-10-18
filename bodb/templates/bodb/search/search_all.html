@@ -8,9 +8,46 @@
     animatedcollapse.addDiv('ssrResults', 'fade=1');
     animatedcollapse.addDiv('brainRegionResults', 'fade=1');
     animatedcollapse.addDiv('userResults', 'fade=1');
+    animatedcollapse.addDiv('workspaceResults', 'fade=1');
+
+    function submitSearchAll()
+    {
+        document.getElementById('searchingMsg').style.display = 'block';
+        document.getElementById('searchingOver').style.display = 'block';
+        var frm = $('#allSearchForm');
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: doneSearchAll,
+            error: function(data) {
+                alert("Something went wrong!");
+            }
+        });
+        return false;
+    }
+
+    function doneSearchAll(data)
+    {
+        processModelResults(data);
+
+        processBOPResults(data);
+
+        processSEDResults(data);
+
+        processSSRResults(data);
+
+        processLiteratureResults(data);
+
+        processBrainRegionResults(data);
+
+        processUserResults(data);
+
+        processWorkspaceResults(data);
+    }
 </script>
 <div id="allDiv" style="display:{%ifequal searchType 'all'%}block{% else %}none{% endifequal %}">
-    <form id="allSearchForm" method="post" action="">
+    <form id="allSearchForm" method="post" action="" onsubmit="return submitSearchAll()">
         {% csrf_token %}
         <input type="hidden" id="searchType" name="searchType" value="all"/>
         <table class="tab_panel">
@@ -134,7 +171,7 @@
                     <strong>Search criteria combination:</strong> {{ form.search_options }}
                     <br>Search federated databases (warning this may drastically slow the search):
                     <br>CoCoMac {{ form.search_cocomac }} Brede {{ form.search_brede }}
-                    <br><input class="btn" type="button" value="Search" onclick="document.getElementById('allSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    <br><input id="allSearchButton" class="btn" type="button" value="Search" onclick="submitSearchAll();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
             {% if literatures %}
@@ -227,7 +264,7 @@
                     </td>
                 </tr>
             {% endif %}
-            {% if generic_seds or connectivity_seds or erp_seds or imaging_seds %}
+            {% if generic_seds or connectivity_seds or erp_seds or imaging_seds or neurophysiology_seds %}
                 <tr>
                     <td>&nbsp;</td>
                 </tr>
@@ -340,6 +377,7 @@
                     </td>
                 </tr>
             {% endif %}
+>>>>>>> fb63911... added neurophys ui
         </table>
     </form>
 </div>

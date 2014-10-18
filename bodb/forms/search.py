@@ -11,11 +11,48 @@ SEARCH_CHOICES = (
     ('all', 'all'),
     ('any', 'any')
 )
-
+NUM_RESULTS_CHOICES = (
+    ('10','10'),
+    ('25','25'),
+    ('50','50'),
+    ('100','100'),
+)
 class SearchForm(forms.Form):
     keywords = forms.CharField(help_text="Keyword search", required=False)
     keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    results_per_page = forms.ChoiceField(choices=NUM_RESULTS_CHOICES, help_text='Number of results to show on one page', required=False)
+
+
+class WorkspaceSearchForm(SearchForm):
+    title = forms.CharField(help_text="Title", required=False)
+    title_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    description = forms.CharField(help_text="Description", required=False)
+    description_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    created_from = forms.DateTimeField(help_text="Earliest creation date", widget=forms.DateTimeInput, required=False)
+    created_to = forms.DateTimeField(help_text="Latest creation date", widget=forms.DateTimeInput, required=False)
+    created_by = forms.BooleanField(help_text="Only search your entries", required=False)
+    username = forms.CharField(help_text='Username of the creator',required=False)
+    first_name = forms.CharField(help_text='First name of the creator',required=False)
+    last_name = forms.CharField(help_text='Last name of the creator',required=False)
+    related_brain_region = forms.CharField(help_text='Related brain region', required=False)
+    related_brain_region_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_bop = forms.CharField(help_text="Related BOP", required=False)
+    related_bop_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_model = forms.CharField(help_text="Related Model", required=False)
+    related_model_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_sed = forms.CharField(help_text="Related SED", required=False)
+    related_sed_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_ssr = forms.CharField(help_text="Related SSR", required=False)
+    related_ssr_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_title = forms.CharField(help_text="Related literature title", required=False)
+    related_literature_title_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_author = forms.CharField(help_text="Related literature author", required=False)
+    related_literature_author_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    related_literature_year_min = forms.CharField(help_text="Related literature min year", required=False)
+    related_literature_year_max = forms.CharField(help_text="Related literature max year", required=False)
+    related_literature_annotation = forms.CharField(help_text="Related literature annotation", required=False)
+    related_literature_annotation_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 
 
 class DocumentSearchForm(SearchForm):
@@ -212,6 +249,10 @@ class SEDSearchForm(DocumentWithLiteratureSearchForm):
     electrode_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     source=forms.CharField(help_text='Source', required=False)
     source_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_condition=forms.CharField(help_text='Condition', required=False)
+    neurophys_condition_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_unit_type=forms.CharField(help_text='Unit Type', required=False)
+    neurophys_unit_type_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
     search_brede = forms.BooleanField(help_text='Search Brede', required=False)
 
