@@ -1,7 +1,3 @@
-import matplotlib
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-
-matplotlib.use('Agg')
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
