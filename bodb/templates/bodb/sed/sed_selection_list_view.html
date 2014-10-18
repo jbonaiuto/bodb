@@ -12,7 +12,6 @@
                 </tr>
             {% endif %}
         {% endif %}
-        {% if generic_seds|length %}
         <tr>
             <td colspan="6">
                 <div id="generic_sed_list" name="generic_sed_list" style="display:{% if generic_seds|length %}block{% else %}none{% endif %}">
@@ -20,8 +19,6 @@
                 </div>
             </td>
         </tr>
-        {% endif %}
-        {% if connectivity_seds|length %}
         <tr>
             <td colspan="6">
                 <div id="connectivity_sed_list" name="connectivity_sed_list" style="display:{% if connectivity_seds|length %}block{% else %}none{% endif %}">
@@ -29,8 +26,6 @@
                 </div>
             </td>
         </tr>
-        {% endif %}
-        {% if imaging_seds|length %}
         <tr>
             <td colspan="6">
                 <div id="imaging_sed_list" name="imaging_sed_list" style="display:{% if imaging_seds|length %}block{% else %}none{% endif %}">
@@ -38,8 +33,6 @@
                 </div>
             </td>
         </tr>
-        {% endif %}
-        {% if erp_seds|length %}
         <tr>
             <td colspan="6">
                 <div id="erp_sed_list" name="erp_sed_list" style="display:{% if erp_seds|length %}block{% else %}none{% endif %}">
@@ -47,14 +40,11 @@
                 </div>
             </td>
         </tr>
-        {% endif %}
-        {% if neurophysiology_seds|length %}
-            <tr>
-                <td colspan="6">
-                    {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
-                </td>
-            </tr>
-        {% endif %}
+        <tr>
+            <td colspan="6">
+                {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+            </td>
+        </tr>
         <tr>
             <td colspan=6>
                 <br>

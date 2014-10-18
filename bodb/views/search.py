@@ -101,7 +101,6 @@ class SearchView(FormView):
             models=runModelSearch(model_form.cleaned_data, user.id)
         elif searchType=='seds' and sed_form.is_valid():
             seds=runSEDSearch(sed_form.cleaned_data, user.id)
-            print(len(seds))
             for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
                     erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
@@ -271,6 +270,8 @@ class SearchView(FormView):
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                             for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                     'ssrs': ssr_list,
                     'ssrs_count': len(ssr_list),
                     'ssrs_start_index':1,
@@ -320,6 +321,8 @@ class SearchView(FormView):
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                    'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                             for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                     'ssrs': ssrs.object_list,
                     'ssrs_count': ssr_paginator.count,
                     'ssrs_num_pages': ssr_paginator.num_pages,

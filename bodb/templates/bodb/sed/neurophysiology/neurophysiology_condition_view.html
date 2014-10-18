@@ -3,30 +3,12 @@
 {% block extrahead %}
     <title>BODB - View Neurophysiology Condition: {{ object.title }}</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
     <script type="text/javascript">
-        function realignUnitPlot(unit_id, csrf_token)
-        {
-            var event=document.getElementById('unit_'+unit_id+'_realign').value;
-            var data={'unit': unit_id, 'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
-            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignUnitPlot };
-            $.ajax(args);
-            return false;
-        }
-
-        function doneRealignUnitPlot(res, status)
-        {
-            var txt = res.responseText;
-            var data = eval('('+txt+')');
-            if (status=="success")
-            {
-                document.getElementById('unit_'+data.unit+'_plot').src=data.diagram_url;
-            }
-            else
-                alert(txt);
-        }
-
         function realignPopulationMeanPlot(csrf_token)
         {
+            document.getElementById('realigningMsg').style.display='block';
+            document.getElementById('realigningOver').style.display='block';
             var event=document.getElementById('population_realign').value;
             var data={'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
             var args={type:"POST", url:"/bodb/sed/neurophysiology/condition_population_realign/", data: data, complete: doneRealignPopulationMeanPlot };
@@ -41,6 +23,9 @@
             if (status=="success")
             {
                 document.getElementById('mean_pop_rate_plot').src=data.diagram_url;
+                document.getElementById('realigningMsg').style.display='none';
+                document.getElementById('realigningOver').style.display='none';
+
             }
             else
                 alert(txt);
@@ -85,13 +70,13 @@
                 <strong>Area:</strong> {{ unit.area }}
             </td>
             <td>
-                Realign: <select id="unit_{{ unit.id }}_realign" onchange="realignUnitPlot({{ unit.id }}, '{{ csrf_token }}')">
+                Realign: <select id="unit_{{ unit.id }}_condition_{{ object.id }}_realign" onchange="realignUnitConditionPlot({{ unit.id }}, {{ object.id }}, '{{ csrf_token }}')">
                 <option value="start">trial start</option>
                 {% for event in events %}
                     <option value="{{ event }}">{{ event }}</option>
                 {% endfor %}
             </select>
-                <br><img id="unit_{{ unit.id }}_plot" src="{{ unit.diagram_url }}" width="30%" />
+                <br><img id="unit_{{ unit.id }}_condition_{{ object.id }}_plot" src="{{ unit.diagram_url }}" width="30%" />
             </td>
         </tr>
     {% endfor %}

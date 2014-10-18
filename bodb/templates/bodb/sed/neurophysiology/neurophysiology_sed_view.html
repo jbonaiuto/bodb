@@ -1,8 +1,10 @@
 {% extends "base_generic.html" %}
 {% load staticfiles %}
+{% load bodb_extras %}
 {% block extrahead %}
     <title>BODB - View {{ neurophysiologysed.title }} SED</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
@@ -151,33 +153,48 @@
         </tr>
     {% endif %}
     <tr class="section_subheader">
-        <td colspan=2>Conditions</td>
+        <td width=200px>Units</td>
+        <td>Conditions</td>
     </tr>
-    {% for condition in conditions %}
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="3"><strong>Name:</strong> <a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a></td>
-        </tr>
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="3"><strong>Description:</strong> {{ condition.name }}</td>
-        </tr>
-    {% endfor %}
-    <tr class="section_subheader">
-        <td colspan=2>Units</td>
+    <tr>
+        <td colspan="2">
+            <table class="tab_panel">
+                <tr class="odd_row">
+                    <td width=200px>&nbsp;</td>
+                    {% for condition in conditions %}
+                        <td>
+                            <strong><a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a></strong>
+                            <br>{{ condition.description }}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% for unit in units %}
+                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                        <td><strong>ID:</strong> <a href="/bodb/sed/neurophysiology/unit/{{ unit.id }}/">{{ unit.id }}</a></td>
+                        {% for condition in conditions %}
+                            <td rowspan="3">
+                                Realign: <select id="unit_{{ unit.id }}_condition_{{ condition.id }}_realign" onchange="realignUnitConditionPlot({{ unit.id }}, {{ condition.id }}, '{{ csrf_token }}')">
+                                <option value="start">trial start</option>
+                                {% for event in events %}
+                                    <option value="{{ event }}">{{ event }}</option>
+                                {% endfor %}
+                                </select>
+                                <br><img id="unit_{{ unit.id }}_condition_{{ condition.id }}_plot" src="{{ unit_diagram_urls|lookup:unit.id|lookup:condition.id }}" width="90%"/>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                        <td><strong>Type:</strong> {{ unit.type }}</td>
+                    </tr>
+                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                        <td><strong>Area:</strong> {{ unit.area }}</td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+        </td>
     </tr>
-    {% for unit in units %}
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="2"><strong>ID:</strong> <a href="/bodb/sed/neurophysiology/unit/{{ unit.id }}/">{{ unit.id }}</a></td>
-        </tr>
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="2"><strong>Type:</strong> {{ unit.type }}</td>
-        </tr>
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="2"><strong>Area:</strong> {{ unit.area }}</td>
-        </tr>
-        <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-            <td colspan="2"><img src="{{ unit.diagram_url }}" width="50%" /></td>
-        </tr>
-    {% endfor %}
+
     {% if figures %}
         <tr class="section_subheader">
             <td colspan=2>
@@ -347,9 +364,6 @@
     </tr>
     </table>
     <span id="sed_message" class="messages"></span>
-    {% if perms.bodb.change_sed and canEdit %}
-        <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/sed/connectivity/{{neurophysiologysed.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-    {% endif %}
     {% if ispopup %}
         <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
     {% else %}

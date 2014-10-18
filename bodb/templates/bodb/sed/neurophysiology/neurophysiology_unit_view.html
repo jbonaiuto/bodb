@@ -3,28 +3,7 @@
 {% block extrahead %}
     <title>BODB - View Neurophysiology Unit: {{ object.id }}</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
-    <script type="text/javascript">
-        function realignConditionPlot(condition_id, csrf_token)
-        {
-            var event=document.getElementById('condition_'+condition_id+'_realign').value;
-            var data={'unit': {{ object.id }}, 'condition': condition_id, 'event': event, 'csrfmiddlewaretoken': csrf_token};
-            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignConditionPlot };
-            $.ajax(args);
-            return false;
-        }
-
-        function doneRealignConditionPlot(res, status)
-        {
-            var txt = res.responseText;
-            var data = eval('('+txt+')');
-            if (status=="success")
-            {
-                document.getElementById('condition_'+data.condition+'_plot').src=data.diagram_url;
-            }
-            else
-                alert(txt);
-        }
-    </script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -50,13 +29,13 @@
                 </td>
             </tr>
                 <td>
-                    Realign: <select id="condition_{{ condition.id }}_realign" onchange="realignConditionPlot({{ condition.id }}, '{{ csrf_token }}')">
+                    Realign: <select id="unit_{{ object.id }}_condition_{{ condition.id }}_realign" onchange="realignUnitConditionPlot({{ object.id }},{{ condition.id }}, '{{ csrf_token }}')">
                     <option value="start">trial start</option>
                     {% for event in events %}
                         <option value="{{ event }}">{{ event }}</option>
                     {% endfor %}
                 </select>
-                    <br><img id="condition_{{ condition.id }}_plot" src="{{ condition.diagram_url }}" width="30%" />
+                    <br><img id="unit_{{ object.id }}_condition_{{ condition.id }}_plot" src="{{ condition.diagram_url }}" width="30%" />
                 </td>
             </tr>
         {% endfor %}
