@@ -224,6 +224,7 @@ class SEDDetailView(DocumentDetailView):
             context['units']=Unit.objects.filter(recordingtrial__condition__sed=self.object).distinct()
             context['unit_diagram_urls']={}
             event_names=[]
+            event_descriptions=[]
             for unit in context['units']:
                 if not unit.id in context['unit_diagram_urls']:
                     context['unit_diagram_urls'][unit.id]={}
@@ -236,7 +237,8 @@ class SEDDetailView(DocumentDetailView):
                 for event in Event.objects.filter(trial__unit=unit).distinct():
                     if not event.name in event_names:
                         event_names.append(event.name)
-            context['events']=event_names
+                        event_descriptions.append(event.description)
+            context['events']=zip(event_names,event_descriptions)
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -1248,10 +1250,12 @@ class NeurophysiologyConditionView(DetailView):
             unit.diagram_url='/media/export/%s' % filename
         context['units']=units
         event_names=[]
+        event_descriptions=[]
         for event in Event.objects.filter(trial__condition=self.object).distinct():
             if not event.name in event_names:
                 event_names.append(event.name)
-        context['events']=event_names
+                event_descriptions.append(event.description)
+        context['events']=zip(event_names,event_descriptions)
         return context
 
 class NeurophysiologyUnitView(DetailView):
@@ -1269,10 +1273,12 @@ class NeurophysiologyUnitView(DetailView):
             condition.diagram_url='/media/export/%s' % filename
         context['conditions']=conditions
         event_names=[]
+        event_descriptions=[]
         for event in Event.objects.filter(trial__unit=self.object).distinct():
             if not event.name in event_names:
                 event_names.append(event.name)
-        context['events']=event_names
+                event_descriptions.append(event.description)
+        context['events']=zip(event_names,event_descriptions)
         return context
 
 class NeurophysiologyUnitRealignView(JSONResponseMixin, BaseUpdateView):

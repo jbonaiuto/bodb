@@ -119,12 +119,6 @@
     <tr valign="top">
         <td colspan="2"><strong>Tags:</strong> {{ neurophysiologysed.tags.all|join:', ' }}</td>
     </tr>
-    <tr class="section_subheader">
-        <td colspan=2>Brief Description</td>
-    </tr>
-    <tr>
-        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
-    </tr>
     <tr>
         <td colspan=2 valign=top>
             <strong>Public:</strong>&nbsp;
@@ -153,6 +147,25 @@
         </tr>
     {% endif %}
     <tr class="section_subheader">
+        <td colspan=2>Brief Description</td>
+    </tr>
+    <tr>
+        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
+    </tr>
+    <tr class="section_subheader">
+        <td colspan="2">Trial Events</td>
+    </tr>
+    <tr class="odd_row">
+        <td>trial start</td>
+        <td>start of the trial</td>
+    </tr>
+    {% for event_name,event_description in events %}
+        <tr class="{% cycle 'even_row' 'odd_row' %}">
+            <td>{{ event_name }}</td>
+            <td>{{ event_description }}</td>
+        </tr>
+    {% endfor %}
+    <tr class="section_subheader">
         <td width=200px>Units</td>
         <td>Conditions</td>
     </tr>
@@ -175,8 +188,8 @@
                             <td rowspan="3">
                                 Realign: <select id="unit_{{ unit.id }}_condition_{{ condition.id }}_realign" onchange="realignUnitConditionPlot({{ unit.id }}, {{ condition.id }}, '{{ csrf_token }}')">
                                 <option value="start">trial start</option>
-                                {% for event in events %}
-                                    <option value="{{ event }}">{{ event }}</option>
+                                {% for event_name, event_description in events %}
+                                    <option value="{{ event_name }}">{{ event_name }}</option>
                                 {% endfor %}
                                 </select>
                                 <br><img id="unit_{{ unit.id }}_condition_{{ condition.id }}_plot" src="{{ unit_diagram_urls|lookup:unit.id|lookup:condition.id }}" width="90%"/>

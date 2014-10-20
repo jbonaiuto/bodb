@@ -44,13 +44,26 @@
     <tr valign="top">
         <td colspan=2><strong>Description: </strong>{{ object.description }}</td>
     </tr>
+        <tr class="section_subheader">
+            <td colspan="2">Trial Events</td>
+        </tr>
+        <tr class="odd_row">
+            <td>trial start</td>
+            <td>start of the trial</td>
+        </tr>
+        {% for event_name,event_description in events %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                <td>{{ event_name }}</td>
+                <td>{{ event_description }}</td>
+            </tr>
+        {% endfor %}
     <tr valign="top">
         <td colspan="2">
             <strong>Population Mean Firing Rate</strong>
             <br>Realign: <select id="population_realign" onchange="realignPopulationMeanPlot('{{ csrf_token }}')">
             <option value="start">trial start</option>
-            {% for event in events %}
-                <option value="{{ event }}">{{ event }}</option>
+            {% for event_name, event_description in events %}
+                <option value="{{ event_name }}">{{ event_name }}</option>
             {% endfor %}
             </select>
             <br>
@@ -72,8 +85,8 @@
             <td>
                 Realign: <select id="unit_{{ unit.id }}_condition_{{ object.id }}_realign" onchange="realignUnitConditionPlot({{ unit.id }}, {{ object.id }}, '{{ csrf_token }}')">
                 <option value="start">trial start</option>
-                {% for event in events %}
-                    <option value="{{ event }}">{{ event }}</option>
+                {% for event_name, event_description in events %}
+                    <option value="{{ event_name }}">{{ event_name }}</option>
                 {% endfor %}
             </select>
                 <br><img id="unit_{{ unit.id }}_condition_{{ object.id }}_plot" src="{{ unit.diagram_url }}" width="30%" />

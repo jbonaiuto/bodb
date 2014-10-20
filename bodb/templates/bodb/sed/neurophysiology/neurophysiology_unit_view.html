@@ -18,21 +18,35 @@
             <td colspan=2><strong>Area: </strong>{{ object.area }}</td>
         </tr>
         <tr class="section_subheader">
+            <td colspan="2">Trial Events</td>
+        </tr>
+        <tr class="odd_row">
+            <td>trial start</td>
+            <td>start of the trial</td>
+        </tr>
+        {% for event_name,event_description in events %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                <td>{{ event_name }}</td>
+                <td>{{ event_description }}</td>
+            </tr>
+        {% endfor %}
+        <tr class="section_subheader">
             <td colspan=2>Conditions</td>
         </tr>
         {% for condition in conditions %}
             <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>
+                <td colspan="2">
                     <strong>Name:</strong> <a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a>
                     <br>
                     <strong>Description:</strong> {{ condition.name }}
                 </td>
             </tr>
-                <td>
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td colspan="2">
                     Realign: <select id="unit_{{ object.id }}_condition_{{ condition.id }}_realign" onchange="realignUnitConditionPlot({{ object.id }},{{ condition.id }}, '{{ csrf_token }}')">
                     <option value="start">trial start</option>
-                    {% for event in events %}
-                        <option value="{{ event }}">{{ event }}</option>
+                    {% for event_name,event_description in events %}
+                        <option value="{{ event_name }}">{{ event_name }}</option>
                     {% endfor %}
                 </select>
                     <br><img id="unit_{{ object.id }}_condition_{{ condition.id }}_plot" src="{{ condition.diagram_url }}" width="30%" />
