@@ -96,7 +96,7 @@ class Workspace(models.Model):
             return self.created_by.username
 
     def get_users(self):
-        return User.objects.filter(groups__group=self.group)
+        return User.objects.filter(groups=self.group)
 
     def get_absolute_url(self):
         return reverse('workspace_view', kwargs={'pk': self.pk})
@@ -120,6 +120,12 @@ class Workspace(models.Model):
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).count()>0
             workspace_list.append([subscribed_to_user,w])
         return workspace_list
+
+    def check_perm(self, user, perm):
+        if perm=='admin':
+            return self.admin_users.filter(id=user.id).count()>0
+        elif perm=='member':
+            return self.get_users().filter(id=user.id).count()>0 or user.is_superuser
 
 
 class WorkspaceInvitation(models.Model):
@@ -155,10 +161,12 @@ class WorkspaceInvitation(models.Model):
         text += 'or<br>'
         text += '<a href="%s">Decline</a>' % decline_url
         self.sent=datetime.datetime.now()
+        print(text)
         # send internal message
         profile=BodbProfile.objects.get(user__id=self.invited_user.id)
         notification_type = profile.notification_preference
         if notification_type == 'message' or notification_type == 'both':
+            print('sending message to %d' % self.invited_user.id)
             message = Message(recipient=self.invited_user, subject=subject, read=False)
             message.text = text
             message.save()

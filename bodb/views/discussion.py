@@ -1,9 +1,10 @@
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.discussion import PostForm
 from bodb.models import Forum
+from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
-class ForumPostView(JSONResponseMixin,BaseUpdateView):
+class ForumPostView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = Forum
 
     def get_context_data(self, **kwargs):

@@ -10,7 +10,9 @@ from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainI
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
 from bodb.views.sed import SaveCoordinateSelectionView
+from guardian.mixins import LoginRequiredMixin
 from guardian.models import User
 from guardian.shortcuts import assign_perm, remove_perm
 from uscbp.views import JSONResponseMixin
@@ -19,8 +21,9 @@ workspace_permissions=['add_post','add_entry','remove_entry',
                        'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
                        'add_bookmark','delete_bookmark']
 
-class ActivateWorkspaceView(JSONResponseMixin,BaseUpdateView):
+class ActivateWorkspaceView(ObjectRolePermissionRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = Workspace
+    permission_required = 'member'
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -37,15 +40,16 @@ class ActivateWorkspaceView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class WorkspaceUserToggleAdminView(JSONResponseMixin,BaseUpdateView):
+class WorkspaceUserToggleAdminView(ObjectRolePermissionRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = Workspace
+    permission_required = 'admin'
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             workspace=Workspace.objects.get(id=self.kwargs.get('pk',None))
             user=User.objects.get(id=self.request.POST['user_id'])
-            if self.request.POST['admin']:
+            if self.request.POST['admin']=='true':
                 if not user in workspace.admin_users.all():
                     workspace.admin_users.add(user)
             else:
@@ -53,13 +57,14 @@ class WorkspaceUserToggleAdminView(JSONResponseMixin,BaseUpdateView):
                     workspace.admin_users.remove(user)
             context={
                 'user_id': user.id,
-                'admin': self.request.POST['admin']
+                'admin': self.request.POST['admin']=='true'
             }
         return context
 
 
-class WorkspaceUserRemoveView(JSONResponseMixin,BaseUpdateView):
+class WorkspaceUserRemoveView(ObjectRolePermissionRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = Workspace
+    permission_required = 'admin'
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -74,7 +79,7 @@ class WorkspaceUserRemoveView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class WorkspaceTitleAvailableView(JSONResponseMixin,BaseCreateView):
+class WorkspaceTitleAvailableView(LoginRequiredMixin, JSONResponseMixin,BaseCreateView):
     model = Workspace
 
     def get_context_data(self, **kwargs):
@@ -90,7 +95,7 @@ class WorkspaceTitleAvailableView(JSONResponseMixin,BaseCreateView):
         return context
 
 
-class ActiveWorkspaceDetailView(View):
+class ActiveWorkspaceDetailView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         profile=self.request.user.get_profile()
         url=profile.active_workspace.get_absolute_url()
@@ -99,7 +104,7 @@ class ActiveWorkspaceDetailView(View):
         return redirect(url)
 
 
-class WorkspaceInvitationResponseView(TemplateView):
+class WorkspaceInvitationResponseView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceInvitationResponseView,self).get_context_data(**kwargs)
         context['invitation']=get_object_or_404(WorkspaceInvitation,activation_key=context['activation_key'])
@@ -133,7 +138,7 @@ class EditWorkspaceMixin():
     template_name = 'bodb/workspace/workspace_detail.html'
 
 
-class CreateWorkspaceView(EditWorkspaceMixin, CreateView):
+class CreateWorkspaceView(LoginRequiredMixin, EditWorkspaceMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context=super(CreateWorkspaceView,self).get_context_data(**kwargs)
@@ -157,8 +162,9 @@ class CreateWorkspaceView(EditWorkspaceMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class UpdateWorkspaceView(EditWorkspaceMixin, UpdateView):
+class UpdateWorkspaceView(ObjectRolePermissionRequiredMixin, EditWorkspaceMixin, UpdateView):
     help_page='BODB-Edit-Workspace'
+    permission_required = 'admin'
 
     def get_context_data(self, **kwargs):
         context=super(UpdateWorkspaceView,self).get_context_data(**kwargs)
@@ -170,7 +176,7 @@ class UpdateWorkspaceView(EditWorkspaceMixin, UpdateView):
         return redirect(self.get_success_url())
 
 
-class WorkspaceInvitationView(JSONResponseMixin, BaseUpdateView):
+class WorkspaceInvitationView(LoginRequiredMixin, JSONResponseMixin, BaseUpdateView):
     model=WorkspaceInvitation
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -196,7 +202,7 @@ class WorkspaceInvitationView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class WorkspaceInvitationResendView(JSONResponseMixin, BaseUpdateView):
+class WorkspaceInvitationResendView(LoginRequiredMixin, JSONResponseMixin, BaseUpdateView):
     model=WorkspaceInvitation
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -207,12 +213,16 @@ class WorkspaceInvitationResendView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class WorkspaceDetailView(BODBView,FormView):
+class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
     template_name = 'bodb/workspace/workspace_view.html'
     form_class=WorkspaceInvitationForm
+    permission_required = 'member'
+
+    def get_object(self):
+        return get_object_or_404(Workspace, id=self.kwargs.get('pk', None))
 
     def get(self, request, *args, **kwargs):
-        self.object=get_object_or_404(Workspace, id=self.kwargs.get('pk', None))
+        self.object=self.get_object()
         return super(WorkspaceDetailView,self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -330,13 +340,21 @@ class WorkspaceDetailView(BODBView,FormView):
         return context
 
 
-class DeleteWorkspaceView(DeleteView):
+class DeleteWorkspaceView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=Workspace
     success_url = '/bodb/workspaces/'
+    permission_required = 'admin'
 
 
-class SaveWorkspaceCoordinateSelectionView(SaveCoordinateSelectionView):
+class SaveWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, SaveCoordinateSelectionView):
     model=SavedSEDCoordSelection
+
+    def get_required_permissions(self, request=None):
+        context=self.get_context_data()
+        if context['action']=='add':
+            return ['bodb.add_coordinate_selection']
+        return ['bodb.change_coordinate_selection']
+
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
@@ -350,8 +368,10 @@ class SaveWorkspaceCoordinateSelectionView(SaveCoordinateSelectionView):
         return context
 
 
-class DeleteWorkspaceCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
+class DeleteWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SavedSEDCoordSelection
+    permission_required = 'delete_coordinate_selection'
+
     def get_context_data(self, **kwargs):
         # load selection
         coordSelection=get_object_or_404(SavedSEDCoordSelection, id=self.request.POST['id'])
@@ -362,9 +382,10 @@ class DeleteWorkspaceCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
         return super(DeleteWorkspaceCoordinateSelectionView,self).get_context_data(**kwargs)
 
 
-class WorkspaceUserDetailView(DetailView):
+class WorkspaceUserDetailView(ObjectRolePermissionRequiredMixin, DetailView):
     model = User
     template_name = 'bodb/workspace/user_view.html'
+    permission_required = 'admin'
 
     def get_context_data(self, **kwargs):
         context = super(WorkspaceUserDetailView,self).get_context_data(**kwargs)
@@ -377,10 +398,14 @@ class WorkspaceUserDetailView(DetailView):
         return context
 
 
-class UpdateWorkspaceUserView(SingleObjectTemplateResponseMixin, ProcessFormView):
+class UpdateWorkspaceUserView(ObjectRolePermissionRequiredMixin,SingleObjectTemplateResponseMixin, ProcessFormView):
     form_class = WorkspaceUserForm
     template_name = 'bodb/workspace/user_detail.html'
     helpPage='BODB-Edit-User'
+    permission_required = 'admin'
+
+    def get_object(self):
+        return Workspace.objects.get(id=self.kwargs['id'])
 
     def get_form_class(self):
         return WorkspaceUserForm
@@ -423,8 +448,9 @@ class UpdateWorkspaceUserView(SingleObjectTemplateResponseMixin, ProcessFormView
         return redirect(redirect_url)
 
 
-class CreateWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
+class CreateWorkspaceBookmarkView(ObjectRolePermissionRequiredMixin, JSONResponseMixin, BaseUpdateView):
     model=Workspace
+    permission_required = 'add_bookmark'
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -450,8 +476,9 @@ class CreateWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class DeleteWorkspaceBookmarkView(JSONResponseMixin, BaseUpdateView):
+class DeleteWorkspaceBookmarkView(ObjectRolePermissionRequiredMixin, JSONResponseMixin, BaseUpdateView):
     model=Workspace
+    permission_required = 'delete_bookmark'
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }

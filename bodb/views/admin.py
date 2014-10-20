@@ -9,6 +9,8 @@ from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
 from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR
+from bodb.views.security import AdminCreateView, AdminUpdateView
+from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView
 from registration.models import User
@@ -36,7 +38,7 @@ def username_available(request):
     return HttpResponseServerError("Requires a username field.")
 
 
-class UpdateUserProfileView(UpdateView):
+class UpdateUserProfileView(LoginRequiredMixin,UpdateView):
     form_class = BodbProfileForm
     model = BodbProfile
     template_name = 'registration/profile_detail.html'
@@ -129,22 +131,25 @@ class EditUserMixin():
     template_name = 'bodb/admin/user_detail.html'
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        user=form.save()
+        if self.request.user.is_superuser:
+            context = self.get_context_data()
+            user=form.save()
 
-        for permission in bodb_permissions:
-            if context[permission]:
-                assign_perm('bodb.%s' % permission, user)
-            else:
-                remove_perm('bodb.%s' % permission, user)
+            for permission in bodb_permissions:
+                if context[permission]:
+                    assign_perm('bodb.%s' % permission, user)
+                else:
+                    remove_perm('bodb.%s' % permission, user)
 
-        redirect_url='%s?action=%s' % (reverse('user_view', kwargs={'pk': user.id}),self.action)
-        if context['ispopup']:
-            redirect_url+='&_popup=1'
+            redirect_url='%s?action=%s' % (reverse('user_view', kwargs={'pk': user.id}),self.action)
+            if context['ispopup']:
+                redirect_url+='&_popup=1'
+        else:
+            redirect_url='/bodb/index.html'
         return redirect(redirect_url)
 
 
-class CreateUserView(EditUserMixin,CreateView):
+class CreateUserView(EditUserMixin,AdminCreateView):
     action='add'
 
     def get_context_data(self, **kwargs):
@@ -160,7 +165,7 @@ class CreateUserView(EditUserMixin,CreateView):
         return context
 
 
-class UpdateUserView(EditUserMixin,UpdateView):
+class UpdateUserView(EditUserMixin,AdminUpdateView):
     action='edit'
 
     def get_context_data(self, **kwargs):
@@ -176,7 +181,7 @@ class UpdateUserView(EditUserMixin,UpdateView):
         return context
 
 
-class UserDetailView(DetailView):
+class UserDetailView(AdminDetailView):
     model = User
     template_name = 'bodb/admin/user_view.html'
 
@@ -208,7 +213,7 @@ class UserToggleActiveView(JSONResponseMixin,BaseUpdateView):
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax() and 'active' in self.request.POST:
+        if self.request.is_ajax() and 'active' in self.request.POST and self.request.user.is_superuser:
             user=User.objects.get(id=self.kwargs.get('pk', None))
             # change active status
             user.is_active=(self.request.POST['active']=='true')
@@ -226,7 +231,7 @@ class UserToggleStaffView(JSONResponseMixin,BaseUpdateView):
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax() and 'staff' in self.request.POST:
+        if self.request.is_ajax() and 'staff' in self.request.POST and self.request.user.is_superuser:
             user=User.objects.get(id=self.kwargs.get('pk', None))
             # change staff status
             user.is_staff=(self.request.POST['staff']=='true')
@@ -244,7 +249,7 @@ class UserToggleAdminView(JSONResponseMixin,BaseUpdateView):
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax() and 'admin' in self.request.POST:
+        if self.request.is_ajax() and 'admin' in self.request.POST and self.request.user.is_superuser:
             user=User.objects.get(id=self.kwargs.get('pk', None))
             # change admin status
             user.is_superuser=(self.request.POST['admin']=='true')
@@ -272,7 +277,7 @@ class GetUserIconUrlView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class CreateGroupView(CreateView):
+class CreateGroupView(AdminCreateView):
     model = Group
     form_class = GroupForm
     template_name = 'bodb/admin/group_detail.html'
@@ -306,7 +311,7 @@ class CreateGroupView(CreateView):
         return redirect(redirect_url)
 
 
-class UpdateGroupView(UpdateView):
+class UpdateGroupView(AdminUpdateView):
     model = Group
     form_class = GroupForm
     template_name = 'bodb/admin/group_detail.html'
@@ -340,7 +345,7 @@ class UpdateGroupView(UpdateView):
         return redirect(redirect_url)
 
 
-class GroupDetailView(DetailView):
+class GroupDetailView(AdminDetailView):
     model = Group
     template_name = 'bodb/admin/group_view.html'
 
@@ -359,7 +364,7 @@ class DeleteGroupView(JSONResponseMixin,BaseUpdateView):
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
+        if self.request.is_ajax() and self.request.user.is_superuser:
             # load group
             group=Group.objects.get(id=self.kwargs.get('pk', None))
 

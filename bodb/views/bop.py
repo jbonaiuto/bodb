@@ -10,6 +10,8 @@ from bodb.forms.sed import BuildSEDFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers.bop import BOPSerializer
@@ -117,7 +119,19 @@ class EditBOPMixin():
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
-class CreateBOPView(EditBOPMixin,CreateView):
+class CreateBOPView(EditBOPMixin,PermissionRequiredMixin,CreateView):
+    permission_required='bodb.add_bop'
+
+    def get_object(self, queryset=None):
+        return None
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        return super(BaseCreateView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super(BaseCreateView, self).post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(CreateBOPView,self).get_context_data(**kwargs)
@@ -134,7 +148,8 @@ class CreateBOPView(EditBOPMixin,CreateView):
         return context
 
 
-class UpdateBOPView(EditBOPMixin,UpdateView):
+class UpdateBOPView(EditBOPMixin,ObjectRolePermissionRequiredMixin,UpdateView):
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBOPView,self).get_context_data(**kwargs)
@@ -156,9 +171,10 @@ class UpdateBOPView(EditBOPMixin,UpdateView):
         return context
 
 
-class DeleteBOPView(DeleteView):
+class DeleteBOPView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=BOP
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 class BOPAPIListView(DocumentAPIListView):
     serializer_class = BOPSerializer
@@ -168,16 +184,19 @@ class BOPAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=BOP.get_security_q(user)
         return BOP.objects.filter(security_q)
-    
-class BOPAPIDetailView(DocumentAPIDetailView):    
-    queryset = BOP.objects.all()
+
+
+class BOPAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = BOPSerializer
     model = BOP
+    permission_required = 'view'
 
-class BOPDetailView(DocumentDetailView):
+
+class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = BOP
     template_name = 'bodb/bop/bop_view.html'
-    
+    permission_required = 'view'
+
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
@@ -199,7 +218,7 @@ class BOPDetailView(DocumentDetailView):
         return context
 
 
-class ToggleSelectBOPView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectBOPView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = BOP
 
     def get_context_data(self, **kwargs):
@@ -232,7 +251,7 @@ class ToggleSelectBOPView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class SimilarBOPView(JSONResponseMixin, BaseDetailView):
+class SimilarBOPView(LoginRequiredMixin,JSONResponseMixin, BaseDetailView):
 
     def get(self, request, *args, **kwargs):
         # Load similar models

@@ -12,6 +12,8 @@ from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCo
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -83,7 +85,11 @@ class EditSEDMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateSEDView(EditSEDMixin, CreateView):
+class CreateSEDView(EditSEDMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_sed'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateSEDView,self).get_context_data(**kwargs)
@@ -99,7 +105,8 @@ class CreateSEDView(EditSEDMixin, CreateView):
         return context
 
 
-class UpdateSEDView(EditSEDMixin, UpdateView):
+class UpdateSEDView(EditSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSEDView,self).get_context_data(**kwargs)
@@ -117,9 +124,10 @@ class UpdateSEDView(EditSEDMixin, UpdateView):
         return context
 
 
-class DeleteSEDView(DeleteView):
+class DeleteSEDView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=SED
     success_url = '/bodb/index.html'
+    permission_required='delete'
     
 class SEDAPIListView(DocumentAPIListView):
     serializer_class = SEDSerializer
@@ -157,12 +165,10 @@ class ConnectivitySEDAPIListView(DocumentAPIListView):
         security_q=Document.get_security_q(user)
         return ConnectivitySED.objects.filter(security_q)
     
-class SEDAPIDetailView(DocumentAPIDetailView):
-    
-    queryset = SED.objects.all()
+class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = SEDSerializer
-    
     model = SED
+    permission_required = 'view'
 
     def get(self, request, *args, **kwargs):
         id=self.kwargs.get('pk', None)
@@ -183,10 +189,11 @@ class SEDAPIDetailView(DocumentAPIDetailView):
         self.queryset = self.model.objects.all()
         return super(SEDAPIDetailView, self).get(request, *args, **kwargs)
 
-class SEDDetailView(DocumentDetailView):
+class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     
     model = SED
     template_name = 'bodb/sed/generic/generic_sed_view.html'
+    permission_required = 'view'
 
     def get(self, request, *args, **kwargs):
         id=self.kwargs.get('pk', None)
@@ -204,6 +211,9 @@ class SEDDetailView(DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).count():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
+        user = self.request.user
+        security_q=Document.get_security_q(user)
+        self.queryset = self.model.objects.all()
         return super(SEDDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -479,7 +489,11 @@ class EditBrainImagingSEDMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
+class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_sed'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_initial(self):
         return {
@@ -503,7 +517,8 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, CreateView):
         return context
 
 
-class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, UpdateView):
+class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
 
     def get_initial(self):
         # load coordinates
@@ -647,9 +662,10 @@ class CleanBrainImagingSEDView(TemplateView):
                                         'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
 
 
-class DeleteBrainImagingSEDView(DeleteView):
+class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=BrainImagingSED
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 
 class EditConnectivitySEDMixin():
@@ -710,7 +726,11 @@ class EditConnectivitySEDMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
+class CreateConnectivitySEDView(EditConnectivitySEDMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_sed'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateConnectivitySEDView, self).get_context_data(**kwargs)
@@ -726,7 +746,8 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, CreateView):
         return context
 
 
-class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
+class UpdateConnectivitySEDView(EditConnectivitySEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateConnectivitySEDView,self).get_context_data(**kwargs)
@@ -744,9 +765,10 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, UpdateView):
         return context
 
 
-class DeleteConnectivitySEDView(DeleteView):
+class DeleteConnectivitySEDView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=ConnectivitySED
     success_url = '/bodb/index.html'
+    permission_required='delete'
 
 
 class EditERPSEDMixin():
@@ -822,7 +844,11 @@ class EditERPSEDMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateERPSEDView(EditERPSEDMixin, CreateView):
+class CreateERPSEDView(EditERPSEDMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_bop'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateERPSEDView, self).get_context_data(**kwargs)
@@ -841,7 +867,8 @@ class CreateERPSEDView(EditERPSEDMixin, CreateView):
         return context
 
 
-class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
+class UpdateERPSEDView(EditERPSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateERPSEDView,self).get_context_data(**kwargs)
@@ -867,12 +894,13 @@ class UpdateERPSEDView(EditERPSEDMixin, UpdateView):
         return context
 
 
-class DeleteERPSEDView(DeleteView):
+class DeleteERPSEDView(PermissionRequiredMixin, DeleteView):
     model=ERPSED
     success_url = '/bodb/index.html'
+    permission_required='delete'
 
 
-class ToggleSelectSEDView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectSEDView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = SED
 
     def get_context_data(self, **kwargs):
@@ -905,7 +933,7 @@ class ToggleSelectSEDView(JSONResponseMixin,BaseUpdateView):
         return context
 
 
-class SimilarSEDView(JSONResponseMixin, BaseDetailView):
+class SimilarSEDView(LoginRequiredMixin, JSONResponseMixin, BaseDetailView):
 
     def get(self, request, *args, **kwargs):
         # Load similar models
@@ -963,7 +991,7 @@ class ConnectivityDiagramView(JSONResponseMixin,BaseCreateView):
         return context
 
 
-class SelectSelectedSEDCoordView(JSONResponseMixin, BaseCreateView):
+class SelectSelectedSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SelectedSEDCoord
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -981,7 +1009,7 @@ class SelectSelectedSEDCoordView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class UnselectSelectedSEDCoordView(JSONResponseMixin, BaseCreateView):
+class UnselectSelectedSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SelectedSEDCoord
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -994,7 +1022,7 @@ class UnselectSelectedSEDCoordView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class SelectSEDCoordView(JSONResponseMixin, BaseCreateView):
+class SelectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SelectedSEDCoord
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -1022,7 +1050,7 @@ class SelectSEDCoordView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class UnselectSEDCoordView(JSONResponseMixin, BaseCreateView):
+class UnselectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SelectedSEDCoord
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -1038,7 +1066,7 @@ class UnselectSEDCoordView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
+class CoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SavedSEDCoordSelection
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -1089,7 +1117,7 @@ class CoordinateSelectionView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class CloseCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
+class CloseCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SavedSEDCoordSelection
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -1107,7 +1135,7 @@ class CloseCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class DeleteCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
+class DeleteCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     model=SavedSEDCoordSelection
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
@@ -1127,7 +1155,7 @@ class DeleteCoordinateSelectionView(JSONResponseMixin, BaseCreateView):
         return context
 
 
-class SaveCoordinateSelectionView(JSONResponseMixin, BaseUpdateView):
+class SaveCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseUpdateView):
     model=SavedSEDCoordSelection
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }

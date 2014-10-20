@@ -17,6 +17,8 @@ from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, f
 from bodb.models.ssr import SSR, Prediction
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from taggit.models import Tag
 from taggit.utils import parse_tags
 from uscbp import settings
@@ -316,7 +318,11 @@ class EditModelMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateModelView(EditModelMixin, CreateView):
+class CreateModelView(EditModelMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_model'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateModelView,self).get_context_data(**kwargs)
@@ -358,8 +364,8 @@ MODEL_WIZARD_TEMPLATES = {"step1": 'bodb/model/model_create_1.html',
                           "step6": 'bodb/model/model_create_6.html'
                          }
 
-class CreateModelWizardView(SessionWizardView):
-
+class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
+    permission_required='bodb.add_model'
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'figures'))
 
     def get_template_names(self):
@@ -602,7 +608,9 @@ class CreateModelWizardView(SessionWizardView):
         return redirect(model.get_absolute_url())
 
 
-class UpdateModelView(EditModelMixin, UpdateView):
+class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
+
     def get_context_data(self, **kwargs):
         context = super(UpdateModelView,self).get_context_data(**kwargs)
         context['helpPage']='insert_data.html#insert-model'
@@ -638,14 +646,16 @@ class UpdateModelView(EditModelMixin, UpdateView):
         return context
 
 
-class DeleteModelView(DeleteView):
+class DeleteModelView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=Model
     success_url = '/bodb/index.html'
+    permission_required='delete'
 
 
-class ModelDetailView(DocumentDetailView):
+class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     model = Model
     template_name = 'bodb/model/model_view.html'
+    permission_required='view'
 
     def get_context_data(self, **kwargs):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
@@ -675,7 +685,7 @@ class ModelDetailView(DocumentDetailView):
         return context
 
 
-class ToggleSelectModelView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = Model
 
     def get_context_data(self, **kwargs):
@@ -723,10 +733,11 @@ class ModelTaggedView(BODBView):
         return context
 
 
-class UpdateModuleView(UpdateView):
+class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
     model = Module
     form_class = ModuleForm
     template_name = 'bodb/model/module_detail.html'
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateModuleView,self).get_context_data(**kwargs)
@@ -837,9 +848,10 @@ class UpdateModuleView(UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class DeleteModuleView(DeleteView):
+class DeleteModuleView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=Module
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 
 class ModelAPIListView(DocumentAPIListView):
@@ -852,16 +864,16 @@ class ModelAPIListView(DocumentAPIListView):
         return Model.objects.filter(security_q)
 
 
-class ModelAPIDetailView(DocumentAPIDetailView):
-    queryset = Model.objects.all()
+class ModelAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = ModelSerializer
-    
     model = Model
+    permission_required = 'view'
 
 
-class ModuleDetailView(DocumentDetailView):
+class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     model = Module
     template_name = 'bodb/model/module_view.html'
+    permission_required = 'view'
 
     def get_context_data(self, **kwargs):
         context = super(ModuleDetailView, self).get_context_data(**kwargs)
@@ -880,7 +892,7 @@ class ModuleDetailView(DocumentDetailView):
         return context
 
 
-class SimilarModelView(JSONResponseMixin, BaseDetailView):
+class SimilarModelView(LoginRequiredMixin,JSONResponseMixin, BaseDetailView):
 
     def get(self, request, *args, **kwargs):
         # Load similar models

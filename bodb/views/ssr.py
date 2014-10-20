@@ -7,6 +7,8 @@ from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SSRSerializer
@@ -18,10 +20,11 @@ from rest_framework import mixins
 from rest_framework import generics
 
 
-class UpdateSSRView(UpdateView):
+class UpdateSSRView(ObjectRolePermissionRequiredMixin, UpdateView):
     model = SSR
     form_class = SSRForm
     template_name = 'bodb/ssr/ssr_detail.html'
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSSRView,self).get_context_data(**kwargs)
@@ -67,9 +70,11 @@ class UpdateSSRView(UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class DeleteSSRView(DeleteView):
+class DeleteSSRView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=SSR
     success_url = '/bodb/index.html'
+    permission_required='delete'
+
 
 class SSRAPIListView(DocumentAPIListView):
     serializer_class = SSRSerializer
@@ -79,18 +84,19 @@ class SSRAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return SSR.objects.filter(security_q)
-    
-class SSRAPIDetailView(DocumentAPIDetailView):
-    queryset = SSR.objects.all()
+
+
+class SSRAPIDetailView(ObjectRolePermissionRequiredMixin, DocumentAPIDetailView):
     serializer_class = SSRSerializer
     model = SSR
+    permission_required = 'view'
 
-class SSRDetailView(DocumentDetailView):
+
+class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = SSR
     template_name = 'bodb/ssr/ssr_view.html'
-    
-    queryset = SSR.objects.all()
     serializer_class = SSRSerializer
+    permission_required = 'view'
 
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
@@ -109,7 +115,7 @@ class SSRDetailView(DocumentDetailView):
         return context
 
 
-class ToggleSelectSSRView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectSSRView(LoginRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = SSR
 
     def get_context_data(self, **kwargs):
