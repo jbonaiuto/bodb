@@ -4,6 +4,16 @@
     <title>BODB - View Neurophysiology Unit: {{ object.id }}</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
+    <script type="text/javascript">
+        function realignAllUnitConditionPlots(csrf_token)
+        {
+            var event=document.getElementById('realign_all').value;
+            {% for condition in conditions %}
+                document.getElementById('unit_{{ object.id }}_condition_{{ condition.id }}_realign').value=event;
+                realignUnitConditionPlot({{ object.id }},{{ condition.id }},csrf_token);
+            {% endfor %}
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -30,6 +40,15 @@
                 <td>{{ event_description }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td><strong>Realign All:</strong> <select id="realign_all" onchange="realignAllUnitConditionPlots('{{ csrf_token }}')">
+                <option value="start">trial start</option>
+                {% for event_name, event_description in events %}
+                    <option value="{{ event_name }}">{{ event_name }}</option>
+                {% endfor %}
+            </select></td>
+            <td></td>
+        </tr>
         <tr class="section_subheader">
             <td colspan=2>Conditions</td>
         </tr>

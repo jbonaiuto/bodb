@@ -9,6 +9,7 @@
         {
             document.getElementById('realigningMsg').style.display='block';
             document.getElementById('realigningOver').style.display='block';
+            last_to_realign='population';
             var event=document.getElementById('population_realign').value;
             var data={'condition': {{ object.id }}, 'event': event, 'csrfmiddlewaretoken': csrf_token};
             var args={type:"POST", url:"/bodb/sed/neurophysiology/condition_population_realign/", data: data, complete: doneRealignPopulationMeanPlot };
@@ -23,12 +24,25 @@
             if (status=="success")
             {
                 document.getElementById('mean_pop_rate_plot').src=data.diagram_url;
-                document.getElementById('realigningMsg').style.display='none';
-                document.getElementById('realigningOver').style.display='none';
-
+                if(last_to_realign=='population')
+                {
+                    document.getElementById('realigningMsg').style.display='none';
+                    document.getElementById('realigningOver').style.display='none';
+                }
             }
             else
                 alert(txt);
+        }
+
+        function realignAllUnitConditionPlots(csrf_token)
+        {
+            var event=document.getElementById('realign_all').value;
+            document.getElementById('population_realign').value=event;
+            realignPopulationMeanPlot(csrf_token);
+            {% for unit in units %}
+                document.getElementById('unit_{{ unit.id }}_condition_{{ object.id }}_realign').value=event;
+                realignUnitConditionPlot({{ unit.id }},{{ object.id }},csrf_token);
+            {% endfor %}
         }
     </script>
 {% endblock %}
@@ -44,19 +58,28 @@
     <tr valign="top">
         <td colspan=2><strong>Description: </strong>{{ object.description }}</td>
     </tr>
-        <tr class="section_subheader">
-            <td colspan="2">Trial Events</td>
+    <tr class="section_subheader">
+        <td colspan="2">Trial Events</td>
+    </tr>
+    <tr class="odd_row">
+        <td>trial start</td>
+        <td>start of the trial</td>
+    </tr>
+    {% for event_name,event_description in events %}
+        <tr class="{% cycle 'even_row' 'odd_row' %}">
+            <td>{{ event_name }}</td>
+            <td>{{ event_description }}</td>
         </tr>
-        <tr class="odd_row">
-            <td>trial start</td>
-            <td>start of the trial</td>
-        </tr>
-        {% for event_name,event_description in events %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}">
-                <td>{{ event_name }}</td>
-                <td>{{ event_description }}</td>
-            </tr>
-        {% endfor %}
+    {% endfor %}
+    <tr>
+        <td><strong>Realign All:</strong> <select id="realign_all" onchange="realignAllUnitConditionPlots('{{ csrf_token }}')">
+            <option value="start">trial start</option>
+            {% for event_name, event_description in events %}
+                <option value="{{ event_name }}">{{ event_name }}</option>
+            {% endfor %}
+        </select></td>
+        <td></td>
+    </tr>
     <tr valign="top">
         <td colspan="2">
             <strong>Population Mean Firing Rate</strong>

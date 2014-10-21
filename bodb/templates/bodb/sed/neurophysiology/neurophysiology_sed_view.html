@@ -91,6 +91,18 @@
                     document.getElementById(displayIds[i]).value=0;
             }
         }
+
+
+        function realignAllUnitConditionPlots(csrf_token)
+        {
+            var event=document.getElementById('realign_all').value;
+            {% for unit in units %}
+                {% for condition in conditions %}
+                    document.getElementById('unit_{{ unit.id }}_condition_{{ condition.id }}_realign').value=event;
+                    realignUnitConditionPlot({{ unit.id }},{{ condition.id }},csrf_token);
+                {% endfor %}
+            {% endfor %}
+        }
     </script>
 {% endblock %}
 {% block content %}
@@ -165,6 +177,15 @@
             <td>{{ event_description }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        <td><strong>Realign All:</strong> <select id="realign_all" onchange="realignAllUnitConditionPlots('{{ csrf_token }}')">
+            <option value="start">trial start</option>
+            {% for event_name, event_description in events %}
+                <option value="{{ event_name }}">{{ event_name }}</option>
+            {% endfor %}
+        </select></td>
+        <td></td>
+    </tr>
     <tr class="section_subheader">
         <td width=200px>Units</td>
         <td>Conditions</td>
