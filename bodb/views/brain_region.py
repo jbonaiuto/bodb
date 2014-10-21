@@ -7,6 +7,8 @@ from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
 from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED
 from bodb.search.sed import runSEDCoordSearch
+from bodb.views.security import AdminUpdateView, AdminCreateView
+from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView
@@ -18,7 +20,7 @@ from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
 
-class BrainRegionRequestListView(ListView):
+class BrainRegionRequestListView(LoginRequiredMixin,ListView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_list_view.html'
 
@@ -31,7 +33,7 @@ class BrainRegionRequestListView(ListView):
         return BrainRegionRequest.objects.filter(user=self.request.user)
 
 
-class CreateBrainRegionRequestView(CreateView):
+class CreateBrainRegionRequestView(LoginRequiredMixin,CreateView):
     model=BrainRegionRequest
     form_class = BrainRegionRequestForm
     template_name = 'bodb/brainRegion/brain_region_request_detail.html'
@@ -50,7 +52,7 @@ class CreateBrainRegionRequestView(CreateView):
         return redirect('/bodb/index.html')
 
 
-class CheckBrainRegionRequestExistsView(JSONResponseMixin,BaseCreateView):
+class CheckBrainRegionRequestExistsView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
     model = BrainRegionRequest
 
     def get_context_data(self, **kwargs):
@@ -64,7 +66,7 @@ class CheckBrainRegionRequestExistsView(JSONResponseMixin,BaseCreateView):
         return context
 
 
-class BrainRegionRequestDenyView(UpdateView):
+class BrainRegionRequestDenyView(AdminUpdateView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_deny.html'
     pk_url_kwarg='activation_key'
@@ -114,7 +116,7 @@ class BrainRegionRequestDenyView(UpdateView):
         return self.render_to_response(context)
 
 
-class BrainRegionRequestApproveView(CreateView):
+class BrainRegionRequestApproveView(AdminCreateView):
     model=BrainRegion
     template_name = 'bodb/brainRegion/brain_region_request_approve.html'
     form_class = BrainRegionForm
@@ -230,7 +232,7 @@ class BrainRegionView(DetailView):
         return context
 
 
-class ToggleSelectBrainRegionView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = BrainRegion
 
     def get_context_data(self, **kwargs):

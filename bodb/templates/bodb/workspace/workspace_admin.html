@@ -45,7 +45,7 @@
             alert(res.responseText);
         else
         {
-            document.getElementById('spanWorkspaceUser_'+data.user_id).innerHTML='';
+            document.getElementById('spanWorkspaceUser_'+data.user_id).style.display='none';
         }
     }
 
@@ -115,7 +115,7 @@
     {% for usr, isadmin, subscribed in members %}
         <tr>
             <td colspan=5>
-                <span id="spanWorkspaceUser_{{usr.id}}">
+                <div id="spanWorkspaceUser_{{usr.id}}" style="display: block;">
                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                         <td width=160px>
                             {% if not usr == workspace.created_by and not usr == user%}
@@ -153,7 +153,7 @@
                             <span id="user_{{ usr.id }}_message" name="user_{{ usr.id }}_message" class="messages"></span>
                         </td>
                     </tr>
-                </span>
+                </div>
             </td>
         </tr>
     {% endfor %}

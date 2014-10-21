@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
 from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR, NeurophysiologySED
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -51,9 +52,6 @@ class EditLiteratureMixin():
         return None
 
     def get(self, request, *args, **kwargs):
-        if not request.user.has_perm(self.required_perm):
-            return HttpResponseRedirect('/bodb/index.html')
-
         id = self.kwargs.get('pk', None)
         literatureType=request.GET.get('literatureType','journal')
 
@@ -168,14 +166,14 @@ class EditLiteratureMixin():
         return render(request, self.template_name, context)
 
 
-class CreateLiteratureView(EditLiteratureMixin,View):
+class CreateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
     helpPage='insert_data.html#insert-literature'
-    required_perm='bodb.add_literature'
+    permission_required='bodb.add_literature'
 
 
-class UpdateLiteratureView(EditLiteratureMixin,View):
+class UpdateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
     helpPage='insert_data.html#insert-literature'
-    required_perm='bodb.change_literature'
+    permission_required='bodb.change_literature'
 
     def get_instances(self,request,id,literatureType):
         # create new literature objects
@@ -299,9 +297,10 @@ class LiteratureDetailView(TemplateView):
 
         return context
 
-class DeleteLiteratureView(DeleteView):
+class DeleteLiteratureView(PermissionRequiredMixin,DeleteView):
     model=Literature
     success_url = '/bodb/index.html'
+    permission_required = 'bodb.delete_literature'
 
 
 class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
@@ -324,7 +323,7 @@ class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class ToggleSelectLiteratureView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = Literature
 
     def get_context_data(self, **kwargs):

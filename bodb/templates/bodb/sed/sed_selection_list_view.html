@@ -42,7 +42,9 @@
         </tr>
         <tr>
             <td colspan="6">
-                {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+                <div id="neurophysiology_sed_list" name="neurophysiology_sed_list" style="display:{% if neurophysiology_seds|length %}block{% else %}none{% endif %}">
+                    {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+                </div>
             </td>
         </tr>
         <tr>

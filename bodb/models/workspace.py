@@ -96,7 +96,7 @@ class Workspace(models.Model):
             return self.created_by.username
 
     def get_users(self):
-        return User.objects.filter(groups__group=self.group)
+        return User.objects.filter(groups=self.group)
 
     def get_absolute_url(self):
         return reverse('workspace_view', kwargs={'pk': self.pk})
@@ -120,6 +120,12 @@ class Workspace(models.Model):
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).count()>0
             workspace_list.append([subscribed_to_user,w])
         return workspace_list
+
+    def check_perm(self, user, perm):
+        if perm=='admin':
+            return self.admin_users.filter(id=user.id).count()>0
+        elif perm=='member':
+            return self.get_users().filter(id=user.id).count()>0 or user.is_superuser
 
 
 class WorkspaceInvitation(models.Model):

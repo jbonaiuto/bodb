@@ -4,8 +4,9 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, DeleteView
 from bodb.forms.messaging import MessageForm
 from bodb.models import Message
+from guardian.mixins import LoginRequiredMixin
 
-class UserMessageListView(View):
+class UserMessageListView(LoginRequiredMixin,View):
     template_name = 'bodb/messaging/message_list.html'
 
     def get_context(self, request):
@@ -38,7 +39,7 @@ class UserMessageListView(View):
         return render(request, self.template_name, context)
 
 
-class CreateUserMessageView(CreateView):
+class CreateUserMessageView(LoginRequiredMixin,CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'bodb/messaging/message_compose.html'
@@ -70,7 +71,7 @@ class CreateUserMessageView(CreateView):
         return HttpResponseRedirect('/bodb/messages/')
 
 
-class ReadReplyUserMessageView(UpdateView):
+class ReadReplyUserMessageView(LoginRequiredMixin,UpdateView):
     model = Message
     form_class = MessageForm
     template_name = 'bodb/messaging/message_detail.html'
@@ -103,7 +104,7 @@ class ReadReplyUserMessageView(UpdateView):
         return HttpResponseRedirect('/bodb/messages/')
 
 
-class DeleteUserMessageView(DeleteView):
+class DeleteUserMessageView(LoginRequiredMixin,DeleteView):
     model=Message
     success_url='/bodb/messages/'
 

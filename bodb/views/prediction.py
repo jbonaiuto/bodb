@@ -5,9 +5,9 @@ from bodb.models import Prediction, SSR, PredictionSSR, Document, UserSubscripti
 from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.main import BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
 
 class PredictionAPIListView(DocumentAPIListView):
-    queryset = Prediction.objects.all()
     serializer_class = PredictionSerializer
     model = Prediction
 
@@ -16,15 +16,18 @@ class PredictionAPIListView(DocumentAPIListView):
         security_q=Document.get_security_q(user)
         return Prediction.objects.filter(security_q)
 
-class PredictionAPIDetailView(DocumentAPIDetailView):
-    queryset = Prediction.objects.all()
+
+class PredictionAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = PredictionSerializer
     model = Prediction
+    permission_required = 'view'
 
-class UpdatePredictionView(UpdateView):
+
+class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
     model = Prediction
     form_class = PredictionForm
     template_name = 'bodb/prediction/prediction_detail.html'
+    permission_required='edit'
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePredictionView,self).get_context_data(**kwargs)
@@ -83,14 +86,16 @@ class UpdatePredictionView(UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class DeletePredictionView(DeleteView):
+class DeletePredictionView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=Prediction
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 
-class PredictionDetailView(DocumentDetailView):
+class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = Prediction
     template_name = 'bodb/prediction/prediction_view.html'
+    permission_required = 'view'
 
     def get_context_data(self, **kwargs):
         context = super(PredictionDetailView, self).get_context_data(**kwargs)

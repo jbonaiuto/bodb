@@ -4,6 +4,7 @@ from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
 from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, NeurophysiologySED
+from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -68,7 +69,7 @@ class AboutView(BODBView):
         return context
 
 
-class InsertView(BODBView):
+class InsertView(LoginRequiredMixin,BODBView):
     template_name = 'bodb/insert.html'
 
     def get_context_data(self, **kwargs):
@@ -78,7 +79,7 @@ class InsertView(BODBView):
         return context
 
 
-class DraftListView(BODBView):
+class DraftListView(LoginRequiredMixin,BODBView):
     template_name = 'bodb/draft_list_view.html'
 
     def get_context_data(self, **kwargs):
@@ -108,7 +109,7 @@ class DraftListView(BODBView):
         return context
 
 
-class FavoriteListView(BODBView):
+class FavoriteListView(LoginRequiredMixin,BODBView):
     template_name = 'bodb/favorite_list_view.html'
 
     def get_context_data(self, **kwargs):
@@ -190,7 +191,7 @@ class FavoriteListView(BODBView):
         return context
 
 
-class ToggleFavoriteView(JSONResponseMixin,BaseCreateView):
+class ToggleFavoriteView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
     model = Document
 
     def get_context_data(self, **kwargs):
@@ -213,7 +214,7 @@ class ToggleFavoriteView(JSONResponseMixin,BaseCreateView):
             return context
 
 
-class ToggleFavoriteBrainRegionView(JSONResponseMixin,BaseCreateView):
+class ToggleFavoriteBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
     model = BrainRegion
 
     def get_context_data(self, **kwargs):
@@ -236,7 +237,7 @@ class ToggleFavoriteBrainRegionView(JSONResponseMixin,BaseCreateView):
             return context
 
 
-class ToggleFavoriteLiteratureView(JSONResponseMixin,BaseCreateView):
+class ToggleFavoriteLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
     model = Literature
 
     def get_context_data(self, **kwargs):

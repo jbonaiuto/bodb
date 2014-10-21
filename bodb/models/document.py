@@ -69,11 +69,24 @@ class Document(models.Model):
     def get_modified_str(self):
         return self.last_modified_time.strftime('%B %d, %Y')
 
-    def canEdit(self, user):
-        if user.is_superuser:
-            return True
-        if self.collator.id==user.id:
-            return True
+    def check_perm(self, user, perm):
+        if perm=='view':
+            if user.is_authenticated() and not user.is_anonymous():
+                if user.is_superuser:
+                    return True
+                else:
+                    if self.collator.id==user.id or self.public==1:
+                        return True
+                    elif self.draft==0:
+                        for group in user.groups.all():
+                            if self.collator.groups.filter(id=group.id).count()>0:
+                                return True
+            else:
+                return self.public==1
+            return False
+        else:
+            return user.is_authenticated() and (self.collator==user or user.is_superuser or
+                                                user.has_perm(perm,Document.objects.get(id=self.id)))
 
     def isFavorite(self, user):
         if user.is_authenticated() and not user.is_anonymous():

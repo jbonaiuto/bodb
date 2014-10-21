@@ -52,12 +52,9 @@ class DocumentDetailView(DetailView):
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
         context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
         context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(RelatedBrainRegion.objects.filter(document=self.object), user)
-        context['canEdit']=user.is_authenticated() and (self.object.collator==user or user.is_superuser or
-                                                        user.has_perm('edit',Document.objects.get(id=self.object.id)))
-        context['canDelete']=user.is_authenticated() and (self.object.collator==user or user.is_superuser or
-                                                          user.has_perm('delete',Document.objects.get(id=self.object.id)))
-        context['canManage']=user.is_authenticated() and (self.object.collator==user or user.is_superuser or
-                                                          user.has_perm('manage',Document.objects.get(id=self.object.id)))
+        context['canEdit']=self.object.check_perm(user,'edit')
+        context['canDelete']=self.object.check_perm(user,'delete')
+        context['canManage']=self.object.check_perm(user,'manage')
         context['ispopup']=('_popup' in self.request.GET)
         context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted'))
         context['is_favorite']=False

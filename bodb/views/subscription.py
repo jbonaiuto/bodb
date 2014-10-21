@@ -2,9 +2,10 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView
 from bodb.forms.subscription import SubscriptionForm, UserSubscriptionForm
 from bodb.models import Subscription, UserSubscription
+from guardian.mixins import LoginRequiredMixin
 from registration.models import User
 
-class CreateSubscriptionView(CreateView):
+class CreateSubscriptionView(LoginRequiredMixin, CreateView):
     model=Subscription
     form_class = SubscriptionForm
     template_name = 'bodb/admin/subscription_detail.html'
@@ -31,7 +32,7 @@ class CreateSubscriptionView(CreateView):
         return redirect('/bodb/index.html')
 
 
-class CreateUserSubscriptionView(CreateView):
+class CreateUserSubscriptionView(LoginRequiredMixin, CreateView):
     model=UserSubscription
     form_class = UserSubscriptionForm
     template_name = 'bodb/admin/user_subscription_detail.html'
