@@ -117,12 +117,6 @@
             <tr valign="top">
                 <td colspan="2"><strong>Tags:</strong> {{ connectivitysed.tags.all|join:', ' }}</td>
             </tr>
-            <tr class="section_subheader">
-                <td colspan=2>Brief Description</td>
-            </tr>
-            <tr>
-                <td colspan=2>{{ connectivitysed.brief_description }}</td>
-            </tr>
             <tr>
                 <td colspan=2 valign=top>
                     <strong>Public:</strong>&nbsp;
@@ -142,6 +136,12 @@
                         {% endif %}
                     {% endif %}
                 </td>
+            </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ connectivitysed.brief_description }}</td>
             </tr>
             <tr valign="top">
                 <td width="150px"><strong>Source region:</strong></td>
