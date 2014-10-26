@@ -1,29 +1,36 @@
+from django.db import connections
 import scipy.io
 from django.db.models import Q
-from bodb.models import SED, NeurophysiologySED, NeurophysiologyCondition, Unit, BrainRegion, RecordingTrial, Event, GraspObservationCondition, Species, GraspPerformanceCondition
+from bodb.models import NeurophysiologySED, Unit, BrainRegion, RecordingTrial, Event, GraspObservationCondition, Species, GraspPerformanceCondition
 from registration.models import User
+from uscbp import settings
 
 def remove_all(db='default'):
-    for event in Event.objects.using(db).all():
-        event.delete(using=db)
-    for trial in RecordingTrial.objects.using(db).all():
-        trial.delete(using=db)
-    for unit in Unit.objects.using(db).all():
-        unit.delete(using=db)
-    for condition in NeurophysiologyCondition.objects.using(db).all():
-        condition.delete(using=db)
+    cursor=connections[db].cursor()
+    cursor.execute('DELETE FROM %s.bodb_event WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_recordingtrial WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_unit WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_graspobservationcondition WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_graspperformancecondition WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_graspcondition WHERE 1=1' % (settings.DATABASES[db]['NAME']))
+    cursor.execute('DELETE FROM %s.bodb_neurophysiologycondition WHERE 1=1' % (settings.DATABASES[db]['NAME']))
     for sed in NeurophysiologySED.objects.using(db).all():
-        sed.delete(using=db)
-    for sed in SED.objects.using(db).filter(type='neurophysiology'):
-        sed.delete(using=db)
-        
+        cursor.execute('DELETE FROM %s.bodb_neurophysiologysed WHERE sed_ptr_id=%d' % (settings.DATABASES[db]['NAME'],sed.id))
+        cursor.execute('DELETE FROM %s.bodb_sed WHERE document_ptr_id=%d' % (settings.DATABASES[db]['NAME'],sed.id))
+        cursor.execute('DELETE FROM %s.bodb_document WHERE id=%d' % (settings.DATABASES[db]['NAME'],sed.id))
+    cursor.close()
+
 def import_kraskov_data(mat_file, db='default'):
     seds={}
-    
+
+    collator=User.objects.using(db).get(username='jbonaiuto')
+    if User.objects.using(db).filter(username='akraskov').count():
+        collator=User.objects.using(db).get(username='akraskov')
+
     seds['m1_ptn']=NeurophysiologySED()
-    seds['m1_ptn'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_ptn'].collator=collator
     seds['m1_ptn'].type='neurophysiology'
-    seds['m1_ptn'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_ptn'].last_modified_by=collator
     seds['m1_ptn'].title='M1 PTN - Observation/Execution of Grasps'
     seds['m1_ptn'].brief_description='Recording of M1 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
     seds['m1_ptn'].subject_species=Species.objects.using(db).get(genus_name='Macaca',species_name='mulatta')
@@ -35,9 +42,9 @@ def import_kraskov_data(mat_file, db='default'):
     seds['m1_ptn'].tags.add('grasping')
 
     seds['m1_uid']=NeurophysiologySED()
-    seds['m1_uid'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_uid'].collator=collator
     seds['m1_uid'].type='neurophysiology'
-    seds['m1_uid'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['m1_uid'].last_modified_by=collator
     seds['m1_uid'].title='M1 Observation/Execution of Grasps'
     seds['m1_uid'].brief_description='Recording of unidentified M1 neurons while monkeys observed or performed object-directed grasps'
     seds['m1_uid'].subject_species=Species.objects.using(db).get(genus_name='Macaca',species_name='mulatta')
@@ -49,9 +56,9 @@ def import_kraskov_data(mat_file, db='default'):
     seds['m1_uid'].tags.add('grasping')
 
     seds['f5_ptn']=NeurophysiologySED()
-    seds['f5_ptn'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_ptn'].collator=collator
     seds['f5_ptn'].type='neurophysiology'
-    seds['f5_ptn'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_ptn'].last_modified_by=collator
     seds['f5_ptn'].title='F5 PTN - Observation/Execution of Grasps'
     seds['f5_ptn'].brief_description='Recording of F5 pyramidal tract neurons (PTNs) while monkeys observed or performed object-directed grasps'
     seds['f5_ptn'].subject_species=Species.objects.using(db).get(genus_name='Macaca',species_name='mulatta')
@@ -63,9 +70,9 @@ def import_kraskov_data(mat_file, db='default'):
     seds['f5_ptn'].tags.add('grasping')
 
     seds['f5_uid']=NeurophysiologySED()
-    seds['f5_uid'].collator=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_uid'].collator=collator
     seds['f5_uid'].type='neurophysiology'
-    seds['f5_uid'].last_modified_by=User.objects.using(db).get(username='jbonaiuto')
+    seds['f5_uid'].last_modified_by=collator
     seds['f5_uid'].title='F5 Observation/Execution of Grasps'
     seds['f5_uid'].brief_description='Recording of unidentified F5 neurons while monkeys observed or performed object-directed grasps'
     seds['f5_uid'].subject_species=Species.objects.using(db).get(genus_name='Macaca',species_name='mulatta')
@@ -163,6 +170,8 @@ def import_kraskov_data(mat_file, db='default'):
     # load file
     mat_file=scipy.io.loadmat(mat_file)
 
+    trial_numbers={}
+
     for i in range(len(mat_file['U'][0])):
         print('importing unit %d' % i)
         area_idx=-1
@@ -188,6 +197,9 @@ def import_kraskov_data(mat_file, db='default'):
         unit.area=region[0]
         unit.type=mat_file['U'][0][i][unittype_idx][0]
         unit.save(using=db)
+
+        if not unit.id in trial_numbers:
+            trial_numbers[unit.id]={}
 
         sed_id=''
         if area=='M1':
@@ -253,7 +265,6 @@ def import_kraskov_data(mat_file, db='default'):
         for j in range(len(trial_types)):
             # create trial
             trial=RecordingTrial(unit=unit)
-            trial.trial_number=j+1
             if trial_types[j]=='h':
                 if objects[j]==1:
                     trial.condition=sed_conditions[sed_id]['obs_ring']
@@ -268,6 +279,10 @@ def import_kraskov_data(mat_file, db='default'):
                     trial.condition=sed_conditions[sed_id]['mov_sphere']
                 elif objects[j]==4:
                     trial.condition=sed_conditions[sed_id]['mov_trapezoid']
+            if not trial.condition.id in trial_numbers[unit.id]:
+                trial_numbers[unit.id][trial.condition.id]=0
+            trial_numbers[unit.id][trial.condition.id]+=1
+            trial.trial_number=trial_numbers[unit.id][trial.condition.id]
             trial.start_time=trial_start_times[j]
             trial.end_time=trial_end_times[j]
 
