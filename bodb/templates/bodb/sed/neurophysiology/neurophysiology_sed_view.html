@@ -164,6 +164,9 @@
     <tr>
         <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
     </tr>
+    <tr>
+        <td colspan="2"><strong>Subject species:</strong> {{ neurophysiologysed.subject_species }}</td>
+    </tr>
     <tr class="section_subheader">
         <td colspan="2">Trial Events</td>
     </tr>
@@ -198,6 +201,7 @@
                     {% for condition in conditions %}
                         <td>
                             <strong><a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a></strong>
+                            <br>Type: {{ condition.type }}
                             <br>{{ condition.description }}
                         </td>
                     {% endfor %}

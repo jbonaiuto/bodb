@@ -1,6 +1,10 @@
+import datetime
+import hashlib
+import random
+from django.contrib.sites.models import get_current_site
+from django.core.mail import EmailMessage
 import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-
 matplotlib.use('Agg')
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -8,12 +12,14 @@ from django.db.models import Q
 from matplotlib.figure import Figure
 from numpy.core.umath import exp
 from numpy.numarray import arange
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message
 import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
+from uscbp.image_utils import save_to_png
+
 
 class SED(Document):
     """
@@ -696,6 +702,7 @@ class NeurophysiologyCondition(models.Model):
     sed=models.ForeignKey('NeurophysiologySED')
     name=models.CharField(max_length=100)
     description=models.TextField()
+    type=models.CharField(max_length=50)
 
     class Meta:
         app_label='bodb'
@@ -785,7 +792,7 @@ class NeurophysiologyCondition(models.Model):
 
 class GraspCondition(NeurophysiologyCondition):
     object=models.CharField(max_length=50)
-    object_distance=models.DecimalField(max_digits=5, decimal_places=3)
+    object_distance=models.DecimalField(max_digits=6, decimal_places=3)
     grasp=models.CharField(max_length=50)
 
     class Meta:
@@ -807,7 +814,7 @@ class GraspObservationCondition(GraspCondition):
     )
     demonstrator_species=models.ForeignKey('Species', related_name='demonstrator')
     demonstration_type=models.CharField(max_length=30, choices=DEMONSTRATION_CHOICES)
-    viewing_angle=models.DecimalField(max_digits=5, decimal_places=2)
+    viewing_angle=models.DecimalField(max_digits=6, decimal_places=3)
     whole_body_visible = models.BooleanField()
 
     class Meta:
@@ -912,12 +919,61 @@ class Event(models.Model):
         app_label='bodb'
 
 
-def save_to_png(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_png(output_file, dpi=72)
+class NeurophysiologyExportRequest(models.Model):
+    STATUS_OPTIONS=(
+        ('',''),
+        ('accepted','accepted'),
+        ('declined','declined')
+    )
+    sed=models.ForeignKey('NeurophysiologySED')
+    requesting_user=models.ForeignKey(User, related_name='requesting_user')
+    request_body=models.CharField(max_length=1000, blank=False)
+    status=models.CharField(max_length=20, choices=STATUS_OPTIONS, blank=True)
+    activation_key = models.CharField('activation key', max_length=40)
+    sent=models.DateTimeField(auto_now=True, blank=True)
 
-def save_to_eps(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_eps(output_file, dpi=72)
+    class Meta:
+        app_label='bodb'
+
+    def send(self):
+        # message subject
+        subject = 'Request to export neurophysiology data'
+        # message text
+        text = 'You\'ve been sent a request by %s to export data from the Neurophysiology SED: %s.<br>' % (
+            self.requesting_user, self.sed.__unicode__())
+        text += self.request_body
+        text += '<br>Click one of the following links to accept or decline the request:<br>'
+        accept_url = ''.join(
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export/accept/%s/' % self.activation_key])
+        decline_url = ''.join(
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export/decline/%s/' % self.activation_key])
+        text += '<a href="%s">Accept</a><br>' % accept_url
+        text += 'or<br>'
+        text += '<a href="%s">Decline</a>' % decline_url
+        self.sent=datetime.datetime.now()
+        # send internal message
+        profile=BodbProfile.objects.get(user__id=self.sed.collator.id)
+        notification_type = profile.notification_preference
+        if notification_type == 'message' or notification_type == 'both':
+            message = Message(recipient=self.sed.collator, subject=subject, read=False)
+            message.text = text
+            message.save()
+
+        # send email message
+        if notification_type == 'email' or notification_type == 'both':
+            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.sed.collator.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send(fail_silently=True)
+
+    def save(self, **kwargs):
+        if self.id is None:
+            salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+            username = self.requesting_user.username
+            if isinstance(username, unicode):
+                username = username.encode('utf-8')
+            self.activation_key = hashlib.sha1(salt+username).hexdigest()
+
+            self.send()
+        super(NeurophysiologyExportRequest,self).save(**kwargs)
+
+

@@ -1,6 +1,6 @@
 import scipy.io
 from django.db.models import Q
-from bodb.models import NeurophysiologySED, NeurophysiologyCondition, Unit, BrainRegion, RecordingTrial, Event, GraspObservationCondition, Species, GraspPerformanceCondition
+from bodb.models import SED, NeurophysiologySED, NeurophysiologyCondition, Unit, BrainRegion, RecordingTrial, Event, GraspObservationCondition, Species, GraspPerformanceCondition
 from registration.models import User
 
 def remove_all(db='default'):
@@ -13,6 +13,8 @@ def remove_all(db='default'):
     for condition in NeurophysiologyCondition.objects.using(db).all():
         condition.delete(using=db)
     for sed in NeurophysiologySED.objects.using(db).all():
+        sed.delete(using=db)
+    for sed in SED.objects.using(db).filter(type='neurophysiology'):
         sed.delete(using=db)
         
 def import_kraskov_data(mat_file, db='default'):
@@ -83,9 +85,10 @@ def import_kraskov_data(mat_file, db='default'):
         sed_conditions[sed_id]['obs_ring'].sed=sed
         sed_conditions[sed_id]['obs_ring'].name='Observe ring hook grasp'
         sed_conditions[sed_id]['obs_ring'].description='Monkeys observed the human experimenter grasping a ring using a hook grip with just the index finger'
+        sed_conditions[sed_id]['obs_ring'].type='grasp_observe'
         sed_conditions[sed_id]['obs_ring'].object='ring'
-        #sed_conditions[sed_id]['obs_ring'].object_distance=
-        #sed_conditions[sed_id]['obs_ring'].whole_body_visible=
+        sed_conditions[sed_id]['obs_ring'].object_distance=114.0
+        sed_conditions[sed_id]['obs_ring'].whole_body_visible=True
         sed_conditions[sed_id]['obs_ring'].grasp='hook'
         sed_conditions[sed_id]['obs_ring'].demonstrator_species=Species.objects.using(db).get(genus_name='Homo',species_name='sapiens')
         sed_conditions[sed_id]['obs_ring'].demonstration_type='live'
@@ -96,21 +99,23 @@ def import_kraskov_data(mat_file, db='default'):
         sed_conditions[sed_id]['mov_ring'].sed=sed
         sed_conditions[sed_id]['mov_ring'].name='Execute ring hook grasp'
         sed_conditions[sed_id]['mov_ring'].description='Monkeys grasped a ring using a hook grip with just the index finger'
+        sed_conditions[sed_id]['mov_ring'].type='grasp_perform'
         sed_conditions[sed_id]['mov_ring'].object='ring'
-        #sed_conditions[sed_id]['mov_ring'].object_distance=
+        sed_conditions[sed_id]['mov_ring'].object_distance=57.0
         sed_conditions[sed_id]['mov_ring'].grasp='hook'
-        #sed_conditions[sed_id]['mov_ring'].hand_visible=
-        #sed_conditions[sed_id]['mov_ring'].object_visible=
+        sed_conditions[sed_id]['mov_ring'].hand_visible=True
+        sed_conditions[sed_id]['mov_ring'].object_visible=True
         sed_conditions[sed_id]['mov_ring'].save(using=db)
     
         sed_conditions[sed_id]['obs_sphere']=GraspObservationCondition()
         sed_conditions[sed_id]['obs_sphere'].sed=sed
         sed_conditions[sed_id]['obs_sphere'].name='Observe sphere whole hand grasp'
         sed_conditions[sed_id]['obs_sphere'].description='Monkeys observed the human experimenter grasping a sphere using the whole hand'
+        sed_conditions[sed_id]['obs_sphere'].type='grasp_observe'
         sed_conditions[sed_id]['obs_sphere'].object='sphere'
         sed_conditions[sed_id]['obs_sphere'].grasp='whole hand'
-        #sed_conditions[sed_id]['obs_sphere'].object_distance=
-        #sed_conditions[sed_id]['obs_sphere'].whole_body_visible=
+        sed_conditions[sed_id]['obs_sphere'].object_distance=114.0
+        sed_conditions[sed_id]['obs_sphere'].whole_body_visible=True
         sed_conditions[sed_id]['obs_sphere'].demonstrator_species=Species.objects.using(db).get(genus_name='Homo',species_name='sapiens')
         sed_conditions[sed_id]['obs_sphere'].demonstration_type='live'
         sed_conditions[sed_id]['obs_sphere'].viewing_angle=180.0
@@ -120,21 +125,23 @@ def import_kraskov_data(mat_file, db='default'):
         sed_conditions[sed_id]['mov_sphere'].sed=sed
         sed_conditions[sed_id]['mov_sphere'].name='Execute sphere whole hand'
         sed_conditions[sed_id]['mov_sphere'].description='Monkeys grasped a sphere using the whole hand'
+        sed_conditions[sed_id]['mov_sphere'].type='grasp_perform'
         sed_conditions[sed_id]['mov_sphere'].object='sphere'
-        #sed_conditions[sed_id]['mov_sphere'].object_distance=
+        sed_conditions[sed_id]['mov_sphere'].object_distance=57.0
         sed_conditions[sed_id]['mov_sphere'].grasp='whole hand'
-        #sed_conditions[sed_id]['mov_sphere'].hand_visible=
-        #sed_conditions[sed_id]['mov_sphere'].object_visible=
+        sed_conditions[sed_id]['mov_sphere'].hand_visible=True
+        sed_conditions[sed_id]['mov_sphere'].object_visible=True
         sed_conditions[sed_id]['mov_sphere'].save(using=db)
     
         sed_conditions[sed_id]['obs_trapezoid']=GraspObservationCondition()
         sed_conditions[sed_id]['obs_trapezoid'].sed=sed
         sed_conditions[sed_id]['obs_trapezoid'].name='Observe trapezoid precision grasp'
         sed_conditions[sed_id]['obs_trapezoid'].description='Monkeys observed the human experimenter grasping a trapezoid using a precision grasp with the thumb and forefinger'
+        sed_conditions[sed_id]['obs_trapezoid'].type='grasp_observe'
         sed_conditions[sed_id]['obs_trapezoid'].object='trapezoid'
         sed_conditions[sed_id]['obs_trapezoid'].grasp='precision'
-        #sed_conditions[sed_id]['obs_trapezoid'].object_distance=
-        #sed_conditions[sed_id]['obs_trapezoid'].whole_body_visible=
+        sed_conditions[sed_id]['obs_trapezoid'].object_distance=114.0
+        sed_conditions[sed_id]['obs_trapezoid'].whole_body_visible=True
         sed_conditions[sed_id]['obs_trapezoid'].demonstrator_species=Species.objects.using(db).get(genus_name='Homo',species_name='sapiens')
         sed_conditions[sed_id]['obs_trapezoid'].demonstration_type='live'
         sed_conditions[sed_id]['obs_trapezoid'].viewing_angle=180.0
@@ -144,11 +151,12 @@ def import_kraskov_data(mat_file, db='default'):
         sed_conditions[sed_id]['mov_trapezoid'].sed=sed
         sed_conditions[sed_id]['mov_trapezoid'].name='Execute trapezoid precision grasp'
         sed_conditions[sed_id]['mov_trapezoid'].description='Monkeys grasped a trapezoid using a precision grasp with the thumb and forefinger'
+        sed_conditions[sed_id]['mov_trapezoid'].type='grasp_perform'
         sed_conditions[sed_id]['mov_trapezoid'].object='trapezoid'
-        #sed_conditions[sed_id]['mov_trapezoid'].object_distance=
+        sed_conditions[sed_id]['mov_trapezoid'].object_distance=57.0
         sed_conditions[sed_id]['mov_trapezoid'].grasp='precision'
-        #sed_conditions[sed_id]['mov_trapezoid'].hand_visible=
-        #sed_conditions[sed_id]['mov_trapezoid'].object_visible=
+        sed_conditions[sed_id]['mov_trapezoid'].hand_visible=True
+        sed_conditions[sed_id]['mov_trapezoid'].object_visible=True
         sed_conditions[sed_id]['mov_trapezoid'].save(using=db)
 
     # create event types (if not already exist)

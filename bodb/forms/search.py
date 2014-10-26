@@ -176,6 +176,21 @@ class SEDSearchForm(DocumentWithLiteratureSearchForm):
         ('approx', 'Approximate'),
         ('window', 'Time Window')
         )
+    NEUROPHYS_CONDITION_CHOICES=(
+        ('',''),
+        ('grasp_observe', 'Grasp observation'),
+        ('grasp_perform', 'Grasp performance')
+    )
+    NEUROPHYS_CONDITION_DEMONSTRATION_CHOICES=(
+        ('',''),
+        ('live','live'),
+        ('video','video')
+    )
+    VISIBILITY_CHOICES=(
+        ('',''),
+        ('visible','visible'),
+        ('invisible','invisible'),
+    )
     type = forms.ChoiceField(choices=SED.TYPE_CHOICES, help_text='Type of SED', required=False,
         widget=forms.Select(attrs={'onchange': 'updateSEDSearchOptions(this.value)'}))
     control_condition = forms.CharField(help_text='Control condition', required=False)
@@ -249,10 +264,35 @@ class SEDSearchForm(DocumentWithLiteratureSearchForm):
     electrode_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     source=forms.CharField(help_text='Source', required=False)
     source_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_subject_species = forms.CharField(help_text="Subject species", required=False)
+    neurophys_subject_species_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     neurophys_condition=forms.CharField(help_text='Condition', required=False)
     neurophys_condition_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
-    neurophys_unit_type=forms.CharField(help_text='Unit Type', required=False)
+    neurophys_condition_type=forms.ChoiceField(choices=NEUROPHYS_CONDITION_CHOICES, help_text='Condition type',
+        required=False, widget=forms.Select(attrs={'onchange': 'updateNeurophysSEDSearchOptions(this.value)'}))
+    neurophys_condition_object=forms.CharField(help_text='Object grasped', required=False)
+    neurophys_condition_object_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_condition_grasp=forms.CharField(help_text='Grasp type', required=False)
+    neurophys_condition_grasp_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_condition_object_distance_min = forms.CharField(help_text='Minimum object distance', widget=forms.TextInput(attrs={'size':'3'}),
+        required=False)
+    neurophys_condition_object_distance_max = forms.CharField(help_text='Maximum object distance', widget=forms.TextInput(attrs={'size':'3'}),
+        required=False)
+    neurophys_condition_whole_body_visible = forms.ChoiceField(choices=VISIBILITY_CHOICES, help_text='Whole body of demonstrator visible',required=False)
+    neurophys_condition_demonstrator_species = forms.CharField(help_text="Demonstrator species", required=False)
+    neurophys_condition_demonstrator_species_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_condition_demonstration_type=forms.ChoiceField(choices=NEUROPHYS_CONDITION_DEMONSTRATION_CHOICES, help_text='Condition type',
+        required=False)
+    neurophys_condition_viewing_angle_min = forms.CharField(help_text='Minimum viewing angle', widget=forms.TextInput(attrs={'size':'3'}),
+        required=False)
+    neurophys_condition_viewing_angle_max = forms.CharField(help_text='Maximum viewing angle', widget=forms.TextInput(attrs={'size':'3'}),
+        required=False)
+    neurophys_condition_hand_visible = forms.ChoiceField(choices=VISIBILITY_CHOICES, help_text='Hand of subject visible during grasp',required=False)
+    neurophys_condition_object_visible = forms.ChoiceField(choices=VISIBILITY_CHOICES, help_text='Object visible during grasp',required=False)
+    neurophys_unit_type=forms.CharField(help_text='Unit type', required=False)
     neurophys_unit_type_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    neurophys_unit_region=forms.CharField(help_text='Unit brain region', required=False)
+    neurophys_unit_region_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     search_cocomac = forms.BooleanField(help_text='Search CoCoMac',required=False)
     search_brede = forms.BooleanField(help_text='Search Brede', required=False)
 

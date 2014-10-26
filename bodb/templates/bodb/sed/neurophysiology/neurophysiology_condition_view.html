@@ -58,6 +58,50 @@
     <tr valign="top">
         <td colspan=2><strong>Description: </strong>{{ object.description }}</td>
     </tr>
+    <tr valign=top>
+        <td colspan="2"><strong>Subject species: </strong>{{ object.sed.subject_species }}</td>
+    </tr>
+    {% ifequal object.type 'grasp_observe' %}
+        <tr valign="top">
+        <td colspan="2"><strong>Object: </strong>{{ object.object }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Grasp: </strong>{{ object.grasp }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Distance from subject: </strong>{{ object.object_distance }}cm</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Whole body visible: </strong>{{ object.whole_body_visible }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Demonstrator species: </strong>{{ object.demonstrator_species }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Demonstration type: </strong>{{ object.demonstration_type }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Viewing angle: </strong>{{ object.viewing_angle }} degrees</td>
+        </tr>
+    {% endifequal %}
+    {% ifequal object.type 'grasp_perform' %}
+        <tr valign="top">
+        <td colspan="2"><strong>Object: </strong>{{ object.object }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Grasp: </strong>{{ object.grasp }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Distance from subject: </strong>{{ object.object_distance }}cm</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Hand visible: </strong>{{ object.hand_visible }}</td>
+        </tr>
+        <tr valign="top">
+        <td colspan="2"><strong>Object visible: </strong>{{ object.object_visible }}</td>
+        </tr>
+    {% endifequal %}
+    </tr>
     <tr class="section_subheader">
         <td colspan="2">Trial Events</td>
     </tr>

@@ -1,5 +1,6 @@
 import os
 from string import atof
+from django.contrib.auth import login
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.views.generic.detail import BaseDetailView
@@ -8,12 +9,14 @@ from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event, GraspObservationCondition, GraspPerformanceCondition, NeurophysiologyExportRequest
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, Event
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from guardian.shortcuts import assign_perm
+from registration.models import User
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -1261,6 +1264,14 @@ class NeurophysiologyConditionView(DetailView):
     model = NeurophysiologyCondition
     template_name = 'bodb/sed/neurophysiology/neurophysiology_condition_view.html'
 
+    def get_object(self, queryset=None):
+        object=super(NeurophysiologyConditionView,self).get_object()
+        if object.type=='grasp_observe':
+            object=GraspObservationCondition.objects.get(id=object.id)
+        elif object.type=='grasp_perform':
+            object=GraspPerformanceCondition.objects.get(id=object.id)
+        return object
+
     def get_context_data(self, **kwargs):
         context=super(NeurophysiologyConditionView,self).get_context_data(**kwargs)
         filename='condition_%d.start_aligned.png' % self.object.id
@@ -1354,3 +1365,25 @@ class NeurophysiologyConditionPopulationRealignView(JSONResponseMixin, BaseUpdat
                 }
         return context
 
+
+class NeurophysiologyExportRequestResponse(LoginRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context=super(NeurophysiologyExportRequestResponse,self).get_context_data(**kwargs)
+        context['request']=get_object_or_404(NeurophysiologyExportRequest,activation_key=context['activation_key'])
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context=self.get_context_data(**kwargs)
+        context['request'].sed.collator.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(self.request,context['request'].sed.collator)
+        if context['action']=='decline':
+            context['invitation'].status='declined'
+            self.template_name='bodb/sed/neurophysiology/export_request_decline.html'
+        elif context['action']=='accept':
+            context['request'].status='accepted'
+            user=User.objects.get(id=context['request'].requesting_user.id)
+            # Add workspace group to user's groups
+            assign_perm('export',user,context['request'].sed)
+            self.template_name='bodb/sed/neurophysiology/export_request_accept.html'
+        context['request'].save()
+        return self.render_to_response(context)
