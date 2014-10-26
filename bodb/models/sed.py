@@ -18,6 +18,7 @@ from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
+import h5py
 from uscbp.image_utils import save_to_png
 
 
@@ -697,6 +698,37 @@ class NeurophysiologySED(SED):
     def get_tagged_seds(name, user):
         return NeurophysiologySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
+    def export(self, output_file):
+        f = h5py.File(output_file, 'w')
+        f.attrs['id']=self.id
+        f.attrs['collator']=np.string_(self.collator.__unicode__())
+        f.attrs['title']=np.string_(self.title)
+        f.attrs['brief_description']=np.string_(self.brief_description)
+        f.attrs['narrative']=np.string_(self.narrative)
+        f.attrs['subject_species']=np.string_(self.subject_species.__unicode__())
+        
+        f_conditions=f.create_group('conditions')
+        for condition in NeurophysiologyCondition.objects.filter(sed=self):
+            f_condition=f_conditions.create_group(str(condition.id))
+
+            if condition.type=='grasp_observe':
+                condition=GraspObservationCondition.objects.get(id=condition.id)
+            elif condition.type=='grasp_perform':
+                condition=GraspPerformanceCondition.objects.get(id=condition.id)
+            condition.export(f_condition)
+
+        f_units=f.create_group('units')
+        for unit in Unit.objects.filter(recordingtrial__condition__sed=self).distinct():
+            f_unit=f_units.create_group(str(unit.id))
+            unit.export(f_unit)
+
+        f_trials=f.create_group('trials')
+        for trial in RecordingTrial.objects.filter(condition__sed=self).distinct():
+            f_trial=f_trials.create_group('condition_%d.unit_%d.trial_%d' % (trial.condition.id, trial.unit.id,
+                                                                             trial.trial_number))
+            trial.export(f_trial)
+
+        f.close()
 
 class NeurophysiologyCondition(models.Model):
     sed=models.ForeignKey('NeurophysiologySED')
@@ -707,6 +739,12 @@ class NeurophysiologyCondition(models.Model):
     class Meta:
         app_label='bodb'
 
+    def export(self, group):
+        group.attrs['id']=self.id
+        group.attrs['name']=np.string_(self.name)
+        group.attrs['description']=np.string_(self.description)
+        group.attrs['type']=np.string_(self.type)
+        
     def plot_trial_spikes(self, unit, ax, event_colors, x_min, x_max, align_to=None):
         trials=RecordingTrial.objects.filter(unit=unit, condition=self)
         for trial_idx, trial in enumerate(trials):
@@ -797,6 +835,12 @@ class GraspCondition(NeurophysiologyCondition):
 
     class Meta:
         app_label='bodb'
+        
+    def export(self, group):
+        super(GraspCondition,self).export(group)
+        group.attrs['object']=np.string_(self.object)
+        group.attrs['object_distance']=float(self.object_distance)
+        group.attrs['grasp']=np.string_(self.grasp)
 
 
 class GraspPerformanceCondition(GraspCondition):
@@ -805,6 +849,12 @@ class GraspPerformanceCondition(GraspCondition):
 
     class Meta:
         app_label='bodb'
+
+    def export(self, group):
+        super(GraspPerformanceCondition,self).export(group)
+
+        group.attrs['hand_visible']=self.hand_visible
+        group.attrs['object_visible']=self.object_visible
 
 
 class GraspObservationCondition(GraspCondition):
@@ -820,12 +870,26 @@ class GraspObservationCondition(GraspCondition):
     class Meta:
         app_label='bodb'
 
+    def export(self, group):
+        super(GraspObservationCondition,self).export(group)
+
+        group.attrs['demonstrator_species']=np.string_(self.demonstrator_species.__unicode__())
+        group.attrs['demonstration_type']=np.string_(self.demonstration_type)
+        group.attrs['viewing_angle']=float(self.viewing_angle)
+        group.attrs['whole_body_visible']=self.whole_body_visible
+
+
 class Unit(models.Model):
     type=models.CharField(max_length=50)
     area=models.ForeignKey('BrainRegion')
 
     class Meta:
         app_label='bodb'
+
+    def export(self, group):
+        group.attrs['id']=self.id
+        group.attrs['type']=np.string_(self.type)
+        group.attrs['area']=np.string_(self.area.__unicode__())
 
     def plot_condition_spikes(self, condition_ids, bin_width, align_to=None, filename=None):
 
@@ -891,6 +955,19 @@ class RecordingTrial(models.Model):
         for idx,spike in enumerate(spikes):
             if len(spike) and float(spike)>=float(self.start_time)-1.0 and float(spike)<float(self.end_time)+1.0:
                 self.spike_times_array[idx]=float(spike)
+
+    def export(self, group):
+        group.attrs['trial_number']=self.trial_number
+        group.attrs['unit']=self.unit.id
+        group.attrs['condition']=self.condition.id
+        group.attrs['start_time']=float(self.start_time)
+        group.attrs['end_time']=float(self.end_time)
+        group['spike_times']=self.get_relative_spike_times()
+        f_events=group.create_group('events')
+        for event in Event.objects.filter(trial=self):
+            f_event=f_events.create_group(event.name)
+            f_event.attrs['description']=np.string_(event.description)
+            f_event.attrs['time']=float(event.time)
 
     def get_relative_spike_times(self, align_to=None):
         align_time=self.start_time
