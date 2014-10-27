@@ -291,8 +291,9 @@ def import_kraskov_data(mat_file, db='default'):
                 next_trial_start_time=trial_start_times[j+1]
 
             previous_trial=None
-            if j>0:
-                previous_trial=RecordingTrial.objects.using(db).get(unit=unit, trial_number=j)
+            if trial_numbers[unit.id][trial.condition.id]>1:
+                previous_trial=RecordingTrial.objects.using(db).get(unit=unit, condition=trial.condition,
+                    trial_number=trial_numbers[unit.id][trial.condition.id]-1)
 
             # load spikes
             spike_times=[]
