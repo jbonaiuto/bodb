@@ -182,3 +182,5 @@ TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInl
     nested_can_delete=True,extra=0,nested_extra=1,nested_max_num=1)
 
 
+class NeurophysiologySEDExportRequestForm(forms.Form):
+    request_body=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)

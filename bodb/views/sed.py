@@ -1,15 +1,16 @@
+import h5py
 import os
 from string import atof
 from django.contrib.auth import login
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event, GraspObservationCondition, GraspPerformanceCondition, NeurophysiologyExportRequest
+from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, NeurophysiologySEDExportRequestForm
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event, GraspObservationCondition, GraspPerformanceCondition, NeurophysiologySEDExportRequest, Message
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, Event
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
 from bodb.views.main import BODBView
@@ -18,10 +19,11 @@ from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from guardian.shortcuts import assign_perm
 from registration.models import User
 from uscbp import settings
+from uscbp.settings import MEDIA_ROOT
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -252,6 +254,17 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                         event_names.append(event.name)
                         event_descriptions.append(event.description)
             context['events']=zip(event_names,event_descriptions)
+            context['form']=NeurophysiologySEDExportRequestForm()
+            context['request_status']=''
+            if self.request.user==self.object.collator:
+                context['request_status']='accepted'
+            elif NeurophysiologySEDExportRequest.objects.filter(sed=self.object,requesting_user=self.request.user).count():
+                request=NeurophysiologySEDExportRequest.objects.get(sed=self.object,requesting_user=self.request.user)
+                if len(request.status):
+                    context['request_status']=request.status
+                else:
+                    context['request_status']='pending'
+            print(context['request_status'])
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -325,6 +338,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         return context
+
 
 class EditBrainImagingSEDMixin():
     model=BrainImagingSED
@@ -1366,24 +1380,72 @@ class NeurophysiologyConditionPopulationRealignView(JSONResponseMixin, BaseUpdat
         return context
 
 
-class NeurophysiologyExportRequestResponse(LoginRequiredMixin, TemplateView):
+class NeurophysiologySEDExportRequestView(LoginRequiredMixin, JSONResponseMixin, BaseUpdateView):
+    model=NeurophysiologySEDExportRequest
+
     def get_context_data(self, **kwargs):
-        context=super(NeurophysiologyExportRequestResponse,self).get_context_data(**kwargs)
-        context['request']=get_object_or_404(NeurophysiologyExportRequest,activation_key=context['activation_key'])
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            sed=NeurophysiologySED.objects.get(id=kwargs.get('pk',None))
+            form=NeurophysiologySEDExportRequestForm(self.request.POST)
+            context={}
+            if form.is_valid():
+                request=NeurophysiologySEDExportRequest(sed=sed, requesting_user=self.request.user,
+                    request_body=form.cleaned_data['request_body'])
+                request.save()
+            else:
+                print(form.errors)
+        return context
+
+class NeurophysiologySEDExportRequestResponseView(LoginRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context=super(NeurophysiologySEDExportRequestResponseView,self).get_context_data(**kwargs)
+        context['request']=get_object_or_404(NeurophysiologySEDExportRequest,activation_key=context['activation_key'])
         return context
 
     def get(self, request, *args, **kwargs):
         context=self.get_context_data(**kwargs)
         context['request'].sed.collator.backend = 'django.contrib.auth.backends.ModelBackend'
         login(self.request,context['request'].sed.collator)
+        msg=Message(recipient=context['request'].requesting_user, sender=context['request'].sed.collator)
         if context['action']=='decline':
-            context['invitation'].status='declined'
+            context['request'].status='declined'
+            msg.subject='Neurophysiology SED export request declined'
+            msg.text='Sorry, but your request to export the neurophysiology SED: %s<br>' % context['request'].sed.title
+            msg.text+='has been declined.'
             self.template_name='bodb/sed/neurophysiology/export_request_decline.html'
         elif context['action']=='accept':
             context['request'].status='accepted'
             user=User.objects.get(id=context['request'].requesting_user.id)
             # Add workspace group to user's groups
             assign_perm('export',user,context['request'].sed)
+            msg.subject='Neurophysiology SED export request accepted'
+            msg.text='Your request to export the neurophysiology SED: %s<br>' % context['request'].sed.title
+            msg.text+='has been accepted. Click the following link to view the entry and download the raw data:<br>'
+            msg.text+='<a href="%s/bodb/sed/%d/">%s</a>' % (settings.URL_BASE, context['request'].sed.id,
+                                                              context['request'].sed.title)
             self.template_name='bodb/sed/neurophysiology/export_request_accept.html'
+        msg.save()
         context['request'].save()
         return self.render_to_response(context)
+
+
+class NeurophysiologySEDExportView(View):
+    def post(self, request, *args, **kwargs):
+        id = self.kwargs.get('pk', None)
+
+        sed=get_object_or_404(NeurophysiologySED, id=id)
+
+        allowed=False
+        if request.user==sed.collator:
+            allowed=True
+        else:
+            if NeurophysiologySEDExportRequest.objects.filter(requesting_user=request.user,sed=sed):
+                request=NeurophysiologySEDExportRequest.objects.get(requesting_user=request.user,sed=sed)
+                if request.status=='accepted':
+                    allowed=True
+        if allowed:
+            file_name='neurophysiology_sed.%d.h5' % sed.id
+            sed.export(os.path.join(MEDIA_ROOT,'export',file_name))
+            return redirect('/media/export/%s' % file_name)
+        return HttpResponseForbidden()

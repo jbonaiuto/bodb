@@ -77,6 +77,11 @@
             document.getElementById('reportForm').submit();
         }
 
+        function exportNeurophysiologySEDData()
+        {
+            document.getElementById('exportForm').submit();
+        }
+
         function updateSectionDisplaySettings()
         {
             var sectionIds=['figureData', 'narrativeData', 'relatedBopData', 'relatedModelData',
@@ -102,6 +107,28 @@
                     realignUnitConditionPlot({{ unit.id }},{{ condition.id }},csrf_token);
                 {% endfor %}
             {% endfor %}
+        }
+
+        function sendExportRequest()
+        {
+            data=$('#exportRequestForm').serialize();
+            var args = { type: "POST", url: '/bodb/sed/neurophysiology/{{ neurophysiologysed.id }}/export_request/',
+                data: data, complete: doneSendExportRequest };
+            $.ajax(args)
+            return false;
+        }
+
+        function doneSendExportRequest(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status!="success")
+                alert(res.responseText);
+            else
+            {
+                document.getElementById('export_request').style.display='none';
+                document.getElementById('export_request_pending').style.display='inline';
+            }
         }
     </script>
 {% endblock %}
@@ -423,7 +450,31 @@
     <select id="exportType">
         <option value="pdf">PDF</option>
         <option value="rtf">RTF</option>
-    </select>
+    </select><br>
+    {% if request_status == 'accepted' %}
+        <form id="exportForm" name="exportForm" action="/bodb/sed/neurophysiology/{{neurophysiologysed.id}}/export/" method="post">
+            {% csrf_token %}
+        </form>
+        <input class="btn" type="button" value="Export Raw Data" onclick="return exportNeurophysiologySEDData();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    {% endif %}
+    <div id="export_request" style="display: {% if request_status == '' %}inline{% else %}none{% endif %};">
+        <form id="exportRequestForm" name="exportRequestForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td><strong>Request Body</strong></td>
+                    <td>{{ form.request_body }}</td>
+                </tr>
+            </table>
+        </form>
+        <input class="btn" type="button" value="Request Raw Data" onclick="return sendExportRequest()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    </div>
+    <div id="export_request_pending" style="display:{% if request_status == 'pending' %}inline{% else %}none{% endif %};">
+        <div class="messages">Raw data request pending</div>
+    </div>
+    <div id="export_request_denied" style="display:{% if request_status == 'denied' %}inline{% else %}none{% endif %}">
+        <div class="myerrors">Raw data request denied</div>
+    </div>
     </div>
     <form id="fileForm" action=""></form>
     <form id="reportForm" name="reportForm" action="/bodb/sed/{{neurophysiologysed.id}}/report/rtf/" method="post">
