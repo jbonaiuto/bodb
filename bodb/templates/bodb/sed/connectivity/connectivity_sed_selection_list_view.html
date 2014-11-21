@@ -180,7 +180,7 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="return opener.addSEDMultiple('<%= type %>', <%= id %>, ['<%= title %>', '<%= brief_description %>', '<%= type %>']);">Select</a>
+                                <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', <%= id %>, ['<%= title %>', '<%= brief_description %>', '<%= sed_type %>']);">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

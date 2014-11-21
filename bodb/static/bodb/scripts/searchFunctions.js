@@ -156,7 +156,7 @@ function processSEDResults(data)
             var tmplMarkup = $('#generic_sed-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['generic_seds'][i][3]['id'], title: data['generic_seds'][i][3]['title'],
-                    type: data['generic_seds'][i][3]['type'],
+                    sed_type: data['generic_seds'][i][3]['type'],
                     brief_description: data['generic_seds'][i][3]['brief_description'],
                     is_favorite: data['generic_seds'][i][1], selected: data['generic_seds'][i][0],
                     title_str: data['generic_seds'][i][3]['title_str'], draft: data['generic_seds'][i][3]['draft'],
@@ -196,7 +196,7 @@ function processSEDResults(data)
             var tmplMarkup = $('#erp_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['erp_seds'][i][3]['id'], title: data['erp_seds'][i][3]['title'],
-                    type: data['erp_seds'][i][3]['type'],
+                    sed_type: data['erp_seds'][i][3]['type'],
                     brief_description: data['erp_seds'][i][3]['brief_description'],
                     components: data['erp_seds'][i][4], is_favorite: data['erp_seds'][i][1],
                     selected: data['erp_seds'][i][0], title_str: data['erp_seds'][i][3]['title_str'],
@@ -236,7 +236,8 @@ function processSEDResults(data)
             var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['connectivity_seds'][i][3]['id'],
-                    title: data['connectivity_seds'][i][3]['title'], type: data['connectivity_seds'][i][3]['type'],
+                    title: data['connectivity_seds'][i][3]['title'],
+                    sed_type: data['connectivity_seds'][i][3]['type'],
                     brief_description: data['connectivity_seds'][i][3]['brief_description'],
                     url_str: data['connectivity_seds'][i][3]['url_str'], is_favorite: data['connectivity_seds'][i][1],
                     selected: data['connectivity_seds'][i][0], title_str: data['connectivity_seds'][i][3]['title_str'],
@@ -275,7 +276,7 @@ function processSEDResults(data)
             var tmplMarkup = $('#imaging_sed-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 { idx : count+1, id: data['imaging_seds'][i][3]['id'], title: data['imaging_seds'][i][3]['title'],
-                    type: data['imaging_seds'][i][3]['type'], url_str: data['imaging_seds'][i][3]['url_str'],
+                    sed_type: data['imaging_seds'][i][3]['type'], url_str: data['imaging_seds'][i][3]['url_str'],
                     brief_description: data['imaging_seds'][i][3]['brief_description'],
                     coords: data['imaging_seds'][i][4], is_favorite: data['imaging_seds'][i][1],
                     selected: data['imaging_seds'][i][0], title_str: data['imaging_seds'][i][3]['title_str'],
