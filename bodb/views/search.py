@@ -422,7 +422,7 @@ class BOPSearchView(FormView):
         if self.request.is_ajax():
             bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
                       for (selected,is_favorite,subscribed_to_user,bop) in context['bops']]
-            bop_paginator=Paginator(bop_list,10)
+            bop_paginator=Paginator(bop_list,int(self.request.POST.get('results_per_page','10')))
             bop_page=self.request.POST.get('bop_page')
             try:
                 bops=bop_paginator.page(bop_page)
@@ -482,7 +482,7 @@ class BrainRegionSearchView(FormView):
         if self.request.is_ajax():
             brain_region_list=[(selected,is_favorite,region.as_json())
                                for (selected,is_favorite,region) in context['brain_regions']]
-            brain_region_paginator=Paginator(brain_region_list,10)
+            brain_region_paginator=Paginator(brain_region_list,int(self.request.POST.get('results_per_page','10')))
             brain_region_page=self.request.POST.get('brain_region_page')
             try:
                 brain_regions=brain_region_paginator.page(brain_region_page)
@@ -539,7 +539,7 @@ class LiteratureSearchView(FormView):
         if self.request.is_ajax():
             literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
                              for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
-            literature_paginator=Paginator(literature_list,10)
+            literature_paginator=Paginator(literature_list,int(self.request.POST.get('results_per_page','10')))
             literature_page=self.request.POST.get('literature_page')
             try:
                 literatures=literature_paginator.page(literature_page)
@@ -598,7 +598,7 @@ class ModelSearchView(FormView):
         if self.request.is_ajax():
             model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
                         for (selected,is_favorite,subscribed_to_user,model) in context['models']]
-            model_paginator=Paginator(model_list,10)
+            model_paginator=Paginator(model_list,int(self.request.POST.get('results_per_page','10')))
             model_page=self.request.POST.get('model_page')
             try:
                 models=model_paginator.page(model_page)
