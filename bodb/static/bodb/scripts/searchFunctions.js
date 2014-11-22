@@ -1,48 +1,41 @@
 function processModelResults(data)
 {
-    if(data['models'].length>0)
+
+    $('[name=model_section]').each(function(index, element){
+        $( this ).attr('style','display:block');
+    });
+    $('[name=model_list]').each(function(index, element){
+        if(data['models'].length>0)
+            $( this ).attr('style','display:block');
+        else
+            $( this ).attr('style','display:none');
+    });
+    $('[name=numModelResults]').each(function(index, element){
+        $( this ).html(data['models_count']);
+    });
+    $('[name=modelResultStartIndex]').each(function(index, element){
+        $(this).html(data['models_start_index']);
+    });
+    $('[name=modelResultEndIndex]').each(function(index, element){
+        $(this).html(data['models_end_index']);
+    });
+    $('#model_current_page').html(data['models_page_number']);
+    $('#model_total_pages').html(data['models_num_pages']);
+    if(data['models_has_previous'])
     {
-        $('[name=model_section]').each(function(index, element){
-            $( this ).attr('style','display:block');
-        });
-        $('[name=model_list]').each(function(index, element){
-            $( this ).attr('style','display:block');
-        });
-        $('[name=numModelResults]').each(function(index, element){
-            $( this ).html(data['models_count']);
-        });
-        $('[name=modelResultStartIndex]').each(function(index, element){
-            $(this).html(data['models_start_index']);
-        });
-        $('[name=modelResultEndIndex]').each(function(index, element){
-            $(this).html(data['models_end_index']);
-        });
-        $('#model_current_page').html(data['models_page_number']);
-        $('#model_total_pages').html(data['models_num_pages']);
-        if(data['models_has_previous'])
-        {
-            $('#models_previous').attr('style','display:inline');
-            $('#models_previous').html('<a href="" onclick="modelJumpPage('+data['models_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#models_previous').attr('style','display:none');
-        if(data['models_has_next'])
-        {
-            $('#models_next').attr('style','display:inline');
-            $('#models_next').html('<a href="" onclick="modelJumpPage('+data['models_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#models_next').attr('style','display:none');
+        $('#models_previous').attr('style','display:inline');
+        $('#models_previous').html('<a href="" onclick="modelJumpPage('+data['models_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#models_previous').attr('style','display:none');
+    if(data['models_has_next'])
     {
-        $('[name=model_section]').each(function(index, element){
-            $( this ).attr('style','display:none');
-        });
-        $('[name=model_list]').each(function(index, element){
-            $( this ).attr('style','display:none');
-        });
+        $('#models_next').attr('style','display:inline');
+        $('#models_next').html('<a href="" onclick="modelJumpPage('+data['models_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#models_next').attr('style','display:none');
+
     $('[name=models]').each(function(index, element){
         $( this ).empty();
         for(var i=0; i<data['models'].length; i++)
@@ -74,49 +67,40 @@ function processModelResults(data)
 function processBOPResults(data)
 {
     // BOP results
-    if(data['bops'].length>0)
+    $('[name=bop_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=bop_list]').each(function(index, element){
+        if(data['bops'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numBOPResults]').each(function(index, element){
+        $(this).html(data['bops_count']);
+    });
+    $('[name=bopResultStartIndex]').each(function(index, element){
+        $(this).html(data['bops_start_index']);
+    });
+    $('[name=bopResultEndIndex]').each(function(index, element){
+        $(this).html(data['bops_end_index']);
+    });
+    $('#bop_current_page').html(data['bops_page_number']);
+    $('#bop_total_pages').html(data['bops_num_pages']);
+    if(data['bops_has_previous'])
     {
-        $('[name=bop_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=bop_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numBOPResults]').each(function(index, element){
-            $(this).html(data['bops_count']);
-        });
-        $('[name=bopResultStartIndex]').each(function(index, element){
-            $(this).html(data['bops_start_index']);
-        });
-        $('[name=bopResultEndIndex]').each(function(index, element){
-            $(this).html(data['bops_end_index']);
-        });
-        $('#bop_current_page').html(data['bops_page_number']);
-        $('#bop_total_pages').html(data['bops_num_pages']);
-        if(data['bops_has_previous'])
-        {
-            $('#bops_previous').attr('style','display:inline');
-            $('#bops_previous').html('<a href="" onclick="bopJumpPage('+data['bops_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#bops_previous').attr('style','display:none');
-        if(data['bops_has_next'])
-        {
-            $('#bops_next').attr('style','display:inline');
-            $('#bops_next').html('<a href="" onclick="bopJumpPage('+data['bops_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#bops_next').attr('style','display:none');
+        $('#bops_previous').attr('style','display:inline');
+        $('#bops_previous').html('<a href="" onclick="bopJumpPage('+data['bops_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#bops_previous').attr('style','display:none');
+    if(data['bops_has_next'])
     {
-        $('[name=bop_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=bop_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#bops_next').attr('style','display:inline');
+        $('#bops_next').html('<a href="" onclick="bopJumpPage('+data['bops_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#bops_next').attr('style','display:none');
     $('[name=bops]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['bops'].length; i++)
@@ -148,24 +132,18 @@ function processBOPResults(data)
 function processSEDResults(data)
 {
     // Generic SED results
-    if(data['generic_seds'].length>0)
-    {
-        $('[name=sed_section]').each(function(index, element){
+    $('[name=sed_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=generic_sed_list]').each(function(index, element){
+        if(data['generic_seds'].length>0)
             $( this).attr('style','display:block');
-        });
-        $('[name=generic_sed_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numGenericSEDResults]').each(function(index, element){
-            $(this).html(data['generic_seds'].length)
-        });
-    }
-    else
-    {
-        $('[name=generic_sed_list]').each(function(index, element){
+        else
             $( this).attr('style','display:none');
-        });
-    }
+    });
+    $('[name=numGenericSEDResults]').each(function(index, element){
+        $(this).html(data['generic_seds'].length)
+    });
     $('[name=generic_seds]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['generic_seds'].length; i++)
@@ -193,24 +171,15 @@ function processSEDResults(data)
     });
 
     // ERP SED results
-    if(data['erp_seds'].length>0)
-    {
-        $('[name=sed_section]').each(function(index, element){
+    $('[name=erp_sed_list]').each(function(index, element){
+        if(data['erp_seds'].length>0)
             $( this).attr('style','display:block');
-        });
-        $('[name=erp_sed_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numERPSEDResults]').each(function(index, element){
-            $(this).html(data['erp_seds'].length)
-        });
-    }
-    else
-    {
-        $('[name=erp_sed_list]').each(function(index, element){
+        else
             $( this).attr('style','display:none');
-        });
-    }
+    });
+    $('[name=numERPSEDResults]').each(function(index, element){
+        $(this).html(data['erp_seds'].length)
+    });
     $('[name=erp_seds]').each(function(index, element){
         var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
@@ -242,24 +211,15 @@ function processSEDResults(data)
     });
 
     // Connectivity SED results
-    if(data['connectivity_seds'].length>0)
-    {
-        $('[name=sed_section]').each(function(index, element){
+    $('[name=connectivity_sed_list]').each(function(index, element){
+        if(data['connectivity_seds'].length>0)
             $( this).attr('style','display:block');
-        });
-        $('[name=connectivity_sed_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numConnectivitySEDResults]').each(function(index, element){
-            $(this).html(data['connectivity_seds'].length)
-        });
-    }
-    else
-    {
-        $('[name=connectivity_sed_list]').each(function(index, element){
+        else
             $( this).attr('style','display:none');
-        });
-    }
+    });
+    $('[name=numConnectivitySEDResults]').each(function(index, element){
+        $(this).html(data['connectivity_seds'].length)
+    });
     $('[name=connectivity_seds]').each(function(index, element){
         var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
@@ -289,24 +249,15 @@ function processSEDResults(data)
     });
 
     // Imaging SED results
-    if(data['imaging_seds'].length>0)
-    {
-        $('[name=sed_section]').each(function(index, element){
+    $('[name=imaging_sed_list]').each(function(index, element){
+        if(data['imaging_seds'].length>0)
             $( this).attr('style','display:block');
-        });
-        $('[name=imaging_sed_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numImagingSEDResults]').each(function(index, element){
-            $(this).html(data['imaging_seds'].length)
-        });
-    }
-    else
-    {
-        $('[name=imaging_sed_list]').each(function(index, element){
+        else
             $( this).attr('style','display:none');
-        });
-    }
+    });
+    $('[name=numImagingSEDResults]').each(function(index, element){
+        $(this).html(data['imaging_seds'].length)
+    });
     $('[name=imaging_seds]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['imaging_seds'].length; i++)
@@ -342,49 +293,40 @@ function processSEDResults(data)
 function processSSRResults(data)
 {
     // SSR results
-    if(data['ssrs'].length>0)
+    $('[name=ssr_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=ssr_list]').each(function(index, element){
+        if(data['ssrs'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numSSRResults]').each(function(index, element){
+        $(this).html(data['ssrs_count'])
+    });
+    $('[name=ssrResultStartIndex]').each(function(index, element){
+        $(this).html(data['ssrs_start_index']);
+    });
+    $('[name=ssrResultEndIndex]').each(function(index, element){
+        $(this).html(data['ssrs_end_index']);
+    });
+    $('#ssr_current_page').html(data['ssrs_page_number']);
+    $('#ssr_total_pages').html(data['ssrs_num_pages']);
+    if(data['ssrs_has_previous'])
     {
-        $('[name=ssr_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=ssr_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numSSRResults]').each(function(index, element){
-            $(this).html(data['ssrs_count'])
-        });
-        $('[name=ssrResultStartIndex]').each(function(index, element){
-            $(this).html(data['ssrs_start_index']);
-        });
-        $('[name=ssrResultEndIndex]').each(function(index, element){
-            $(this).html(data['ssrs_end_index']);
-        });
-        $('#ssr_current_page').html(data['ssrs_page_number']);
-        $('#ssr_total_pages').html(data['ssrs_num_pages']);
-        if(data['ssrs_has_previous'])
-        {
-            $('#ssrs_previous').attr('style','display:inline');
-            $('#ssrs_previous').html('<a href="" onclick="ssrJumpPage('+data['ssrs_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#ssrs_previous').attr('style','display:none');
-        if(data['ssrs_has_next'])
-        {
-            $('#ssrs_next').attr('style','display:inline');
-            $('#ssrs_next').html('<a href="" onclick="ssrJumpPage('+data['ssrs_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#ssrs_next').attr('style','display:none');
+        $('#ssrs_previous').attr('style','display:inline');
+        $('#ssrs_previous').html('<a href="" onclick="ssrJumpPage('+data['ssrs_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#ssrs_previous').attr('style','display:none');
+    if(data['ssrs_has_next'])
     {
-        $('[name=ssr_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=ssr_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#ssrs_next').attr('style','display:inline');
+        $('#ssrs_next').html('<a href="" onclick="ssrJumpPage('+data['ssrs_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#ssrs_next').attr('style','display:none');
     $('[name=ssrs]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['ssrs'].length; i++)
@@ -417,49 +359,40 @@ function processSSRResults(data)
 function processLiteratureResults(data)
 {
     // Literature results
-    if(data['literatures'].length>0)
+    $('[name=literature_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=literature_list]').each(function(index, element){
+        if(data['literatures'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numLiteratureResults]').each(function(index, element){
+        $(this).html(data['literatures_count'])
+    });
+    $('[name=literatureResultStartIndex]').each(function(index, element){
+        $(this).html(data['literatures_start_index']);
+    });
+    $('[name=literatureResultEndIndex]').each(function(index, element){
+        $(this).html(data['literatures_end_index']);
+    });
+    $('#literature_current_page').html(data['literatures_page_number']);
+    $('#literature_total_pages').html(data['literatures_num_pages']);
+    if(data['literatures_has_previous'])
     {
-        $('[name=literature_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=literature_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numLiteratureResults]').each(function(index, element){
-            $(this).html(data['literatures_count'])
-        });
-        $('[name=literatureResultStartIndex]').each(function(index, element){
-            $(this).html(data['literatures_start_index']);
-        });
-        $('[name=literatureResultEndIndex]').each(function(index, element){
-            $(this).html(data['literatures_end_index']);
-        });
-        $('#literature_current_page').html(data['literatures_page_number']);
-        $('#literature_total_pages').html(data['literatures_num_pages']);
-        if(data['literatures_has_previous'])
-        {
-            $('#literatures_previous').attr('style','display:inline');
-            $('#literatures_previous').html('<a href="" onclick="literatureJumpPage('+data['literatures_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#literatures_previous').attr('style','display:none');
-        if(data['literatures_has_next'])
-        {
-            $('#literatures_next').attr('style','display:inline');
-            $('#literatures_next').html('<a href="" onclick="literatureJumpPage('+data['literatures_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#literatures_next').attr('style','display:none');
+        $('#literatures_previous').attr('style','display:inline');
+        $('#literatures_previous').html('<a href="" onclick="literatureJumpPage('+data['literatures_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#literatures_previous').attr('style','display:none');
+    if(data['literatures_has_next'])
     {
-        $('[name=literature_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=literature_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#literatures_next').attr('style','display:inline');
+        $('#literatures_next').html('<a href="" onclick="literatureJumpPage('+data['literatures_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#literatures_next').attr('style','display:none');
     $('[name=literatures]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['literatures'].length; i++)
@@ -492,49 +425,40 @@ function processLiteratureResults(data)
 function processBrainRegionResults(data)
 {
     // Brain region results
-    if(data['brain_regions'].length>0)
+    $('[name=brain_region_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=brain_region_list]').each(function(index, element){
+        if(data['brain_regions'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numBrainRegionResults]').each(function(index, element){
+        $(this).html(data['brain_regions_count'])
+    });
+    $('[name=brainRegionResultStartIndex]').each(function(index, element){
+        $(this).html(data['brain_regions_start_index']);
+    });
+    $('[name=brainRegionResultEndIndex]').each(function(index, element){
+        $(this).html(data['brain_regions_end_index']);
+    });
+    $('#brain_region_current_page').html(data['brain_regions_page_number']);
+    $('#brain_region_total_pages').html(data['brain_regions_num_pages']);
+    if(data['brain_regions_has_previous'])
     {
-        $('[name=brain_region_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=brain_region_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numBrainRegionResults]').each(function(index, element){
-            $(this).html(data['brain_regions_count'])
-        });
-        $('[name=brainRegionResultStartIndex]').each(function(index, element){
-            $(this).html(data['brain_regions_start_index']);
-        });
-        $('[name=brainRegionResultEndIndex]').each(function(index, element){
-            $(this).html(data['brain_regions_end_index']);
-        });
-        $('#brain_region_current_page').html(data['brain_regions_page_number']);
-        $('#brain_region_total_pages').html(data['brain_regions_num_pages']);
-        if(data['brain_regions_has_previous'])
-        {
-            $('#brain_regions_previous').attr('style','display:inline');
-            $('#brain_regions_previous').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#brain_regions_previous').attr('style','display:none');
-        if(data['brain_regions_has_next'])
-        {
-            $('#brain_regions_next').attr('style','display:inline');
-            $('#brain_regions_next').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#brain_regions_next').attr('style','display:none');
+        $('#brain_regions_previous').attr('style','display:inline');
+        $('#brain_regions_previous').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#brain_regions_previous').attr('style','display:none');
+    if(data['brain_regions_has_next'])
     {
-        $('[name=brain_region_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=brain_region_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#brain_regions_next').attr('style','display:inline');
+        $('#brain_regions_next').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#brain_regions_next').attr('style','display:none');
     $('[name=brain_regions]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['brain_regions'].length; i++)
@@ -566,49 +490,40 @@ function processBrainRegionResults(data)
 function processUserResults(data)
 {
     // User results
-    if(data['users'].length>0)
+    $('[name=user_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=user_list]').each(function(index, element){
+        if(data['users'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numUserResults]').each(function(index, element){
+        $(this).html(data['users_count'])
+    });
+    $('[name=userResultStartIndex]').each(function(index, element){
+        $(this).html(data['users_start_index']);
+    });
+    $('[name=userResultEndIndex]').each(function(index, element){
+        $(this).html(data['users_end_index']);
+    });
+    $('#user_current_page').html(data['users_page_number']);
+    $('#user_total_pages').html(data['users_num_pages']);
+    if(data['users_has_previous'])
     {
-        $('[name=user_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=user_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numUserResults]').each(function(index, element){
-            $(this).html(data['users_count'])
-        });
-        $('[name=userResultStartIndex]').each(function(index, element){
-            $(this).html(data['users_start_index']);
-        });
-        $('[name=userResultEndIndex]').each(function(index, element){
-            $(this).html(data['users_end_index']);
-        });
-        $('#user_current_page').html(data['users_page_number']);
-        $('#user_total_pages').html(data['users_num_pages']);
-        if(data['users_has_previous'])
-        {
-            $('#users_previous').attr('style','display:inline');
-            $('#users_previous').html('<a href="" onclick="userJumpPage('+data['users_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#users_previous').attr('style','display:none');
-        if(data['users_has_next'])
-        {
-            $('#users_next').attr('style','display:inline');
-            $('#users_next').html('<a href="" onclick="userJumpPage('+data['users_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#users_next').attr('style','display:none');
+        $('#users_previous').attr('style','display:inline');
+        $('#users_previous').html('<a href="" onclick="userJumpPage('+data['users_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#users_previous').attr('style','display:none');
+    if(data['users_has_next'])
     {
-        $('[name=user_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=user_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#users_next').attr('style','display:inline');
+        $('#users_next').html('<a href="" onclick="userJumpPage('+data['users_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#users_next').attr('style','display:none');
     $('[name=users]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['users'].length; i++)
@@ -637,49 +552,40 @@ function processUserResults(data)
 function processWorkspaceResults(data)
 {
     // Workspace results
-    if(data['workspaces'].length>0)
+    $('[name=workspace_section]').each(function(index, element){
+        $( this).attr('style','display:block');
+    });
+    $('[name=workspace_list]').each(function(index, element){
+        if(data['workspaces'].length>0)
+            $( this).attr('style','display:block');
+        else
+            $( this).attr('style','display:none');
+    });
+    $('[name=numWorkspaceResults]').each(function(index, element){
+        $(this).html(data['workspaces_count'])
+    });
+    $('[name=workspaceResultStartIndex]').each(function(index, element){
+        $(this).html(data['workspaces_start_index']);
+    });
+    $('[name=workspaceResultEndIndex]').each(function(index, element){
+        $(this).html(data['workspaces_end_index']);
+    });
+    $('#workspace_current_page').html(data['workspaces_page_number']);
+    $('#workspace_total_pages').html(data['workspaces_num_pages']);
+    if(data['workspaces_has_previous'])
     {
-        $('[name=workspace_section]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=workspace_list]').each(function(index, element){
-            $( this).attr('style','display:block');
-        });
-        $('[name=numWorkspaceResults]').each(function(index, element){
-            $(this).html(data['workspaces_count'])
-        });
-        $('[name=workspaceResultStartIndex]').each(function(index, element){
-            $(this).html(data['workspaces_start_index']);
-        });
-        $('[name=workspaceResultEndIndex]').each(function(index, element){
-            $(this).html(data['workspaces_end_index']);
-        });
-        $('#workspace_current_page').html(data['workspaces_page_number']);
-        $('#workspace_total_pages').html(data['workspaces_num_pages']);
-        if(data['workspaces_has_previous'])
-        {
-            $('#workspaces_previous').attr('style','display:inline');
-            $('#workspaces_previous').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_previous_page_number']+'); return false;">previous</a>');
-        }
-        else
-            $('#workspaces_previous').attr('style','display:none');
-        if(data['workspaces_has_next'])
-        {
-            $('#workspaces_next').attr('style','display:inline');
-            $('#workspaces_next').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_next_page_number']+'); return false;">next</a>');
-        }
-        else
-            $('#workspaces_next').attr('style','display:none');
+        $('#workspaces_previous').attr('style','display:inline');
+        $('#workspaces_previous').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_previous_page_number']+'); return false;">previous</a>');
     }
     else
+        $('#workspaces_previous').attr('style','display:none');
+    if(data['workspaces_has_next'])
     {
-        $('[name=workspace_section]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
-        $('[name=workspace_list]').each(function(index, element){
-            $( this).attr('style','display:none');
-        });
+        $('#workspaces_next').attr('style','display:inline');
+        $('#workspaces_next').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_next_page_number']+'); return false;">next</a>');
     }
+    else
+        $('#workspaces_next').attr('style','display:none');
     $('[name=workspaces]').each(function(index, element){
         $(this).empty();
         for(var i=0; i<data['workspaces'].length; i++)
