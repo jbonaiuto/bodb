@@ -161,9 +161,9 @@
                     {% if user.is_authenticated and not user.is_anonymous %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../" onclick="return opener.addBOPMultiple(<%= id %>, ['<%= title %>', '<%= brief_description %>']);">Select</a>
+                                <a href="../" onclick="return opener.addBOPMultiple(<%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>']);">Select</a>
                             {% else %}
-                                <a href="../" onclick="opener.selectSingleBOP(<%= id %>, '<%= title %>');self.close();">Select</a>
+                                <a href="../" onclick="opener.selectSingleBOP(<%= id %>, '<%= title.replaceAll('\'','\\\'') %>');self.close();">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
