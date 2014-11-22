@@ -74,7 +74,7 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
-                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= authors %>', '<%= year %>', '<%= title %>']);">Select</a>
+                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= authors.replaceAll('\'','\\\'') %>', '<%= year %>', '<%= title.replaceAll('\'','\\\'') %>']);">Select</a>
                         {% else %}
                             <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature(<%= id %>,'favIconLiterature-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIconLiterature-<%= id %>" name="favIconLiterature-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>

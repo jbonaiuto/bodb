@@ -50,11 +50,20 @@ function processModelResults(data)
             var count = $( this ).children().length;
             var tmplMarkup = $('#model-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['models_start_index'], id: data['models'][i][3]['id'], title: data['models'][i][3]['title'],
-                    brief_description: data['models'][i][3]['brief_description'], is_favorite: data['models'][i][1],
-                    selected: data['models'][i][0], title_str: data['models'][i][3]['title_str'],
-                    draft: data['models'][i][3]['draft'], collator_id: data['models'][i][3]['collator_id'],
-                    collator: data['models'][i][3]['collator'], subscribed_to_user: data['models'][i][2]});
+                {
+                    idx : count+data['models_start_index'],
+                    id: data['models'][i][3]['id'],
+                    title: data['models'][i][3]['title'],
+                    brief_description: data['models'][i][3]['brief_description'],
+                    is_favorite: data['models'][i][1],
+                    selected: data['models'][i][0],
+                    title_str: data['models'][i][3]['title_str'],
+                    draft: data['models'][i][3]['draft'],
+                    collator_id: data['models'][i][3]['collator_id'],
+                    collator: data['models'][i][3]['collator'],
+                    subscribed_to_user: data['models'][i][2]
+                }
+            );
             $( this ).append(compiledTmpl);
         }
     });
@@ -115,11 +124,20 @@ function processBOPResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#bop-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['bops_start_index'], id: data['bops'][i][3]['id'], title: data['bops'][i][3]['title'],
-                    brief_description: data['bops'][i][3]['brief_description'], is_favorite: data['bops'][i][1],
-                    selected: data['bops'][i][0], title_str: data['bops'][i][3]['title_str'],
-                    draft: data['bops'][i][3]['draft'], collator_id: data['bops'][i][3]['collator_id'],
-                    collator: data['bops'][i][3]['collator'], subscribed_to_user: data['bops'][i][2]});
+                {
+                    idx : count+data['bops_start_index'],
+                    id: data['bops'][i][3]['id'],
+                    title: data['bops'][i][3]['title'],
+                    brief_description: data['bops'][i][3]['brief_description'],
+                    is_favorite: data['bops'][i][1],
+                    selected: data['bops'][i][0],
+                    title_str: data['bops'][i][3]['title_str'],
+                    draft: data['bops'][i][3]['draft'],
+                    collator_id: data['bops'][i][3]['collator_id'],
+                    collator: data['bops'][i][3]['collator'],
+                    subscribed_to_user: data['bops'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -155,14 +173,21 @@ function processSEDResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#generic_sed-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['generic_seds'][i][3]['id'], title: data['generic_seds'][i][3]['title'],
+                {
+                    idx : count+1,
+                    id: data['generic_seds'][i][3]['id'],
+                    title: data['generic_seds'][i][3]['title'],
                     sed_type: data['generic_seds'][i][3]['type'],
                     brief_description: data['generic_seds'][i][3]['brief_description'],
-                    is_favorite: data['generic_seds'][i][1], selected: data['generic_seds'][i][0],
-                    title_str: data['generic_seds'][i][3]['title_str'], draft: data['generic_seds'][i][3]['draft'],
+                    is_favorite: data['generic_seds'][i][1],
+                    selected: data['generic_seds'][i][0],
+                    title_str: data['generic_seds'][i][3]['title_str'],
+                    draft: data['generic_seds'][i][3]['draft'],
                     collator_id: data['generic_seds'][i][3]['collator_id'],
                     collator: data['generic_seds'][i][3]['collator'],
-                    subscribed_to_user: data['generic_seds'][i][2]});
+                    subscribed_to_user: data['generic_seds'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -233,13 +258,22 @@ function processSEDResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#erp_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['erp_seds'][i][3]['id'], title: data['erp_seds'][i][3]['title'],
+                {
+                    idx : count+1,
+                    id: data['erp_seds'][i][3]['id'],
+                    title: data['erp_seds'][i][3]['title'],
                     sed_type: data['erp_seds'][i][3]['type'],
                     brief_description: data['erp_seds'][i][3]['brief_description'],
-                    components: data['erp_seds'][i][4], is_favorite: data['erp_seds'][i][1],
-                    selected: data['erp_seds'][i][0], title_str: data['erp_seds'][i][3]['title_str'],
-                    draft: data['erp_seds'][i][3]['draft'], collator_id: data['erp_seds'][i][3]['collator_id'],
-                    collator: data['erp_seds'][i][3]['collator'], subscribed_to_user: data['erp_seds'][i][2]});
+                    components: data['erp_seds'][i][4],
+                    is_favorite: data['erp_seds'][i][1],
+                    selected: data['erp_seds'][i][0],
+                    title_str: data['erp_seds'][i][3]['title_str'],
+                    draft: data['erp_seds'][i][3]['draft'],
+                    collator_id: data['erp_seds'][i][3]['collator_id'],
+                    collator: data['erp_seds'][i][3]['collator'],
+                    subscribed_to_user: data['erp_seds'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
         eval('load'+groupName+'Popups();');
@@ -273,16 +307,21 @@ function processSEDResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['connectivity_seds'][i][3]['id'],
+                {
+                    idx : count+1, id: data['connectivity_seds'][i][3]['id'],
                     title: data['connectivity_seds'][i][3]['title'],
                     sed_type: data['connectivity_seds'][i][3]['type'],
                     brief_description: data['connectivity_seds'][i][3]['brief_description'],
-                    url_str: data['connectivity_seds'][i][3]['url_str'], is_favorite: data['connectivity_seds'][i][1],
-                    selected: data['connectivity_seds'][i][0], title_str: data['connectivity_seds'][i][3]['title_str'],
+                    url_str: data['connectivity_seds'][i][3]['url_str'],
+                    is_favorite: data['connectivity_seds'][i][1],
+                    selected: data['connectivity_seds'][i][0],
+                    title_str: data['connectivity_seds'][i][3]['title_str'],
                     draft: data['connectivity_seds'][i][3]['draft'],
                     collator_id: data['connectivity_seds'][i][3]['collator_id'],
                     collator: data['connectivity_seds'][i][3]['collator'],
-                    subscribed_to_user: data['connectivity_seds'][i][2]});
+                    subscribed_to_user: data['connectivity_seds'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -313,13 +352,23 @@ function processSEDResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#imaging_sed-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+1, id: data['imaging_seds'][i][3]['id'], title: data['imaging_seds'][i][3]['title'],
-                    sed_type: data['imaging_seds'][i][3]['type'], url_str: data['imaging_seds'][i][3]['url_str'],
+                {
+                    idx : count+1,
+                    id: data['imaging_seds'][i][3]['id'],
+                    title: data['imaging_seds'][i][3]['title'],
+                    sed_type: data['imaging_seds'][i][3]['type'],
+                    url_str: data['imaging_seds'][i][3]['url_str'],
                     brief_description: data['imaging_seds'][i][3]['brief_description'],
-                    coords: data['imaging_seds'][i][4], is_favorite: data['imaging_seds'][i][1],
-                    selected: data['imaging_seds'][i][0], title_str: data['imaging_seds'][i][3]['title_str'],
-                    draft: data['imaging_seds'][i][3]['draft'], collator_id: data['imaging_seds'][i][3]['collator_id'],
-                    collator: data['imaging_seds'][i][3]['collator'], subscribed_to_user: data['imaging_seds'][i][2]});
+                    coords: data['imaging_seds'][i][4],
+                    is_favorite: data['imaging_seds'][i][1],
+                    selected: data['imaging_seds'][i][0],
+                    title_str: data['imaging_seds'][i][3]['title_str'],
+                    draft: data['imaging_seds'][i][3]['draft'],
+                    collator_id: data['imaging_seds'][i][3]['collator_id'],
+                    collator: data['imaging_seds'][i][3]['collator'],
+                    subscribed_to_user: data['imaging_seds'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -381,11 +430,20 @@ function processSSRResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#ssr-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['ssrs_start_index'], id: data['ssrs'][i][3]['id'], title: data['ssrs'][i][3]['title'],
-                    brief_description: data['ssrs'][i][3]['brief_description'], is_favorite: data['ssrs'][i][1],
-                    selected: data['ssrs'][i][0], title_str: data['ssrs'][i][3]['title_str'],
-                    draft: data['ssrs'][i][3]['draft'], collator_id: data['ssrs'][i][3]['collator_id'],
-                    collator: data['ssrs'][i][3]['collator'], subscribed_to_user: data['ssrs'][i][2]});
+                {
+                    idx : count+data['ssrs_start_index'],
+                    id: data['ssrs'][i][3]['id'],
+                    title: data['ssrs'][i][3]['title'],
+                    brief_description: data['ssrs'][i][3]['brief_description'],
+                    is_favorite: data['ssrs'][i][1],
+                    selected: data['ssrs'][i][0],
+                    title_str: data['ssrs'][i][3]['title_str'],
+                    draft: data['ssrs'][i][3]['draft'],
+                    collator_id: data['ssrs'][i][3]['collator_id'],
+                    collator: data['ssrs'][i][3]['collator'],
+                    subscribed_to_user: data['ssrs'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -447,11 +505,20 @@ function processLiteratureResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#literature-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['literatures_start_index'], id: data['literatures'][i][3]['id'], authors: data['literatures'][i][3]['authors'],
-                    year: data['literatures'][i][3]['year'], is_favorite: data['literatures'][i][1],
-                    selected: data['literatures'][i][0], title: data['literatures'][i][3]['title'],
-                    string: data['literatures'][i][3]['string'], collator_id: data['literatures'][i][3]['collator_id'],
-                    collator: data['literatures'][i][3]['collator'], subscribed_to_user: data['literatures'][i][2]});
+                {
+                    idx : count+data['literatures_start_index'],
+                    id: data['literatures'][i][3]['id'],
+                    authors: data['literatures'][i][3]['authors'],
+                    year: data['literatures'][i][3]['year'],
+                    is_favorite: data['literatures'][i][1],
+                    selected: data['literatures'][i][0],
+                    title: data['literatures'][i][3]['title'],
+                    string: data['literatures'][i][3]['string'],
+                    collator_id: data['literatures'][i][3]['collator_id'],
+                    collator: data['literatures'][i][3]['collator'],
+                    subscribed_to_user: data['literatures'][i][2]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -513,13 +580,19 @@ function processBrainRegionResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#brain_region-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['brain_regions_start_index'], id: data['brain_regions'][i][2]['id'], name: data['brain_regions'][i][2]['name'],
+                {
+                    idx : count+data['brain_regions_start_index'],
+                    id: data['brain_regions'][i][2]['id'],
+                    name: data['brain_regions'][i][2]['name'],
                     abbreviation: data['brain_regions'][i][2]['abbreviation'],
-                    is_favorite: data['brain_regions'][i][1], selected: data['brain_regions'][i][0],
+                    is_favorite: data['brain_regions'][i][1],
+                    selected: data['brain_regions'][i][0],
                     type: data['brain_regions'][i][2]['type'],
                     parent_region: data['brain_regions'][i][2]['parent_region'],
                     nomenclature: data['brain_regions'][i][2]['nomenclature'],
-                    species: data['brain_regions'][i][2]['species']});
+                    species: data['brain_regions'][i][2]['species']
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -581,9 +654,16 @@ function processUserResults(data)
             var count = $(this).children().length;
             var tmplMarkup = $('#user-template').html();
             var compiledTmpl = _.template(tmplMarkup,
-                { idx : count+data['users_start_index'], id: data['users'][i][1]['id'], username: data['users'][i][1]['username'],
-                    first_name: data['users'][i][1]['first_name'], last_name: data['users'][i][1]['last_name'],
-                    email: data['users'][i][1]['email'], subscribed_to_user: data['users'][i][0]});
+                {
+                    idx : count+data['users_start_index'],
+                    id: data['users'][i][1]['id'],
+                    username: data['users'][i][1]['username'],
+                    first_name: data['users'][i][1]['first_name'],
+                    last_name: data['users'][i][1]['last_name'],
+                    email: data['users'][i][1]['email'],
+                    subscribed_to_user: data['users'][i][0]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });
@@ -646,10 +726,15 @@ function processWorkspaceResults(data)
             var tmplMarkup = $('#workspace-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 {
-                    idx : count+data['workspaces_start_index'], id: data['workspaces'][i][1]['id'],
-                    title: data['workspaces'][i][1]['title'], description: data['workspaces'][i][1]['description'],
+                    idx : count+data['workspaces_start_index'],
+                    id: data['workspaces'][i][1]['id'],
+                    title: data['workspaces'][i][1]['title'],
+                    description: data['workspaces'][i][1]['description'],
                     created_by: data['workspaces'][i][1]['created_by'],
-                    created_by_id: data['workspaces'][i][1]['created_by_id'], subscribed_to_user: data['workspaces'][i][0]});
+                    created_by_id: data['workspaces'][i][1]['created_by_id'],
+                    subscribed_to_user: data['workspaces'][i][0]
+                }
+            );
             $(this).append(compiledTmpl);
         }
     });

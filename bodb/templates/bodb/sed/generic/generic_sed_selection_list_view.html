@@ -67,7 +67,7 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup and multiple %}
-                            <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', <%= id %>, ['<%= title %>', '<%= brief_description %>', '<%= sed_type %>']);">Select</a>
+                            <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>']);">Select</a>
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
