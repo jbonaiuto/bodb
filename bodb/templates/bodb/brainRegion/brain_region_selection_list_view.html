@@ -88,9 +88,9 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../" onclick="return opener.addBrainRegionMultiple(<%= id %>, ['<%= name %>', '<%= nomenclature %>', '<%= species %>']);">Select</a></td>
+                                <a href="../" onclick="return opener.addBrainRegionMultiple(<%= id %>, ['<%= name.replaceAll('\'','\\\'') %>', '<%= nomenclature.replaceAll('\'','\\\'') %>', '<%= species.replaceAll('\'','\\\'') %>']);">Select</a>
                             {% else %}
-                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= name %>', '<%= nomenclature %>', '<%= species %>'], '{{ fieldName }}');self.close();">Select</a></td>
+                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= name.replaceAll('\'','\\\'') %>', '<%= nomenclature.replaceAll('\'','\\\'') %>', '<%= species.replaceAll('\'','\\\'') %>'], '{{ fieldName }}');self.close();">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLinkRegion" href="" onclick="return toggleFavoriteBrainRegion(<%= id %>,'favIconRegion-<%= id %>','{{ csrf_token }}');">

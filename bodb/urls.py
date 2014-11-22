@@ -12,7 +12,7 @@ from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
-from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, ConnectivityDiagramView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView, NeurophysiologyExportRequestResponse
+from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, ConnectivityDiagramView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView, NeurophysiologySEDExportRequestResponseView, NeurophysiologySEDExportRequestView, NeurophysiologySEDExportView
 from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
@@ -165,8 +165,11 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/neurophysiology/unit/(?P<pk>\d+)/$', NeurophysiologyUnitView.as_view(), {}, 'neurophysiology_unit'),
     url(r'^sed/neurophysiology/unit_realign/$', NeurophysiologyUnitRealignView.as_view(), {}, 'neurophysiology_unit_realign'),
     url(r'^sed/neurophysiology/condition_population_realign/$', NeurophysiologyConditionPopulationRealignView.as_view(), {}, 'neurophysiology_unit_realign'),
-    url(r'^sed/neurophysiology/export/(?P<action>\w+)/(?P<activation_key>\w+)/$', NeurophysiologyExportRequestResponse.as_view(), {},
-        'neurophysiology_export_accept'),
+    url(r'^sed/neurophysiology/(?P<pk>\d+)/export/$', NeurophysiologySEDExportView.as_view(), {}, 'neurophysiology_export'),
+    url(r'^sed/neurophysiology/(?P<pk>\d+)/export_request/$', NeurophysiologySEDExportRequestView.as_view(), {},
+        'neurophysiology_export_request'),
+    url(r'^sed/neurophysiology/export_request/(?P<action>\w+)/(?P<activation_key>\w+)/$', NeurophysiologySEDExportRequestResponseView.as_view(), {},
+        'neurophysiology_export_response'),
     url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
     url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
     url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),

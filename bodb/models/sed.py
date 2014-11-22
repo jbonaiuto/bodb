@@ -683,6 +683,9 @@ class NeurophysiologySED(SED):
 
     class Meta:
         app_label='bodb'
+        permissions=(
+            ('export','Export raw data'),
+        )
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -729,6 +732,7 @@ class NeurophysiologySED(SED):
             trial.export(f_trial)
 
         f.close()
+
 
 class NeurophysiologyCondition(models.Model):
     sed=models.ForeignKey('NeurophysiologySED')
@@ -996,7 +1000,7 @@ class Event(models.Model):
         app_label='bodb'
 
 
-class NeurophysiologyExportRequest(models.Model):
+class NeurophysiologySEDExportRequest(models.Model):
     STATUS_OPTIONS=(
         ('',''),
         ('accepted','accepted'),
@@ -1021,9 +1025,9 @@ class NeurophysiologyExportRequest(models.Model):
         text += self.request_body
         text += '<br>Click one of the following links to accept or decline the request:<br>'
         accept_url = ''.join(
-            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export/accept/%s/' % self.activation_key])
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export_request/accept/%s/' % self.activation_key])
         decline_url = ''.join(
-            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export/decline/%s/' % self.activation_key])
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export_request/decline/%s/' % self.activation_key])
         text += '<a href="%s">Accept</a><br>' % accept_url
         text += 'or<br>'
         text += '<a href="%s">Decline</a>' % decline_url
@@ -1051,6 +1055,6 @@ class NeurophysiologyExportRequest(models.Model):
             self.activation_key = hashlib.sha1(salt+username).hexdigest()
 
             self.send()
-        super(NeurophysiologyExportRequest,self).save(**kwargs)
+        super(NeurophysiologySEDExportRequest,self).save(**kwargs)
 
 
