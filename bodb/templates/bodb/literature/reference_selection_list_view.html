@@ -87,7 +87,7 @@
                     {% endif %}
                 </td>
                 <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= string %></a></td>
-                <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
+                <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
                 <td width=100px><span id="literature_<%= id %>_message" name="literature_<%= id %>_message" class="messages"></span> </td>
             </tr>
         </table>
