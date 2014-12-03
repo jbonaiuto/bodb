@@ -187,7 +187,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Literature Results (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureResults')"><span id="literatureResultsLabel">Hide</span></a>)</td>
+                                <td>Literature (<span id="literatureResultStartIndex" name="literatureResultStartIndex">1</span>-<span id="literatureResultEndIndex" name="literatureResultEndIndex">1</span> of <span id="numLiteratureResults" name="numLiteratureResults">{{ literatures|length }}</span>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td>
@@ -223,7 +223,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>BOP Results (1-{{ bops|length }}) (<a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
+                                <td>BOPs (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -259,7 +259,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Model Results (1-{{ models|length }}) (<a href="javascript:animatedcollapse.toggle('modelResults')"><span id="modelResultsLabel">Hide</span></a>)</td>
+                                <td>Models (<span id="modelResultStartIndex" name="modelResultStartIndex">1</span>-<span id="modelResultEndIndex" name="modelResultEndIndex">1</span> of <span id="numModelResults" name="numModelResults">{{ models|length }}</span>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -295,7 +295,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Summary of Experimental Data Results (<a href="javascript:animatedcollapse.toggle('sedResults')"><span id="sedResultsLabel">Hide</span></a>)</td>
+                                <td>Summaries of Experimental Data (<a href="javascript:animatedcollapse.toggle('sedResults')"><span id="sedResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -334,7 +334,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Summary of Simulation Results (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
+                                <td colspan=8>Summaries of Simulation Results (<span id="ssrResultStartIndex" name="ssrResultStartIndex">1</span>-<span id="ssrResultEndIndex" name="ssrResultEndIndex">1</span> of <span id="numSSRResults" name="numSSRResults">{{ ssrs|length }}</span>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -370,7 +370,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Brain Region Results (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
+                                <td>Brain Regions (<span id="brainRegionResultStartIndex" name="brainRegionResultStartIndex">1</span>-<span id="brainRegionResultEndIndex" name="brainRegionResultEndIndex">1</span> of <span id="numBrainRegionResults" name="numBrainRegionResults">{{ bops|length }}</span>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
@@ -401,7 +401,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>User Results (1-{{ users|length }}) (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
+                                <td>Users (<span id="userResultStartIndex" name="userResultStartIndex">1</span>-<span id="userResultEndIndex" name="userResultEndIndex">1</span> of <span id="numUserResults" name="numUserResults">{{ users|length }}</span>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
