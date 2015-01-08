@@ -936,7 +936,7 @@ class BenchmarkModelView(TemplateView):
         for model in context['selected_models']:
             context['scores'].append(0)
 
-        buildsed_q=Q(Q(related_build_sed_document__document__in=context['selected_models']))
+        buildsed_q=Q(Q(build_sed__document__in=context['selected_models']))
         testsed_q=Q(Q(test_sed__model__in=context['selected_models']))
         related_seds=SED.objects.filter(Q(buildsed_q | testsed_q) & Document.get_security_q(user))
 
