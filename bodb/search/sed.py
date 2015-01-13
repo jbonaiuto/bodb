@@ -31,7 +31,6 @@ def runSEDSearch(search_data, userId):
 
     q = reduce(op,filters) & Document.get_security_q(user) & Q(connectivitysed__cocomacconnectivitysed__isnull=True) & \
         Q(brainimagingsed__bredebrainimagingsed__isnull=True)
-    print(q)
     results=SED.objects.filter(q).order_by('title').select_related().distinct()
     return results
 

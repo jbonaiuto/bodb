@@ -161,12 +161,10 @@ class WorkspaceInvitation(models.Model):
         text += 'or<br>'
         text += '<a href="%s">Decline</a>' % decline_url
         self.sent=datetime.datetime.now()
-        print(text)
         # send internal message
         profile=BodbProfile.objects.get(user__id=self.invited_user.id)
         notification_type = profile.notification_preference
         if notification_type == 'message' or notification_type == 'both':
-            print('sending message to %d' % self.invited_user.id)
             message = Message(recipient=self.invited_user, subject=subject, read=False)
             message.text = text
             message.save()
