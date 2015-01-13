@@ -79,11 +79,11 @@
                                                         <img id="favIcon-{{ model.id }}" name="favIcon-{{ model.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                                     </a>
                                                     <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
-                                                    <input type=hidden name="selectedModel" id="selectedModel_{{ model.id }}" value="{{ model.id }}"/>
                                                 {% endif %}
                                             {% else %}
                                                 <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" style="display: none;"/>
                                             {% endif %}
+                                            <input type=hidden name="selectedModel" id="selectedModel_{{ model.id }}" value="{{ model.id }}"/>
                                         </td>
                                         <td width=200px>
                                             <a href="/bodb/model/{{ model.id }}/" onclick="return openInNewTab('/bodb/model/{{ model.id }}/');">{{ model }}</a>
@@ -167,11 +167,11 @@
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<%} else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedModel" id="selectedModel_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
+                    <input type=hidden name="selectedModel" id="selectedModel_<%= id %>" value="<%= id %>"/>
                 </td>
                 <td width=200px>
                     <a href="/bodb/model/<%= id %>/" onclick="return openInNewTab('/bodb/model/<%= id %>/');"><%= title_str %></a>
