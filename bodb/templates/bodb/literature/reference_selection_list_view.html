@@ -48,11 +48,11 @@
                                                     <img id="favIconLiterature-{{ literature.id }}" name="favIconLiterature-{{ literature.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                                 </a>
                                                 <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
-                                                <input type=hidden name="selectedLiterature" id="selectedLiterature_{{ literature.id }}" value="{{ literature.id }}"/>
                                             {% endif %}
                                         {% else %}
                                             <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" style="display: none;"/>
                                         {% endif %}
+                                        <input type=hidden name="selectedLiterature" id="selectedLiterature_{{ literature.id }}" value="{{ literature.id }}"/>
                                     </td>
                                     <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
                                     <td width=100px><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
@@ -80,11 +80,11 @@
                                 <img id="favIconLiterature-<%= id %>" name="favIconLiterature-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %>{% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedLiterature" id="selectedLiterature_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
+                    <input type=hidden name="selectedLiterature" id="selectedLiterature_<%= id %>" value="<%= id %>"/>
                 </td>
                 <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= string %></a></td>
                 <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>

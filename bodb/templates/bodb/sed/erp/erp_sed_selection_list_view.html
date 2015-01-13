@@ -137,9 +137,11 @@
                                                     <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                                 </a>
                                                 <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedERPSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                                <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
                                             {% endif %}
+                                        {% else %}
+                                            <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedERPSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" style="display:none"/>
                                         {% endif %}
+                                        <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
                                     </td>
                                     <td width=200px>
                                         <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
@@ -393,9 +395,11 @@
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedERPSEDCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
                         {% endif %}
+                    {% else %}
+                        <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedERPSEDCheckbox_<%= id %>" value="<%= id %>" style="display:none"/>
                     {% endif %}
+                    <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
                 </td>
                 <td width=200px>
                     <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= title_str %></a>
