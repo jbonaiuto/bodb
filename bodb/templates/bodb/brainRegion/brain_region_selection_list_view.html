@@ -42,11 +42,11 @@
                                                     <img id="favIconRegion-{{ brain_region.id }}" name="favIconRegion-{{ brain_region.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                                 </a>
                                                 <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_{{ brain_region.id }}" value="{{ brain_region.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleBrainRegionSelect(this.value, '{{ csrf_token }}');"/>
-                                                <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_{{ brain_region.id }}" value="{{ brain_region.id }}"/>
                                             {% endif %}
                                         {% else %}
                                                 <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_{{ brain_region.id }}" value="{{ brain_region.id }}" style="display: none;"/>
                                         {% endif %}
+                                        <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_{{ brain_region.id }}" value="{{ brain_region.id }}"/>
                                     </td>
                                     <td width=250px>
                                         <a href="/bodb/brain_region/{{ brain_region.id }}/" onclick="return openInNewTab('/bodb/brain_region/{{ brain_region.id }}/');">{{ brain_region }}</a>
@@ -97,11 +97,11 @@
                                 <img id="favIconRegion-<%= id %>" name="favIconRegion-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %>{% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleBrainRegionSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
+                    <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_<%= id %>" value="<%= id %>"/>
                 </td>
                 <td width=250px>
                     <a href="/bodb/brain_region/<%= id %>/" onclick="return openInNewTab('/bodb/brain_region/<%= id %>/');"><%= name %></a>

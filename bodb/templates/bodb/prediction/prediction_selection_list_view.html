@@ -30,8 +30,8 @@
                             <img id="favIcon-{{ prediction.get_ssr.id }}" name="favIcon-{{ prediction.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                         </a>
                         <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                        <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}"/>
                     {% endif %}
+                    <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}"/>
                 </td>
                 <td>{{ prediction.get_ssr.title }}</td>
                 <td>{{ prediction.get_ssr.brief_description }}</td>

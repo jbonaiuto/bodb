@@ -390,7 +390,6 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
         elif self.steps.current=='step2':
             self.storage.data['step1_data']=self.request.POST
             self.storage.data['literature']=self.request.POST.getlist('literature')
-            print(self.storage.data['literature'])
             context['figure_formset']=DocumentFigureFormSet(prefix='figure')
             context['input_formset']=VariableFormSet(prefix='input')
             context['output_formset']=VariableFormSet(prefix='output')
@@ -427,7 +426,6 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
         for tag in form_list[0].cleaned_data['tags']:
             model.tags.add(tag)
         for lit_id in self.storage.data['literature']:
-            print(lit_id)
             model.literature.add(Literature.objects.get(id=lit_id))
 
         # save authors
