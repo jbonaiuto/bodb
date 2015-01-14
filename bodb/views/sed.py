@@ -282,8 +282,6 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                 coords=SelectedSEDCoord.objects.filter(selected=True, user=user)
                 for coord in coords:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
-        elif self.model==ConnectivitySED:
-            context['url']=self.object.html_url_string()
         context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
         context['related_models'] = RelatedModel.get_reverse_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
         context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
