@@ -3,14 +3,14 @@
     <table class="tab_panel" style="background:#e6e8ed;">
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan=5>
+                <td colspan=6>
                     {% if can_add_entry or can_remove_entry %}
                         Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllLiteratureSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllLiteratureSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     {% endif %}
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan=5>
+                <td colspan=6>
                     Format:
                     <select class="lit_export_format" id="id_lit_export_format" style="font-size: 80%;font-family: verdana, sans-serif">
                         <option value="endnote">Endnote</option>
@@ -25,10 +25,11 @@
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
             <td>Reference</td>
             <td width=100px>Collator</td>
+            <td width=150px>&nbsp;</td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 <div id="literatures" name="literatures">
                     {% for selected,is_favorite,subscribed,literature in literatures %}
                         <div id="literature-{{ forloop.counter0 }}" name="literature">
@@ -56,6 +57,7 @@
                                     </td>
                                     <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
                                     <td width=100px><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                                    <td width=150px>{{ literature.html_url_string }}</td>
                                     <td width=100px><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
                                 </tr>
                             </table>
@@ -88,6 +90,7 @@
                 </td>
                 <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= string %></a></td>
                 <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td width=150px><%= url_str %></td>
                 <td width=100px><span id="literature_<%= id %>_message" name="literature_<%= id %>_message" class="messages"></span> </td>
             </tr>
         </table>

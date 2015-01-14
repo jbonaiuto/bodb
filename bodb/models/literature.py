@@ -147,8 +147,16 @@ class Literature(models.Model):
             'title': self.title,
             'collator_id': self.collator.id,
             'collator': self.get_collator_str(),
-            'string': self.str()
+            'string': self.str(),
+            'url_str': self.html_url_string()
         }
+
+    def html_url_string(self):
+        if len(self.pubmed_id):
+            url='http://www.ncbi.nlm.nih.gov/pubmed/%s' % self.pubmed_id
+            return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in PubMed</a>' % (url,url)
+        return ''
+
     @staticmethod
     def get_reference_list(references, user):
         profile=None
