@@ -268,7 +268,7 @@ class LiteratureDetailView(TemplateView):
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_literature_seds(self.object,user),user)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_literature_seds(literature,user),user)
 
         context['is_favorite']=False
         context['selected']=False
