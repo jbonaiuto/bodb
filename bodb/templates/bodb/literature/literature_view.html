@@ -59,11 +59,7 @@
         }
 
         {% if ispopup %}
-            {% if multiple %}
-                opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);
-            {% else %}
-                opener.selectSingleLiterature({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}'], 'lit', 'span_lit', '{% if perms.bodb.change_literature %}/bodb/literature/{{ literature.id }}/edit/?_popup=1{% endif %}&fieldName={{ fieldName }}&spanName={{ spanName }}', '', '');self.close();
-            {% endif %}
+            opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);
             self.close();
         {% endif %}
     </script>

@@ -39,11 +39,7 @@
                                     <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             {% if ispopup %}
-                                                {% if multiple %}
-                                                    <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
-                                                {% else %}
-                                                    <a href="#" onclick="opener.selectSingleLiterature({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}'], 'lit', 'span_lit', '{% if perms.bodb.change_literature %}/bodb/literature/{{ literature.id }}/edit/?_popup=1{% endif %}&fieldName={{ fieldName }}&spanName={{ spanName }}', '', '');self.close();">Select</a>
-                                                {% endif %}
+                                                <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
                                             {% else %}
                                                 <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature({{ literature.id }},'favIconLiterature-{{ literature.id }}','{{ csrf_token }}');">
                                                     <img id="favIconLiterature-{{ literature.id }}" name="favIconLiterature-{{ literature.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
