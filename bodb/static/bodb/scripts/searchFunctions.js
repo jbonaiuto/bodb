@@ -449,7 +449,8 @@ function processLiteratureResults(data)
                     string: data['literatures'][i][3]['string'],
                     collator_id: data['literatures'][i][3]['collator_id'],
                     collator: data['literatures'][i][3]['collator'],
-                    subscribed_to_user: data['literatures'][i][2]
+                    subscribed_to_user: data['literatures'][i][2],
+                    url_str: data['literatures'][i][3]['url_str']
                 }
             );
             $(this).append(compiledTmpl);
