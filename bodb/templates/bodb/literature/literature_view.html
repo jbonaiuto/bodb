@@ -239,6 +239,14 @@
                     <td><strong>URL:</strong></td>
                     <td><a href="" onclick="window.open('{{ literature.url }}');return false;">{{ literature.url }}</a></td>
                 </tr>
+            {% else %}
+                {% if url %}
+                    <tr>
+                        <td colspan="2">
+                            {{ url|safe }}
+                        </td>
+                    </tr>
+                {% endif %}
             {% endif %}
             <tr valign=top>
                 <td><strong>Language:</strong></td>
