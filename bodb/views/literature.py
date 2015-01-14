@@ -249,6 +249,7 @@ class LiteratureDetailView(TemplateView):
         user=self.request.user
         context['helpPage']='view_entry.html'
         context['literature']=literature
+        context['url']=literature.html_url_string()
         context['literatureType']=literatureType
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['ispopup']=('_popup' in self.request.GET)
