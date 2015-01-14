@@ -57,6 +57,11 @@
         {
             document.location.href='/bodb/';
         }
+
+        {% if ispopup %}
+            opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);
+            self.close();
+        {% endif %}
     </script>
 {% endblock %}
 {% block content %}

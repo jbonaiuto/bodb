@@ -87,7 +87,6 @@ class EditLiteratureMixin():
             'unpublished_form': unpublished_form,
             'unpublished_author_formset': unpublished_author_formset,
             'literatureType':literatureType,
-            'multiple': ('_multiple' in request.GET),
             'ispopup': ('_popup' in request.GET)}
 
         return render(request, self.template_name, context)
@@ -142,8 +141,6 @@ class EditLiteratureMixin():
             href='/bodb/literature/%d/?literatureType=%s' % (id,literatureType)
             if '_popup' in request.GET:
                 href+='&_popup=%s' % request.GET['_popup']
-            if '_multiple' in request.GET:
-                href+='&_multiple=%s' % request.GET['_multiple']
             return HttpResponseRedirect(href)
 
         context={
@@ -255,7 +252,6 @@ class LiteratureDetailView(TemplateView):
         context['literatureType']=literatureType
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
         context['ispopup']=('_popup' in self.request.GET)
-        context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
