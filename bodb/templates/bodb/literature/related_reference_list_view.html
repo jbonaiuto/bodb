@@ -2,14 +2,14 @@
 {% if literatures|length %}
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="col_header">
-            <td colspan=4>
+            <td colspan=5>
                 {% if can_add_entry or can_remove_entry %}
                     Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllLiteratureSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllLiteratureSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                 {% endif %}
             </td>
         </tr>
         <tr class="col_header">
-            <td colspan=4>
+            <td colspan=5>
                 Format:
                 <select class="lit_export_format" id="id_lit_export_format" style="font-size: 80%;font-family: verdana, sans-serif">
                     <option value="endnote">Endnote</option>
@@ -22,6 +22,7 @@
             <td style="width:45px">&nbsp;</td>
             <td>Reference</td>
             <td style="width:100px">Collator</td>
+            <td width=150px>&nbsp;</td>
             <td width=200px>&nbsp;</td>
         </tr>
         {% for selected,is_favorite,subscribed,literature in literatures %}
@@ -37,6 +38,7 @@
                 </td>
                 <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/">{{ literature.str }}</a></td>
                 <td><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+                <td> {% autoescape off %}{{ literature.html_url_string }} {% endautoescape %}</td>
                 <td><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
             </tr>
         {% endfor %}
