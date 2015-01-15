@@ -237,10 +237,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
 
-        context['form']=WorkspaceInvitationForm(initial={
-            'invited_by':user,
-            'workspace':self.object
-        })
+        context['form']=WorkspaceInvitationForm()
         invited_user_ids=[]
         for invite in WorkspaceInvitation.objects.filter(workspace=self.object).exclude(status='declined'):
             invited_user_ids.append(invite.invited_user.id)

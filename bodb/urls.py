@@ -20,6 +20,9 @@ from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, Act
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.conf.urls import include
 
+import autocomplete_light
+autocomplete_light.autodiscover()
+
 feeds = {
     'latestModels': LatestModels,
     'latestBOPs': LatestBOPs,
@@ -28,6 +31,7 @@ feeds = {
     }
 
 urlpatterns = patterns('',
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^api/document/$', DocumentAPIListView.as_view()),
     url(r'^api/document/(?P<pk>[0-9]+)/$', DocumentAPIDetailView.as_view()),
     url(r'^api/document/sed/$', SEDAPIListView.as_view()),

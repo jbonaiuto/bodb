@@ -130,6 +130,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/var/www/bodb/uscbp/templates',
     '/var/www/bodb/bodb/templates',
+    '/var/www/bodb/autocomplete_light/templates/'),
     )
 
 INSTALLED_APPS = (
@@ -147,7 +148,8 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_templatetags',
     'rest_framework',
-    'documentation'
+    'documentation',
+    'autocomplete_light',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
