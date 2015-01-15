@@ -51,9 +51,12 @@
 
     function inviteUsers()
     {
-        data=$('#invitationForm').serialize();
-        var args = { type: "POST", url: '/bodb/workspace/{{ workspace.id }}/invitation/', data: data, complete: doneInviteUsers };
-        $.ajax(args)
+        if($('#id_invited_users-deck').children().length>0)
+        {
+            data=$('#invitationForm').serialize();
+            var args = { type: "POST", url: '/bodb/workspace/{{ workspace.id }}/invitation/', data: data, complete: doneInviteUsers };
+            $.ajax(args);
+        }
         return false;
     }
 
@@ -65,6 +68,7 @@
             alert(res.responseText);
         else
         {
+            alert('Invitations have been sent');
             for(var i=0; i<data.invitations.length; i++)
             {
                 var count = $('#invitationList').children().length;
@@ -75,6 +79,11 @@
                 $('#invitationList').append(compiledTmpl);
                 $('textarea:not(.processed)').TextAreaResizer();
             }
+            document.getElementById('id_invitation_body').value='';
+            //var widget = $('#id_invited_users-wrapper').yourlabsWidget();
+            //widget.freeDeck()
+            $('#id_invited_users-deck').empty();
+            $('#id_invited_users').empty();
         }
     }
 
@@ -95,7 +104,7 @@
             alert(res.responseText);
         else
         {
-            alert('Invitation to '+data.username+' has be resent');
+            alert('Invitation to '+data.username+' has been resent');
             document.getElementById('invitation_sent-'+data.id).innerHTML=data.sent;
         }
         return false;
@@ -172,7 +181,6 @@
                         <td width=150px><strong>Users</strong></td>
                         <td>
                             {{ form.invited_users }}
-                            <br>Hold down "Control", or "Command" on a Mac, to select more than one.
                         </td>
                     </tr>
                     <tr>
