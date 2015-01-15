@@ -38,6 +38,31 @@
         else
             alert(txt);
     }
+
+    function filter_groups(filter_string)
+    {
+        if(filter_string.length==0)
+        {
+            $('.group').each(function(){
+                this.style.display='inline';
+            });
+        }
+        else{
+            $('.group').each(function(){
+                if($(this).find(".group_name").html().indexOf(filter_string)>-1)
+                    this.style.display='inline';
+                else
+                    this.style.display='none';
+            });
+        }
+    }
+
+    $(document).ready(function()
+    {
+        {% for group in groups %}
+            addGroup({{ group.id }},'{{ group.name }}')
+        {% endfor %}
+    });
 </script>
 <div id="groupDiv" style="display:none">
     <table class="tab_panel">
@@ -47,27 +72,15 @@
             </td>
         </tr>
         <tr class="col_header">
+            <td colspan="2">Filter: <input type="text" id="id_group_filter" name="group_filter" onkeyup="filter_groups(this.value);"/></td>
+        </tr>
+        <tr class="col_header">
             <td style="width:100px">&nbsp;</td>
             <td>Name</td>
         </tr>
         <tr>
             <td colspan=2>
                 <div id="groups">
-                    {% for group in groups %}
-                        <div id="group-{{ group.id }}">
-                             <table class="tab_panel">
-                                 <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                     <td style="width:100px">
-                                         <a href="/bodb/group/{{ group.id }}/edit/" onclick="return showPopup('edit_group_{{ group.id }}', 700, 550, '/bodb/group/{{ group.id }}/edit/');">Edit</a>&nbsp;&nbsp;
-                                         <a href="" onclick="return deleteGroup('{{ group.id }}')">Delete</a>
-                                     </td>
-                                     <td>
-                                         <a href="/bodb/group/{{ group.id }}/" onclick="return showPopup('view_group_{{ group.id }}', 700, 550, '/bodb/group/{{ group.id }}/');">{{ group.name }}</a>
-                                     </td>
-                                 </tr>
-                             </table>
-                         </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -75,7 +88,7 @@
 </div>
 
 <script type="text/html" id="group-template">
-    <div id="group-<%= id %>">
+    <div id="group-<%= id %>" class="group">
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:100px">
@@ -83,7 +96,7 @@
                     <a href="" onclick="return deleteGroup('<%= id %>')">Delete</a>
                 </td>
                 <td>
-                    <a href="/bodb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/');"><%= name %></a>
+                    <div id="group-<%= id %>-name" class="group_name"><a href="/bodb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/');"><%= name %></a></div>
                 </td>
             </tr>
         </table>
