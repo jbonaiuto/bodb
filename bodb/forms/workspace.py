@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.models import inlineformset_factory
+import autocomplete_light
 from bodb.models import Workspace, WorkspaceBookmark
 from registration.models import User
 
@@ -10,8 +11,8 @@ class WorkspaceUserForm(forms.ModelForm):
 
 
 class WorkspaceInvitationForm(forms.Form):
-    invited_users=forms.ModelMultipleChoiceField(queryset=User.objects.all(),
-        widget=forms.SelectMultiple(attrs={'width':'250px'}))
+    invited_users = forms.ModelMultipleChoiceField(queryset=User.objects.all(),
+        widget=autocomplete_light.MultipleChoiceWidget('UserAutocomplete'), required=False)
     invitation_body=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
 
 
