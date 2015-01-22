@@ -17,7 +17,11 @@
         {% if ispopup and action %}
             {% if multiple %}
                 {% if action == "add" %}
-                    opener.addSEDMultiple('{{ type }}', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}']);
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}'],'', []);
+                    {% endifequal %}
                 {% endif %}
             {% endif %}
             self.close();

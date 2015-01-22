@@ -150,6 +150,7 @@
             <br>
             {{ form.draft }}
             {{ form.collator }}
+            <input id="id_type" name="type" value="generic" type="hidden"/>
             <input class="btn" type="button" value="Save Draft" onclick="save(1);" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% if perms.bodb.save_ssr or user.is_superuser %}
                 <input class="btn" type="button" value="Save" onclick="save(0);" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;

@@ -69,14 +69,15 @@
 
         function doneCheckSimilarSEDs(res, status)
         {
-            document.getElementById('savingMsg').style.display = 'none';
-            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")
             {
                 if(checkSimilar && data.similar_sed_ids.length>0)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
                     var dispTxt='The SED you entered is similar to the following existing SEDs:';
                     dispTxt+='<table>';
                     for(var i=0; i<data.similar_sed_ids.length; i++)

@@ -15,10 +15,6 @@
             errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            var ssrErrors=validateInlineForm('predictionssr', ['ssr_title','ssr_brief_description'], ['Title','Brief description']);
-            if(ssrErrors>0)
-                animatedcollapse.show('ssrData');
-            errors+=ssrErrors;
 
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -44,6 +40,29 @@
             {% endif %}
                 document.location.href='/bodb/prediction/{{form.instance.id}}/delete/{% if ispopup %}?_popup=1{% endif %}';
             }
+        }
+
+        function removeSSR(idx)
+        {
+            document.getElementById('id_ssr').value='';
+            document.getElementById('ssr-'+idx).style.display='none';
+            document.getElementById('id_new_ssr').style.display='inline';
+        }
+
+        function addNewSSR(ssr_type)
+        {
+            if(ssr_type.length>0)
+            {
+                document.getElementById('id_new_ssr_type').value='';
+                showPopup('add_ssr_{{ form.instance.id }}',700,550,'/bodb/ssr/new/?type=prediction&idx=0');
+            }
+        }
+
+        function setPredictionSSR(idx, ssr_id, ssr_title, ssr_brief_description, ssr_type)
+        {
+            document.getElementById('id_ssr').value=ssr_id;
+            addSSR(ssr_id, ssr_title, ssr_brief_description, ssr_type);
+            document.getElementById('id_new_ssr').style.display='none';
         }
 
         $(document).ready(function()
@@ -84,29 +103,9 @@
                 timeOnScreen: 3000
             });
 
-            $('#id_predictionssr-0-ssr_title').poshytip({
-                className: 'tip-skyblue',
-                content: 'Enter the name of the SSR.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignX: 'right',
-                offsetX: 5,
-                offsetY: -45,
-                timeOnScreen: 3000
-            });
-
-            $('#id_predictionssr-0-ssr_brief_description').poshytip({
-                className: 'tip-skyblue',
-                content: 'Enter a brief description of the SSR.',
-                showOn: 'focus',
-                showTimeout: 100,
-                alignTo: 'target',
-                alignY: 'center',
-                alignX: 'right',
-                offsetX: 5,
-                timeOnScreen: 3000
-            });
+            {% if form.instance.ssr %}
+                document.getElementById('id_new_ssr').style.display='none';
+            {% endif %}
         });
     </script>
 {% endblock %}
@@ -166,6 +165,7 @@
             {{ form.model }}
             {{ form.draft }}
             {{ form.collator }}
+            {{ form.ssr }}
             <input class="btn" type="button" value="Save Draft" onclick="save(1)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% if perms.bodb.save_prediction or user.is_superuser %}
                 <input class="btn" type="button" value="Save" onclick="save(0)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;

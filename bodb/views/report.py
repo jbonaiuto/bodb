@@ -289,7 +289,7 @@ class SSRReportView(View):
 
         ssr=get_object_or_404(SSR, id=id)
         # load related entries
-        model=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=ssr) | Q(prediction__predictionssr__ssr=ssr))[0]
+        model=Model.objects.filter(Q(related_test_sed_document__ssr=ssr) | Q(prediction__ssr=ssr))[0]
         figures=list(DocumentFigure.objects.filter(document=ssr).order_by('order'))
 
         context={
@@ -1004,11 +1004,11 @@ def model_report_rtf(context, display_settings, doc=None):
             c3.SetSpan(2)
             table.AddRow(c1, c2, c3)
 
-            if testsed.get_ssr():
+            if testsed.ssr:
                 c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,''), thin_frame)
                 c1.SetVerticalMerge(True)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.get_ssr().title).encode('latin1','ignore')), thin_frame)
-                c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.get_ssr().brief_description).encode('latin1','replace')), thin_frame)
+                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.ssr.title).encode('latin1','ignore')), thin_frame)
+                c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.ssr.brief_description).encode('latin1','replace')), thin_frame)
                 c3.SetSpan(2)
                 table.AddRow(c1,c2,c3)
 
@@ -1044,8 +1044,8 @@ def model_report_rtf(context, display_settings, doc=None):
 
             c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,''), thin_frame)
             c1.SetVerticalMerge(True)
-            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(prediction.get_ssr().title).encode('latin1','ignore')), thin_frame)
-            c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(prediction.get_ssr().brief_description).encode('latin1','ignore')), thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(prediction.ssr.title).encode('latin1','ignore')), thin_frame)
+            c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(prediction.ssr.brief_description).encode('latin1','ignore')), thin_frame)
             c3.SetSpan(2)
             table.AddRow(c1,c2,c3)
 
@@ -1313,10 +1313,10 @@ def model_report_pdf(context, display_settings, elements=None):
             tableStyle.append(('SPAN',(2,rows),(3,rows)))
             rows += 1
 
-            if testsed.get_ssr():
+            if testsed.ssr:
                 sedData.append(['',
-                                Paragraph(unicode(testsed.get_ssr().title).encode('latin1','ignore'),styles['BodyText']),
-                                Paragraph(unicode(testsed.get_ssr().brief_description).encode('latin1','ignore'),styles['BodyText']),
+                                Paragraph(unicode(testsed.ssr.title).encode('latin1','ignore'),styles['BodyText']),
+                                Paragraph(unicode(testsed.ssr.brief_description).encode('latin1','ignore'),styles['BodyText']),
                                 ''])
                 tableStyle.append(('SPAN',(2,rows),(3,rows)))
                 rows += 1
@@ -1359,8 +1359,8 @@ def model_report_pdf(context, display_settings, elements=None):
             rows += 1
 
             sedData.append(['',
-                            Paragraph(unicode(prediction.get_ssr().title).encode('latin1','ignore'),styles['BodyText']),
-                            Paragraph(unicode(prediction.get_ssr().brief_description).encode('latin1','ignore'),styles['BodyText']),
+                            Paragraph(unicode(prediction.ssr.title).encode('latin1','ignore'),styles['BodyText']),
+                            Paragraph(unicode(prediction.ssr.brief_description).encode('latin1','ignore'),styles['BodyText']),
                             ''])
             tableStyle.append(('SPAN',(2,rows),(3,rows)))
             rows += 1

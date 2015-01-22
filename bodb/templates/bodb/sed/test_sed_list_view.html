@@ -46,18 +46,18 @@
                                     <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.get_ssr.id }}" name="favIcon-{{ testsed.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                             </a>
-                                            <input type=checkbox class="selectedGenericSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.get_ssr.id }}" id="selectedGenericSEDSSRCheckbox_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}"/>
+                                            <input type=checkbox class="selectedGenericSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedGenericSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
                                     </td>
-                                    <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -112,18 +112,18 @@
                                     <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.get_ssr.id }}" name="favIcon-{{ testsed.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                             </a>
-                                            <input type=checkbox class="selectedConnectivitySEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.get_ssr.id }}" id="selectedConnectivitySEDSSRCheckbox_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}"/>
+                                            <input type=checkbox class="selectedConnectivitySEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedConnectivitySEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
                                     </td>
-                                    <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -200,18 +200,18 @@
                                     <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.get_ssr.id }}" name="favIcon-{{ testsed.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                             </a>
-                                            <input type=checkbox class="selectedImagingSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.get_ssr.id }}" id="selectedImagingSEDSSRCheckbox_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}"/>
+                                            <input type=checkbox class="selectedImagingSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedImagingSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
                                     </td>
-                                    <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>
@@ -266,18 +266,18 @@
                                     <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
                                     <td align=center style="width:45px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.get_ssr.id }},'favIcon-{{ testsed.get_ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.get_ssr.id }}" name="favIcon-{{ testsed.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
+                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                                             </a>
-                                            <input type=checkbox class="selectedERPSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.get_ssr.id }}" id="selectedERPSEDSSRCheckbox_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.get_ssr.id }}" value="{{ testsed.get_ssr.id }}"/>
+                                            <input type=checkbox class="selectedERPSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedERPSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
                                         {% endif %}
                                     </td>
                                     <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.get_ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.get_ssr.id }}/');">{{ testsed.get_ssr.title }}</a>
+                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
                                     </td>
-                                    <td style="width:200px">{{ testsed.get_ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.get_ssr.id }}_message" name="ssr_{{ testsed.get_ssr.id }}_message" class="messages"></span></td>
+                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
+                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
                                     <td style="width:120px">{{ testsed.relationship }}</td>
                                     <td>{{ testsed.relevance_narrative }}</td>
                                 </tr>

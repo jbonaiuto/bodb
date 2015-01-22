@@ -54,17 +54,11 @@
             errors+=buildSEDErrors;
             if(buildSEDErrors>0)
                 animatedcollapse.show('buildSEDData');
-            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            var test_sed_count = $('#test_seds').children().length;
-            for(var i=0; i<test_sed_count; i++)
-                testSEDErrors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative', 'ssr'], ['Relationship', 'Relevance narrative', 'SSR']);
             errors+=testSEDErrors;
             if(testSEDErrors>0)
                 animatedcollapse.show('testSEDData');
             var predictionErrors=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
-            var prediction_count = $('#predictions').children().length;
-            for(var i=0; i<prediction_count; i++)
-                predictionErrors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
             errors+=predictionErrors;
             if(predictionErrors>0)
                 animatedcollapse.show('predictionData');
@@ -122,14 +116,15 @@
 
         function doneCheckSimilarModels(res, status)
         {
-            document.getElementById('savingMsg').style.display = 'none';
-            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")
             {
                 if(checkSimilar && data.similar_model_ids.length>0)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
                     var dispTxt='The model you entered is similar to the following existing models:';
                     dispTxt+='<table>';
                     for(var i=0; i<data.similar_model_ids.length; i++)

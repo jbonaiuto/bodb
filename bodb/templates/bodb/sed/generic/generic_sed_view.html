@@ -17,7 +17,11 @@
         {% if ispopup and action %}
             {% if multiple %}
                 {% if action == "add" %}
-                    opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}'],'', []);
+                    {% endifequal %}
                 {% endif %}
             {% endif %}
             self.close();

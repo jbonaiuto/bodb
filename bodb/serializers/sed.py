@@ -46,7 +46,7 @@ class BuildSEDSerializer(serializers.ModelSerializer):
     
 class TestSEDSerializer(serializers.ModelSerializer):
     sed = SEDSerializer(fields = ('id','title', 'type', 'brief_description',))
-    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title', 'brief_description','type'))
+    ssr = SSRSerializer(fields = ('id','title', 'brief_description','type'))
     
     class Meta:
         model = TestSED
