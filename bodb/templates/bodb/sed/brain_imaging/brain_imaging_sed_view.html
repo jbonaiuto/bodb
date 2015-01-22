@@ -17,7 +17,11 @@
         {% if ispopup and action %}
             {% if multiple %}
                 {% if action == "add" %}
-                    opener.addSEDMultiple('{{ type }}', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type }}']);
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type }}'],'', []);
+                    {% endifequal %}
                 {% endif %}
             {% endif %}
             self.close();

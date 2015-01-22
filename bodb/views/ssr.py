@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import UpdateView, DeleteView, CreateView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
@@ -8,7 +8,7 @@ from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Docum
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
-from guardian.mixins import LoginRequiredMixin
+from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SSRSerializer
@@ -20,18 +20,10 @@ from rest_framework import mixins
 from rest_framework import generics
 
 
-class UpdateSSRView(ObjectRolePermissionRequiredMixin, UpdateView):
+class EditSSRMixin():
     model = SSR
     form_class = SSRForm
     template_name = 'bodb/ssr/ssr_detail.html'
-    permission_required='edit'
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateSSRView,self).get_context_data(**kwargs)
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
-        context['ispopup']=('_popup' in self.request.GET)
-        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -62,13 +54,47 @@ class UpdateSSRView(ObjectRolePermissionRequiredMixin, UpdateView):
                 if figure_form.instance.id:
                     figure_form.instance.delete()
 
-            url=self.get_success_url()
+            url=self.get_success_url()+'?action='+context['action']
             if context['ispopup']:
-                url+='?_popup=1'
+                url+='&_popup=1'
+            if 'type' in context and context['type'] is not None:
+                url+='&type=%s' % context['type']
+            if 'idx' in context and context['idx']>-1:
+                url+='&idx=%s' % context['idx']
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
+
+class UpdateSSRView(EditSSRMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateSSRView,self).get_context_data(**kwargs)
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
+        context['ispopup']=('_popup' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',-1)
+        context['action']='edit'
+        return context
+
+
+class CreateSSRView(EditSSRMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_ssr'
+
+    def get_object(self, queryset=None):
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateSSRView,self).get_context_data(**kwargs)
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='figure')
+        context['ispopup']=('_popup' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',-1)
+        context['action']='add'
+        return context
 
 class DeleteSSRView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=SSR
@@ -102,7 +128,7 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        models=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))
+        models=Model.objects.filter(Q(related_test_sed_document__ssr=self.object) | Q(prediction__ssr=self.object))
         context['model']=None
         if models.count():
             context['model']=models[0]
@@ -112,6 +138,10 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='SSR').count()>0
             context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
+        context['action']=self.request.GET.get('action',None)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',None)
+        context['ispopup']=('_popup' in self.request.GET)
         return context
 
 

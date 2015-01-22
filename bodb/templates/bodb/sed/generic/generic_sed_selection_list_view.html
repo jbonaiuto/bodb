@@ -32,7 +32,7 @@
                                     <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                                         {% if user.is_authenticated and not user.is_anonymous  %}
                                             {% if ispopup and multiple %}
-                                                <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);">Select</a>
+                                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);{% else %}return opener.addTestSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}'],'', []);{% endifequal %}">Select</a>
                                             {% else %}
                                                 <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
                                                     <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
@@ -69,7 +69,7 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup and multiple %}
-                            <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>']);">Select</a>
+                            <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>'], '', []);{% endifequal %}">Select</a>
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>

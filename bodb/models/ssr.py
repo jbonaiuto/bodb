@@ -64,6 +64,8 @@ class SSR(Document):
 class Prediction(Document):
     # The model the prediction is linked to
     model=models.ForeignKey('Model', related_name = 'prediction')
+    # the SSR
+    ssr=models.ForeignKey('SSR', null=True)
 
     class Meta:
         app_label='bodb'
@@ -75,11 +77,6 @@ class Prediction(Document):
     def get_absolute_url(self):
         return reverse('prediction_view', kwargs={'pk': self.pk})
 
-    def get_ssr(self):
-        if PredictionSSR.objects.filter(prediction=self).count()>0:
-            return PredictionSSR.objects.filter(prediction=self)[0].ssr
-        return None
-
     @staticmethod
     def get_prediction_list(predictions, user):
         profile=None
@@ -89,14 +86,14 @@ class Prediction(Document):
             active_workspace=profile.active_workspace
         prediction_list=[]
         for prediction in predictions:
-            if prediction.get_ssr() is None:
+            if prediction.ssr is None:
                 ssr_selected=False
                 ssr_is_favorite=False
                 ssr_subscribed_to_user=False
             else:
-                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.get_ssr().id).count()>0
-                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.get_ssr().id).count()>0
-                ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.get_ssr().collator,
+                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.ssr.id).count()>0
+                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.ssr.id).count()>0
+                ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.ssr.collator,
                     user=user, model_type='SSR').count()>0
             prediction_list.append([ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction])
         return prediction_list
@@ -104,12 +101,7 @@ class Prediction(Document):
     @staticmethod
     def get_predictions(model, user):
         return Prediction.objects.filter(Q(Q(model=model) & Document.get_security_q(user) &
-                                           Document.get_security_q(user, field='predictionssr__ssr'))).distinct()
-
-    @staticmethod
-    def get_ssrs(prediction, user):
-        return SSR.objects.filter(Q(Q(predictionssr__prediction=prediction) &
-                                    Document.get_security_q(user, field='predictionssr__ssr'))).distinct()
+                                           Document.get_security_q(user, field='ssr'))).distinct()
 
     @staticmethod
     def get_tagged_predictions(name, user):
@@ -132,10 +124,3 @@ class Prediction(Document):
             # send notifications to subscribed users
             sendNotifications(self, 'Prediction')
 
-
-class PredictionSSR(models.Model):
-    prediction=models.ForeignKey('Prediction')
-    ssr=models.ForeignKey('SSR', null=True)
-
-    class Meta:
-        app_label='bodb'

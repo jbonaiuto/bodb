@@ -71,6 +71,17 @@
                     document.getElementById(displayIds[i]).value=0;
             }
         }
+
+        {% if ispopup and action %}
+            {% if action == "add" %}
+                {% ifequal type 'testsed' %}
+                    opener.setTestingSEDSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type }}');
+                {% else %}
+                    opener.setPredictionSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type }}');
+                {% endifequal %}
+            {% endif %}
+            self.close();
+        {% endif %}
     </script>
 {% endblock %}
 {% block content %}

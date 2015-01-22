@@ -18,7 +18,11 @@
         {% if ispopup and action %}
             {% if multiple %}
                 {% if action == "add" %}
-                    opener.addSEDMultiple('{{ type }}', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type }}']);
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type }}'],'', []);
+                    {% endifequal %}
                 {% endif %}
             {% endif %}
             self.close();

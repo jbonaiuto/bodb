@@ -32,7 +32,7 @@ class SSRSerializer(serializers.ModelSerializer):
 class PredictionSerializer(serializers.ModelSerializer):
     collator = UserSerializer()
     last_modified_by = UserSerializer()
-    ssr = SSRSerializer(source = 'get_ssr', fields = ('id','title','brief_description','type'))
+    ssr = SSRSerializer(fields = ('id','title','brief_description','type'))
     tags=DocumentTagSerializer()
     
     class Meta:

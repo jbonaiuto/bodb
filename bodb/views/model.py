@@ -130,35 +130,6 @@ class EditModelMixin():
                     prediction.public=self.object.public
                     prediction.save()
 
-                    # save prediction SSRs
-                    for predictionssr_form in prediction_form.nested.forms:
-                        if not predictionssr_form in prediction_form.nested.deleted_forms:
-                            predictionssr=predictionssr_form.save(commit=False)
-                            predictionssr.prediction=prediction
-                            ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                                brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
-                                type=predictionssr_form.cleaned_data['ssr_type'])
-                            # Update ssr if editing existing one
-                            if 'ssr' in predictionssr_form.cleaned_data and\
-                               predictionssr_form.cleaned_data['ssr'] is not None:
-                                ssr=predictionssr_form.cleaned_data['ssr']
-                                ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                                ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                            # Set collator if this is a new SSR
-                            else:
-                                ssr.collator=self.object.collator
-                            ssr.last_modified_by=self.request.user
-                            ssr.draft=self.object.draft
-                            ssr.public=self.object.public
-                            ssr.save()
-                            predictionssr.ssr=ssr
-                            predictionssr.save()
-
-                    # remove prediction SSRs
-                    for predictionssr_form in prediction_form.nested.deleted_forms:
-                        if predictionssr_form.instance.id:
-                            predictionssr_form.instance.delete()
-
             # remove predictions
             for prediction_form in prediction_formset.deleted_forms:
                 if prediction_form.instance.id:
@@ -171,35 +142,6 @@ class EditModelMixin():
                     test_sed=test_sed_form.save(commit=False)
                     test_sed.model=self.object
                     test_sed.save()
-
-                    # save testSED SSRs
-                    for testsedssr_form in test_sed_form.nested.forms:
-                        if not testsedssr_form in test_sed_form.nested.deleted_forms:
-                            testsedssr=testsedssr_form.save(commit=False)
-                            testsedssr.test_sed=test_sed
-                            ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
-                                brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
-                                type=testsedssr_form.cleaned_data['ssr_type'])
-                            # Update ssr if editing existing one
-                            if 'ssr' in testsedssr_form.cleaned_data and\
-                               testsedssr_form.cleaned_data['ssr'] is not None:
-                                ssr=testsedssr_form.cleaned_data['ssr']
-                                ssr.title=testsedssr_form.cleaned_data['ssr_title']
-                                ssr.brief_description=testsedssr_form.cleaned_data['ssr_brief_description']
-                            # Set collator if this is a new SSR
-                            else:
-                                ssr.collator=self.object.collator
-                            ssr.last_modified_by=self.request.user
-                            ssr.draft=self.object.draft
-                            ssr.public=self.object.public
-                            ssr.save()
-                            testsedssr.ssr=ssr
-                            testsedssr.save()
-
-                    # remove testSED SSRs
-                    for testsedssr_form in test_sed_form.nested.deleted_forms:
-                        if testsedssr_form.instance.id:
-                            testsedssr_form.instance.delete()
 
             # remove test SEDs
             for test_sed_form in test_sed_formset.deleted_forms:
@@ -516,29 +458,6 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
             test_sed.model=model
             test_sed.save()
 
-            # save testSED SSRs
-            for testsedssr_form in test_sed_form.nested.forms:
-                testsedssr=testsedssr_form.save(commit=False)
-                testsedssr.test_sed=test_sed
-                ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
-                    brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
-                    type=testsedssr_form.cleaned_data['ssr_type'])
-                # Update ssr if editing existing one
-                if 'ssr' in testsedssr_form.cleaned_data and\
-                   testsedssr_form.cleaned_data['ssr'] is not None:
-                    ssr=testsedssr_form.cleaned_data['ssr']
-                    ssr.title=testsedssr_form.cleaned_data['ssr_title']
-                    ssr.brief_description=testsedssr_form.cleaned_data['ssr_brief_description']
-                # Set collator if this is a new SSR
-                else:
-                    ssr.collator=model.collator
-                ssr.last_modified_by=self.request.user
-                ssr.draft=model.draft
-                ssr.public=model.public
-                ssr.save()
-                testsedssr.ssr=ssr
-                testsedssr.save()
-
         # save predictions
         prediction_formset=PredictionFormSet(self.storage.data['step5_data'], prefix='prediction')
         prediction_formset.instance = model
@@ -552,29 +471,6 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
             prediction.draft=model.draft
             prediction.public=model.public
             prediction.save()
-
-            # save prediction SSRs
-            for predictionssr_form in prediction_form.nested.forms:
-                predictionssr=predictionssr_form.save(commit=False)
-                predictionssr.prediction=prediction
-                ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                    brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
-                    type=predictionssr_form.cleaned_data['ssr_type'])
-                # Update ssr if editing existing one
-                if 'ssr' in predictionssr_form.cleaned_data and\
-                   predictionssr_form.cleaned_data['ssr'] is not None:
-                    ssr=predictionssr_form.cleaned_data['ssr']
-                    ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                    ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                # Set collator if this is a new SSR
-                else:
-                    ssr.collator=model.collator
-                ssr.last_modified_by=self.request.user
-                ssr.draft=model.draft
-                ssr.public=model.public
-                ssr.save()
-                predictionssr.ssr=ssr
-                predictionssr.save()
 
         # save related BOPs
         related_bop_formset=RelatedBOPFormSet(self.request.POST, prefix='related_bop')
