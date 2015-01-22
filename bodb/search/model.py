@@ -106,12 +106,12 @@ class ModelSearch(DocumentWithLiteratureSearch):
             if self.ssr_options=='all':
                 op=operator.and_
             words=parse_tags(self.ssr)
-            title_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__title__icontains=word) |\
-                             Q(prediction__predictionssr__ssr__title__icontains=word)) for word in words]
-            description_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__brief_description__icontains=word) |\
-                                   Q(prediction__predictionssr__ssr__brief_description__icontains=word)) for word in words]
-            narrative_filters=[Q(Q(related_test_sed_document__testsedssr__ssr__narrative__icontains=word) |\
-                                 Q(prediction__predictionssr__ssr__narrative__icontains=word)) for word in words]
+            title_filters=[Q(Q(related_test_sed_document__ssr__title__icontains=word) |\
+                             Q(prediction__ssr__title__icontains=word)) for word in words]
+            description_filters=[Q(Q(related_test_sed_document__ssr__brief_description__icontains=word) |\
+                                   Q(prediction__ssr__brief_description__icontains=word)) for word in words]
+            narrative_filters=[Q(Q(related_test_sed_document__ssr__narrative__icontains=word) |\
+                                 Q(prediction__ssr__narrative__icontains=word)) for word in words]
             keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters)
             return keyword_q
         return Q()

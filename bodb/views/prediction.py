@@ -1,7 +1,8 @@
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import UpdateView, DeleteView
-from bodb.forms.ssr import PredictionSSRFormSet, PredictionForm
-from bodb.models import Prediction, SSR, PredictionSSR, Document, UserSubscription
+from bodb.forms.ssr import PredictionForm
+from bodb.models import Prediction, SSR, Document, UserSubscription, Model
 from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.main import BODBView
@@ -31,59 +32,25 @@ class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePredictionView,self).get_context_data(**kwargs)
-        context['predictionssr_formset']=PredictionSSRFormSet(self.request.POST or None, instance=self.object,
-            queryset=PredictionSSR.objects.filter(prediction=self.object), prefix='predictionssr')
+        context['ssrs']=[self.object.ssr]
         context['ispopup']=('_popup' in self.request.GET)
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        predictionssr_formset = context['predictionssr_formset']
 
-        if predictionssr_formset.is_valid():
+        self.object = form.save(commit=False)
+        # Set the collator if this is a new BOP
+        if self.object.id is None:
+            self.object.collator=self.request.user
+        self.object.last_modified_by=self.request.user
+        self.object.save()
+        form.save_m2m()
 
-            self.object = form.save(commit=False)
-            # Set the collator if this is a new BOP
-            if self.object.id is None:
-                self.object.collator=self.request.user
-            self.object.last_modified_by=self.request.user
-            self.object.save()
-            form.save_m2m()
-
-            # save SSRs
-            for predictionssr_form in predictionssr_formset.forms:
-                if not predictionssr_form in predictionssr_formset.deleted_forms:
-                    predictionssr=predictionssr_form.save(commit=False)
-                    predictionssr.prediction=self.object
-                    ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                        brief_description=predictionssr_form.cleaned_data['ssr_brief_description'])
-                    # Update ssr if editing existing one
-                    if 'ssr' in predictionssr_form.cleaned_data and\
-                       predictionssr_form.cleaned_data['ssr'] is not None:
-                        ssr=predictionssr_form.cleaned_data['ssr']
-                        ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                        ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                    # Set collator if this is a new SSR
-                    else:
-                        ssr.collator=self.object.collator
-                    ssr.last_modified_by=self.request.user
-                    ssr.draft=self.object.draft
-                    ssr.public=self.object.public
-                    ssr.save()
-                    predictionssr.ssr=ssr
-                    predictionssr.save()
-
-            # remove prediction SSRs
-            for predictionssr_form in predictionssr_formset.deleted_forms:
-                if predictionssr_form.instance.id:
-                    predictionssr_form.instance.delete()
-
-            url=self.get_success_url()
-            if context['ispopup']:
-                url+='?_popup=1'
-            return redirect(url)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+        url=self.get_success_url()
+        if context['ispopup']:
+            url+='?_popup=1'
+        return redirect(url)
 
 
 class DeletePredictionView(ObjectRolePermissionRequiredMixin, DeleteView):
@@ -100,8 +67,15 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
     def get_context_data(self, **kwargs):
         context = super(PredictionDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
+        models=Model.objects.filter(Q(prediction=self.object))
+        context['model']=None
+        if models.count():
+            context['model']=models[0]
+        ssrs=[]
+        if self.object.ssr:
+            ssrs.append(self.object.ssr)
+        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user)
         user=self.request.user
-        context['ssrs']=SSR.get_ssr_list(Prediction.get_ssrs(self.object, user), user)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='Prediction').count()>0

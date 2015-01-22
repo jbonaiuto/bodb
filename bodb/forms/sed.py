@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import ErrorList, formset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
-from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, TestSEDSSR
+from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR
 from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
@@ -144,6 +144,7 @@ BuildSEDFormSet = inlineformset_factory(Document,BuildSED,form=BuildSEDInlineFor
 class TestSEDInlineForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
     sed = forms.ModelChoiceField(queryset=SED.objects.all(),widget=forms.HiddenInput,required=False)
+    ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=TestSED.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
     relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=True)
@@ -152,34 +153,8 @@ class TestSEDInlineForm(forms.ModelForm):
         model=TestSED
 
 
-class TestSEDSSRInlineForm(forms.ModelForm):
-    test_sed = forms.ModelChoiceField(queryset=TestSED.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr_collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr_title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    ssr_brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'50','rows':'3'}),required=True)
-    ssr_draft=forms.CharField(widget=forms.HiddenInput,required=False)
-    ssr_public = forms.BooleanField(widget=forms.HiddenInput, required=False)
-    ssr_type=forms.CharField(widget=forms.HiddenInput,required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(TestSEDSSRInlineForm, self).__init__(*args, **kwargs)
-        instance=kwargs.get('instance')
-        if instance is not None and instance.ssr is not None:
-            self.initial['ssr_collator']=instance.ssr.collator
-            self.initial['ssr_title']=instance.ssr.title
-            self.initial['ssr_brief_description']=instance.ssr.brief_description
-            self.initial['ssr_draft']=instance.ssr.draft
-            self.initial['ssr_public']=instance.ssr.public
-            self.initial['ssr_type']=instance.ssr.type
-
-    class Meta:
-        model = TestSEDSSR
-
-
-TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInlineForm,
-    nested_form=TestSEDSSRInlineForm,fk_name='model',nested_fk_name='test_sed',can_delete=True,
-    nested_can_delete=True,extra=0,nested_extra=1,nested_max_num=1)
+TestSEDFormSet = inlineformset_factory(Model,TestSED,form=TestSEDInlineForm, fk_name='model',extra=0,
+    can_delete=True)
 
 
 class NeurophysiologySEDExportRequestForm(forms.Form):

@@ -26,17 +26,17 @@
                 </td>
                 <td>{{ prediction.brief_description }}</td>
                 <td align=center style="width:45px">
-                    {% if user.is_authenticated and not user.is_anonymous  %}
-                        <a id="favLink" href="" onclick="return toggleFavorite({{ prediction.get_ssr.id }},'favIcon-{{ prediction.get_ssr.id }}','{{ csrf_token }}');">
-                            <img id="favIcon-{{ prediction.get_ssr.id }}" name="favIcon-{{ prediction.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+                    {% if user.is_authenticated and not user.is_anonymous and prediction.ssr %}
+                        <a id="favLink" href="" onclick="return toggleFavorite({{ prediction.ssr.id }},'favIcon-{{ prediction.ssr.id }}','{{ csrf_token }}');">
+                            <img id="favIcon-{{ prediction.ssr.id }}" name="favIcon-{{ prediction.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
                         </a>
-                        <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                        <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}"/>
+                        <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_{{ prediction.ssr.id }}" value="{{ prediction.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                        <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.ssr.id }}" value="{{ prediction.ssr.id }}"/>
                     {% endif %}
                 </td>
-                <td><a href="/bodb/ssr/{{ prediction.get_ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ prediction.get_ssr.id }}/');">{{ prediction.get_ssr.title }}</a></td>
-                <td>{{ prediction.get_ssr.brief_description }}</td>
-                <td><span id="ssr_{{ prediction.get_ssr.id }}_message" name="ssr_{{ prediction.get_ssr.id }}_message" class="messages"></span></td>
+                <td><a href="/bodb/ssr/{{ prediction.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ prediction.ssr.id }}/');">{{ prediction.ssr.title }}</a></td>
+                <td>{{ prediction.ssr.brief_description }}</td>
+                <td><span id="ssr_{{ prediction.ssr.id }}_message" name="ssr_{{ prediction.ssr.id }}_message" class="messages"></span></td>
             </tr>
         {% endfor %}
     </table>

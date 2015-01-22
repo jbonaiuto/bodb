@@ -569,13 +569,6 @@ class BuildSED(models.Model):
 def compareBuildSEDs(a, b):
     return cmp(a.sed.title.lower(), b.sed.title.lower())
 
-class TestSEDSSR(models.Model):
-    test_sed=models.ForeignKey('TestSED')
-    ssr=models.ForeignKey('SSR', null=True)
-
-    class Meta:
-        app_label='bodb'
-
 # An SED used to test a model prediction
 class TestSED(models.Model):
     # the model prediction either explains or contradicts the SED
@@ -586,6 +579,8 @@ class TestSED(models.Model):
     model=models.ForeignKey('Model', related_name='related_test_sed_document')
     # the SED
     sed = models.ForeignKey('SED', related_name='test_sed',null=True)
+    # the SSR
+    ssr=models.ForeignKey('SSR', null=True)
     # the relationship between the SSR and SED
     relationship = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
     # relevance narrative - how the SED relates to the SSR in detail
@@ -594,8 +589,8 @@ class TestSED(models.Model):
     class Meta:
         app_label='bodb'
 
-    def save(self, force_insert=False, force_update=False):
-        super(TestSED, self).save()
+    def save(self, *args, **kwargs):
+        super(TestSED, self).save(*args, **kwargs)
 
     @staticmethod
     def get_testing_sed_list(tseds, user):
@@ -613,10 +608,10 @@ class TestSED(models.Model):
                                    UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=user,
                                        model_type='SED').count()>0
             ssr_selected=active_workspace is not None and \
-                         active_workspace.related_ssrs.filter(id=testsed.get_ssr().id).count()>0
-            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.get_ssr().id).count()>0
+                         active_workspace.related_ssrs.filter(id=testsed.ssr.id).count()>0
+            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.ssr.id).count()>0
             ssr_subscribed_to_user=profile is not None and\
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.get_ssr().collator,
+                                   UserSubscription.objects.filter(subscribed_to_user=testsed.ssr.collator,
                                        user=user, model_type='SSR').count()>0
             test_sed_list.append([sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,
                                   ssr_subscribed_to_user,testsed])
@@ -625,36 +620,31 @@ class TestSED(models.Model):
     @staticmethod
     def get_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct()
 
     @staticmethod
     def get_generic_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__type='generic') &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct()
 
     @staticmethod
     def get_connectivity_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__connectivitysed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct()
 
     @staticmethod
     def get_imaging_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__brainimagingsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct()
 
     @staticmethod
     def get_erp_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__erpsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
-
-    def get_ssr(self):
-        if TestSEDSSR.objects.filter(test_sed=self).count()>0:
-            return TestSEDSSR.objects.filter(test_sed=self)[0].ssr
-        return None
+                                        Document.get_security_q(user, field='ssr'))).distinct()
 
 
 def compareTestSEDs(a, b):
