@@ -79,7 +79,7 @@ class BodbProfileForm(forms.ModelForm):
 
     class Meta:
         model=BodbProfile
-        exclude=('active_workspace','loaded_coordinate_selection','favorites')
+        exclude=('active_workspace','loaded_coordinate_selection','favorites', 'favorite_literature', 'favorite_regions')
 
 
 class BrainRegionRequestForm(forms.ModelForm):

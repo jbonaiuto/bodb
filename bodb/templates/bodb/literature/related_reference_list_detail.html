@@ -2,7 +2,7 @@
     function addLiteratureMultiple(lit_id, data){
         var count = $('#references').children().length;
         var tmplMarkup = $('#reference-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count, lit: lit_id, authors: data[0], year: data[1], title: data[2]});
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, lit: lit_id, authors: data[0], year: data[1], title: data[2]});
         $('#references').append(compiledTmpl);
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
@@ -12,6 +12,13 @@
         $('#reference-'+idx).remove();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for reference in references %}
+            addLiteratureMultiple({{ reference.id }}, ['{{ reference.author_names }}', '{{ reference.year }}',
+                '{{ reference.title|escapejs }}']);
+        {% endfor %}
+    });
 </script>
 <div id="referenceData" style="display:{% if showReferences %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
@@ -30,33 +37,18 @@
         <tr>
             <td colspan=4>
                 <div id="references">
-                    {% for reference in references %}
-                        <div id="reference-{{ forloop.counter0 }}">
-                            <input type=hidden name="literature" id="id_literature-{{ forloop.counter0 }}" value="{{ reference.id }}"/>
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">
-                                        <a href="" onclick="return removeReference({{ forloop.counter0 }});">Remove</a>
-                                    </td>
-                                    <td style="width:150px">{{ reference.author_names }}</td>
-                                    <td style="width:120px">{{ reference.year }}</td>
-                                    <td>{{ reference.title }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
     </table>
 </div>
 <script type="text/html" id="reference-template">
-    <div id="reference-<%= id %>" name="reference">
-        <input id="id_literature-<%= id %>" name="literature" type="hidden" value="<%= lit %>"/>
+    <div id="reference-<%= idx %>" name="reference">
+        <input id="id_literature-<%= idx %>" name="literature" type="hidden" value="<%= lit %>"/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return removeReference(<%= id %>);">Remove</a>&nbsp;
+                    <a href="" onclick="return removeReference(<%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
                     <%= authors %>

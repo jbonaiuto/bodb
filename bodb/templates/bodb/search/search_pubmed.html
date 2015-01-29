@@ -9,7 +9,7 @@
             {
                 author_name=author_list[i];
                 names=author_name.split(' ');
-                opener.addjournalAuthor(names[1], names[0]);
+                opener.addjournalAuthor('', '', names[1], '', names[0]);
             }
             ids=opener.document.getElementsByName('pubmed_id');
             for(var i=0; i<ids.length; i++)

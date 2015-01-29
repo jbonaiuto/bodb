@@ -27,7 +27,7 @@
             errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'experimental_condition_errors');
             errors+=validateField('experimental_condition', 'Experimental condition', 'experimental_condition_errors');
-            var componentErrors=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','scalp_region','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Scalp region', 'Interpretation']);
+            var componentErrors=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Interpretation']);
             if(componentErrors>0)
                 animatedcollapse.show('erpComponentData');
             errors+=componentErrors;
@@ -101,7 +101,7 @@
             }
         }
 
-        function updateElectrodePosition(system_elem_id, system_elem_value)
+        function updateElectrodePosition(system_elem_id, system_elem_value, new_val)
         {
             var form_id=system_elem_id.substring(17);
             form_id=form_id.substring(0,form_id.indexOf('-'));
@@ -110,7 +110,7 @@
             {
                 position_elem.remove(i);
             }
-            var data={'form_id': form_id};
+            var data={'form_id': form_id, 'new_val': new_val};
             var args={type:"GET", url:"/bodb/sed/electrode_positions/"+system_elem_value+"/", data: data, complete: doneUpdateElectrodePosition };
             $.ajax(args)
         }
@@ -126,6 +126,7 @@
                 {
                     position_elem.options[position_elem.options.length]=new Option(data.position_names[i],data.position_ids[i]);
                 }
+                position_elem.value=data.new_val;
             }
         }
 

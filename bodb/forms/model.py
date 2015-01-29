@@ -92,13 +92,10 @@ VariableFormSet = inlineformset_factory(Module,Variable,form=VariableInlineForm,
 class ModuleInlineForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
     brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'47','rows':'3'}),required=True)
-    collator=forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
-    draft=forms.BooleanField(widget=forms.HiddenInput,required=False)
-    public=forms.BooleanField(widget=forms.HiddenInput,required=False)
 
     class Meta:
         model = Module
-        exclude=('tags',)
+        exclude=('tags','collator','draft','public')
 
 
 ModuleFormSet=inlineformset_factory(Module, Module, form=ModuleInlineForm, fk_name='parent', can_delete=True, extra=0)
