@@ -45,6 +45,18 @@ def runModelSearch(search_data, userId, exclude=None):
 
 class ModelSearch(DocumentWithLiteratureSearch):
 
+    # search by title, description, narrative, or tags
+    def search_keywords(self, userId):
+        q=super(DocumentWithLiteratureSearch,self).search_keywords(userId)
+        if self.keywords:
+            op=operator.or_
+            if self.keywords_options=='all':
+                op=operator.and_
+            words=parse_tags(self.keywords)
+            authors_filters=[Q(Q(authors__author__first_name__icontains=word) | Q(authors__author__last_name__icontains=word)) for word in words]
+            return reduce(op,authors_filters) | q
+        return Q()
+
     def search_author(self, userId):
         if self.author:
             op=operator.or_
@@ -66,7 +78,7 @@ class ModelSearch(DocumentWithLiteratureSearch):
             description_filters=[Q(related_build_sed_document__sed__brief_description__icontains=word) for word in words]
             narrative_filters=[Q(related_build_sed_document__sed__narrative__icontains=word) for word in words]
             relevance_filters=[Q(related_build_sed_document__relevance_narrative__icontains=word) for word in words]
-            keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) | \
+            keyword_q = reduce(op,title_filters) | reduce(op,description_filters) | reduce(op,narrative_filters) |\
                         reduce(op,relevance_filters)
             return keyword_q
         return Q()
