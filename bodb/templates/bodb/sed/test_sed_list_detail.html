@@ -72,7 +72,7 @@
     <div id="test_sed-<%= idx %>" name="test_sed">
         <input type=hidden id="id_test_sed-<%= idx %>-DELETE" name="test_sed-<%= idx %>-DELETE"/>
         <input id="id_test_sed-<%= idx %>-id" name="test_sed-<%= idx %>-id" type="hidden" value="<%= id %>"/>
-        <input id="id_test_sed-<%= idx %>-model" name="test_sed-<%= idx %>-model" type="hidden" {% if form.instance %}value="{{ form.instance.id }}"{% endif %}/>
+        <input id="id_test_sed-<%= idx %>-model" name="test_sed-<%= idx %>-model" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <input id="id_test_sed-<%= idx %>-sed" name="test_sed-<%= idx %>-sed" type="hidden" value="<%= sed %>"/>
         <input id="id_test_sed-<%= idx %>-ssr" name="test_sed-<%= idx %>-ssr" type="hidden" value="<%= ssr %>"/>
         <table class="tab_panel">

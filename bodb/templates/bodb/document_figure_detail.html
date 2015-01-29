@@ -1,8 +1,8 @@
 <script type="text/javascript">
-    function addFigureForm(){
+    function addFigureForm(id, file, title, caption){
         var count = $('#figures').children().length;
         var tmplMarkup = $('#figure-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, file: file, title: title, caption: caption });
         $('#figures').append(compiledTmpl);
         // update form count
         $('#id_figure-TOTAL_FORMS').attr('value', count+1);
@@ -42,13 +42,20 @@
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for figure_form in figure_formset.forms %}
+            addFigureForm({{ figure_form.instance.id }},'{{ figure_form.instance.figure.name }}',
+                    '{{ figure_form.instance.title }}','{{ figure_form.instance.caption }}');
+        {% endfor %}
+    });
 </script>
 <div id="figureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr>
             <td colspan=5 class="table_header">
-                <a href="#" class="add-figure" onclick="return addFigureForm();">Add new</a>
+                <a href="#" class="add-figure" onclick="return addFigureForm('','','','');">Add new</a>
             </td>
         </tr>
         <tr class="col_header">
@@ -65,37 +72,6 @@
                     {{ figure_formset.management_form.errors }}
                 </div>
                 <div id="figures">
-                    {% for figure_form in figure_formset.forms %}
-                        <div id="figure-{{ forloop.counter0 }}" name="figure">
-                            <input type=hidden id="id_figure-{{ forloop.counter0 }}-DELETE" name="figure-{{ forloop.counter0 }}-DELETE"/>
-                            {{ figure_form.id }}
-                            {{ figure_form.document }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>
-                                        <a href="" onclick="return deleteInlineForm('figure', {{ forloop.counter0 }});">Delete</a>
-                                    </td>
-                                    <td width=100px>
-                                        {{ figure_form.order }}
-                                    </td>
-                                    <td style="width:275px">
-                                        {{ figure_form.figure }}
-                                    </td>
-                                    <td style="width:250px">
-                                        {{ figure_form.title }}
-                                    </td>
-                                    <td>
-                                        {{ figure_form.caption }}
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                <span id="figure_{{ forloop.counter0 }}_errors">
-                                    {{ figure_form.errors }}
-                                </span>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -103,31 +79,31 @@
 </div>
 
 <script type="text/html" id="figure-template">
-    <div id="figure-<%= id %>" name="figure">
-        <input type=hidden id="id_figure-<%= id %>-DELETE" name="figure-<%= id %>-DELETE"/>
-        <input id="id_figure-<%= id %>-id" name="figure-<%= id %>-id" type="hidden" />
-        <input id="id_figure-<%= id %>-document" name="figure-<%= id %>-document" type="hidden" />
+    <div id="figure-<%= idx %>" name="figure">
+        <input type=hidden id="id_figure-<%= idx %>-DELETE" name="figure-<%= idx %>-DELETE"/>
+        <input id="id_figure-<%= idx %>-id" name="figure-<%= idx %>-id" type="hidden" value="<%= id %>" />
+        <input id="id_figure-<%= idx %>-document" name="figure-<%= idx %>-document" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>
-                    <a href="" onclick="return deleteInlineForm('figure', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('figure', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:100px">
-                    <input id="id_figure-<%= id %>-order" name="figure-<%= id %>-order" size="3" type="text" value="<%= id %>"/>
+                    <input id="id_figure-<%= idx %>-order" name="figure-<%= idx %>-order" size="3" type="text" value="<%= idx %>"/>
                 </td>
                 <td style="width:275px">
-                    <input id="id_figure-<%= id %>-figure" name="figure-<%= id %>-figure" type="file" />
+                    <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
                 </td>
                 <td style="width:250px">
-                    <input id="id_figure-<%= id %>-title" maxlength="100" name="figure-<%= id %>-title" type="text" />
+                    <input id="id_figure-<%= idx %>-title" maxlength="100" name="figure-<%= idx %>-title" type="text" value="<%= title %>"/>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_figure-<%= id %>-caption" name="figure-<%= id %>-caption" rows="10"></textarea>
+                    <textarea cols="40" id="id_figure-<%= idx %>-caption" name="figure-<%= idx %>-caption" rows="10"><%= caption %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="figure_<%= id %>_errors">
+            <span id="figure_<%= idx %>_errors">
             </span>
         </div>
     </div>

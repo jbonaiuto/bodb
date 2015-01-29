@@ -176,7 +176,7 @@
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                     <td><strong>Peak Latency (ms):</strong> {{ component.latency_peak }}</td>
                     <td><strong>Peak Latency Type:</strong> {{ component.latency_peak_type }}</td>
-                    <td><strong>Peak Latency Onset:</strong>{% if component.latency_onset %}{ component.latency_onset }}{% endif %}</td>
+                    <td><strong>Peak Latency Onset:</strong>{% if component.latency_onset %}{{ component.latency_onset }}{% endif %}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                     <td><strong>Peak Amplitude:</strong>{% if component.amplitude_peak %} {{ component.amplitude_peak }}{% endif %}</td>

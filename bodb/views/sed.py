@@ -1266,6 +1266,7 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
             position_names=[position.name for position in positions]
             context={
                 'form_id': self.request.GET.get('form_id'),
+                'new_val': self.request.GET.get('new_val'),
                 'position_ids': position_ids,
                 'position_names': position_names
             }

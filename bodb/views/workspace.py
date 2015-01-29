@@ -429,7 +429,7 @@ class UpdateWorkspaceUserView(ObjectRolePermissionRequiredMixin,SingleObjectTemp
             if self.request.POST:
                 context[permission]=permission in self.request.POST
             else:
-                context[permission]=self.object.has_perm('%s' % permission,context['workspace'])
+                context[permission]=self.object.check_perm('%s' % permission,context['workspace'])
         return context
 
     def form_valid(self, form):

@@ -44,7 +44,7 @@ class DocumentDetailView(DetailView):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='index.html'
-        context['figures'] = DocumentFigure.objects.filter(document=self.object)
+        context['figures'] = DocumentFigure.objects.filter(document=self.object).order_by('order')
         context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
         context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
         context['imaging_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)

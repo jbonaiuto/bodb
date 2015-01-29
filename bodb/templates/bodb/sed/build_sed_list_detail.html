@@ -54,7 +54,7 @@
         <input type=hidden id="id_build_sed-<%= idx %>-DELETE" name="build_sed-<%= idx %>-DELETE"/>
         <input id="id_build_sed-<%= idx %>-id" name="build_sed-<%= idx %>-id" type="hidden" value="<%= id %>"/>
         <input id="id_build_sed-<%= idx %>-sed" name="build_sed-<%= idx %>-sed" type="hidden" value="<%= sed %>" />
-        <input id="id_build_sed-<%= idx %>-document" name="build_sed-<%= idx %>-document" type="hidden" {% if form.instance %}value="{{ form.instance.id }}"{% endif %}/>
+        <input id="id_build_sed-<%= idx %>-document" name="build_sed-<%= idx %>-document" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">

@@ -1,4 +1,29 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        {% for selected,is_favorite,subscribed,literature in literatures %}
+            var count = $('#literatures').children().length;
+            var tmplMarkup = $('#literature-template').html();
+            var compiledTmpl = _.template(tmplMarkup,
+                    {
+                        idx : count+1,
+                        id: {{ literature.id }},
+                        authors: '{{ literature.author_names|escapejs }}',
+                        year: '{{ literature.year|escapejs }}',
+                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                        selected: {% if selected %}true{% else %}false{% endif %},
+                        title: '{{ literature.title|escapejs }}',
+                        string: '{{ literature.str }}',
+                        collator_id: {{ literature.collator.id }},
+                        collator: '{{ literature.get_collator_str }}',
+                        subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %},
+                        url_str: '{{ literature.html_url_string|escapejs }}'
+                    }
+            );
+            $('#literatures').append(compiledTmpl);
+        {% endfor %}
+    });
+</script>
 <div id="literature_list" name="literature_list" style="display:{% if literatures|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         {% if not ispopup %}
@@ -31,34 +56,6 @@
         <tr>
             <td colspan="6">
                 <div id="literatures" name="literatures">
-                    {% for selected,is_favorite,subscribed,literature in literatures %}
-                        <div id="literature-{{ forloop.counter0 }}" name="literature">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            {% if ispopup %}
-                                                <a href="#" onclick="return opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);">Select</a>
-                                            {% else %}
-                                                <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature({{ literature.id }},'favIconLiterature-{{ literature.id }}','{{ csrf_token }}');">
-                                                    <img id="favIconLiterature-{{ literature.id }}" name="favIconLiterature-{{ literature.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                                </a>
-                                                <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleLiteratureSelect(this.value, '{{ csrf_token }}');"/>
-                                            {% endif %}
-                                        {% else %}
-                                            <input type=checkbox name="selectedLiteratureCheckbox" class="selectedLiteratureCheckbox" id="selectedLiteratureCheckbox_{{ literature.id }}" value="{{ literature.id }}" style="display: none;"/>
-                                        {% endif %}
-                                        <input type=hidden name="selectedLiterature" id="selectedLiterature_{{ literature.id }}" value="{{ literature.id }}"/>
-                                    </td>
-                                    <td><input type="hidden" name="literature" value="{{ literature.id }}"/><a href="/bodb/literature/{{ literature.id }}/" onclick="return openInNewTab('/bodb/literature/{{ literature.id }}/');">{{ literature.str }}</a></td>
-                                    <td width=100px><a href="/bodb/user/{{ literature.collator.id }}/">{{ literature.get_collator_str }}</a> {% if not literature.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ literature.collator.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                                    <td width=150px>{{ literature.html_url_string }}</td>
-                                    <td width=100px><span id="literature_{{ literature.id }}_message" name="literature_{{ literature.id }}_message" class="messages"></span> </td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>

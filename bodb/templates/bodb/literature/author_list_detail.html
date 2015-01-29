@@ -1,21 +1,30 @@
 <script type="text/javascript">
-    function add{{ groupName }}Author(first_name, last_name)
+    function add{{ groupName }}Author(id, author_id, first_name, middle_name, last_name)
     {
         var count = $('#{{ groupName }}_authors').children().length;
-        var tmplMarkup = $('#{{ groupName }}_existing-author-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { idx : count, first_name:first_name, last_name:last_name });
+        var tmplMarkup = $('#{{ groupName }}_author-template').html();
+        var compiledTmpl = _.template(tmplMarkup, { id: id, author_id: author_id, idx: count, first_name: first_name,
+            middle_name: middle_name, last_name:last_name });
         $('#{{ groupName }}_authors').append(compiledTmpl);
         // update form count
         $('#id_{{ groupName }}_author-TOTAL_FORMS').attr('value', count+1);
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for author_form in author_formset.forms %}
+            add{{ groupName }}Author({{ author_form.instance.id }},{{ author_form.instance.author.id }},
+                    '{{ author_form.instance.author.first_name }}','{{ author_form.instance.author.middle_name }}',
+                    '{{ author_form.instance.author.last_name }}');
+        {% endfor %}
+    });
 </script>
 <div id="{{ groupName }}Authors" style="display:{% if showAuthors %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">
             <td colspan=5>
-                <a href="#" class="add-author" onclick="return addInlineForm('{{ groupName }}_authors','{{ groupName }}_author','{{ groupName }}_author');">Add new</a>
+                <a href="#" class="add-author" onclick="return add{{ groupName }}Author('', '', '', '', '');">Add new</a>
             </td>
         </tr>
         <tr class="col_header">
@@ -32,36 +41,6 @@
                     {{ author_formset.management_form.errors }}
                 </div>
                 <div id="{{ groupName }}_authors">
-                    {% for author_form in author_formset.forms %}
-                        <div id="{{ groupName }}_author-{{ forloop.counter0 }}" name="{{ groupName }}_author">
-                            <input type=hidden name="{{ groupName }}_author-{{ forloop.counter0 }}-DELETE" id="id_{{ groupName }}_author-{{ forloop.counter0 }}-DELETE"/>
-                            {{ author_form.id }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:150px">
-                                        <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', {{ forloop.counter0 }});">Delete</a>
-                                    </td>
-                                    <td style="width:175px">
-                                        {{ author_form.author_first_name }}
-                                    </td>
-                                    <td style="width:150px">
-                                        {{ author_form.author_middle_name }}
-                                    </td>
-                                    <td style="width:300px">
-                                        {{ author_form.author_last_name }}
-                                    </td>
-                                    <td>
-                                        {{ author_form.order }}
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                <span id="{{ groupName }}_author_{{ forloop.counter0 }}_errors">
-                                    {{ author_form.errors }}
-                                </span>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -70,49 +49,19 @@
 
 
 <script type="text/html" id="{{ groupName }}_author-template">
-    <div id="{{ groupName }}_author-<%= id %>" name="{{ groupName }}_author">
-        <input type=hidden name="{{ groupName }}_author-<%= id %>-DELETE" id="id_{{ groupName }}_author-<%= id %>-DELETE"/>
-        <input id="id_{{ groupName }}_author-<%= id %>-id" name="{{ groupName }}_author-<%= id %>-id" type="hidden" />
-        <table class="tab_panel">
-            <tr class="even_row" valign=top>
-                <td style="width:150px">
-                    <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', <%= id %>);">Delete</a>
-                </td>
-                <td style="width:175px">
-                    <input id="id_{{ groupName }}_author-<%= id %>-author_first_name" name="{{ groupName }}_author-<%= id %>-author_first_name" size="13" type="text" />
-                </td>
-                <td style="width:150px">
-                    <input id="id_{{ groupName }}_author-<%= id %>-author_middle_name" name="{{ groupName }}_author-<%= id %>-author_middle_name" size="10" type="text" />
-                </td>
-                <td style="width:300px">
-                    <input id="id_{{ groupName }}_author-<%= id %>-author_last_name" name="{{ groupName }}_author-<%= id %>-author_last_name" size="26" type="text" />
-                </td>
-                <td>
-                    <input id="id_{{ groupName }}_author-<%= id %>-order" name="{{ groupName }}_author-<%= id %>-order" size="3" type="text" value="<%= id %>"/>
-                </td>
-            </tr>
-        </table>
-        <div class="myerrors">
-            <span id="{{ groupName }}_author_<%= id %>_errors">
-            </span>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="{{ groupName }}_existing-author-template">
     <div id="{{ groupName }}_author-<%= idx %>" name="{{ groupName }}_author">
         <input type=hidden name="{{ groupName }}_author-<%= idx %>-DELETE" id="id_{{ groupName }}_author-<%= idx %>-DELETE"/>
-        <input id="id_{{ groupName }}_author-<%= idx %>-id" name="{{ groupName }}_author-<%= idx %>-id" type="hidden"/>
+        <input id="id_{{ groupName }}_author-<%= idx %>-id" name="{{ groupName }}_author-<%= idx %>-id" type="hidden" value="<%= id %>"/>
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:150px">
                     <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', <%= idx %>);">Delete</a>
                 </td>
-                <td style="width:150px">
+                <td style="width:175px">
                     <input id="id_{{ groupName }}_author-<%= idx %>-author_first_name" name="{{ groupName }}_author-<%= idx %>-author_first_name" size="13" type="text" value="<%= first_name %>"/>
                 </td>
-                <td style="width:120px">
-                    <input id="id_{{ groupName }}_author-<%= idx %>-author_middle_name" name="{{ groupName }}_author-<%= idx %>-author_middle_name" size="10" type="text" />
+                <td style="width:150px">
+                    <input id="id_{{ groupName }}_author-<%= idx %>-author_middle_name" name="{{ groupName }}_author-<%= idx %>-author_middle_name" size="10" type="text" value="<%= middle_name"/>
                 </td>
                 <td style="width:300px">
                     <input id="id_{{ groupName }}_author-<%= idx %>-author_last_name" name="{{ groupName }}_author-<%= idx %>-author_last_name" size="26" type="text" value="<%= last_name %>"/>
