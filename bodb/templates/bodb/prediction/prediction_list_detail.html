@@ -95,7 +95,7 @@
     <div id="prediction-<%= idx %>" name="prediction">
         <input type=hidden id="id_prediction-<%= idx %>-DELETE" name="prediction-<%= idx %>-DELETE"/>
         <input id="id_prediction-<%= idx %>-id" name="prediction-<%= idx %>-document_ptr" type="hidden" value="<%= id %>"/>
-        <input id="id_prediction-<%= idx %>-model" name="prediction-<%= idx %>-model" type="hidden" {% if form.instance %}value="{{ form.instance.id }}"{% endif %}/>
+        <input id="id_prediction-<%= idx %>-model" name="prediction-<%= idx %>-model" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <input id="id_prediction-<%= idx %>-collator" name="prediction-<%= idx %>-collator" type="hidden" value="<%= collator %>"/>
         <input id="id_prediction-<%= idx %>-draft" name="prediction-<%= idx %>-draft" type="hidden" value="<%= draft %>"/>
         <input id="id_prediction-<%= idx %>-public" name="prediction-<%= idx %>-public" type="hidden" value="<%= public %>"/>

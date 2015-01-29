@@ -126,6 +126,8 @@ class Workspace(models.Model):
             return self.admin_users.filter(id=user.id).count()>0
         elif perm=='member':
             return self.get_users().filter(id=user.id).count()>0 or user.is_superuser
+        else:
+            return user.has_perm(perm, self)
 
 
 class WorkspaceInvitation(models.Model):

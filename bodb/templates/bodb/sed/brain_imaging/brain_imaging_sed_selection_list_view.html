@@ -10,6 +10,34 @@
         }
         return false;
     }
+
+    $(document).ready(function(){
+        {% for selected,is_favorite,subscribed,sed,coords in imaging_seds %}
+            var count = $('#imaging_seds').children().length;
+            var tmplMarkup = $('#imaging_sed-template').html();
+            var compiledTmpl = _.template(tmplMarkup,
+                    {
+                        idx : count+1,
+                        id: {{ sed.id }},
+                        title: '{{ sed.title|escapejs }}',
+                        sed_type: 'imaging',
+                        url_str: '{{ sed.html_url_string|escapejs }}',
+                        brief_description: '{{ sed.brief_description|escapejs }}',
+                        coords: [{% for coord in coords %}[{id:{{ coord.id }},
+                            brain_region:'{{ coord.named_brain_region }}',hemisphere: '{{ coord.hemisphere }}',
+                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}}],{% endfor %}],
+                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                        selected: {% if selected %}true{% else %}false{% endif %},
+                        title_str: '{{ sed|escapejs }}',
+                        draft: {% if sed.draft %}true{% else %}false{% endif %},
+                        collator_id: {{ sed.collator.id }},
+                        collator: '{{ sed.get_collator_str }}',
+                        subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+                    }
+            );
+            $('#imaging_seds').append(compiledTmpl);
+        {% endfor %}
+    });
 </script>
 <div id="imagingSEDData">
     <table class="tab_panel">
@@ -37,87 +65,6 @@
         <tr>
             <td colspan="7">
                 <div id="imaging_seds" name="imaging_seds">
-                    {% for selected,is_favorite,subscribed,sed,coords in imaging_seds %}
-                        <div id="imaging_sed-{{ forloop.counter0 }}" name="imaging_sed">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            {% if ispopup %}
-                                                {% if multiple %}
-                                                    <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);{% else %}return opener.addTestSEDMultiple('', '', '', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}'],'',[]);{% endifequal %}">Select</a>
-                                                {% endif %}
-                                            {% else %}
-                                                <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
-                                                    <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                                </a>
-                                                <input type=checkbox class="selectedImagingSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedImagingSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                            {% endif %}
-                                        {% else %}
-                                            <input type=checkbox class="selectedImagingSEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedImagingSEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" style="display:none"/>
-                                        {% endif %}
-                                        <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
-                                    </td>
-                                    <td width=200px>
-                                        <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
-                                        {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td width=200px><a href="/bodb/user/{{ sed.collator.id }}/">{{ sed.get_collator_str }}</a> {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                                    <td>{{sed.brief_description }}</td>
-                                    <td width=150px>
-                                        {{ sed.html_url_string|safe }}
-                                    </td>
-                                    <td width=100px><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
-                                </tr>
-                                {% if coords %}
-                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                        <td colspan="3"></td>
-                                        <td colspan="4" class="col_header">Coordinates</td>
-                                    </tr>
-                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                        <td colspan="3"></td>
-                                        <td colspan="4">
-                                            <table class="tab_panel">
-                                                <tr>
-                                                    <td style="width:50px"></td>
-                                                    <td style="width:200px"><strong>Region</strong></td>
-                                                    <td style="width:100px"><strong>Hemisphere</strong></td>
-                                                    <td style="width:50px"><strong>x</strong></td>
-                                                    <td style="width:50px"><strong>y</strong></td>
-                                                    <td style="width:50px"><strong>z</strong></td>
-                                                    <td></td>
-                                                </tr>
-                                                {% for coord in coords %}
-                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                        <td>
-                                                            {% if user.is_authenticated and not user.is_anonymous %}
-                                                                <input type=checkbox class="sed_{{ sed.id }}_coord_select" name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord.id in selected_coord_ids %}checked=True{% endif %}/>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>{{ coord.named_brain_region }}</td>
-                                                        <td>{{ coord.hemisphere }}</td>
-                                                        <td>{{ coord.coord.x }}</td>
-                                                        <td>{{ coord.coord.y }}</td>
-                                                        <td>{{ coord.coord.z }}</td>
-                                                        <td><span id="coord_{{ sed.id }}_{{ coord.id }}_message" name="coord_{{ sed.id }}_{{ coord.id }}_message" class="messages"></span></td>
-                                                    </tr>
-                                                {% endfor %}
-                                                {% if user.is_authenticated and not user.is_anonymous %}
-                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                        <td colspan="7">
-                                                            <a href="" onclick="return setAllSEDSelectedCoords('{{ sed.id }}', true);">Select all</a> /&nbsp;
-                                                            <a href="" onclick="return setAllSEDSelectedCoords('{{ sed.id }}', false);">Unselect all</a>
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                            </table>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -133,7 +80,7 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'') %>', '<%= sed_type %>'],'',[]);{% endifequal %}">Select</a>
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'').replaceAll('\n',' ').replaceAll('\r',' ') %>', '<%= sed_type %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= title.replaceAll('\'','\\\'') %>', '<%= brief_description.replaceAll('\'','\\\'').replaceAll('\n',' ').replaceAll('\r',' ') %>', '<%= sed_type %>'],'',[]);{% endifequal %}">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

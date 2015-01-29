@@ -1,8 +1,9 @@
 <script type="text/javascript">
-    function addModelMultiple(model_id, data){
+    function addModelMultiple(id, relationship, model_id, data){
         var count = $('#related_models').children().length;
         var tmplMarkup = $('#related_model-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count, model: model_id, title: data[0], brief_description: data[1] });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, relationship: relationship, model: model_id,
+            title: data[0], brief_description: data[1] });
         $('#related_models').append(compiledTmpl);
         // update form count
         $('#id_related_model-TOTAL_FORMS').attr('value', count+1);
@@ -20,6 +21,14 @@
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for related_model_form in related_model_formset.forms %}
+            addModelMultiple({{ related_model_form.instance.id }}, '{{ related_model_form.instance.relationship }}',
+                    {{ related_model_form.instance.model.id }}, ['{{ related_model_form.instance.model.title }}',
+                        '{{ related_model_form.instance.model.brief_description|escapejs }}']);
+        {% endfor %}
+    });
 </script>
 <div id="modelData" style="display:{% if showRelatedModels %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
@@ -42,54 +51,21 @@
                     {{ related_model_formset.management_form.errors }}
                 </div>
                 <div id="related_models">
-                    {% for related_model_form in related_model_formset.forms %}
-                        <div id="related_model-{{ forloop.counter0 }}" name="related_model">
-                            <input type=hidden id="id_related_model-{{ forloop.counter0 }}-DELETE" name="related_model-{{ forloop.counter0 }}-DELETE"/>
-                            {{ related_model_form.id }}
-                            {{ related_model_form.model }}
-                            {{ related_model_form.document }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">
-                                        <a href="" onclick="return deleteInlineForm('related_model', {{ forloop.counter0 }});">Remove</a>&nbsp;
-                                    </td>
-                                    <td style="width:150px">
-                                        {% if related_model_form.instance %}
-                                            {{ related_model_form.instance.model.title }}
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:350px">
-                                        {% if related_model_form.instance %}
-                                            {{ related_model_form.instance.model.brief_description }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ related_model_form.relationship }}
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                <span id="related_model_{{ forloop.counter0 }}_errors">
-                                    {{ related_model_form.errors }}
-                                </span>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
     </table>
 </div>
 <script type="text/html" id="related_model-template">
-    <div id="related_model-<%= id %>" name="related_model">
-        <input type=hidden id="id_related_model-<%= id %>-DELETE" name="related_model-<%= id %>-DELETE"/>
-        <input id="id_related_model-<%= id %>-id" name="related_model-<%= id %>-id" type="hidden" />
-        <input id="id_related_model-<%= id %>-model" name="related_model-<%= id %>-model" type="hidden" value="<%= model %>"/>
-        <input id="id_related_model-<%= id %>-document" name="related_model-<%= id %>-document" type="hidden" />
+    <div id="related_model-<%= idx %>" name="related_model">
+        <input type=hidden id="id_related_model-<%= idx %>-DELETE" name="related_model-<%= idx %>-DELETE"/>
+        <input id="id_related_model-<%= idx %>-id" name="related_model-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_related_model-<%= idx %>-model" name="related_model-<%= idx %>-model" type="hidden" value="<%= model %>"/>
+        <input id="id_related_model-<%= idx %>-document" name="related_model-<%= idx %>-document" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('related_model', <%= id %>);">Remove</a>&nbsp;
+                    <a href="" onclick="return deleteInlineForm('related_model', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
                     <%= title %>
@@ -98,12 +74,12 @@
                     <%= brief_description %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_model-<%= id %>-relationship" name="related_model-<%= id %>-relationship" rows="3"></textarea>
+                    <textarea cols="40" id="id_related_model-<%= idx %>-relationship" name="related_model-<%= idx %>-relationship" rows="3"><%= relationship %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="related_model_<%= id %>_errors">
+            <span id="related_model_<%= idx %>_errors">
             </span>
         </div>
     </div>
