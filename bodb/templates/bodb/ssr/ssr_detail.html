@@ -7,15 +7,24 @@
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
 
-        function validateForm()
+        function validateForm(isDraft)
         {
             var errors=0;
+            var figureErrors=0;
             clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
-            errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+            errors+=validateField('title', 'Title', 'title_errors');
+            if(isDraft>0)
+            {
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+            }
+            else
+            {
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+            }
+
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
             errors+=figureErrors;
@@ -31,7 +40,7 @@
          */
         function save(draft)
         {
-            if(validateForm())
+            if(validateForm(draft))
             {
                 document.getElementById('id_draft').value=draft;
                 document.getElementById('ssrForm').submit();

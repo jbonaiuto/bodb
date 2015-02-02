@@ -79,8 +79,8 @@ ModelAuthorFormSet=modelformset_factory(ModelAuthor, form=ModelAuthorInlineForm,
 class VariableInlineForm(forms.ModelForm):
     module = forms.ModelChoiceField(queryset=Module.objects.all(),widget=forms.HiddenInput,required=False)
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    data_type = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),required=True)
-    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'42','rows':'3'}),required=True)
+    data_type = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'42','rows':'3'}),required=False)
     var_type = forms.CharField(widget=forms.HiddenInput,required=True)
     class Meta:
         model=Variable
@@ -91,7 +91,7 @@ VariableFormSet = inlineformset_factory(Module,Variable,form=VariableInlineForm,
 
 class ModuleInlineForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'47','rows':'3'}),required=True)
+    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'47','rows':'3'}),required=False)
 
     class Meta:
         model = Module
@@ -103,7 +103,7 @@ ModuleFormSet=inlineformset_factory(Module, Module, form=ModuleInlineForm, fk_na
 
 class RelatedModelInlineForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
-    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=True)
+    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=False)
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
 
     class Meta:

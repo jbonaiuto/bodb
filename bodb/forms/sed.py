@@ -33,7 +33,7 @@ class ERPSEDForm(SEDForm):
     sensory_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     response_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     control_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
+    experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
         model=ERPSED
@@ -42,9 +42,9 @@ class ERPSEDForm(SEDForm):
 class ERPComponentInlineForm(forms.ModelForm):
     erp_sed = forms.ModelChoiceField(queryset=ERPSED.objects.all(),widget=forms.HiddenInput,required=False)
     component_name=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
-    latency_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}), required=True)
+    latency_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}), required=False)
     latency_peak_type=forms.ChoiceField(choices=ERPComponent.LATENCY_CHOICES,
-        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
     latency_onset=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_mean=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
@@ -57,7 +57,7 @@ class ERPComponentInlineForm(forms.ModelForm):
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
     channel_number=forms.CharField(widget=forms.TextInput(attrs={'size':'5'}),required=False)
     source=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    interpretation=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
+    interpretation=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=False)
 
     class Meta:
         model=ERPComponent
@@ -70,7 +70,10 @@ ERPComponentFormSet = inlineformset_factory(ERPSED, ERPComponent, form=ERPCompon
 class BrainImagingSEDForm(SEDForm):
     control_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
     experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    coord_space = forms.ModelChoiceField(CoordinateSpace.objects.all(), required=True)
+    method = forms.ChoiceField(choices=BrainImagingSED.METHOD_CHOICES,
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif', 'onchange': 'updateColumns()'}),
+        required=False)
+    coord_space = forms.ModelChoiceField(CoordinateSpace.objects.all(), required=False)
     core_header_1 = forms.ChoiceField(choices=BrainImagingSED.HEADER_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif', 'onchange': 'updateColumns()'}),
         required=True)
@@ -85,7 +88,7 @@ class BrainImagingSEDForm(SEDForm):
         required=True)
     extra_header = forms.CharField(widget=forms.TextInput(attrs={'size':'50', 'onkeyup': 'updateExtraHeader(this.value)'}),
         required=False)
-    data = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'10'}),required=True)
+    data = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'10'}),required=False)
 
     class Meta:
         model=BrainImagingSED
@@ -132,7 +135,7 @@ class BuildSEDInlineForm(forms.ModelForm):
     sed = forms.ModelChoiceField(queryset=SED.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=BuildSED.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=False)
 
     class Meta:
         model=BuildSED
@@ -147,7 +150,7 @@ class TestSEDInlineForm(forms.ModelForm):
     ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=TestSED.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=False)
 
     class Meta:
         model=TestSED

@@ -8,18 +8,37 @@
 
         animatedcollapse.addDiv('architectureData', 'fade=1');
 
-        function validateForm()
+        function validateForm(isDraft)
         {
             var errors=0;
+            var figureErrors=0;
+            var archErrors=0;
             clearSpan(document, 'form_errors');
+            clearSpan(document, 'title_errors');
+            clearSpan(document, 'description_errors');
+
             errors+=validateField('title', 'Title', 'title_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            var archErrors=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            archErrors+=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            archErrors+=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
-            archErrors+=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
-            if(archErrors>0)
+
+            if(isDraft>0)
+            {
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+                archErrors=validateInlineForm('input', ['name'], ['Name']);
+                archErrors+=validateInlineForm('output', ['name'], ['Name']);
+                archErrors+=validateInlineForm('state', ['name'], ['Name']);
+                archErrors+=validateInlineForm('module', ['title'], ['Title']);
+            }
+            else{
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+                archErrors=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                archErrors+=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                archErrors+=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                archErrors+=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
+            }
+
+            if(archErrors>0 || figureErrors>0)
                 animatedcollapse.show('architectureData');
+            errors+=figureErrors;
             errors+=archErrors;
 
             if(errors>0)
@@ -29,7 +48,7 @@
 
         function save(isDraft)
         {
-            if(validateForm())
+            if(validateForm(isDraft))
             {
                 document.getElementById('id_draft').value=isDraft;
                 document.getElementById('moduleForm').submit();
