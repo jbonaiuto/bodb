@@ -542,3 +542,28 @@ function doneModelDiagram(res, status)
     else
         alert(txt);
 }
+
+function selectActiveWorkspace(id, csrf_token)
+{
+    var data = { 'id': id, 'csrfmiddlewaretoken': csrf_token};
+    var args = { type: "POST", url: "/bodb/workspace/"+id+"/activate/", data: data,
+        complete: doneSelectActiveWorkspace };
+    $.ajax(args)
+    return false;
+}
+
+function doneSelectActiveWorkspace(res, status)
+{
+    var txt = res.responseText;
+    var data = eval('('+txt+')');
+    if (status!="success")
+        alert(res.responseText);
+    else
+    {
+        document.getElementById('id_active_workspace_select').value=data.id;
+        document.getElementById('active_workspace_title').innerHTML=data.title;
+        document.getElementById('workspace_'+data.id+'_message').innerHTML='Workspace active';
+        document.getElementById('workspace_'+data.id+'_message').style.display='block';
+        $('#workspace_'+data.id+'_message').fadeOut(5000, function(){});
+    }
+}

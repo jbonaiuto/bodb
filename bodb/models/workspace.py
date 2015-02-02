@@ -6,6 +6,7 @@ from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
@@ -349,6 +350,12 @@ class BodbProfile(models.Model):
     favorite_regions = models.ManyToManyField('BrainRegion')
     class Meta:
         app_label='bodb'
+
+    def get_workspaces(self):
+        visibility_q=Q(created_by__is_active=True)
+        if not self.user.is_superuser:
+            visibility_q=Q(visibility_q & Q(group__in=self.user.groups.all()))
+        return Workspace.objects.filter(visibility_q)
 
     @staticmethod
     def get_user_list(users, user):
