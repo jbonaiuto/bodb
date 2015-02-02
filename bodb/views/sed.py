@@ -128,7 +128,7 @@ class DeleteSEDView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=SED
     success_url = '/bodb/index.html'
     permission_required='delete'
-    
+
 class SEDAPIListView(DocumentAPIListView):
     serializer_class = SEDSerializer
     model = SED
@@ -137,7 +137,7 @@ class SEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return SED.objects.filter(security_q)
-    
+
 class ERPSEDAPIListView(DocumentAPIListView):
     serializer_class = ERPSEDSerializer
     model = ERPSED
@@ -146,7 +146,7 @@ class ERPSEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return ERPSED.objects.filter(security_q)
-    
+
 class BrainImagingSEDAPIListView(DocumentAPIListView):
     serializer_class = BrainImagingSEDSerializer
     model = BrainImagingSED
@@ -155,7 +155,7 @@ class BrainImagingSEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return BrainImagingSED.objects.filter(security_q)
-    
+
 class ConnectivitySEDAPIListView(DocumentAPIListView):
     serializer_class = ConnectivitySEDSerializer
     model = ConnectivitySED
@@ -164,7 +164,7 @@ class ConnectivitySEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return ConnectivitySED.objects.filter(security_q)
-    
+
 class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = SEDSerializer
     model = SED
@@ -190,7 +190,7 @@ class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
         return super(SEDAPIDetailView, self).get(request, *args, **kwargs)
 
 class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
-    
+
     model = SED
     template_name = 'bodb/sed/generic/generic_sed_view.html'
     permission_required = 'view'
@@ -233,7 +233,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
 
             # create list of columns
             cols=['Brain Region','Hemisphere']
-            header_str=self.object.core_header_1+' | '+self.object.core_header_2+' | '+self.object.core_header_3 + \
+            header_str=self.object.core_header_1+' | '+self.object.core_header_2+' | '+self.object.core_header_3 +\
                        ' | '+self.object.core_header_4
             header_elems=header_str.split(' | ')
             for elem in header_elems:
@@ -595,7 +595,7 @@ class CleanBrainImagingSEDView(TemplateView):
             if (coord.hemisphere=='left' and atof(coord.coord.x)>=0) or (coord.hemisphere=='right' and atof(coord.coord.x)<=0) or (coord.hemisphere=='interhemispheric' and atof(coord.coord.x)!=0):
                 row['hemisphere_error']='1'
                 error=True
-            # add new SEDCoordForm data to initial
+                # add new SEDCoordForm data to initial
             if error:
                 row['sed_coord_id']=coord.id
                 row['coord_space']=coord.sed.coord_space
@@ -644,8 +644,9 @@ class CleanBrainImagingSEDView(TemplateView):
                             coord.coord.x*=-1
                         elif coord.hemisphere=='interhemispheric':
                             coord.coord.x=0
+                coord.coord.save()
                 coord.save()
-            # forward to SED view
+                # forward to SED view
             url='/bodb/sed/%s/' % id
             params='?type='+request.GET.get('type','')+'&action='+request.GET.get('action','')
             if '_popup' in request.GET:
@@ -654,7 +655,7 @@ class CleanBrainImagingSEDView(TemplateView):
                 params+='&_multiple=1'
             url+=params
             return redirect(url)
-        # forward to sed clean view
+            # forward to sed clean view
         return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
                                         'ispopup': ('_popup' in request.GET),
                                         'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
@@ -999,7 +1000,7 @@ class SelectSelectedSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCrea
             # add to currently loaded selection
             if 'selectionId' in self.request.POST:
                 selectedCoord.saved_selection=SavedSEDCoordSelection.objects.get(id=self.request.POST['selectionId'])
-            # select coord
+                # select coord
             selectedCoord.selected=True
             # save selected coord
             selectedCoord.save()
@@ -1034,7 +1035,7 @@ class SelectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
             # add to currently loaded selection (if one is currently loaded)
             if self.request.user.get_profile().loaded_coordinate_selection:
                 selectedCoord.saved_selection=self.request.user.get_profile().loaded_coordinate_selection
-            # set shape and color to be same as other selected coords from same SED
+                # set shape and color to be same as other selected coords from same SED
             if len(SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id))>0:
                 otherCoord=SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id)[0]
                 selectedCoord.twod_shape=otherCoord.twod_shape
@@ -1085,7 +1086,7 @@ class CoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateV
                 'collator_id':selection.user.id,
                 'last_modified_by':selection.get_modified_by_str(),
                 'last_modified_by_id':selection.last_modified_by.id,
-            }
+                }
 
             selected_coord_objs=SelectedSEDCoord.objects.filter(saved_selection=selection)
 
@@ -1125,7 +1126,7 @@ class CloseCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCr
             if self.request.user.get_profile().loaded_coordinate_selection:
                 self.request.user.get_profile().loaded_coordinate_selection=None
                 self.request.user.get_profile().save()
-            # unselect all coordinates belonging to loaded selection
+                # unselect all coordinates belonging to loaded selection
             if 'id' in self.request.POST and len(self.request.POST['id']):
                 SelectedSEDCoord.objects.filter(selected=True, saved_selection__id=self.request.POST['id'],
                     user=self.request.user).update(selected=False)
@@ -1142,12 +1143,12 @@ class DeleteCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseC
             coords=SelectedSEDCoord.objects.filter(saved_selection__id=self.request.POST['id'])
             for coord in coords:
                 coord.delete()
-            # load selection
+                # load selection
             coordSelection=get_object_or_404(SavedSEDCoordSelection, id=self.request.POST['id'])
             if self.request.user.get_profile().loaded_coordinate_selection==coordSelection:
                 self.request.user.get_profile().loaded_coordinate_selection=None
                 self.request.user.get_profile().save()
-            # delete selection
+                # delete selection
             coordSelection.delete()
             context = {'id': self.request.POST['id']}
         return context
