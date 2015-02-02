@@ -29,7 +29,7 @@ class DocumentWithLiteratureForm(DocumentForm):
 
 class DocumentFigureForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
-    figure=forms.ImageField(required=True, widget=ImageWidget)
+    figure=forms.ImageField(required=True, max_length=500, widget=ImageWidget)
     title=forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=True)
     caption=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
     order=forms.IntegerField(widget=forms.TextInput(attrs={'size':'3'}),required=True)
