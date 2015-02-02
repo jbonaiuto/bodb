@@ -24,7 +24,7 @@
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=25px><%= idx %></td>
                 <td style="width:{% if ispopup %}120{% else %}45{% endif %}px" align=center>
-                    <input type="radio" name="activeWorkspace" id="activeWorkspace<%= id %>" value="<%= id %>" <% if(id=={{ active_workspace.id }}){ %>checked<% } %> onclick="selectActiveWorkspace(<%= id %>);"/>
+                    <input type="radio" name="activeWorkspace" id="activeWorkspace<%= id %>" value="<%= id %>" <% if(id=={{ active_workspace.id }}){ %>checked<% } %> onclick="selectActiveWorkspace(<%= id %>,'{{ csrf_token }}');"/>
                 </td>
                 <td width=200px>
                     <a href="/bodb/workspace/<%= id %>/" onclick="return openInNewTab('/bodb/workspace/<%= id %>/');"><%= title %></a>
