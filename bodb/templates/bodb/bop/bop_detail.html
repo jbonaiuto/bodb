@@ -22,31 +22,41 @@
         function validateForm()
         {
             var errors=0;
+            var figureErrors=0;
             clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
-            errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
-            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+
+            errors+=validateField('title', 'Title', 'title_errors');
+
+            if(isDraft>0)
+            {
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+            }
+            else{
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+                var buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+                if(buildSEDErrors>0)
+                    animatedcollapse.show('buildSEDData');
+                errors+=buildSEDErrors;
+                var relatedModelErrors=validateInlineForm('related_model', ['relationship'], ['Relationship']);
+                if(relatedModelErrors>0)
+                    animatedcollapse.show('modelData');
+                errors+=relatedModelErrors;
+                var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+                if(relatedBOPErrors>0)
+                    animatedcollapse.show('bopData');
+                errors+=relatedBOPErrors;
+                var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+                if(relatedBrainRegionErrors>0)
+                    animatedcollapse.show('brainRegionData');
+                errors+=relatedBrainRegionErrors;
+            }
+
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
             errors+=figureErrors;
-            var buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            if(buildSEDErrors>0)
-                animatedcollapse.show('buildSEDData');
-            errors+=buildSEDErrors;
-            var relatedModelErrors=validateInlineForm('related_model', ['relationship'], ['Relationship']);
-            if(relatedModelErrors>0)
-                animatedcollapse.show('modelData');
-            errors+=relatedModelErrors;
-            var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
-            if(relatedBOPErrors>0)
-                animatedcollapse.show('bopData');
-            errors+=relatedBOPErrors;
-            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
-            if(relatedBrainRegionErrors>0)
-                animatedcollapse.show('brainRegionData');
-            errors+=relatedBrainRegionErrors;
 
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';

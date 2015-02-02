@@ -23,7 +23,7 @@ class PredictionForm(DocumentForm):
 class PredictionInlineForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
     title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'50','rows':'3'}),required=True)
+    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'50','rows':'3'}),required=False)
     ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
     collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)

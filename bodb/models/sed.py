@@ -163,7 +163,7 @@ class ERPComponent(models.Model):
     erp_sed=models.ForeignKey(ERPSED, related_name = 'components')
     component_name=models.CharField(max_length=100)
 
-    latency_peak=models.DecimalField(decimal_places=3, max_digits=10, null=False)
+    latency_peak=models.DecimalField(decimal_places=3, max_digits=10, null=True)
     latency_peak_type=models.CharField(max_length=100, choices=LATENCY_CHOICES, default='exact')
     latency_onset=models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
 
@@ -199,6 +199,7 @@ class ERPComponent(models.Model):
 # A summary of brain imaging data: inherits from SED
 class BrainImagingSED(SED):
     METHOD_CHOICES = (
+        ('', ''),
         ('fMRI', 'fMRI'),
         ('PET', 'PET'),
         )
@@ -218,7 +219,7 @@ class BrainImagingSED(SED):
     # description of experimental condition
     experimental_condition = models.TextField()
     # coordinate space
-    coord_space = models.ForeignKey('CoordinateSpace')
+    coord_space = models.ForeignKey('CoordinateSpace',null=True)
     # basic column headers
     core_header_1 = models.CharField(max_length=20, choices=HEADER_CHOICES, default='hemisphere')
     core_header_2 = models.CharField(max_length=20, choices=HEADER_CHOICES, default='x y z')

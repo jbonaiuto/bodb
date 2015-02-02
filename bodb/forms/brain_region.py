@@ -17,7 +17,7 @@ class BrainRegionForm(forms.ModelForm):
 
 class RelatedBrainRegionInlineForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
-    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=True)
+    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=False)
     brain_region = forms.ModelChoiceField(queryset=BrainRegion.objects.all(),widget=forms.HiddenInput,required=False)
 
     class Meta:

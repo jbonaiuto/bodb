@@ -7,14 +7,16 @@
     <script type="text/javascript">
         animatedcollapse.addDiv('ssrData', 'fade=1');
 
-        function validateForm()
+        function validateForm(isDraft)
         {
             var errors=0;
             clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
-            errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
+            errors+=validateField('title', 'Title', 'title_errors');
+
+            if(isDraft<1)
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
 
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -23,7 +25,7 @@
 
         function save(isDraft)
         {
-            if(validateForm())
+            if(validateForm(isDraft))
             {
                 document.getElementById('id_draft').value=isDraft;
                 document.getElementById('predictionForm').submit();
