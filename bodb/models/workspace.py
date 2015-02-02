@@ -355,7 +355,7 @@ class BodbProfile(models.Model):
         visibility_q=Q(created_by__is_active=True)
         if not self.user.is_superuser:
             visibility_q=Q(visibility_q & Q(group__in=self.user.groups.all()))
-        return Workspace.objects.filter(visibility_q)
+        return Workspace.objects.filter(visibility_q).order_by('title')
 
     @staticmethod
     def get_user_list(users, user):
