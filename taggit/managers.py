@@ -69,7 +69,7 @@ class ExtraJoinRestriction(object):
 
 class TaggableManager(RelatedField, Field):
     def __init__(self, verbose_name=_("Tags"),
-        help_text=_("A comma-separated list of tags."), through=None, blank=False):
+                 help_text=_("A comma-separated list of tags."), through=None, blank=False):
         Field.__init__(self, verbose_name=verbose_name, help_text=help_text, blank=blank)
         self.through = through or TaggedItem
         self.rel = TaggableRel(self)
@@ -77,7 +77,7 @@ class TaggableManager(RelatedField, Field):
     def __get__(self, instance, model):
         if instance is not None and instance.pk is None:
             raise ValueError("%s objects need to have a primary key value "
-                "before you can access their tags." % model.__name__)
+                             "before you can access their tags." % model.__name__)
         manager = _TaggableManager(
             through=self.through, model=model, instance=instance
         )
@@ -114,7 +114,7 @@ class TaggableManager(RelatedField, Field):
         self.related = RelatedObject(cls, self.model, self)
         self.use_gfk = (
             self.through is None or issubclass(self.through, GenericTaggedItemBase)
-        )
+            )
         self.rel.to = self.through._meta.get_field("tag").rel.to
         self.related = RelatedObject(self.through, cls, self)
         if self.use_gfk:
@@ -326,9 +326,9 @@ class _TaggableManager(models.Manager):
     @require_instance_manager
     def add(self, *tags):
         str_tags = set([
-            t
-            for t in tags
-            if not isinstance(t, self.through.tag_model())
+        t
+        for t in tags
+        if not isinstance(t, self.through.tag_model())
         ])
         tag_objs = set(tags) - str_tags
         # If str_tags has 0 elements Django actually optimizes that to not do a
@@ -338,7 +338,7 @@ class _TaggableManager(models.Manager):
         )
         tag_objs.update(existing)
 
-        for new_tag in str_tags - set(t.name for t in existing):
+        for new_tag in str_tags - set(t.name.lower() for t in existing):
             tag_objs.add(self.through.tag_model().objects.create(name=new_tag))
 
         for tag in tag_objs:
@@ -406,7 +406,7 @@ class _TaggableManager(models.Manager):
         results = []
         for result in qs:
             obj = items[
-                tuple(result[k] for k in lookup_keys)
+                  tuple(result[k] for k in lookup_keys)
             ]
             obj.similar_tags = result["n"]
             results.append(obj)
