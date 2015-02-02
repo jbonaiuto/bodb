@@ -12,7 +12,7 @@ class BOPForm(DocumentWithLiteratureForm):
 
 class RelatedBOPInlineForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=False)
     bop = forms.ModelChoiceField(queryset=BOP.objects.all(),widget=forms.HiddenInput,required=False)
 
     class Meta:
@@ -27,7 +27,7 @@ class BOPRelatedBOPInlineForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=RelatedBOP.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=False)
     bop = forms.ModelChoiceField(queryset=BOP.objects.all(),widget=forms.HiddenInput,required=False)
 
     class Meta:
