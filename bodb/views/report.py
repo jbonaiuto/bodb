@@ -1016,17 +1016,15 @@ def model_report_rtf(context, display_settings, doc=None):
         c1.SetSpan(4)
         table.AddRow(c1)
 
-        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Name'), thin_frame)
         c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Relationship'), thin_frame)
         c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Relevance Narrative'), thin_frame)
-        c3.SetSpan(2)
-        table.AddRow(c1, c2, c3)
+        c3.SetSpan(3)
+        table.AddRow(c2, c3)
 
         for testsed in context['testing_seds'] :
             c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.relationship).encode('latin1','replace')), thin_frame)
             c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(testsed.relevance_narrative).encode('latin1','replace')), thin_frame)
-            c1.SetSpan(2)
-            c2.SetSpan(2)
+            c2.SetSpan(3)
             table.AddRow(c1, c2)
 
             c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,''), thin_frame)
@@ -1378,16 +1376,15 @@ def model_report_pdf(context, display_settings, elements=None):
         tableStyle.append(('SPAN',(0,rows),(3,rows)))
         rows += 1
 
-        sedData.append([Paragraph('Name',styles['Heading3']),
-                        Paragraph('Relationship',styles['Heading3']),
-                        Paragraph('Relevance Narrative',styles['Heading3']),''])
-        tableStyle.append(('SPAN',(2,rows),(3,rows)))
+        sedData.append([Paragraph('Relationship',styles['Heading3']),
+                        Paragraph('Relevance Narrative',styles['Heading3'])])
+        tableStyle.append(('SPAN',(1,rows),(3,rows)))
         rows += 1
 
         for testsed in context['testing_seds'] :
             sedData.append([Paragraph(unicode(testsed.relationship).encode('latin1','ignore'),styles['BodyText']),
-                            Paragraph(unicode(testsed.relevance_narrative).encode('latin1','ignore'),styles['BodyText']),''])
-            tableStyle.append(('SPAN',(2,rows),(3,rows)))
+                            Paragraph(unicode(testsed.relevance_narrative).encode('latin1','ignore'),styles['BodyText'])])
+            tableStyle.append(('SPAN',(1,rows),(3,rows)))
             rows += 1
 
             sedData.append(['',
