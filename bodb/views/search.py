@@ -20,7 +20,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace, Species
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -38,7 +38,9 @@ class SearchView(FormView):
         context['sed_search_form']=SEDSearchForm(self.request.POST or None,prefix='sed')
         context['ssr_search_form']=DocumentSearchForm(self.request.POST or None,prefix='ssr')
         context['literature_search_form']=LiteratureSearchForm(self.request.POST or None,prefix='literature')
-        context['brain_region_search_form']=BrainRegionSearchForm(self.request.POST or None,prefix='brain_region')
+        genus_options=Species.get_genus_options()
+        species_options=Species.get_species_options()
+        context['brain_region_search_form']=BrainRegionSearchForm(genus_options, species_options, self.request.POST or None,prefix='brain_region')
         context['user_search_form']=UserSearchForm(self.request.POST or None,prefix='user')
         context['workspace_search_form']=WorkspaceSearchForm(self.request.POST or None, prefix='workspace')
         
@@ -452,6 +454,14 @@ class BOPSearchView(FormView):
 class BrainRegionSearchView(FormView):
     form_class=BrainRegionSearchForm
     template_name='bodb/search/search.html'
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        genus_options=Species.get_genus_options()
+        species_options=Species.get_species_options()
+        return form_class(genus_options, species_options, **self.get_form_kwargs())
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionSearchView,self).get_context_data(**kwargs)
