@@ -139,6 +139,7 @@ class ModelReportView(View):
         output_ports = list(Variable.objects.filter(var_type='output', module=model))
         states = list(Variable.objects.filter(var_type='state', module=model))
         modules = list(Module.objects.filter(parent=model))
+        all_submodules = list(model.get_descendants().all())
 
         # load related entries
         related_models = list(RelatedModel.get_related_models(model, request.user))
@@ -153,6 +154,7 @@ class ModelReportView(View):
         output_ports.sort(compareVariables)
         states.sort(compareVariables)
         modules.sort(compareModules)
+        all_submodules.sort(compareModules)
         building_seds.sort(compareBuildSEDs)
         testing_seds.sort(compareTestSEDs)
         predictions.sort(compareDocuments)
@@ -168,6 +170,7 @@ class ModelReportView(View):
             'output_ports': output_ports,
             'states': states,
             'modules': modules,
+            'all_submodules': all_submodules,
             'related_models': related_models,
             'related_bops': related_bops,
             'related_brain_regions': related_brain_regions,
@@ -763,6 +766,105 @@ def sed_report_pdf(context, display_settings, elements=None):
     return elements
 
 
+def get_module_architecture_table_rtf(ss, context, display_settings):
+    table = PyRTF.Table(TabPS.DEFAULT_WIDTH * 4, TabPS.DEFAULT_WIDTH * 3, TabPS.DEFAULT_WIDTH * 6)
+    if display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures']):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Diagrams'), thin_frame)
+        c1.SetSpan(3)
+        table.AddRow(c1)
+
+        for figure in context['figures']:
+            thumb_path = get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
+            image = PyRTF.Image(thumb_path)
+            c1 = Cell(PyRTF.Paragraph(image))
+            c1.SetSpan(2)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(figure.caption).encode('latin1', 'replace')),
+                thin_frame)
+            table.AddRow(c1, c2)
+
+    #print architecture.inputs
+    if context['input_ports'] and len(context['input_ports']):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Inputs'), thin_frame)
+        c1.SetSpan(3)
+        table.AddRow(c1)
+
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Name'), thin_frame)
+        c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Data Type'), thin_frame)
+        c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Description'), thin_frame)
+        table.AddRow(c1, c2, c3)
+
+        for input in context['input_ports']:
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(input.name).encode('latin1', 'replace')),
+                thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(input.data_type).encode('latin1', 'replace')),
+                thin_frame)
+            c3 = Cell(
+                PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(input.description).encode('latin1', 'replace')),
+                thin_frame)
+            table.AddRow(c1, c2, c3)
+
+    #print architecture.outputs
+    if context['output_ports'] and len(context['output_ports']):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Outputs'), thin_frame)
+        c1.SetSpan(3)
+        table.AddRow(c1)
+
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Name'), thin_frame)
+        c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Data Type'), thin_frame)
+        c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Description'), thin_frame)
+        table.AddRow(c1, c2, c3)
+
+        for output in context['output_ports']:
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(output.name).encode('latin1', 'replace')),
+                thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(output.data_type).encode('latin1', 'replace')),
+                thin_frame)
+            c3 = Cell(
+                PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(output.description).encode('latin1', 'replace')),
+                thin_frame)
+            table.AddRow(c1, c2, c3)
+
+    #print architecture.states
+    if context['states'] and len(context['states']):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'States'), thin_frame)
+        c1.SetSpan(3)
+        table.AddRow(c1)
+
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Name'), thin_frame)
+        c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Data Type'), thin_frame)
+        c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Description'), thin_frame)
+        table.AddRow(c1, c2, c3)
+
+        for state in context['states']:
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(state.name).encode('latin1', 'replace')),
+                thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(state.data_type).encode('latin1', 'replace')),
+                thin_frame)
+            c3 = Cell(
+                PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(state.description).encode('latin1', 'replace')),
+                thin_frame)
+            table.AddRow(c1, c2, c3)
+    if context['modules'] and len(context['modules']):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Submodules'), thin_frame)
+        c1.SetSpan(3)
+        table.AddRow(c1)
+
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Name'), thin_frame)
+        c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5, 'Description'), thin_frame)
+        c2.SetSpan(2)
+        table.AddRow(c1, c2)
+
+        for module in context['modules']:
+            c1 = Cell(
+                PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(module.module.title).encode('latin1', 'replace')),
+                thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,
+                unicode(module.module.brief_description).encode('latin1', 'replace')), thin_frame)
+            c2.SetSpan(2)
+            table.AddRow(c1, c2)
+    return table
+
+
 def model_report_rtf(context, display_settings, doc=None):
 
 
@@ -843,89 +945,46 @@ def model_report_rtf(context, display_settings, doc=None):
         p.append("Architecture")
         section.append(p)
 
-        table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
+        table = get_module_architecture_table_rtf(ss, context, display_settings)
 
-        if display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures']):
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Diagrams'), thin_frame)
-            c1.SetSpan(3)
-            table.AddRow(c1)
+        section.append(table)
 
-            for figure in context['figures']:
-                thumb_path=get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
-                image = PyRTF.Image(thumb_path)
-                c1 = Cell(PyRTF.Paragraph(image))
-                c1.SetSpan(2)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(figure.caption).encode('latin1','replace')), thin_frame)
-                table.AddRow(c1, c2)
-
-        #print architecture.inputs
-        if context['input_ports'] and len(context['input_ports']):
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Inputs'), thin_frame)
-            c1.SetSpan(3)
-            table.AddRow(c1)
-
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Name'), thin_frame)
-            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Data Type'), thin_frame)
-            c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Description'), thin_frame)
-            table.AddRow(c1, c2, c3)
-
-            for input in context['input_ports']:
-                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(input.name).encode('latin1','replace')), thin_frame)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(input.data_type).encode('latin1','replace')), thin_frame)
-                c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(input.description).encode('latin1','replace')), thin_frame)
-                table.AddRow(c1, c2, c3)
-
-        #print architecture.outputs
-        if context['output_ports'] and len(context['output_ports']):
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Outputs'), thin_frame)
-            c1.SetSpan(3)
-            table.AddRow(c1)
-
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Name'), thin_frame)
-            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Data Type'), thin_frame)
-            c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Description'), thin_frame)
-            table.AddRow(c1, c2, c3)
-
-            for output in context['output_ports']:
-                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(output.name).encode('latin1','replace')), thin_frame)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(output.data_type).encode('latin1','replace')), thin_frame)
-                c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(output.description).encode('latin1','replace')), thin_frame)
-                table.AddRow(c1, c2, c3)
-
-        #print architecture.states
-        if context['states'] and len(context['states']):
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'States'), thin_frame)
-            c1.SetSpan(3)
-            table.AddRow(c1)
-
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Name'), thin_frame)
-            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Data Type'), thin_frame)
-            c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Description'), thin_frame)
-            table.AddRow(c1, c2, c3)
-
-            for state in context['states']:
-                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(state.name).encode('latin1','replace')), thin_frame)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(state.data_type).encode('latin1','replace')), thin_frame)
-                c3 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(state.description).encode('latin1','replace')), thin_frame)
-                table.AddRow(c1, c2, c3)
-
-        if context['modules'] and len(context['modules']):
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Submodules'), thin_frame)
-            c1.SetSpan(3)
-            table.AddRow(c1)
-
-            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Name'), thin_frame)
-            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading5,'Description'), thin_frame)
+    if context['all_submodules'] and len(context['all_submodules']):
+        for submodule in context['all_submodules']:
+            p=PyRTF.Paragraph(ss.ParagraphStyles.Heading4)
+            p.append(unicode('Submodule: %s' % submodule.title).encode('latin1','replace'))
+            section.append(p)
+            table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
+            table.SetGapBetweenCells(0)
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Brief Description *'), thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(submodule.brief_description).encode('latin1','replace')), thin_frame)
             c2.SetSpan(2)
             table.AddRow(c1, c2)
-
-            for module in context['modules']:
-                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(module.module.title).encode('latin1','replace')), thin_frame)
-                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(module.module.brief_description).encode('latin1','replace')), thin_frame)
+            if display_settings['narrativedisp'] == 1 and submodule.narrative and len(submodule.narrative):
+                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Narrative *'), thin_frame)
+                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(submodule.narrative).encode('latin1','replace')), thin_frame)
                 c2.SetSpan(2)
                 table.AddRow(c1, c2)
 
-        section.append(table)
+            # Tags
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Tags'), thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(', '.join(submodule.tags.names())).encode('latin1','replace')), thin_frame)
+            c2.SetSpan(2)
+            table.AddRow(c1, c2)
+            section.append(table)
+            module_figures = DocumentFigure.objects.filter(document=submodule).order_by('order')
+            input_ports = list(Variable.objects.filter(var_type__iexact='Input',module=submodule))
+            output_ports = list(Variable.objects.filter(var_type__iexact='output', module=submodule))
+            states = list(Variable.objects.filter(var_type__iexact='state', module=submodule))
+            modules = list(Module.objects.filter(parent=submodule))
+            input_ports.sort(compareVariables)
+            output_ports.sort(compareVariables)
+            states.sort(compareVariables)
+            modules.sort(compareModules)
+            table=get_module_architecture_table_rtf(ss, {'input_ports': input_ports, 'output_ports': output_ports,
+                                                     'states': states, 'figures': module_figures, 'modules':modules},
+                display_settings)
+            section.append(table)
 
     # SED + SSR
     if display_settings['seddisp'] == 1:
@@ -1092,6 +1151,101 @@ def model_report_rtf(context, display_settings, doc=None):
     return doc
 
 
+def get_module_architecture_table_pdf(context, display_settings):
+    architectureData = []
+    rows = 0
+    tableStyle = [('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+                  ('VALIGN', (0, 0), (-1, -1), 'TOP')]
+    if display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures']):
+        architectureData.append([Paragraph('Diagrams', styles['Heading2']), '', ''])
+        tableStyle.append(('SPAN', (0, 0), (2, 0)))
+        rows += 1
+
+        for figure in context['figures']:
+            thumb_path = get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
+            image = Image(thumb_path)
+            architectureData.append([image,
+                                     '',
+                                     Paragraph(unicode(figure.caption).encode('latin1', 'ignore'), styles['BodyText'])])
+            tableStyle.append(('SPAN', (0, rows), (1, rows)))
+            rows += 1
+
+    #print architecture.inputs
+    if context['input_ports'] and len(context['input_ports']):
+        architectureData.append([Paragraph('Inputs', styles['Heading2']), '', ''])
+        tableStyle.append(('SPAN', (0, rows), (2, rows)))
+        rows += 1
+
+        architectureData.append([Paragraph('Name', styles['Heading3']),
+                                 Paragraph('Data Type', styles['Heading3']),
+                                 Paragraph('Description', styles['Heading3'])])
+        rows += 1
+
+        for input in context['input_ports']:
+            architectureData.append([Paragraph(unicode(input.name).encode('latin1', 'ignore'), styles['BodyText']),
+                                     Paragraph(unicode(input.data_type).encode('latin1', 'ignore'), styles['BodyText']),
+                                     Paragraph(unicode(input.description).encode('latin1', 'ignore'),
+                                         styles['BodyText'])])
+            rows += 1
+
+    #print architecture.outputs
+    if context['output_ports'] and len(context['output_ports']):
+        architectureData.append([Paragraph('Outputs', styles['Heading2']), '', ''])
+        tableStyle.append(('SPAN', (0, rows), (2, rows)))
+        rows += 1
+
+        architectureData.append([Paragraph('Name', styles['Heading3']),
+                                 Paragraph('Data Type', styles['Heading3']),
+                                 Paragraph('Description', styles['Heading3'])])
+        rows += 1
+
+        for output in context['output_ports']:
+            architectureData.append([Paragraph(unicode(output.name).encode('latin1', 'ignore'), styles['BodyText']),
+                                     Paragraph(unicode(output.data_type).encode('latin1', 'ignore'),
+                                         styles['BodyText']),
+                                     Paragraph(unicode(output.description).encode('latin1', 'ignore'),
+                                         styles['BodyText'])])
+            rows += 1
+
+    #print architecture.states
+    if context['states'] and len(context['states']):
+        architectureData.append([Paragraph('States', styles['Heading2']), '', ''])
+        tableStyle.append(('SPAN', (0, rows), (2, rows)))
+        rows += 1
+
+        architectureData.append([Paragraph('Name', styles['Heading3']),
+                                 Paragraph('Data Type', styles['Heading3']),
+                                 Paragraph('Description', styles['Heading3'])])
+        rows += 1
+
+        for state in context['states']:
+            architectureData.append([Paragraph(unicode(state.name).encode('latin1', 'ignore'), styles['BodyText']),
+                                     Paragraph(unicode(state.data_type).encode('latin1', 'ignore'), styles['BodyText']),
+                                     Paragraph(unicode(state.description).encode('latin1', 'ignore'),
+                                         styles['BodyText'])])
+            rows += 1
+    if context['modules'] and len(context['modules']):
+        architectureData.append([Paragraph('Submodules', styles['Heading2']), '', ''])
+        tableStyle.append(('SPAN', (0, rows), (2, rows)))
+        rows += 1
+
+        architectureData.append([Paragraph('Name', styles['Heading3']),
+                                 Paragraph('Description', styles['Heading3']), ''])
+        tableStyle.append(('SPAN', (1, rows), (2, rows)))
+        rows += 1
+
+        for module in context['modules']:
+            architectureData.append(
+                [Paragraph(unicode(module.module.title).encode('latin1', 'ignore'), styles['BodyText']),
+                 Paragraph(unicode(module.module.brief_description).encode('latin1', 'ignore'), styles['BodyText']),
+                 ''])
+            tableStyle.append(('SPAN', (1, rows), (2, rows)))
+            rows += 1
+    t = reportlab.platypus.tables.Table(architectureData, [2.25 * inch, 2.25 * inch, 3 * inch],
+        style=tableStyle)
+    return t
+
+
 def model_report_pdf(context, display_settings, elements=None):
     ##############################################################################
     if elements is None:
@@ -1144,95 +1298,54 @@ def model_report_pdf(context, display_settings, elements=None):
        (context['output_ports'] and len(context['output_ports'])) or (context['states'] and len(context['states'])) or \
        (context['modules'] and len(context['modules'])):
         elements.append(Paragraph('Architecture', styles['Heading2']))
-        architectureData=[]
-        rows=0
-        tableStyle=[('GRID',(0,0),(-1,-1),0.5,colors.black),
-                    ('VALIGN',(0,0),(-1,-1),'TOP')]
+        t = get_module_architecture_table_pdf(context, display_settings)
+        elements.append(t)
 
-        if display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures']):
-            architectureData.append([Paragraph('Diagrams',styles['Heading2']),'',''])
-            tableStyle.append(('SPAN',(0,0),(2,0)))
-            rows += 1
-
-            for figure in context['figures']:
-                thumb_path=get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
-                image = Image(thumb_path)
-                architectureData.append([image,
-                                         '',
-                                         Paragraph(unicode(figure.caption).encode('latin1','ignore'), styles['BodyText'])])
-                tableStyle.append(('SPAN',(0,rows),(1,rows)))
-                rows += 1
-
-        #print architecture.inputs
-        if context['input_ports'] and len(context['input_ports']):
-            architectureData.append([Paragraph('Inputs',styles['Heading2']),'',''])
-            tableStyle.append(('SPAN',(0,rows),(2,rows)))
-            rows += 1
-
-            architectureData.append([Paragraph('Name',styles['Heading3']),
-                                     Paragraph('Data Type',styles['Heading3']),
-                                     Paragraph('Description',styles['Heading3'])])
-            rows += 1
-
-            for input in context['input_ports']:
-                architectureData.append([Paragraph(unicode(input.name).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(input.data_type).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(input.description).encode('latin1','ignore'),styles['BodyText'])])
-                rows += 1
-
-        #print architecture.outputs
-        if context['output_ports'] and len(context['output_ports']):
-            architectureData.append([Paragraph('Outputs',styles['Heading2']),'',''])
-            tableStyle.append(('SPAN',(0,rows),(2,rows)))
-            rows += 1
-
-            architectureData.append([Paragraph('Name',styles['Heading3']),
-                                     Paragraph('Data Type',styles['Heading3']),
-                                     Paragraph('Description',styles['Heading3'])])
-            rows += 1
-
-            for output in context['output_ports']:
-                architectureData.append([Paragraph(unicode(output.name).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(output.data_type).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(output.description).encode('latin1','ignore'),styles['BodyText'])])
-                rows += 1
-
-        #print architecture.states
-        if context['states'] and len(context['states']):
-            architectureData.append([Paragraph('States',styles['Heading2']),'',''])
-            tableStyle.append(('SPAN',(0,rows),(2,rows)))
-            rows += 1
-
-            architectureData.append([Paragraph('Name',styles['Heading3']),
-                                     Paragraph('Data Type',styles['Heading3']),
-                                     Paragraph('Description',styles['Heading3'])])
-            rows += 1
-
-            for state in context['states']:
-                architectureData.append([Paragraph(unicode(state.name).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(state.data_type).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(state.description).encode('latin1','ignore'),styles['BodyText'])])
-                rows += 1
-
-        if context['modules'] and len(context['modules']):
-            architectureData.append([Paragraph('Submodules',styles['Heading2']),'',''])
-            tableStyle.append(('SPAN',(0,rows),(2,rows)))
-            rows += 1
-
-            architectureData.append([Paragraph('Name',styles['Heading3']),
-                                     Paragraph('Description',styles['Heading3']),''])
+    if context['all_submodules'] and len(context['all_submodules']):
+        for submodule in context['all_submodules']:
+            elements.append(Paragraph('Submodule: %s' % submodule.title, styles['Heading2']))
+            rows=0
+            basicInfoData = []
+            tableStyle=[('GRID',(0,0),(-1,-1),0.5,colors.black),
+                        ('VALIGN',(0,0),(-1,-1),'TOP')]
+            basicInfoData.append([Paragraph('Brief Description *',styles['Heading2']),
+                                  Paragraph(unicode(submodule.brief_description).encode('latin1','ignore'), styles["BodyText"]),
+                                  ''])
             tableStyle.append(('SPAN',(1,rows),(2,rows)))
             rows += 1
 
-            for module in context['modules']:
-                architectureData.append([Paragraph(unicode(module.module.title).encode('latin1','ignore'),styles['BodyText']),
-                                         Paragraph(unicode(module.module.brief_description).encode('latin1','ignore'),styles['BodyText']),''])
+            # Narrative
+            if display_settings['narrativedisp'] == 1 and submodule.narrative and len(submodule.narrative):
+                basicInfoData.append([Paragraph('Narrative *',styles['Heading2']),
+                                      Paragraph(unicode(submodule.narrative).encode('latin1','ignore'),styles['BodyText']),
+                                      ''])
                 tableStyle.append(('SPAN',(1,rows),(2,rows)))
                 rows += 1
 
-        t=reportlab.platypus.tables.Table(architectureData, [2.25*inch, 2.25*inch, 3*inch],
-            style=tableStyle)
-        elements.append(t)
+            # Tags
+            basicInfoData.append([Paragraph('Tags',styles['Heading2']),
+                                  Paragraph(unicode(', '.join(submodule.tags.names())).encode('latin1','ignore'),styles['BodyText']),
+                                  ''])
+            tableStyle.append(('SPAN',(1,rows),(2,rows)))
+
+            t=reportlab.platypus.tables.Table(basicInfoData, [1.5*inch, inch, 5*inch],
+                style=tableStyle)
+            elements.append(t)
+
+            elements.append(Paragraph('Architecture', styles['Heading2']))
+            module_figures = DocumentFigure.objects.filter(document=submodule).order_by('order')
+            input_ports = list(Variable.objects.filter(var_type__iexact='Input',module=submodule))
+            output_ports = list(Variable.objects.filter(var_type__iexact='output', module=submodule))
+            states = list(Variable.objects.filter(var_type__iexact='state', module=submodule))
+            modules = list(Module.objects.filter(parent=submodule))
+            input_ports.sort(compareVariables)
+            output_ports.sort(compareVariables)
+            states.sort(compareVariables)
+            modules.sort(compareModules)
+            t = get_module_architecture_table_pdf({'input_ports': input_ports, 'output_ports': output_ports,
+                                                   'states': states, 'figures': module_figures, 'modules':modules},
+                display_settings)
+            elements.append(t)
 
     # SED + SSR
     if display_settings['seddisp'] == 1:
