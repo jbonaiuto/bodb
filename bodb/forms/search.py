@@ -119,6 +119,11 @@ class BOPSearchForm(DocumentWithLiteratureSearchForm):
 
 
 class BrainRegionSearchForm(SearchForm):
+    def __init__(self, genus_choices, species_choices, *args, **kwargs):
+        super(BrainRegionSearchForm,self).__init__(*args, **kwargs)
+        self.fields['genus'].choices=genus_choices
+        self.fields['species'].choices=species_choices
+
     name = forms.CharField(help_text="Brain region name", required=False)
     name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     abbreviation = forms.CharField(help_text="Brain region abbreviation", required=False)
@@ -127,8 +132,8 @@ class BrainRegionSearchForm(SearchForm):
     parent_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     nomenclature = forms.CharField(help_text="Nomenclature that the brain region belongs to", required=False)
     nomenclature_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
-    species = forms.CharField(help_text="Species that the brain region applies to", required=False)
-    species_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    genus = forms.ChoiceField(choices=(), help_text='Genus that the brain region applies to', required=False)
+    species = forms.ChoiceField(choices=(), help_text='Species that the brain region applies to', required=False)
     region_type = forms.ChoiceField(choices=BrainRegion.REGION_TYPE_CHOICES, help_text="Type of brain region",
         required=False)
 

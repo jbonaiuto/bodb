@@ -30,8 +30,25 @@ class Species(models.Model):
     # when printing instances of this class, print "genus species"
     def __unicode__(self):
         return u"%s %s" % (self.genus_name, self.species_name)
-    
-    
+
+    @staticmethod
+    def get_genus_options():
+        genus_options=[('','')]
+        for species in Species.objects.all():
+            if not (species.genus_name,species.genus_name) in genus_options:
+                genus_options.append((species.genus_name,species.genus_name))
+        return genus_options
+
+    @staticmethod
+    def get_species_options():
+        species_options=[('','')]
+        for species in Species.objects.all():
+            if not (species.__unicode__(),species.__unicode__()) in species_options:
+                species_options.append((species.__unicode__(),species.__unicode__()))
+        return species_options
+
+
+
 # Brain nomenclature
 class Nomenclature(models.Model):
     # literature record the nomenclature is published in

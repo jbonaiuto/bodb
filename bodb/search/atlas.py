@@ -101,17 +101,16 @@ class BrainRegionSearch(object):
             return reduce(op,keyword_filters)
         return Q()
 
+    def search_genus(self):
+        if self.genus:
+            return Q(nomenclature__species__genus_name__iexact=self.genus)
+        return Q()
+
     # search by species
     def search_species(self):
         if self.species:
-            op=operator.or_
-            if self.species_options=='all':
-                op=operator.and_
-            words=parse_tags(self.species)
-            keyword_filters=[Q(Q(nomenclature__species__genus_name__icontains=word) |
-                               Q(nomenclature__species__species_name__icontains=word) |
-                               Q(nomenclature__species__common_name__icontains=word)) for word in words]
-            return reduce(op,keyword_filters)
+            genus,species=self.species.split(' ')
+            return Q(Q(nomenclature__species__genus_name__iexact=genus) & Q(nomenclature__species__species_name__iexact=species))
         return Q()
 
     # search by region type
