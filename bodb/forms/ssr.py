@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import Form
 from django.forms.models import inlineformset_factory
 from bodb.forms.document import DocumentForm
 from bodb.models import Model, Prediction, SSR
@@ -43,3 +44,9 @@ class SSRForm(DocumentForm):
 
     class Meta:
         model=SSR
+
+
+class SSRReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
