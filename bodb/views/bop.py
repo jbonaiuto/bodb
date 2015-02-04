@@ -287,7 +287,7 @@ class BOPDiagramView(JSONResponseMixin,BaseCreateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             graphTool=self.request.POST['graphTool']
-            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds[]'))
+            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds'))
             dot_xml=bop_gxl(bops, self.request.user)
             context['bopDiagram'], size, context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
                 self.request.user, ext=self.request.POST['graphID'])
