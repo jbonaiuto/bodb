@@ -12,79 +12,88 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import *
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import View
+from django.views.generic import View, FormView
+from bodb.forms.bop import BOPReportForm
+from bodb.forms.ssr import SSRReportForm
 from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
+from bodb.forms.model import ModelReportForm
+from bodb.forms.sed import SEDReportForm
 from uscbp.image_utils import get_thumbnail
+import json
+from bodb.serializers.sed import SEDSerializer
+from rest_framework.renderers import UnicodeJSONRenderer
+#from rest_framework.response import Response
+
+def report_json(context, display_settings):
+    response = HttpResponse(mimetype='application/json')
+    response['Content-Disposition'] = 'attachment; filename=SED_Report.json'
+
+    serializer = SEDSerializer(context['sed'])
+    data = UnicodeJSONRenderer().render(serializer.data)
+    json.dump(data, response)
+
+    return response
+
 
 thin_edge  = BorderPS( width=10, style=BorderPS.SINGLE )
 thin_frame  = FramePS( thin_edge,  thin_edge,  thin_edge,  thin_edge )
 styles = getSampleStyleSheet()
 
-def get_sed_report_context(request, sed):
+def get_sed_report_context(request, context):
     # load related entries
-    figures = list(DocumentFigure.objects.filter(document=sed).order_by('order'))
-    related_bops = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(sed,request.user),request.user))
-    related_models = RelatedModel.get_sed_related_models(sed, request.user)
-    related_brain_regions = list(RelatedBrainRegion.objects.filter(document=sed))
-    references = list(sed.literature.all())
-    related_bops.sort(compareRelatedBops)
-    related_models.sort(compareRelatedModels)
-    related_brain_regions.sort(compareRelatedBrainRegions)
-    references.sort(key=Literature.author_names)
-    context = {
-        'sed': sed,
-        'figures': figures,
-        'related_bops': related_bops,
-        'related_models': related_models,
-        'related_brain_regions': related_brain_regions,
-        'references': references
-    }
+    context['figures'] = list(DocumentFigure.objects.filter(document=context['sed']).order_by('order'))
+    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),request.user))
+    context['related_models'] = RelatedModel.get_sed_related_models(context['sed'], request.user)
+    context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['sed']))
+    context['references'] = list(context['sed'].literature.all())
+
+    context['related_bops'].sort(compareRelatedBops)
+    context['related_models'].sort(compareRelatedModels)
+    context['related_brain_regions'].sort(compareRelatedBrainRegions)
+    context['references'].sort(key=Literature.author_names)
+
     return context
 
-class BOPReportView(View):
-    def post(self, request, *args, **kwargs):
-        id = self.kwargs.get('pk', None)
-        format = self.kwargs.get('format', None)
+class BOPReportView(FormView):
+    form_class = BOPReportForm
+    template_name = 'bodb/bop/bop_report.html'
 
-        ############### Obtaining BOP information (James) #########################
-        bop=get_object_or_404(BOP, id=id)
-
+    def get_context_data(self, **kwargs):
+        context=super(BOPReportView,self).get_context_data(**kwargs)
+        context['bop']=get_object_or_404(BOP, id=self.kwargs.get('pk',None))
         # load related entries
-        figures = DocumentFigure.objects.filter(document=bop).order_by('order')
-        child_bops = list(BOP.get_child_bops(bop,request.user))
-        building_seds = list(BuildSED.get_building_seds(bop,request.user))
-        related_bops = list(RelatedBOP.get_related_bops(bop, request.user))
-        related_models = list(RelatedModel.get_related_models(bop, request.user))
-        related_brain_regions = list(RelatedBrainRegion.objects.filter(document=bop))
-        references = list(bop.literature.all())
+        context['figures'] = DocumentFigure.objects.filter(document=context['bop']).order_by('order')
+        context['child_bops'] = list(BOP.get_child_bops(context['bop'],self.request.user))
+        context['building_seds'] = list(BuildSED.get_building_seds(context['bop'],self.request.user))
+        context['related_bops'] = list(RelatedBOP.get_related_bops(context['bop'], self.request.user))
+        context['related_models'] = list(RelatedModel.get_related_models(context['bop'], self.request.user))
+        context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['bop']))
+        context['references'] = list(context['bop'].literature.all())
 
-        child_bops.sort(compareDocuments)
-        related_models.sort(compareRelatedModels)
-        related_bops.sort(compareRelatedBops)
-        building_seds.sort(compareBuildSEDs)
-        related_brain_regions.sort(compareRelatedBrainRegions)
-        references.sort(key=Literature.author_names)
+        context['child_bops'].sort(compareDocuments)
+        context['related_models'].sort(compareRelatedModels)
+        context['related_bops'].sort(compareRelatedBops)
+        context['building_seds'].sort(compareBuildSEDs)
+        context['related_brain_regions'].sort(compareRelatedBrainRegions)
+        context['references'].sort(key=Literature.author_names)
 
-        context={
-            'bop': bop,
-            'figures': figures,
-            'child_bops': child_bops,
-            'building_seds': building_seds,
-            'related_bops': related_bops,
-            'related_models': related_models,
-            'related_brain_regions': related_brain_regions,
-            'references':references,
-        }
+        context['ispopup']='_popup' in self.request.GET
+
+        return context
+
+    def form_valid(self, form):
+        context=self.get_context_data()
+        format = form.cleaned_data['format']
 
         display_settings={
-            'figuredisp': int(request.POST['figureDisplay']),
-            'narrativedisp': int(request.POST['narrativeDisplay']),
-            'childbopdisp': int(request.POST['childBopDisplay']),
-            'seddisp': int(request.POST['summaryDisplay']),
-            'relatedmodeldisp': int(request.POST['relatedModelDisplay']),
-            'relatedbopdisp': int(request.POST['relatedBopDisplay']),
-            'relatedregiondisp': int(request.POST['relatedBrainRegionDisplay']),
-            'referencedisp': int(request.POST['referenceDisplay'])
+            'figuredisp': int(form.cleaned_data['figure_display']),
+            'narrativedisp': int(form.cleaned_data['narrative_display']),
+            'childbopdisp': int(form.cleaned_data['childbop_display']),
+            'seddisp': int(form.cleaned_data['summary_display']),
+            'relatedmodeldisp': int(form.cleaned_data['related_model_display']),
+            'relatedbopdisp': int(form.cleaned_data['related_bop_display']),
+            'relatedregiondisp': int(form.cleaned_data['related_brainregion_display']),
+            'referencedisp': int(form.cleaned_data['reference_display'])
         }
 
         response = HttpResponse(mimetype='application/%s' % format)
@@ -96,7 +105,7 @@ class BOPReportView(View):
         elif format=='pdf':
             elements=bop_report_pdf(context, display_settings)
 
-        if request.POST['includeSEDs']=='true':
+        if form.cleaned_data['include_seds']:
             display_settings={
                 'figuredisp': 1,
                 'narrativedisp': 1,
@@ -107,7 +116,8 @@ class BOPReportView(View):
 
             }
             for buildsed in context['building_seds'] :
-                bsed_context = get_sed_report_context(request, buildsed.sed)
+                bsed_context={'sed':buildsed.sed}
+                bsed_context = get_sed_report_context(self.request, bsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
                 elif format=='pdf':
@@ -123,72 +133,61 @@ class BOPReportView(View):
             doc.build(elements)
         return response
 
+class ModelReportView(FormView):
+    form_class = ModelReportForm
+    template_name = 'bodb/model/model_report.html'
 
-# Report generator for Model page
-class ModelReportView(View):
-
-    def post(self, request, *args, **kwargs):
-        id = self.kwargs.get('pk', None)
-        format = self.kwargs.get('format', None)
-
-        ############### Obtaining model information (James) #########################
+    def get_context_data(self, **kwargs):
+        context=super(ModelReportView,self).get_context_data(**kwargs)
+        context['model']=get_object_or_404(Model, id=self.kwargs.get('pk',None))
         # load model, submodules and variables
-        model=get_object_or_404(Model, id=id)
-        figures = DocumentFigure.objects.filter(document=model).order_by('order')
-        input_ports = list(Variable.objects.filter(var_type='Input',module=model))
-        output_ports = list(Variable.objects.filter(var_type='output', module=model))
-        states = list(Variable.objects.filter(var_type='state', module=model))
-        modules = list(Module.objects.filter(parent=model))
-        all_submodules = list(model.get_descendants().all())
+        context['figures'] = DocumentFigure.objects.filter(document=context['model']).order_by('order')
+        context['input_ports'] = list(Variable.objects.filter(var_type='Input',module=context['model']))
+        context['output_ports'] = list(Variable.objects.filter(var_type='output', module=context['model']))
+        context['states'] = list(Variable.objects.filter(var_type='state', module=context['model']))
+        context['modules'] = list(Module.objects.filter(parent=context['model']))
+        context['all_submodules'] = list(context['model'].get_descendants().all())
 
         # load related entries
-        related_models = list(RelatedModel.get_related_models(model, request.user))
-        related_bops = list(RelatedBOP.get_related_bops(model, request.user))
-        related_brain_regions = list(RelatedBrainRegion.objects.filter(document=model))
-        building_seds = list(BuildSED.get_building_seds(model,request.user))
-        testing_seds = list(TestSED.get_testing_seds(model,request.user))
-        predictions = list(Prediction.get_predictions(model,request.user))
-        references = list(model.literature.all())
+        context['related_models'] = list(RelatedModel.get_related_models(context['model'], self.request.user))
+        context['related_bops'] = list(RelatedBOP.get_related_bops(context['model'], self.request.user))
+        context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['model']))
+        context['building_seds'] = list(BuildSED.get_building_seds(context['model'],self.request.user))
+        context['testing_seds'] = list(TestSED.get_testing_seds(context['model'],self.request.user))
+        context['predictions'] = list(Prediction.get_predictions(context['model'],self.request.user))
+        context['references'] = list(context['model'].literature.all())
 
-        input_ports.sort(compareVariables)
-        output_ports.sort(compareVariables)
-        states.sort(compareVariables)
-        modules.sort(compareModules)
-        all_submodules.sort(compareModules)
-        building_seds.sort(compareBuildSEDs)
-        testing_seds.sort(compareTestSEDs)
-        predictions.sort(compareDocuments)
-        related_models.sort(compareRelatedModels)
-        related_bops.sort(compareRelatedBops)
-        related_brain_regions.sort(compareRelatedBrainRegions)
-        references.sort(key=Literature.author_names)
+        context['input_ports'].sort(compareVariables)
+        context['output_ports'].sort(compareVariables)
+        context['states'].sort(compareVariables)
+        context['modules'].sort(compareModules)
+        context['all_submodules'].sort(compareModules)
+        context['building_seds'].sort(compareBuildSEDs)
+        context['testing_seds'].sort(compareTestSEDs)
+        context['predictions'].sort(compareDocuments)
+        context['related_models'].sort(compareRelatedModels)
+        context['related_bops'].sort(compareRelatedBops)
+        context['related_brain_regions'].sort(compareRelatedBrainRegions)
+        context['references'].sort(key=Literature.author_names)
 
-        context={
-            'model': model,
-            'figures': figures,
-            'input_ports': input_ports,
-            'output_ports': output_ports,
-            'states': states,
-            'modules': modules,
-            'all_submodules': all_submodules,
-            'related_models': related_models,
-            'related_bops': related_bops,
-            'related_brain_regions': related_brain_regions,
-            'building_seds': building_seds,
-            'testing_seds': testing_seds,
-            'predictions': predictions,
-            'references': references
-        }
+        context['ispopup']='_popup' in self.request.GET
+
+        return context
+
+    def form_valid(self, form):
+        context=self.get_context_data()
+
+        format = form.cleaned_data['format']
 
         display_settings={
-            'figuredisp': int(request.POST['figureDisplay']),
-            'narrativedisp': int(request.POST['narrativeDisplay']),
-            'seddisp': int(request.POST['summaryDisplay']),
-            'urldisp': int(request.POST['urlDisplay']),
-            'relatedmodeldisp': int(request.POST['relatedModelDisplay']),
-            'relatedbopdisp': int(request.POST['relatedBopDisplay']),
-            'relatedregiondisp': int(request.POST['relatedBrainRegionDisplay']),
-            'referencedisp': int(request.POST['referenceDisplay'])
+            'figuredisp': int(form.cleaned_data['figure_display']),
+            'narrativedisp': int(form.cleaned_data['narrative_display']),
+            'seddisp': int(form.cleaned_data['summary_display']),
+            'urldisp': int(form.cleaned_data['url_display']),
+            'relatedmodeldisp': int(form.cleaned_data['related_model_display']),
+            'relatedbopdisp': int(form.cleaned_data['related_bop_display']),
+            'relatedregiondisp': int(form.cleaned_data['related_brainregion_display']),
+            'referencedisp': int(form.cleaned_data['reference_display'])
         }
 
         response = HttpResponse(mimetype='application/%s' % format)
@@ -199,7 +198,7 @@ class ModelReportView(View):
         elif format=='pdf':
             elements=model_report_pdf(context, display_settings)
 
-        if request.POST['includeSEDs']=='true':
+        if form.cleaned_data['include_seds']:
             display_settings={
                 'figuredisp': 1,
                 'narrativedisp': 1,
@@ -210,14 +209,16 @@ class ModelReportView(View):
 
             }
             for buildsed in context['building_seds'] :
-                bsed_context = get_sed_report_context(request, buildsed.sed)
+                bsed_context={'sed':buildsed.sed}
+                bsed_context = get_sed_report_context(self.request, bsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
                 elif format=='pdf':
                     elements=sed_report_pdf(bsed_context, display_settings, elements=elements)
 
             for testsed in context['testing_seds']:
-                tsed_context = get_sed_report_context(request, testsed.sed)
+                tsed_context={'sed':testsed.sed}
+                tsed_context = get_sed_report_context(self.request, tsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(tsed_context, display_settings, doc=doc)
                 elif format=='pdf':
@@ -234,21 +235,30 @@ class ModelReportView(View):
 
 
 # Report generator for SED page
-class SEDReportView(View):
-    def post(self, request, *args, **kwargs):
-        id = self.kwargs.get('pk', None)
-        format = self.kwargs.get('format', None)
+class SEDReportView(FormView):
+    form_class = SEDReportForm
+    template_name = 'bodb/sed/sed_report.html'
 
-        sed=get_object_or_404(SED, id=id)
-        context = get_sed_report_context(request, sed)
+    def get_context_data(self, **kwargs):
+        context=super(SEDReportView,self).get_context_data(**kwargs)
+        context['sed']=get_object_or_404(SED, id=self.kwargs.get('pk', None))
+        context=get_sed_report_context(self.request, context)
+        context['ispopup']='_popup' in self.request.GET
+        print(context)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+
+        format = form.cleaned_data['format']
 
         display_settings={
-            'figuredisp': int(request.POST['figureDisplay']),
-            'narrativedisp': int(request.POST['narrativeDisplay']),
-            'relatedbopdisp': int(request.POST['relatedBopDisplay']),
-            'relatedmodeldisp': int(request.POST['relatedModelDisplay']),
-            'relatedregiondisp': int(request.POST['relatedBrainRegionDisplay']),
-            'referencedisp': int(request.POST['referenceDisplay'])
+            'figuredisp': int(form.cleaned_data['figure_display']),
+            'narrativedisp': int(form.cleaned_data['narrative_display']),
+            'relatedbopdisp': int(form.cleaned_data['related_bop_display']),
+            'relatedmodeldisp': int(form.cleaned_data['related_model_display']),
+            'relatedregiondisp': int(form.cleaned_data['related_brainregion_display']),
+            'referencedisp': int(form.cleaned_data['reference_display'])
 
         }
 
@@ -268,42 +278,28 @@ class SEDReportView(View):
         return response
         
 
-import json
-from bodb.serializers.sed import SEDSerializer
-from rest_framework.renderers import UnicodeJSONRenderer
-#from rest_framework.response import Response
-
-def report_json(context, display_settings):
-    response = HttpResponse(mimetype='application/json')
-    response['Content-Disposition'] = 'attachment; filename=SED_Report.json'
-    
-    serializer = SEDSerializer(context['sed'])
-    data = UnicodeJSONRenderer().render(serializer.data)
-    json.dump(data, response)
-
-    return response
-
-
 # Report generator for SSR page
-class SSRReportView(View):
-    def post(self, request, *args, **kwargs):
-        id = self.kwargs.get('pk', None)
-        format = self.kwargs.get('format', None)
+class SSRReportView(FormView):
+    form_class = SSRReportForm
+    template_name = 'bodb/ssr/ssr_report.html'
 
-        ssr=get_object_or_404(SSR, id=id)
+    def get_context_data(self, **kwargs):
+        context=super(SSRReportView,self).get_context_data(**kwargs)
+        context['ssr']=get_object_or_404(SSR, id=self.kwargs.get('pk', None))
         # load related entries
-        model=Model.objects.filter(Q(related_test_sed_document__ssr=ssr) | Q(prediction__ssr=ssr))[0]
-        figures=list(DocumentFigure.objects.filter(document=ssr).order_by('order'))
+        context['model']=Model.objects.filter(Q(related_test_sed_document__ssr=context['ssr']) | Q(prediction__ssr=context['ssr']))[0]
+        context['figures']=list(DocumentFigure.objects.filter(document=context['ssr']).order_by('order'))
+        context['ispopup']='_popup' in self.request.GET
+        return context
 
-        context={
-            'ssr':ssr,
-            'model':model,
-            'figures':figures
-        }
+    def form_valid(self, form):
+        context=self.get_context_data()
+
+        format = form.cleaned_data['format']
 
         display_settings={
-            'figuredisp': int(request.POST['figureDisplay']),
-            'narrativedisp': int(request.POST['narrativeDisplay']),
+            'figuredisp': int(form.cleaned_data['figure_display']),
+            'narrativedisp': int(form.cleaned_data['narrative_display']),
         }
         response = HttpResponse(mimetype='application/%s' % format)
         response['Content-Disposition'] = 'attachment; filename=SSR_Report.%s' % format

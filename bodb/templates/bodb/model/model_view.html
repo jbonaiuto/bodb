@@ -45,21 +45,6 @@
                 alert(res.responseText);
         }
 
-        function updateSectionDisplaySettings()
-        {
-            var sectionIds=['figureData', 'narrativeData', 'summaryData', 'urlData', 'relatedModelData', 'relatedBopData',
-                'relatedBrainRegionData', 'referenceData']
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'summaryDisplay', 'urlDisplay', 'relatedModelDisplay',
-                'relatedBopDisplay', 'relatedBrainRegionDisplay', 'referenceDisplay']
-            for(var i=0; i<sectionIds.length; i++)
-            {
-                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
-                    document.getElementById(displayIds[i]).value=1;
-                else
-                    document.getElementById(displayIds[i]).value=0;
-            }
-        }
-
         function deleteModel()
         {
             if(confirm('This will delete this Model as well as all links to it from other entries. Do you really want to delete the current Model?'))
@@ -80,11 +65,7 @@
 
         function exportModel()
         {
-            var type=document.getElementById('exportType').value;
-            updateSectionDisplaySettings();
-            document.getElementById('reportIncludeSEDs').value=document.getElementById('linkSEDs').checked;
-            document.getElementById('reportForm').action='/bodb/model/{{model.id}}/report/'+type+'/';
-            document.getElementById('reportForm').submit();
+            showPopup('model_{{ model.id }}_export',400,500,'/bodb/model/{{ model.id }}/report/');
         }
     </script>
 {% endblock %}
@@ -406,27 +387,8 @@
                 <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{model.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
-        <br>
         <input class="btn" type="button" value="Export" onclick="exportModel()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-        Format:&nbsp;
-        <select id="exportType">
-            <option value="pdf">PDF</option>
-            <option value="rtf">RTF</option>
-        </select>&nbsp;
-        <input type="checkbox" id="linkSEDs" name="linkSEDs"> Include SEDs
         <br>
     </div>
     <form id="fileForm" action=""></form>
-    <form id="reportForm" name="reportForm" action="/bodb/model/{{model.id}}/report/rtf/" method="post">
-        {% csrf_token %}
-        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
-        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
-        <input id="summaryDisplay" type="hidden" name="summaryDisplay" value=0>
-        <input id="urlDisplay" type="hidden" name="urlDisplay" value=0>
-        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
-        <input id="relatedBopDisplay" type="hidden" name="relatedBopDisplay" value=0>
-        <input id="relatedBrainRegionDisplay" type="hidden" name="relatedBrainRegionDisplay" value=0>
-        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
-        <input id="reportIncludeSEDs" type="hidden" name="includeSEDs" value=0>
-    </form>
 {% endblock %}
