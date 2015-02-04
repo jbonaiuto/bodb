@@ -114,7 +114,7 @@ class EditModelMixin():
             # remove modules
             for module_form in module_formset.deleted_forms:
                 if module_form.instance.id:
-                    module_form.isntance.delete()
+                    module_form.instance.delete()
 
             # save predictions
             prediction_formset.instance = self.object
