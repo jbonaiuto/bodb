@@ -28,11 +28,9 @@
             document.location.href='/bodb/';
         }
 
-        function exportSSR(type)
+        function exportSSR()
         {
-            updateSectionDisplaySettings();
-            document.getElementById('reportForm').action='/bodb/ssr/{{ssr.id}}/report/'+type+'/';
-            document.getElementById('reportForm').submit();
+            showPopup('ssr_{{ ssr.id }}_export',400,500,'/bodb/ssr/{{ ssr.id }}/report/');
         }
 
         function doneToggleSSRSelect(res, status)
@@ -56,20 +54,6 @@
             }
             else
                 alert(res.responseText);
-        }
-
-        function updateSectionDisplaySettings()
-        {
-            var sectionIds=['figureData', 'narrativeData', 'referenceData', 'sedData', 'ssrData', 'relatedModelData'];
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'referenceDisplay', 'sedDisplay', 'ssrDisplay',
-                'relatedModelDisplay'];
-            for(var i=0; i<sectionIds.length; i++)
-            {
-                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
-                    document.getElementById(displayIds[i]).value=1;
-                else
-                    document.getElementById(displayIds[i]).value=0;
-            }
         }
 
         {% if ispopup and action %}
@@ -225,21 +209,7 @@
     {% if ispopup %}
         <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
     {% endif %}
-    <br>
-    <input class="btn" type="button" value="Export" onclick="exportSSR(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-    Format:&nbsp;
-    <select id="exportType">
-        <option value="pdf">PDF</option>
-        <option value="rtf">RTF</option>
-    </select>
+    <input class="btn" type="button" value="Export" onclick="exportSSR()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        <br>
     </div>
-    <form id="reportForm" name="reportForm" action="/bodb/ssr/{{ssr.id}}/report/rtf/" method="post">
-        {% csrf_token %}
-        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
-        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
-        <input id="sedDisplay" type="hidden" name="sedDisplay" value=0>
-        <input id="ssrDisplay" type="hidden" name="ssrDisplay" value=0>
-        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
-        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
-    </form>
 {% endblock %}

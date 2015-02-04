@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import Form
 from django.forms.models import inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
 from bodb.models import BOP, Document, RelatedBOP
@@ -36,3 +37,15 @@ class BOPRelatedBOPInlineForm(forms.ModelForm):
 
 BOPRelatedBOPFormSet = inlineformset_factory(Document,RelatedBOP,form=BOPRelatedBOPInlineForm,fk_name='document',extra=0,
     can_delete=True)
+
+class BOPReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
+    childbop_display=forms.BooleanField(required=False, help_text='Display child BOPs in report')
+    summary_display=forms.BooleanField(required=False, help_text='Display SEDs, SSRs and Predictions in report')
+    related_model_display=forms.BooleanField(required=False, help_text='Display related models in report')
+    related_bop_display=forms.BooleanField(required=False, help_text='Display related BOPs in report')
+    related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
+    reference_display=forms.BooleanField(required=False, help_text='Display references in report')
+    include_seds=forms.BooleanField(required=False, help_text='Include SED reports in report')

@@ -73,26 +73,9 @@
                 alert(res.responseText);
         }
 
-        function exportSED(type)
+        function exportSED()
         {
-            updateSectionDisplaySettings();
-            document.getElementById('reportForm').action='/bodb/sed/{{erpsed.id}}/report/'+type+'/';
-            document.getElementById('reportForm').submit();
-        }
-
-        function updateSectionDisplaySettings()
-        {
-            var sectionIds=['figureData', 'narrativeData', 'relatedBopData', 'relatedModelData',
-                'relatedBrainRegionData', 'referenceData', 'sedData', 'ssrData'];
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'relatedBopDisplay', 'relatedModelDisplay',
-                'relatedBrainRegionDisplay', 'referenceDisplay', 'sedDisplay', 'ssrDisplay'];
-            for(var i=0; i<sectionIds.length; i++)
-            {
-                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
-                    document.getElementById(displayIds[i]).value=1;
-                else
-                    document.getElementById(displayIds[i]).value=0;
-            }
+            showPopup('sed_{{ erpsed.id }}_export',400,500,'/bodb/sed/{{ erpsed.id }}/report/');
         }
     </script>
 {% endblock %}
@@ -384,24 +367,8 @@
                 <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{erpsed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
+        <input class="btn" type="button" value="Export" onclick="exportSED()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         <br>
-        <input class="btn" type="button" value="Export" onclick="exportSED(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-        Format:&nbsp;
-        <select id="exportType">
-            <option value="pdf">PDF</option>
-            <option value="rtf">RTF</option>
-        </select>
     </div>
     <form id="fileForm" action=""></form>
-    <form id="reportForm" name="reportForm" action="/bodb/sed/{{erpsed.id}}/report/rtf/" method="post">
-        {% csrf_token %}
-        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
-        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
-        <input id="sedDisplay" type="hidden" name="sedDisplay" value=0>
-        <input id="ssrDisplay" type="hidden" name="ssrDisplay" value=0>
-        <input id="relatedBopDisplay" type="hidden" name="relatedBopDisplay" value=0>
-        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
-        <input id="relatedBrainRegionDisplay" type="hidden" name="relatedBrainRegionDisplay" value=0>
-        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
-    </form>
 {% endblock %}

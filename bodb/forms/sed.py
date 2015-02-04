@@ -160,3 +160,11 @@ TestSEDFormSet = inlineformset_factory(Model,TestSED,form=TestSEDInlineForm, fk_
     can_delete=True)
 
 
+class SEDReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
+    related_model_display=forms.BooleanField(required=False, help_text='Display related models in report')
+    related_bop_display=forms.BooleanField(required=False, help_text='Display related BOPs in report')
+    related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
+    reference_display=forms.BooleanField(required=False, help_text='Display references in report')
