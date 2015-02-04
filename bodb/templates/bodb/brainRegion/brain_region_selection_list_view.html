@@ -1,5 +1,27 @@
 {% load staticfiles %}
-
+<script type="text/javascript">
+    $(document).ready(function(){
+        {% for selected,is_favorite,brain_region in brain_regions %}
+            var count = $('#brain_regions').children().length;
+            var tmplMarkup = $('#brain_region-template').html();
+            var compiledTmpl = _.template(tmplMarkup,
+                    {
+                        idx : count+1,
+                        id: {{ brain_region.id }},
+                        name: '{{ brain_region.name|escapejs }}',
+                        abbreviation: '{{ brain_region.abbreviation|escapejs }}',
+                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                        selected: {% if selected %}true{% else %}false{% endif %},
+                        type: '{{ brain_region.brain_region_type|escapejs }}',
+                        parent_region: '{% if brain_region.parent_region %}{{ brain_region.parent_region.name|escapejs }}{% endif %}',
+                        nomenclature: '{{ brain_region.nomenclature|escapejs }}',
+                        species: '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}'
+                    }
+            );
+            $('#brain_regions').append(compiledTmpl);
+        {% endfor %}
+    });
+</script>
 <div id="brain_region_list" name="brain_region_list" style="display:{% if brain_regions|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         {% if not ispopup %}
