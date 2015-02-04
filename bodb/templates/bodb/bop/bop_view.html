@@ -55,6 +55,8 @@
         {
             if(confirm('This will delete this BOP as well as all links to it from other entries. Do you really want to delete the current BOP?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 if(opener.document.getElementById('span_related_bop_{{ bop.id }}')!=null)
                     clearSpan(opener.document, 'span_related_bop_{{ bop.id }}');

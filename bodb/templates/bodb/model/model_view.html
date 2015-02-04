@@ -49,6 +49,8 @@
         {
             if(confirm('This will delete this Model as well as all links to it from other entries. Do you really want to delete the current Model?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 clearSpan(opener.document, 'span_related_model_{{ model.id }}');
             {% endif %}

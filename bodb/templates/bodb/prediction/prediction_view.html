@@ -13,6 +13,8 @@
         {
             if(confirm('This will delete this Prediction as well as all links to it from other entries. Do you really want to delete the current Prediction?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 if(opener.document.getElementById('span_prediction_{{ prediction.id }}')!=null)
                     clearSpan(opener.document, 'span_prediction_{{ prediction.id }}');
