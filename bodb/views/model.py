@@ -1009,7 +1009,7 @@ class ModelDiagramView(JSONResponseMixin,BaseCreateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             graphTool=self.request.POST['graphTool']
-            models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds[]'))
+            models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds'))
             dot_xml=model_gxl(models, self.request.user)
             context['modelDiagram'], size, context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
                 self.request.user, ext=self.request.POST['graphID'])

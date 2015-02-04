@@ -1021,7 +1021,7 @@ class ConnectivityDiagramView(JSONResponseMixin,BaseCreateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             graphTool=self.request.POST['graphTool']
-            connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds[]'))
+            connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds'))
             dot_xml = conn_sed_gxl(connectionSEDs)
             context['connDiagram'], size, context['connMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
                 self.request.user, ext=self.request.POST['graphID'])
