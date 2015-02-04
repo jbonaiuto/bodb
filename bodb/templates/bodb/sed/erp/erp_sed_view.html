@@ -32,6 +32,8 @@
         {
             if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 var elem=opener.document.getElementById('span_sed_{{ erpsed.id }}');
                 if(elem!=null)

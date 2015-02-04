@@ -10,6 +10,8 @@
         {
             if(confirm('Do you really want to delete the current Module?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup and idx %}
                 opener.removeSubmodule({{ idx }});
             {% endif %}

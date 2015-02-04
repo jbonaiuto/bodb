@@ -44,6 +44,8 @@
         {
             if(confirm('This will delete this Literature entry as well as all links to it from other entries. Do you really want to delete the current Literature entry?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 clearSpan(opener.document, 'span_reference_{{ literature.id }}');
             {% endif %}

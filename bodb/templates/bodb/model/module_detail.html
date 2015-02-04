@@ -50,6 +50,8 @@
         {
             if(validateForm(isDraft))
             {
+                document.getElementById('savingMsg').style.display = 'block';
+                document.getElementById('savingOver').style.display = 'block';
                 document.getElementById('id_draft').value=isDraft;
                 document.getElementById('moduleForm').submit();
             }

@@ -40,6 +40,8 @@
             errors+=validateField('description', 'Description', 'span_errors');
             if(errors==0)
             {
+                document.getElementById('savingMsg').style.display = 'block';
+                document.getElementById('savingOver').style.display = 'block';
                 document.getElementById('workspaceForm').submit();
             }
         }
