@@ -29,6 +29,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('id_step6-draft').value=isDraft;
             document.getElementById('modelForm').submit();
         }
