@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from bodb.models import Document, Author, Literature, sendNotifications, BuildSED, TestSED, RelatedBrainRegion, UserSubscription
+from bodb.models import Document, Author, Literature, sendNotifications, BuildSED, TestSED, RelatedBrainRegion, UserSubscription, stop_words
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -287,12 +287,13 @@ def find_similar_models(user, title, brief_description):
     for model in other_models:
         total_match=0
         for title_word in title.split(' '):
-            if model.title.find(title_word)>=0:
+            if not title_word in stop_words and model.title.find(title_word)>=0:
                 total_match+=1
         for desc_word in brief_description.split(' '):
-            if model.brief_description.find(desc_word)>=0:
+            if not desc_word in stop_words and model.brief_description.find(desc_word)>=0:
                 total_match+=1
-        similar.append((model,total_match))
+        if total_match>0:
+            similar.append((model,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 

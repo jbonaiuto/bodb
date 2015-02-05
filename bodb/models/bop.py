@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Q
 from bodb.models import RelatedBrainRegion, BuildSED
 from bodb.models.messaging import sendNotifications, UserSubscription
-from bodb.models.document import Document
+from bodb.models.document import Document, stop_words
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -167,12 +167,13 @@ def find_similar_bops(user, title, brief_description):
     for bop in other_bops:
         total_match=0
         for title_word in title.split(' '):
-            if bop.title.find(title_word)>=0:
+            if not title_word in stop_words and bop.title.find(title_word)>=0:
                 total_match+=1
         for desc_word in brief_description.split(' '):
-            if bop.brief_description.find(desc_word)>=0:
+            if not desc_word in stop_words and bop.brief_description.find(desc_word)>=0:
                 total_match+=1
-        similar.append((bop,total_match))
+        if total_match>0:
+            similar.append((bop,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
