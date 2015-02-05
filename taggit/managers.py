@@ -337,8 +337,10 @@ class _TaggableManager(models.Manager):
         q=Q()
         for str_tag in str_tags:
             q |= Q(name__iexact=str_tag)
-        existing = self.through.tag_model().objects.filter(q)
-        tag_objs.update(existing)
+        existing=[]
+        if len(q):
+            existing = self.through.tag_model().objects.filter(q)
+            tag_objs.update(existing)
 
         for new_tag in str_tags - set(t.name for t in existing):
             exists=False
