@@ -12,7 +12,7 @@ from django.db.models import Q
 from matplotlib.figure import Figure
 from numpy.core.umath import exp
 from numpy.numarray import arange
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message, stop_words
 import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
@@ -658,12 +658,13 @@ def find_similar_seds(user, title, brief_description):
     for sed in other_seds:
         total_match=0
         for title_word in title.split(' '):
-            if sed.title.find(title_word)>=0:
+            if not title_word in stop_words and sed.title.find(title_word)>=0:
                 total_match+=1
         for desc_word in brief_description.split(' '):
-            if sed.brief_description.find(desc_word)>=0:
+            if not desc_word in stop_words and sed.brief_description.find(desc_word)>=0:
                 total_match+=1
-        similar.append((sed,total_match))
+        if total_match>0:
+            similar.append((sed,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
