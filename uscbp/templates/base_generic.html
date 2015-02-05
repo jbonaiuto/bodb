@@ -31,7 +31,7 @@
                     document.getElementById("tagBarLabel").innerHTML=(state=="none")?"&gt;" : "&lt;";
                     document.getElementById('sidebar').style.width=(state=="none")?"10px" : "250px";
                     document.getElementById('content').style.marginLeft=(state=="none")?"15px" : "255px";
-                    document.getElementById('controlCell').style.background=(state=="none")?"#c5cbd4" : "#ffffff";
+                    //document.getElementById('controlCell').style.background=(state=="none")?"#c5cbd4" : "#ffffff";
                 }
                 else if(divobj.id.substr(0,9)=="expansion")
                     document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Collapse" : "Expand";
@@ -140,11 +140,11 @@
         </div>
         <b class="c4f"></b><b class="c3f"></b><b class="c2f"></b><b class="c1f"></b>
         <br>
-        <div id="sidebar" style="width:250px">
+        <div id="sidebar" style="width:260px">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
-                        <div id="tagBar" style="display:inline;width:250px;">
+                        <div id="tagBar" style="display:inline;width:245px;">
                             <div style="background:#ffffff;border:0;">
                                 <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
                             </div>
@@ -193,10 +193,12 @@
                             </div>
                         </div>
                     </td>
-                    <td id="controlCell" style="background:#ffffff;height: 450px">
-                        <span id="controlSidebar">
-                            <a href="javascript:animatedcollapse.toggle('tagBar')"><span id='tagBarLabel'>&lt;</span></a>
-                        </span>
+                    <td id="controlCell" style="background:#c5cbd4;height: 450px; cursor: pointer; vertical-align: top;" onclick="animatedcollapse.toggle('tagBar');">
+                        <div style="background:#ffffff;border:0;height: 30px;">
+                        </div>
+                        <div id="controlSidebar" style="height: 100%;">
+                            <div id='tagBarLabel' style="position: relative;top: 50%;transform: translateY(-50%);">&lt;</div>
+                        </div>
                     </td>
                 </tr>
             </table>

@@ -140,17 +140,22 @@ def get_taglist(context, asvar, forvar=None):
 def get_tagcloud(context, asvar, user, forvar=None):
     result = get_queryset(user, forvar)
     num_times=[x.num_times for x in result]
+    zipped=zip(result,num_times)
+    sorted_zipped=sorted(zipped, key=lambda t:t[1])
+    filtered_zipped=sorted_zipped[-25:][:]
+    filtered_results=[x[0] for x in filtered_zipped]
+    filtered_num_times=[x[1] for x in filtered_zipped]
     #num_times = queryset.values_list('num_times', flat=True)
-    if(len(num_times) == 0):
+    if(len(filtered_num_times) == 0):
         #context[asvar] = queryset
-        context[asvar] = result
+        context[asvar] = filtered_results
         return ''
-    weight_fun = get_weight_fun(10, 28, min(num_times), max(num_times))
+    weight_fun = get_weight_fun(10, 28, min(filtered_num_times), max(filtered_num_times))
     #queryset = queryset.order_by('name')
-    result.sort(key=lambda x:x.name)
+    filtered_results.sort(key=lambda x:x.name)
     tags=[]
     #for tag in queryset:
-    for tag in result:
+    for tag in filtered_results:
         weight=weight_fun(tag.num_times)
         #if weight>=8:
         tag.weight =weight
