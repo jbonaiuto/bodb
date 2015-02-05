@@ -4,6 +4,7 @@ from django import VERSION
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
 from django.db.models.fields import Field
 from django.db.models.fields.related import ManyToManyRel, RelatedField, add_lazy_relation
 from django.db.models.related import RelatedObject
@@ -333,13 +334,20 @@ class _TaggableManager(models.Manager):
         tag_objs = set(tags) - str_tags
         # If str_tags has 0 elements Django actually optimizes that to not do a
         # query.  Malcolm is very smart.
-        existing = self.through.tag_model().objects.filter(
-            name__in=str_tags
-        )
+        q=Q()
+        for str_tag in str_tags:
+            q |= Q(name__iexact=str_tag)
+        existing = self.through.tag_model().objects.filter(q)
         tag_objs.update(existing)
 
-        for new_tag in str_tags - set(t.name.lower() for t in existing):
-            tag_objs.add(self.through.tag_model().objects.create(name=new_tag))
+        for new_tag in str_tags - set(t.name for t in existing):
+            exists=False
+            for t in existing:
+                if t.name.lower()==new_tag.lower():
+                    exists=True
+                    break
+            if not exists:
+                tag_objs.add(self.through.tag_model().objects.create(name=new_tag))
 
         for tag in tag_objs:
             self.through.objects.get_or_create(tag=tag, **self._lookup_kwargs())
