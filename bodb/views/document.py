@@ -187,30 +187,3 @@ class DocumentPublicRequestView(JSONResponseMixin,BaseCreateView):
             public_request=DocumentPublicRequest(user=self.request.user, document=document, type=type)
             public_request.save()
         return context
-
-
-def generate_diagram_from_gxl(graphTool, dotXML, user, ext=''):
-    prefix='%s.%s' % (user.username,time.strftime("%Y.%m.%d.%H:%M:%S"))
-    xml_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.xml' % (prefix,ext))
-    dot_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.dot' % (prefix,ext))
-    FILE = open(xml_path, 'w')
-    FILE.write(unicode(dotXML.encode('latin1','ignore')))
-    FILE.close()
-    os.system('gxl2dot -o %s %s' % (dot_path, xml_path))
-    for line in fileinput.input(dot_path, inplace=1):
-        if '_gxl_type' in line:
-            line = line.replace('_gxl_type', 'URL')
-        if 'name' in line:
-            line = line.replace('name','label')
-        sys.stdout.write(line)
-    map_path = os.path.join(settings.MEDIA_ROOT, 'export', '%s.%s.map' % (prefix,ext))
-    diagram = os.path.join('export', '%s.%s.png' % (prefix,ext))
-    png_path = os.path.join(settings.MEDIA_ROOT, diagram)
-    os.system('%s -Tcmapx -o%s -Tpng -o%s %s' % (graphTool, map_path, png_path, dot_path))
-    FILE = open(map_path, 'r')
-    map = FILE.read()
-    map_lines=map.split('\n')
-    map='\n'.join(map_lines[1:-2])
-    FILE.close()
-    im=Image.open(png_path)
-    return diagram, im.size, map

@@ -202,6 +202,7 @@ class BrainRegionView(DetailView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
         context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectionSEDs)
         erp_seds=ERPSED.get_brain_region_seds(self.object, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)

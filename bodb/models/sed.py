@@ -184,7 +184,7 @@ class ERPComponent(models.Model):
     def as_json(self):
         json={
             'id': self.id,
-            'name': self.component_name,
+            'name': self.component_name.replace('\'','\\\''),
             'latency_peak': self.latency_peak.__str__(),
             'latency_peak_type': self.latency_peak_type,
             'position_system': '',
@@ -296,7 +296,7 @@ class SEDCoord(models.Model):
     def as_json(self):
         return {
             'id': self.id,
-            'brain_region': self.named_brain_region,
+            'brain_region': self.named_brain_region.replace('\'','\\\''),
             'hemisphere': self.hemisphere,
             'x': self.coord.x,
             'y': self.coord.y,
@@ -418,6 +418,8 @@ class ConnectivitySED(SED):
     def as_json(self):
         json=super(ConnectivitySED,self).as_json()
         json['url_str']=self.html_url_string()
+        json['source_region']=self.source_region.id
+        json['target_region']=self.target_region.id
         return json
 
     @staticmethod
@@ -434,6 +436,21 @@ class ConnectivitySED(SED):
     def get_tagged_seds(name, user):
         return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
+    @staticmethod
+    def get_region_map(conn_seds):
+        map={}
+        for sed in conn_seds:
+            if not sed.source_region.id in map:
+                map[sed.source_region.id]={'str':'%s - %s' % (sed.source_region.__unicode__(),sed.source_region.nomenclature.__unicode__()),
+                                           'name': sed.source_region.name,
+                                           'abbreviation': sed.source_region.abbreviation,
+                                           'nomenclature': sed.source_region.nomenclature.__unicode__()}
+            if not sed.target_region.id in map:
+                map[sed.target_region.id]={'str':'%s - %s' % (sed.target_region.__unicode__(),sed.target_region.nomenclature.__unicode__()),
+                                           'name': sed.target_region.name,
+                                           'abbreviation': sed.target_region.abbreviation,
+                                           'nomenclature': sed.target_region.nomenclature.__unicode__()}
+        return map
 
 class CoCoMacConnectivitySED(ConnectivitySED):
     class Meta:
@@ -464,45 +481,6 @@ class CoCoMacConnectivitySED(ConnectivitySED):
             return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in CoCoMac</a>' % (cocomac_url,
                                                                                                       cocomac_url)
         return ''
-
-
-def conn_sed_gxl(conn_seds):
-    glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
-    glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    glx+='<graph id="connectivity-sed-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
-    glx+='<attr name="overlap"><string>scale</string></attr>\n'
-    nodes={}
-    for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.source_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        targetname=str(sed.target_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.target_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        if not str(sed.source_region.__unicode__()) in nodes:
-            nodes[str(sed.source_region.__unicode__())]=[]
-        nodes[str(sed.source_region.__unicode__())].append((sourcename, sed.source_region.id))
-        if not str(sed.target_region.__unicode__()) in nodes:
-            nodes[str(sed.target_region.__unicode__())]=[]
-        nodes[str(sed.target_region.__unicode__())].append((targetname, sed.target_region.id))
-    for i,(node_name, children) in enumerate(nodes.iteritems()):
-        glx+='<node id="'+node_name.replace('"','\'').replace('&','&amp;')+'">\n'
-        glx+='<graph id="cluster_%d" edgeids="true" edgemode="directed" hypergraph="false">\n' % i
-        for (name,id) in children:
-            glx+='<node id="'+name+'">\n'
-            glx+='<type xlink:href="/bodb/brain_region/'+str(id)+'/" xlink:type="simple"/>\n'
-            glx+='</node>\n'
-        glx+='</graph>\n'
-        glx+='</node>\n'
-    for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.source_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        targetname=str(sed.target_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.target_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        glx+='<edge id="'+str(sed.id)+'" to="'+targetname+'" from="'+sourcename+'">\n'
-        glx+='<type xlink:href="/bodb/sed/'+str(sed.id)+'/" xlink:type="simple"/>\n'
-        glx+='</edge>\n'
-    glx+='</graph>\n'
-    glx+='</gxl>\n'
-    return glx
 
 
 # An SED used to build a model or support a BOP

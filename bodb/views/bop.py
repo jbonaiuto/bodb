@@ -7,8 +7,8 @@ from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
-from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature, UserSubscription
-from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
+from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, Literature, UserSubscription
+from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -272,18 +272,3 @@ class BOPTaggedView(BODBView):
         context['bopGraphId']='bopRelationshipDiagram'
         return context
 
-
-class BOPDiagramView(JSONResponseMixin,BaseCreateView):
-    model = BOP
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            graphTool=self.request.POST['graphTool']
-            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds'))
-            dot_xml=bop_gxl(bops, self.request.user)
-            context['bopDiagram'], size, context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
-                self.request.user, ext=self.request.POST['graphID'])
-            context['bopDiagramW']=size[0]
-            context['bopDiagramH']=size[1]
-            context['graphId']=self.request.POST['graphID']
-        return context

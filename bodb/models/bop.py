@@ -71,6 +71,23 @@ class BOP(MPTTModel,Document):
             bop_list.append([selected,is_favorite,subscribed_to_user,bop])
         return bop_list
 
+    @staticmethod
+    def get_bop_relationships(bops, user):
+        map=[]
+        for bop in bops:
+            reverse_related_bops=RelatedBOP.get_reverse_related_bops(bop, user)
+            for rrbop in reverse_related_bops:
+                related_bop=BOP.objects.get(id=rrbop.document.id)
+                if related_bop in bops:
+                    map.append({'from':related_bop.id, 'to': bop.id, 'relationship': rrbop.relationship ,
+                                'relevance_narrative': rrbop.relevance_narrative.replace('\'','\\\'').replace('\n',' ').replace('\r',' ')})
+            child_bops=BOP.get_child_bops(bop, user)
+            for child_bop in child_bops:
+                if child_bop in bops:
+                    map.append({'from':bop.id, 'to': child_bop.id, 'relationship': 'Parent-of',
+                                'relevance_narrative': ''})
+        return map
+
 
 # The relationship between a Document and a BOP
 class RelatedBOP(models.Model):
@@ -176,40 +193,3 @@ def find_similar_bops(user, title, brief_description):
             similar.append((bop,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
-
-
-def bop_gxl(bops, user):
-    glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
-    glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    glx+='<graph id="bop-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
-    glx+='<attr name="overlap"><string>scale</string></attr>\n'
-    for bop in bops:
-        glx+='<node id="%d">\n' % bop.id
-        glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bop.id
-        glx+='<node id="%s">\n' % bop.title.replace('"','\'').replace('&','&amp;')
-        glx+='<type xlink:href="/bodb/bop/%d/" xlink:type="simple"/>\n' % bop.id
-        glx+='</node>\n'
-        glx+='</graph>\n'
-        glx+='</node>\n'
-    for bop in bops:
-        reverse_related_bops=RelatedBOP.get_reverse_related_bops(bop, user)
-        for rrbop in reverse_related_bops:
-            related_bop=BOP.objects.get(id=rrbop.document.id)
-            if related_bop in bops:
-                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (bop.id,related_bop.id,
-                                                                bop.title.replace('"','\'').replace('&','&amp;'),
-                                                                related_bop.title.replace('"','\'').replace('&','&amp;'))
-                if rrbop.relationship:
-                    glx+='<attr name="name"><string>%s</string></attr>\n' % rrbop.relationship.replace('"','\'').replace('&','&amp;')
-                glx+='</edge>\n'
-        child_bops=BOP.get_child_bops(bop, user)
-        for child_bop in child_bops:
-            if child_bop in bops:
-                glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (child_bop.id,bop.id,
-                                                                child_bop.title.replace('"','\'').replace('&','&amp;'),
-                                                                bop.title.replace('"','\'').replace('&','&amp;'))
-                glx+='<attr name="name"><string>Parent-of</string></attr>\n'
-                glx+='</edge>\n'
-    glx+='</graph>\n'
-    glx+='</gxl>\n'
-    return glx

@@ -257,14 +257,20 @@ class LiteratureDetailView(TemplateView):
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-        context['models']=Model.get_model_list(Model.get_literature_models(literature, user), user)
-        context['bops']=BOP.get_bop_list(BOP.get_literature_bops(literature, user), user)
+        models=Model.get_literature_models(literature, user)
+        context['models']=Model.get_model_list(models, user)
+        context['model_seds']=Model.get_sed_map(models, user)
+        bops=BOP.get_literature_bops(literature, user)
+        context['bops']=BOP.get_bop_list(bops, user)
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
         context['generic_seds']=SED.get_sed_list(SED.get_literature_seds(literature, user), user)
         imaging_seds=BrainImagingSED.get_literature_seds(literature, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_literature_seds(literature,user), user)
+        conn_seds=ConnectivitySED.get_literature_seds(literature,user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_literature_seds(literature, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
