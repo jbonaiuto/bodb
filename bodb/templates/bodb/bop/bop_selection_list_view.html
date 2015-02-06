@@ -1,44 +1,11 @@
 {% load staticfiles %}
+{% load bodb_extras %}
 {% block extrahead %}
-    <link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
-    <script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.rwdImageMaps.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
     <script type="text/javascript">
 
         $(document).ready(function()
         {
-            $('#{{ bopGraphId }}topPositionMap,#{{ bopGraphId }}leftPositionMap,#{{ bopGraphId }}rightPositionMap,#{{ bopGraphId }}bottomPositionMap').bind("click", {{ bopGraphId }}moveButtonClickHandler);
-            $('#{{ bopGraphId }}zoomInButton,#{{ bopGraphId }}zoomOutButton').bind("click", {{ bopGraphId }}zoomButtonClickHandler);
-
-
-            function {{ bopGraphId }}zoomButtonClickHandler(e){
-                var scaleToAdd = 0.8;
-                if(e.target.id == '{{ bopGraphId }}zoomOutButton')
-                    scaleToAdd = -scaleToAdd;
-                $('#{{ bopGraphId }}').smartZoom('zoom', scaleToAdd);
-            }
-
-            function {{ bopGraphId }}moveButtonClickHandler(e){
-                var pixelsToMoveOnX = 0;
-                var pixelsToMoveOnY = 0;
-
-                switch(e.target.id){
-                    case "{{ bopGraphId }}leftPositionMap":
-                        pixelsToMoveOnX = 50;
-                        break;
-                    case "{{ bopGraphId }}rightPositionMap":
-                        pixelsToMoveOnX = -50;
-                        break;
-                    case "{{ bopGraphId }}topPositionMap":
-                        pixelsToMoveOnY = 50;
-                        break;
-                    case "{{ bopGraphId }}bottomPositionMap":
-                        pixelsToMoveOnY = -50;
-                        break;
-                }
-                $('#{{ bopGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
-            }
-
             {% for selected,is_favorite,subscribed,bop in bops %}
                 var count = $('#bops').children().length;
                 var tmplMarkup = $('#bop-template').html();
@@ -60,6 +27,63 @@
                 $('#bops').append(compiledTmpl);
             {% endfor %}
         });
+
+        var {{ bopGraphId }}nodes=[
+            {% for selected,is_favorite,subscribed,bop in bops %}
+                {id: {{ bop.id }}, label:'{{ bop }}', title:'{{ bop.brief_description|escapejs }}'},
+            {% endfor %}
+        ];
+
+        var {{ bopGraphId }}edges=[
+            {% for bop_rel in bop_relationships %}
+                {from: {{ bop_rel|lookup:'from' }}, to: {{ bop_rel|lookup:'to' }},
+                    label: '{{ bop_rel|lookup:'relationship' }}',
+                    title: '{{ bop_rel|lookup:'relevance_narrative'|escapejs }}'},
+            {% endfor %}
+        ];
+
+        function generateBOPDiagram(graphId, nodes, edges)
+        {
+            document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+
+            var container=document.getElementById(graphId+'Div');
+
+            var data= {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                width: '100%',
+                height: '400px',
+                edges: {
+                    style: 'arrow'
+                },
+                nodes: {
+                    color: {
+                        border:'black',
+                        background: 'white'
+                    },
+                    fontSize: 20
+                },
+                physics: {
+                    barnesHut:{
+                        springLength: 50,
+                        gravitationalConstant: -2000,
+                        springConstant: 0.001
+                    }
+                }
+            };
+            var network = new vis.Network(container, data, options);
+
+            network.on('doubleClick',function(properties){
+                if(properties.nodes.length>0)
+                    document.location.href='/bodb/bop/'+properties.nodes[0]+'/';
+            });
+
+            document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view BOP details.";
+            return false;
+        }
     </script>
 {% endblock %}
 <div id="bop_list" name="bop_list" style="display:{% if bops|length %}block{% else %}none{% endif %}">
@@ -84,49 +108,19 @@
         <tr>
             <td colspan="6">
                 <div id="bops" name="bops">
+                    <input type="hidden" id="groupName" value="{{ bopGraphId }}"/>
                 </div>
             </td>
         </tr>
         {% if not ispopup %}
             <tr class="col_header">
                 <td colspan="6">
-                    Graph Generation Tool:&nbsp;
-                    <select id="graphtool">
-                        <option value="dot">dot</option>
-                        <option value="neato">neato</option>
-                        <option value="fdp">fdp</option>
-                        <option value="sfdp">sfdp</option>
-                        <option value="twopi">twopi</option>
-                        <option value="circo">circo</option>
-                    </select>&nbsp;
-                    <a href="" onclick="return generateBOPDiagram(document.getElementById('graphtool').value,'{{ bopGraphId }}','{{ csrf_token }}');">Generate BOP Relationship Graph</a>
+                    <a href="" onclick="return generateBOPDiagram('{{ bopGraphId }}',{{ bopGraphId }}nodes, {{ bopGraphId }}edges);">Generate BOP Relationship Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
                 <td colspan="6">
-                    <div id="{{ bopGraphId }}Div" style="display:none" class="zoomContainer">
-                        <div id="positionButtonDiv">
-                            <p>Zoom :
-                                <span>
-                                    <img id="{{ bopGraphId }}zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
-                                    <img id="{{ bopGraphId }}zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
-                                </span>
-                            </p>
-                            <p>Pan:
-                                <span class="positionButtonSpan">
-                                    <map name="{{ bopGraphId }}positionMap" class="positionMapClass">
-                                        <area id="{{ bopGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
-                                        <area id="{{ bopGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
-                                        <area id="{{ bopGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
-                                        <area id="{{ bopGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
-                                    </map>
-                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ bopGraphId }}positionMap" />
-                                </span>
-                            </p>
-                        </div>
-                        <img src="" usemap="#{{ bopGraphId }}Map" id="{{ bopGraphId }}" style="width:100%" origWidth="" origHeight=""/>
-                        <map id="{{ bopGraphId }}Map" name="{{ bopGraphId }}Map">
-                        </map>
+                    <div id="{{ bopGraphId }}Div" style="background: #ffffff;">
                     </div>
                 </td>
             </tr>

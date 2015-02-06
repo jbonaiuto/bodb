@@ -86,10 +86,17 @@ class DraftListView(LoginRequiredMixin,BODBView):
         context=super(DraftListView,self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html#drafts'
         user=self.request.user
-        context['models']=Model.get_model_list(Model.objects.filter(collator=user,draft=1),user)
-        context['bops']=BOP.get_bop_list(BOP.objects.filter(collator=user,draft=1),user)
+        Model.objects.filter(collator=user,draft=1)
+        models=Model.objects.filter(collator=user,draft=1)
+        context['models']=Model.get_model_list(models,user)
+        context['model_seds']=Model.get_sed_map(models, user)
+        bops=BOP.objects.filter(collator=user,draft=1)
+        context['bops']=BOP.get_bop_list(bops,user)
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
         context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',collator=user,draft=1),user)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(collator=user,draft=1),user)
+        conn_seds=ConnectivitySED.objects.filter(collator=user,draft=1)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         imaging_seds=BrainImagingSED.objects.filter(collator=user,draft=1)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
@@ -122,7 +129,9 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
         context['literatures']=[]
         context['brain_regions']=[]
         context['models']=[]
+        context['model_seds']=[]
         context['bops']=[]
+        context['bop_relationships']=[]
         context['generic_seds']=[]
         context['connectivity_seds']=[]
         context['imaging_seds']=[]
@@ -134,10 +143,16 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
 
             context['literatures']=Literature.get_reference_list(Literature.objects.filter(id__in=profile.favorite_literature.all()),user)
             context['brain_regions']=BrainRegion.get_region_list(BrainRegion.objects.filter(id__in=profile.favorite_regions.all()),user)
-            context['models']=Model.get_model_list(Model.objects.filter(document_ptr__in=profile.favorites.all()),user)
-            context['bops']=BOP.get_bop_list(BOP.objects.filter(document_ptr__in=profile.favorites.all()),user)
+            models=Model.objects.filter(document_ptr__in=profile.favorites.all())
+            context['models']=Model.get_model_list(models,user)
+            context['model_seds']=Model.get_sed_map(models, user)
+            bops=BOP.objects.filter(document_ptr__in=profile.favorites.all())
+            context['bops']=BOP.get_bop_list(bops,user)
+            context['bop_relationships']=BOP.get_bop_relationships(bops, user)
             context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',document_ptr__in=profile.favorites.all()),user)
-            context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(document_ptr__in=profile.favorites.all()),user)
+            conn_seds=ConnectivitySED.objects.filter(document_ptr__in=profile.favorites.all())
+            context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+            context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
             imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=profile.favorites.all())
             coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
             context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
@@ -270,7 +285,9 @@ class TagView(BODBView):
         context['tagged_bops']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user)
         context['tagged_models']=Model.get_model_list(Model.get_tagged_models(name, user),user)
         context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user), user)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_tagged_seds(name, user),user)
+        conn_seds=ConnectivitySED.get_tagged_seds(name, user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)

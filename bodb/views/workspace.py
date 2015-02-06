@@ -273,16 +273,21 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
 
         context['literatures']=Literature.get_reference_list(self.object.related_literature.distinct(),user)
         context['brain_regions']=BrainRegion.get_region_list(self.object.related_regions.distinct(),user)
-        context['models']=Model.get_model_list(self.object.related_models.filter(visibility).distinct(),user)
-        context['bops']=BOP.get_bop_list(self.object.related_bops.filter(visibility).distinct(),user)
+        models=self.object.related_models.filter(visibility).distinct()
+        context['models']=Model.get_model_list(models,user)
+        context['model_seds']=Model.get_sed_map(models, user)
+        bops=self.object.related_bops.filter(visibility).distinct()
+        context['bops']=BOP.get_bop_list(bops,user)
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
         context['generic_seds']=SED.get_sed_list(self.object.related_seds.filter(Q(type='generic') & visibility).distinct(),
             user)
         ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
         coords=[SEDCoord.objects.filter(sed=sed) for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct(),
-            user)
+        conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in ws_erp_seds]
         context['erp_seds']=SED.get_sed_list(ws_erp_seds, user)

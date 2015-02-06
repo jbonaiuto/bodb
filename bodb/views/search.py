@@ -3,7 +3,6 @@ import json
 from Bio import Entrez
 from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from sklearn.feature_extraction import stop_words
 from bodb.search.workspace import runWorkspaceSearch
 
 Entrez.email = 'uscbrainproject@gmail.com'
@@ -21,7 +20,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace, Species
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace, Species, stop_words
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -156,12 +155,15 @@ class SearchView(FormView):
             workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
 
         context['bops']=BOP.get_bop_list(bops, user)
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
         context['models']=Model.get_model_list(models, user)
+        context['model_seds']=Model.get_sed_map(models, user)
         context['generic_seds']=SED.get_sed_list(genericSEDs, user)
         context['erp_seds']=SED.get_sed_list(erpSEDs, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
             [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
         context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
@@ -250,10 +252,12 @@ class SearchView(FormView):
             if searchType=='all':
                 ajax_context={
                     'bops': bop_list,
+                    'bop_relationships': context['bop_relationships'],
                     'bops_count': len(bop_list),
                     'bops_start_index':1,
                     'bops_end_index': len(bop_list),
                     'models': model_list,
+                    'model_seds': context['model_seds'],
                     'models_count': len(model_list),
                     'models_start_index':1,
                     'models_end_index': len(model_list),
@@ -264,6 +268,7 @@ class SearchView(FormView):
                                  for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
                     'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
                                           for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                    'connectivity_sed_regions': context['connectivity_sed_regions'],
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
@@ -291,6 +296,7 @@ class SearchView(FormView):
             else:
                 ajax_context={
                     'bops': bops.object_list,
+                    'bop_relationships': context['bop_relationships'],
                     'bops_count': bop_paginator.count,
                     'bops_num_pages': bop_paginator.num_pages,
                     'bops_page_number': bops.number,
@@ -299,6 +305,7 @@ class SearchView(FormView):
                     'bops_start_index':bops.start_index(),
                     'bops_end_index': bops.end_index(),
                     'models': models.object_list,
+                    'model_seds': context['model_seds'],
                     'models_count': model_paginator.count,
                     'models_num_pages': model_paginator.num_pages,
                     'models_page_number': models.number,
@@ -313,6 +320,7 @@ class SearchView(FormView):
                                  for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
                     'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
                                           for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                    'connectivity_sed_regions': context['connectivity_sed_regions'],
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                       [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
@@ -421,6 +429,7 @@ class BOPSearchView(FormView):
         bops=runBOPSearch(form.cleaned_data, user.id, exclude=context['exclude'])
 
         context['bops']=BOP.get_bop_list(bops, user)
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         if self.request.is_ajax():
             bop_list=[(selected,is_favorite,subscribed_to_user,bop.as_json())
@@ -436,6 +445,7 @@ class BOPSearchView(FormView):
 
             ajax_context={
                 'bops': bops.object_list,
+                'bop_relationships': context['bop_relationships'],
                 'bops_count': bop_paginator.count,
                 'bops_num_pages': bop_paginator.num_pages,
                 'bops_page_number': bops.number,
@@ -605,6 +615,7 @@ class ModelSearchView(FormView):
 
         models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
         context['models']=Model.get_model_list(models, user)
+        context['model_seds']=Model.get_sed_map(models, user)
 
         if self.request.is_ajax():
             model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
@@ -619,6 +630,7 @@ class ModelSearchView(FormView):
                 models=model_paginator.page(model_paginator.num_pages)
             ajax_context={
                 'models': models.object_list,
+                'model_seds': context['model_seds'],
                 'models_count': model_paginator.count,
                 'models_num_pages': model_paginator.num_pages,
                 'models_page_number': models.number,
@@ -627,6 +639,7 @@ class ModelSearchView(FormView):
                 'models_start_index':models.start_index(),
                 'models_end_index': models.end_index(),
             }
+            print(ajax_context)
             if models.has_next():
                 ajax_context['models_next_page_number']=models.next_page_number()
             if models.has_previous():
@@ -693,6 +706,7 @@ class SEDSearchView(FormView):
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
             [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
         context['connectivity_seds']=SED.get_sed_list(connectivitySEDs,user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs])
@@ -713,6 +727,7 @@ class SEDSearchView(FormView):
                              for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
                 'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
                                       for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                'connectivity_sed_regions': context['connectivity_sed_regions'],
                 'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                   [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
                                  for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],

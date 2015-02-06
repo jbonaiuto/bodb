@@ -37,7 +37,11 @@ function processModelResults(data)
         $('#models_next').attr('style','display:none');
 
     $('[name=models]').each(function(index, element){
-        $( this ).empty();
+        var groupName=$(this).find('#groupName').attr('value');
+        $(this).empty();
+        $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+        eval(groupName+"nodes=[];");
+        eval(groupName+"edges=[];");
         for(var i=0; i<data['models'].length; i++)
         {
             var count = $( this ).children().length;
@@ -58,6 +62,26 @@ function processModelResults(data)
                 }
             );
             $( this ).append(compiledTmpl);
+            eval(groupName+"nodes.push({id: "+data['models'][i][3]['id']+", label:'"+data['models'][i][3]['title']+"', shape:'box', title:'"+data['models'][i][3]['brief_description']+"'});");
+        }
+        for(var model_id in data['model_seds'])
+        {
+            for(var i=0; i<data['model_seds'][model_id].length; i++)
+            {
+                var found=false;
+                eval('for(var j=0; j<'+groupName+'nodes.length; j++){ if('+groupName+'nodes[j]["id"]=='+data['model_seds'][model_id][i]['sed_id']+'){ found=true; break; }}');
+                if(!found)
+                {
+                    eval(groupName+"nodes.push({id: "+data['model_seds'][model_id][i]['sed_id']+", label:'"+data['model_seds'][model_id][i]['title']+"', title:'"+data['model_seds'][model_id][i]['sed_desc']+"'});");
+                }
+            }
+        }
+        for(var model_id in data['model_seds'])
+        {
+            for(var i=0; i<data['model_seds'][model_id].length; i++)
+            {
+                eval(groupName+"edges.push({from: "+data['model_seds'][model_id][i]['sed_id']+", to:"+model_id+", label: '"+data['model_seds'][model_id][i]['relationship']+"', title: '"+data['model_seds'][model_id][i]['relevance_narrative']+"'});");
+            }
         }
     });
     document.getElementById('searchingMsg').style.display = 'none';
@@ -102,7 +126,11 @@ function processBOPResults(data)
     else
         $('#bops_next').attr('style','display:none');
     $('[name=bops]').each(function(index, element){
+        var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
+        $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+        eval(groupName+"nodes=[];");
+        eval(groupName+"edges=[];");
         for(var i=0; i<data['bops'].length; i++)
         {
             var count = $(this).children().length;
@@ -123,6 +151,7 @@ function processBOPResults(data)
                 }
             );
             $(this).append(compiledTmpl);
+            eval(groupName+"nodes.push({id: "+data['bops'][i][3]['id']+", label:'"+data['bops'][i][3]['title']+"', title:'"+data['bops'][i][3]['brief_description']+"'});");
         }
     });
     document.getElementById('searchingMsg').style.display = 'none';
@@ -224,6 +253,8 @@ function processSEDResults(data)
         var groupName=$(this).find('#groupName').attr('value');
         $(this).empty();
         $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+        eval(groupName+"nodes=[];");
+        eval(groupName+"edges=[];");
         for(var i=0; i<data['connectivity_seds'].length; i++)
         {
             var count = $(this).children().length;
@@ -245,6 +276,12 @@ function processSEDResults(data)
                 }
             );
             $(this).append(compiledTmpl);
+            eval(groupName+"edges.push({from: "+data['connectivity_seds'][i][3]['source_region']+", to:"+data['connectivity_seds'][i][3]['target_region']+", id:"+data['connectivity_seds'][i][3]['id']+", title:'"+data['connectivity_seds'][i][3]['brief_description']+"'});");
+        }
+        for(var region_id in data['connectivity_sed_regions'])
+        {
+            var title='Name: '+data['connectivity_sed_regions'][region_id]['name']+'<br>Abbreviation: '+data['connectivity_sed_regions'][region_id]['abbreviation']+'<br>Nomenclature: '+data['connectivity_sed_regions'][region_id]['nomenclature'];
+            eval(groupName+"nodes.push({id:"+region_id+", label:'"+data['connectivity_sed_regions'][region_id]['str']+"', title:'"+title+"'});");
         }
     });
 
