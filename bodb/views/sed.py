@@ -11,8 +11,8 @@ from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, NeurophysiologySEDExportRequestForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event, GraspObservationCondition, GraspPerformanceCondition, NeurophysiologySEDExportRequest, Message
-from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, conn_sed_gxl, ElectrodeCap, Event
-from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
+from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap, Event
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -1001,7 +1001,9 @@ class SEDTaggedView(BODBView):
         context['helpPage']='tags.html'
         context['tag']=name
         context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_tagged_seds(name, user),user)
+        conn_seds=ConnectivitySED.get_tagged_seds(name, user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
@@ -1012,22 +1014,6 @@ class SEDTaggedView(BODBView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        return context
-
-
-class ConnectivityDiagramView(JSONResponseMixin,BaseCreateView):
-    model = ConnectivitySED
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            graphTool=self.request.POST['graphTool']
-            connectionSEDs=ConnectivitySED.objects.filter(sed_ptr__in=self.request.POST.getlist('connSEDIds'))
-            dot_xml = conn_sed_gxl(connectionSEDs)
-            context['connDiagram'], size, context['connMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
-                self.request.user, ext=self.request.POST['graphID'])
-            context['connDiagramW']=size[0]
-            context['connDiagramH']=size[1]
-            context['graphId']=self.request.POST['graphID']
         return context
 
 

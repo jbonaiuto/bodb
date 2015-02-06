@@ -107,8 +107,8 @@ class Workspace(models.Model):
             'id': self.id,
             'created_by_id': self.created_by.id,
             'created_by': self.get_created_by_str(),
-            'title': self.title,
-            'description': self.description
+            'title': self.title.replace('\'','\\\''),
+            'description': self.description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')
         }
 
     @staticmethod

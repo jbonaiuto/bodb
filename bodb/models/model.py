@@ -164,6 +164,25 @@ class Model(Module):
     def get_tagged_models(name, user):
         return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
+    @staticmethod
+    def get_sed_map(models,user):
+        map={}
+        for model in models:
+            map[model.id]=[]
+            build_seds=BuildSED.get_building_seds(model,user)
+            for build_sed in build_seds:
+                map[model.id].append({'sed_id':build_sed.sed.id,'title':build_sed.sed.__unicode__().replace('\'','\\\''),
+                                      'sed_desc':build_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
+                                      'relationship':build_sed.relationship,
+                                      'relevance_narrative': build_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
+            test_seds=TestSED.get_testing_seds(model,user)
+            for test_sed in test_seds:
+                map[model.id].append({'sed_id':test_sed.sed.id,'title':test_sed.sed.__unicode__().replace('\'','\\\''),
+                                      'sed_desc':test_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
+                                      'relationship':test_sed.relationship,
+                                      'relevance_narrative': test_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
+        return map
+
 
 class Variable(models.Model):
     """
@@ -297,60 +316,6 @@ def find_similar_models(user, title, brief_description):
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
-
-def model_gxl(models, user):
-    glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
-    glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    glx+='<graph id="model-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
-    glx+='<attr name="overlap"><string>scale</string></attr>\n'
-    for model in models:
-        glx+='<node id="%d">\n' % model.id
-        glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % model.id
-        glx+='<node id="%s">\n' % model.title.replace('"','\'').replace('&','&amp;')
-        glx+='<attr name="shape"><string>square</string></attr>\n'
-        glx+='<type xlink:href="/bodb/model/%d/" xlink:type="simple"/>\n' % model.id
-        glx+='</node>\n'
-        glx+='</graph>\n'
-        glx+='</node>\n'
-
-        build_seds=BuildSED.get_building_seds(model,user)
-        for bsed in build_seds:
-            glx+='<node id="%d">\n' % bsed.sed.id
-            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % bsed.sed.id
-            glx+='<node id="%s">\n' % bsed.sed.title.replace('"','\'').replace('&','&amp;')
-            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % bsed.sed.id
-            glx+='</node>\n'
-            glx+='</graph>\n'
-            glx+='</node>\n'
-
-        test_seds=TestSED.get_testing_seds(model,user)
-        for tsed in test_seds:
-            glx+='<node id="%d">\n' % tsed.sed.id
-            glx+='<graph id="%d_subgraph" edgeids="true" edgemode="directed" hypergraph="false">\n' % tsed.sed.id
-            glx+='<node id="%s">\n' % tsed.sed.title.replace('"','\'').replace('&','&amp;')
-            glx+='<type xlink:href="/bodb/sed/%d/" xlink:type="simple"/>\n' % tsed.sed.id
-            glx+='</node>\n'
-            glx+='</graph>\n'
-            glx+='</node>\n'
-
-    for model in models:
-        build_seds=BuildSED.get_building_seds(model,user)
-        for bsed in build_seds:
-            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,bsed.sed.id,model.title.replace('"','\'').replace('&','&amp;'),
-                                                            bsed.sed.title.replace('"','\'').replace('&','&amp;'))
-            glx+='<attr name="name"><string>%s</string></attr>\n' % bsed.relationship.replace('"','\'').replace('&','&amp;')
-            glx+='</edge>\n'
-
-        test_seds=TestSED.get_testing_seds(model,user)
-        for tsed in test_seds:
-            glx+='<edge id="%d-%d" to="%s" from="%s">\n' % (model.id,tsed.sed.id,model.title.replace('"','\'').replace('&','&amp;'),
-                                                            tsed.sed.title.replace('"','\'').replace('&','&amp;'))
-            glx+='<attr name="name"><string>%s</string></attr>\n' % tsed.relationship.replace('"','\'').replace('&','&amp;')
-            glx+='</edge>\n'
-
-    glx+='</graph>\n'
-    glx+='</gxl>\n'
-    return glx
 
 class ModelDBResult:
     def __init__(self):

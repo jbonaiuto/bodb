@@ -13,14 +13,12 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm, ModelForm1, ModelForm2, ModelForm6
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl, Literature, UserSubscription
-from bodb.models.ssr import SSR, Prediction
-from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription
+from bodb.models.ssr import Prediction
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from taggit.models import Tag
-from taggit.utils import parse_tags
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -1001,19 +999,3 @@ def compareBenchmarkSEDs(a, b):
         return cmp(SED.objects.get(id=a[0]).title.lower(),SED.objects.get(id=b[0]).title.lower())
     else:
         return -1*cmp(a[1],b[1])
-
-
-class ModelDiagramView(JSONResponseMixin,BaseCreateView):
-    model = Model
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            graphTool=self.request.POST['graphTool']
-            models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds'))
-            dot_xml=model_gxl(models, self.request.user)
-            context['modelDiagram'], size, context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
-                self.request.user, ext=self.request.POST['graphID'])
-            context['modelDiagramW']=size[0]
-            context['modelDiagramH']=size[1]
-            context['graphId']=self.request.POST['graphID']
-        return context
