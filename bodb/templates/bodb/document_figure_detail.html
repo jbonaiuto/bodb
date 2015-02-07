@@ -46,7 +46,7 @@
     $(document).ready(function(){
         {% for figure_form in figure_formset.forms %}
             addFigureForm({{ figure_form.instance.id }},'{{ figure_form.instance.figure.name }}',
-                    '{{ figure_form.instance.title }}','{{ figure_form.instance.caption }}');
+                    '{{ figure_form.instance.title|escapejs }}','{{ figure_form.instance.caption|escapejs }}');
         {% endfor %}
     });
 </script>
