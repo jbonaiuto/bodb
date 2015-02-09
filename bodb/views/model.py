@@ -566,10 +566,10 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').count()>0
+                user=user, model_type='Model').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').count()>0
-            context['selected']=user.get_profile().active_workspace.related_models.filter(id=self.object.id).count()>0
+                user=user, model_type='Model').exists()
+            context['selected']=user.get_profile().active_workspace.related_models.filter(id=self.object.id).exists()
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
@@ -778,9 +778,9 @@ class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['hierarchy_html']=Model.objects.get(id=self.object.get_root().id).hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').count()>0
+                user=user, model_type='Model').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').count()>0
+                user=user, model_type='Model').exists()
         return context
 
 

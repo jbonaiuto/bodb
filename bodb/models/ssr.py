@@ -49,10 +49,10 @@ class SSR(Document):
             active_workspace=profile.active_workspace
         ssr_list=[]
         for ssr in ssrs:
-            selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=ssr.id).count()>0
+            selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=ssr.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=ssr.collator,
-                user=user, model_type='SSR').count()>0
+                user=user, model_type='SSR').exists()
             ssr_list.append([selected,is_favorite,subscribed_to_user,ssr])
         return ssr_list
 
@@ -91,10 +91,10 @@ class Prediction(Document):
                 ssr_is_favorite=False
                 ssr_subscribed_to_user=False
             else:
-                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.ssr.id).count()>0
-                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.ssr.id).count()>0
+                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.ssr.id).exists()
+                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.ssr.id).exists()
                 ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.ssr.collator,
-                    user=user, model_type='SSR').count()>0
+                    user=user, model_type='SSR').exists()
             prediction_list.append([ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction])
         return prediction_list
 

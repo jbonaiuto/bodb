@@ -327,10 +327,10 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='SED').count()>0
+                user=user, model_type='SED').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='SED').count()>0
-            context['selected']=user.get_profile().active_workspace.related_seds.filter(id=self.object.id).count()>0
+                user=user, model_type='SED').exists()
+            context['selected']=user.get_profile().active_workspace.related_seds.filter(id=self.object.id).exists()
         context['type']=self.request.GET.get('type',None)
         context['action']=self.request.GET.get('action',None)
         context['ispopup']=('_popup' in self.request.GET)

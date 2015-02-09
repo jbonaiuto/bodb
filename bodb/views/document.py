@@ -64,10 +64,10 @@ class DocumentDetailView( DetailView):
         context['public_request_sent']=False
         context=set_context_workspace(context, self.request.user)
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).count()>0
-            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).count()>0
+            context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).exists()
+            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
             context['can_add_post']=True
-            context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).count()>0
+            context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
         return context
     
 class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):

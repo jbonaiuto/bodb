@@ -160,8 +160,8 @@ class BrainRegion(models.Model):
         region_list=[]
         for region in regions:
             selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=region.id).count()>0
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).count()>0
+                     active_workspace.related_regions.filter(id=region.id).exists()
+            is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).exists()
             region_list.append([selected,is_favorite,region])
         return region_list
 
@@ -208,8 +208,8 @@ class RelatedBrainRegion(models.Model):
         related_region_list=[]
         for rregion in rregions:
             selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=rregion.brain_region.id).count()>0
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=rregion.brain_region.id).count()>0
+                     active_workspace.related_regions.filter(id=rregion.brain_region.id).exists()
+            is_favorite=profile is not None and profile.favorite_regions.filter(id=rregion.brain_region.id).exists()
             related_region_list.append([selected,is_favorite,rregion])
         return related_region_list
 
