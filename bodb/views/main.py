@@ -33,54 +33,66 @@ class IndexView(BODBView):
         context=super(IndexView,self).get_context_data(**kwargs)
         context['helpPage']='index.html'
         # load recently added entries
-        context['models'] = Model.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
-        context['bops'] = BOP.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
-        context['seds'] = SED.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
-        context['ssrs'] = SSR.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
+        context['models'] = cache.get('recent_models')
+        if not context['models']:
+            context['models']=list(Model.objects.filter(draft=0, public=1).order_by('-creation_time')[:4])
+            cache.set('recent_models',context['models'])
+        context['bops'] = cache.get('recent_bops')
+        if not context['bops']:
+            context['bops']=list(BOP.objects.filter(draft=0, public=1).order_by('-creation_time')[:4])
+            cache.set('recent_bops',context['bops'])
+        context['seds'] = cache.get('recent_seds')
+        if not context['seds']:
+            context['seds']=list(SED.objects.filter(draft=0, public=1).order_by('-creation_time')[:4])
+            cache.set('recent_seds',context['seds'])
+        context['ssrs'] = cache.get('recent_ssrs')
+        if not context['ssrs']:
+            context['ssrs']=list(SSR.objects.filter(draft=0, public=1).order_by('-creation_time')[:4])
+            cache.set('recent_ssrs',context['ssrs'])
 
-        context['model_date']=cache.get('%d.last_model_date' % self.request.user.id)
-        context['model_count']=cache.get('%d.all_model_count' % self.request.user.id)
+        context['model_date']=cache.get('last_model_date')
+        context['model_count']=cache.get('all_model_count')
         if not context['model_date']:
             context['model_date']=''
             public_models=Model.objects.filter(draft=0, public=1).order_by('-creation_time')
             context['model_count']=public_models.count()
             if context['model_count']>0:
                 context['model_date']=public_models[0].creation_time.strftime('%B %d, %Y')
-            cache.set('%d.last_model_date' % self.request.user.id, context['model_date'])
-            cache.set('%d.all_model_count' % self.request.user.id, context['model_count'])
+            cache.set('last_model_date', context['model_date'])
+            cache.set('all_model_count', context['model_count'])
 
-        context['bop_date']=cache.get('%d.last_bop_date' % self.request.user.id)
-        context['bop_count']=cache.get('%d.all_bop_count' % self.request.user.id)
+        context['bop_date']=cache.get('last_bop_date')
+        context['bop_count']=cache.get('all_bop_count')
         if not context['bop_date']:
             context['bop_date']=''
             public_bops=BOP.objects.filter(draft=0, public=1).order_by('-creation_time')
             context['bop_count']=public_bops.count()
             if context['bop_count']>0:
                 context['bop_date']=public_bops[0].creation_time.strftime('%B %d, %Y')
-            cache.set('%d.last_bop_date' % self.request.user.id, context['bop_date'])
-            cache.set('%d.all_bop_count' % self.request.user.id, context['bop_count'])
+            cache.set('last_bop_date', context['bop_date'])
+            cache.set('all_bop_count', context['bop_count'])
 
-        context['sed_date']=cache.get('%d.last_sed_date' % self.request.user.id)
-        context['sed_count']=cache.get('%d.all_sed_count' % self.request.user.id)
+        context['sed_date']=cache.get('last_sed_date')
+        context['sed_count']=cache.get('all_sed_count')
         if not context['sed_date']:
             context['sed_date']=''
             public_seds=SED.objects.filter(draft=0, public=1).order_by('-creation_time')
             context['sed_count']=public_seds.count()
             if context['sed_count']>0:
                 context['sed_date']=public_seds[0].creation_time.strftime('%B %d, %Y')
-            cache.set('%d.last_sed_date' % self.request.user.id, context['sed_date'])
-            cache.set('%d.all_sed_count' % self.request.user.id, context['sed_count'])
+            cache.set('last_sed_date', context['sed_date'])
+            cache.set('all_sed_count', context['sed_count'])
 
-        context['ssr_date']=cache.get('%d.last_ssr_date' % self.request.user.id)
-        context['ssr_count']=cache.get('%d.all_ssr_count' % self.request.user.id)
+        context['ssr_date']=cache.get('last_ssr_date')
+        context['ssr_count']=cache.get('all_ssr_count')
         if not context['ssr_date']:
             context['ssr_date']=''
             public_ssrs=SSR.objects.filter(draft=0, public=1).order_by('-creation_time')
             context['ssr_count']=public_ssrs.count()
             if context['ssr_count']>0:
                 context['ssr_date']=public_ssrs[0].creation_time.strftime('%B %d, %Y')
-            cache.set('%d.last_ssr_date' % self.request.user.id, context['ssr_date'])
-            cache.set('%d.all_ssr_count' % self.request.user.id, context['ssr_count'])
+            cache.set('last_ssr_date', context['ssr_date'])
+            cache.set('all_ssr_count', context['ssr_count'])
 
         return context
 
@@ -89,7 +101,7 @@ class AboutView(BODBView):
     template_name = 'bodb/about.html'
 
     def get_context_data(self, **kwargs):
-        context=super(BODBView,self).get_context_data(**kwargs)
+        context=super(AboutView,self).get_context_data(**kwargs)
         context['helpPage']='index.html'
         return context
 

@@ -16,6 +16,7 @@ from guardian.mixins import LoginRequiredMixin
 from guardian.models import User
 from guardian.shortcuts import assign_perm, remove_perm
 from uscbp.views import JSONResponseMixin
+from django.core.cache import cache
 
 workspace_permissions=['add_post','add_entry','remove_entry',
                        'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
@@ -128,6 +129,12 @@ class WorkspaceInvitationResponseView(LoginRequiredMixin, TemplateView):
             activity.text='%s joined the workspace' % user.username
             activity.save()
             self.template_name='bodb/workspace/workspace_invitation_accept.html'
+            visibility_q=Q(created_by__is_active=True)
+            if not self.self.request.user.is_superuser:
+                visibility_q=Q(visibility_q & Q(group__in=self.request.user.groups.all()))
+            workspaces=Workspace.objects.filter(visibility_q).order_by('title')
+            cache.set('%d.workspaces' % self.request.user.id, list(workspaces))
+
         context['invitation'].save()
         return self.render_to_response(context)
 
@@ -158,6 +165,12 @@ class CreateWorkspaceView(LoginRequiredMixin, EditWorkspaceMixin, CreateView):
 
         self.request.user.get_profile().active_workspace=self.object
         self.request.user.get_profile().save()
+
+        visibility_q=Q(created_by__is_active=True)
+        if not self.self.request.user.is_superuser:
+            visibility_q=Q(visibility_q & Q(group__in=self.request.user.groups.all()))
+        workspaces=Workspace.objects.filter(visibility_q).order_by('title')
+        cache.set('%d.workspaces' % self.request.user.id, list(workspaces))
 
         return redirect(self.get_success_url())
 
