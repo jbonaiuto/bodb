@@ -191,11 +191,11 @@
                                                     <td style="width:50px"><strong>z</strong></td>
                                                     <td></td>
                                                 </tr>
-                                                {% for coord in coords %}
+                                                {% for coord,coord_selected in coords %}
                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                         <td>
                                                             {% if user.is_authenticated and not user.is_anonymous %}
-                                                                <input type=checkbox name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord.id in selected_coord_ids %}checked=True{% endif %}/>
+                                                                <input type=checkbox name="sed_coord_select" id="sed_coord_select_{{ coord.id }}" value="{{ coord.id }}" onclick="sedCoordSelect(this.checked, '{{ coord.id }}', '{{ csrf_token }}');" {% if coord_selected %}checked=True{% endif %}/>
                                                             {% endif %}
                                                         </td>
                                                         <td>{{ coord.named_brain_region }}</td>
