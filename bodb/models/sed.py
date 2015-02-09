@@ -252,9 +252,12 @@ class BrainImagingSED(SED):
         return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
     @staticmethod
-    def augment_sed_list(sed_list, coords):
+    def augment_sed_list(sed_list, coords, user):
         for sed_list_item,coord_list in zip(sed_list,coords):
-            sed_list_item.append(coord_list)
+            sed_coord_list=[]
+            for i in range(coord_list.count()):
+                sed_coord_list.append((coord_list[i],coord_list[i].is_selected(user)))
+            sed_list_item.append(sed_coord_list)
         return sed_list
 
     @staticmethod
@@ -302,6 +305,9 @@ class SEDCoord(models.Model):
             'y': self.coord.y,
             'z': self.coord.z
         }
+
+    def is_selected(self, user):
+        return SelectedSEDCoord.objects.filter(selected=True, user__id=user.id, sed_coordinate__id=self.id).distinct().count()>0
 
 
 class BredeBrainImagingSED(BrainImagingSED):
@@ -521,6 +527,24 @@ class BuildSED(models.Model):
         return build_sed_list
 
     @staticmethod
+    def get_imaging_building_sed_list(bseds, user):
+        profile=None
+        active_workspace=None
+        if user.is_authenticated() and not user.is_anonymous():
+            profile=user.get_profile()
+            active_workspace=profile.active_workspace
+        build_sed_list=[]
+        for (buildsed,coords) in bseds:
+            selected=active_workspace is not None and\
+                     active_workspace.related_seds.filter(id=buildsed.sed.id).count()>0
+            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).count()>0
+            subscribed_to_user=profile is not None and\
+                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
+                                   model_type='SED').count()>0
+            build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed,coords])
+        return build_sed_list
+
+    @staticmethod
     def get_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct()
 
@@ -536,8 +560,17 @@ class BuildSED(models.Model):
 
     @staticmethod
     def get_imaging_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+        build_seds=BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
+                                             Document.get_security_q(user, field='sed'))).distinct()
+        build_sed_list=[]
+        for build_sed in build_seds:
+            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed)
+            sed_coord_list=[]
+            for sed_coord in sed_coords:
+                sed_coord_list.append((sed_coord,sed_coord.is_selected(user)))
+            build_sed_list.append((build_sed,sed_coord_list))
+        return build_sed_list
+
 
     @staticmethod
     def get_erp_building_seds(document, user):

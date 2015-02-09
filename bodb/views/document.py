@@ -47,7 +47,7 @@ class DocumentDetailView(DetailView):
         context['figures'] = DocumentFigure.objects.filter(document=self.object).order_by('order')
         context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
         context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
-        context['imaging_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)
+        context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)
         context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
         context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
@@ -63,7 +63,6 @@ class DocumentDetailView(DetailView):
         context['public_request_sent']=False
         context['can_add_entry']=False
         context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
             context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).count()>0
@@ -72,9 +71,6 @@ class DocumentDetailView(DetailView):
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).count()>0
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
         return context
     
 class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):

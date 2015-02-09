@@ -23,9 +23,9 @@
                         sed_type: 'imaging',
                         url_str: '{{ sed.html_url_string|escapejs }}',
                         brief_description: '{{ sed.brief_description|escapejs }}',
-                        coords: [{% for coord in coords %}[{id:{{ coord.id }},
+                        coords: [{% for coord,coord_selected in coords %}[{id:{{ coord.id }},
                             brain_region:'{{ coord.named_brain_region }}',hemisphere: '{{ coord.hemisphere }}',
-                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}}],{% endfor %}],
+                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}},{% if coord_selected %}true{% else %}false{% endif %}],{% endfor %}],
                         is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
                         selected: {% if selected %}true{% else %}false{% endif %},
                         title_str: '{{ sed|escapejs }}',
@@ -105,49 +105,49 @@
                 <td width=100px><span id="sed_<%= id %>_message" name="sed_<%= id %>_message" class="messages"></span></td>
             </tr>
             <% if(coords.length>0){ %>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td colspan="3"></td>
-                    <td colspan="4" class="col_header">Coordinates</td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td colspan="3"></td>
-                    <td colspan="4">
-                        <table class="tab_panel">
-                            <tr>
-                                <td style="width:50px"></td>
-                                <td style="width:200px"><strong>Region</strong></td>
-                                <td style="width:100px"><strong>Hemisphere</strong></td>
-                                <td style="width:50px"><strong>x</strong></td>
-                                <td style="width:50px"><strong>y</strong></td>
-                                <td style="width:50px"><strong>z</strong></td>
-                                <td></td>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td colspan="3"></td>
+                <td colspan="4" class="col_header">Coordinates</td>
+            </tr>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td colspan="3"></td>
+                <td colspan="4">
+                    <table class="tab_panel">
+                        <tr>
+                            <td style="width:50px"></td>
+                            <td style="width:200px"><strong>Region</strong></td>
+                            <td style="width:100px"><strong>Hemisphere</strong></td>
+                            <td style="width:50px"><strong>x</strong></td>
+                            <td style="width:50px"><strong>y</strong></td>
+                            <td style="width:50px"><strong>z</strong></td>
+                            <td></td>
+                        </tr>
+                        <% for(var coord_idx=0; coord_idx<coords.length; coord_idx++){ %>
+                        <tr class="<%= getTRTag(coord_idx) %>" valign=top>
+                            <td>
+                                {% if user.is_authenticated and not user.is_anonymous %}
+                                    <input type=checkbox class="sed_<%= id %>_coord_select" name="sed_coord_select" id="sed_coord_select_<%= coords[coord_idx][0]['id'] %>" value="<%= coords[coord_idx][0]['id'] %>" onclick="sedCoordSelect(this.checked, '<%= coords[coord_idx][0]['id'] %>', '{{ csrf_token }}');" <% if(coords[coord_idx][1]){ %>checked=True<% } %>/>
+                                {% endif %}
+                            </td>
+                            <td><%= coords[coord_idx][0]['brain_region'] %></td>
+                            <td><%= coords[coord_idx][0]['hemisphere'] %></td>
+                            <td><%= coords[coord_idx][0]['x'] %></td>
+                            <td><%= coords[coord_idx][0]['y'] %></td>
+                            <td><%= coords[coord_idx][0]['z'] %></td>
+                            <td><span id="coord_<%= id %>_<%= coords[coord_idx][0]['id'] %>_message" name="coord_<%= id %>_<%= coords[coord_idx][0]['id'] %>_message" class="messages"></span></td>
+                        </tr>
+                        <% } %>
+                        {% if user.is_authenticated and not user.is_anonymous %}
+                            <tr class="<%= getTRTag(coord_idx) %>" valign=top>
+                                <td colspan="7">
+                                    <a href="" onclick="return setAllSEDSelectedCoords('<%= id %>', true);">Select all</a> /&nbsp;
+                                    <a href="" onclick="return setAllSEDSelectedCoords('<%= id %>', false);">Unselect all</a>
+                                </td>
                             </tr>
-                            <% for(var coord_idx=0; coord_idx<coords.length; coord_idx++){ %>
-                                <tr class="<%= getTRTag(coord_idx) %>" valign=top>
-                                    <td>
-                                        {% if user.is_authenticated and not user.is_anonymous %}
-                                            <input type=checkbox class="sed_<%= id %>_coord_select" name="sed_coord_select" id="sed_coord_select_<%= coords[coord_idx][0]['id'] %>" value="<%= coords[coord_idx][0]['id'] %>" onclick="sedCoordSelect(this.checked, '<%= coords[coord_idx][0]['id'] %>', '{{ csrf_token }}');" <% if(coords[coord_idx][1]){ %>checked=True<% } %>/>
-                                        {% endif %}
-                                    </td>
-                                    <td><%= coords[coord_idx][0]['brain_region'] %></td>
-                                    <td><%= coords[coord_idx][0]['hemisphere'] %></td>
-                                    <td><%= coords[coord_idx][0]['x'] %></td>
-                                    <td><%= coords[coord_idx][0]['y'] %></td>
-                                    <td><%= coords[coord_idx][0]['z'] %></td>
-                                    <td><span id="coord_<%= id %>_<%= coords[coord_idx][0]['id'] %>_message" name="coord_<%= id %>_<%= coords[coord_idx][0]['id'] %>_message" class="messages"></span></td>
-                                </tr>
-                            <% } %>
-                            {% if user.is_authenticated and not user.is_anonymous %}
-                                <tr class="<%= getTRTag(coord_idx) %>" valign=top>
-                                    <td colspan="7">
-                                        <a href="" onclick="return setAllSEDSelectedCoords('<%= id %>', true);">Select all</a> /&nbsp;
-                                        <a href="" onclick="return setAllSEDSelectedCoords('<%= id %>', false);">Unselect all</a>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        </table>
-                    </td>
-                </tr>
+                        {% endif %}
+                    </table>
+                </td>
+            </tr>
             <% } %>
         </table>
     </div>

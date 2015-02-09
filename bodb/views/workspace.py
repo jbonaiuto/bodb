@@ -284,7 +284,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
         ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
         coords=[SEDCoord.objects.filter(sed=sed) for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
         context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
@@ -333,12 +333,6 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
             if coord.sed_coordinate.statistic_value is not None:
                 coord_array['statistic_value']=coord.sed_coordinate.statistic_value.__float__()
             context['selected_coords'].append(coord_array)
-
-        # load selected coordinate Ids
-        selected_coord_ids=[]
-        for coord in selected_coord_objs:
-            selected_coord_ids.append(coord.sed_coordinate.id)
-        context['selected_coord_ids']=selected_coord_ids
 
         return context
 

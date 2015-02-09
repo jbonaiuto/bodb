@@ -267,7 +267,7 @@ class LiteratureDetailView(TemplateView):
         imaging_seds=BrainImagingSED.get_literature_seds(literature, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         conn_seds=ConnectivitySED.get_literature_seds(literature,user)
         context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
@@ -281,17 +281,12 @@ class LiteratureDetailView(TemplateView):
         context['selected']=False
         context['can_add_entry']=False
         context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
             context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).count()>0
 
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
                 user=user).count()>0
-
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
             active_workspace=user.get_profile().active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
