@@ -14,6 +14,8 @@ from bodb.models.messaging import Message, UserSubscription
 from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
+from django.core.cache import cache
+
 
 class Workspace(models.Model):
     created_by = models.ForeignKey(User)
@@ -352,10 +354,15 @@ class BodbProfile(models.Model):
         app_label='bodb'
 
     def get_workspaces(self):
-        visibility_q=Q(created_by__is_active=True)
-        if not self.user.is_superuser:
-            visibility_q=Q(visibility_q & Q(group__in=self.user.groups.all()))
-        return Workspace.objects.filter(visibility_q).order_by('title')
+        workspaces=cache.get('%d.workspaces' % self.user.id)
+        if not workspaces:
+            visibility_q=Q(created_by__is_active=True)
+            if not self.user.is_superuser:
+                visibility_q=Q(visibility_q & Q(group__in=self.user.groups.all()))
+            workspaces=Workspace.objects.filter(visibility_q).order_by('title')
+            cache.set('%d.workspaces' % self.user.id, list(workspaces))
+        return workspaces
+
 
     @staticmethod
     def get_user_list(users, user):
