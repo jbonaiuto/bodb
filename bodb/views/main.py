@@ -289,12 +289,8 @@ class TagView(BODBView):
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-<<<<<<< HEAD
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_tagged_seds(name, user), user)
-=======
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
->>>>>>> sedcoord_optimization
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_tagged_seds(name, user), user)
         context['tagged_predictions']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), user)
         context['tagged_ssrs']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), user)
 
