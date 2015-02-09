@@ -205,7 +205,7 @@ class UserDetailView(AdminDetailView):
         imaging_seds=BrainImagingSED.objects.filter(collator=self.object)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,self.request.user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, self.request.user)
         erp_seds=ERPSED.objects.filter(collator=self.object)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user)

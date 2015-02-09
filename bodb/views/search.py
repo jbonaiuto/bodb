@@ -55,17 +55,12 @@ class SearchView(FormView):
         context['modelModelGraphId']='modelRelationshipDiagram'
         context['can_add_entry']=False
         context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
             context['active_workspace']=active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
         return context
 
     def form_valid(self, form):
@@ -166,7 +161,7 @@ class SearchView(FormView):
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs])
+            [sedCoords[sed.id] for sed in imagingSEDs], user)
         context['ssrs']=SSR.get_ssr_list(ssrs, user)
         context['literatures']=Literature.get_reference_list(literature,user)
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
@@ -270,7 +265,7 @@ class SearchView(FormView):
                                           for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
                     'connectivity_sed_regions': context['connectivity_sed_regions'],
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                      [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
                     'ssrs': ssr_list,
                     'ssrs_count': len(ssr_list),
@@ -322,7 +317,7 @@ class SearchView(FormView):
                                           for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
                     'connectivity_sed_regions': context['connectivity_sed_regions'],
                     'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                      [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
                                      for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
                     'ssrs': ssrs.object_list,
                     'ssrs_count': ssr_paginator.count,
@@ -709,14 +704,9 @@ class SEDSearchView(FormView):
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs])
+            [sedCoords[sed.id] for sed in imagingSEDs], user)
         context['can_add_entry']=False
         context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
-        if user.is_authenticated() and not user.is_anonymous():
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
 
         if self.request.is_ajax():
             ajax_context={
@@ -729,7 +719,7 @@ class SEDSearchView(FormView):
                                       for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
                 'connectivity_sed_regions': context['connectivity_sed_regions'],
                 'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                  [(coord.as_json(),coord.id in context['selected_coord_ids']) for coord in coords])
+                                  [(coord.as_json(),coord_selected) for (coord, coord_selected) in coords])
                                  for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
             }
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')

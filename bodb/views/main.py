@@ -14,13 +14,8 @@ class BODBView(TemplateView):
         user=self.request.user
         context['can_add_entry']=False
         context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
-
             active_workspace=user.get_profile().active_workspace
             context['can_add_entry']=user.has_perm('add_entry',active_workspace)
             context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
@@ -100,7 +95,7 @@ class DraftListView(LoginRequiredMixin,BODBView):
         imaging_seds=BrainImagingSED.objects.filter(collator=user,draft=1)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         erp_seds=ERPSED.objects.filter(collator=user,draft=1)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
@@ -156,7 +151,7 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=profile.favorites.all())
             coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
             context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
             erp_seds=ERPSED.objects.filter(document_ptr__in=profile.favorites.all())
             components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
             context['erp_seds']=SED.get_sed_list(erp_seds, user)
@@ -193,10 +188,6 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
                 context['selected_coords'].append(coord_array)
 
             # load selected coordinate Ids
-            selected_coord_ids=[]
-            for coord in selected_coord_objs:
-                selected_coord_ids.append(coord.sed_coordinate.id)
-            context['selected_coord_ids']=selected_coord_ids
             context['can_delete_coord_selection']=True
             context['can_add_coord_selection']=True
             context['can_change_coord_selection']=True
@@ -295,7 +286,7 @@ class TagView(BODBView):
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         context['tagged_predictions']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), user)
         context['tagged_ssrs']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), user)
 
