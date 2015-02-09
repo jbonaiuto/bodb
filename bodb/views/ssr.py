@@ -134,10 +134,10 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
             context['model']=models[0]
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='SSR').count()>0
+                user=user, model_type='SSR').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='SSR').count()>0
-            context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
+                user=user, model_type='SSR').exists()
+            context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).exists()
         context['action']=self.request.GET.get('action',None)
         context['type']=self.request.GET.get('type',None)
         context['idx']=self.request.GET.get('idx',None)

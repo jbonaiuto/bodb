@@ -91,7 +91,7 @@ class Document(models.Model):
                         return True
                     elif self.draft==0:
                         for group in user.groups.all():
-                            if self.collator.groups.filter(id=group.id).count()>0:
+                            if self.collator.groups.filter(id=group.id).exists():
                                 return True
             else:
                 return self.public==1
@@ -102,7 +102,7 @@ class Document(models.Model):
 
     def isFavorite(self, user):
         if user.is_authenticated() and not user.is_anonymous():
-            return user.get_profile().favorites.filter(id=self.id).count()>0
+            return user.get_profile().favorites.filter(id=self.id).exists()
         return False
 
     def save(self, *args, **kwargs):

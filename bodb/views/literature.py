@@ -282,12 +282,10 @@ class LiteratureDetailView(BODBView):
         context['selected']=False
 
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).count()>0
-
+            context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).exists()
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
-                user=user).count()>0
-
-            context['selected']=context['active_workspace'].related_literature.filter(id=literature.id).count()>0
+                user=user).exists()
+            context['selected']=context['active_workspace'].related_literature.filter(id=literature.id).exists()
 
         return context
 
