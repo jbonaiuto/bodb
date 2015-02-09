@@ -167,11 +167,11 @@ class Literature(models.Model):
         reference_list=[]
         for reference in references:
             selected=active_workspace is not None and\
-                     active_workspace.related_literature.filter(id=reference.id).count()>0
-            is_favorite=profile is not None and profile.favorite_literature.filter(id=reference.id).count()>0
+                     active_workspace.related_literature.filter(id=reference.id).exists()
+            is_favorite=profile is not None and profile.favorite_literature.filter(id=reference.id).exists()
             subscribed_to_user=profile is not None and\
                                UserSubscription.objects.filter(subscribed_to_user=reference.collator, user=user,
-                                   model_type='Model').count()>0
+                                   model_type='Model').exists()
             reference_list.append([selected,is_favorite,subscribed_to_user,reference])
         return reference_list
 

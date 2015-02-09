@@ -120,15 +120,15 @@ class Workspace(models.Model):
             profile=user.get_profile()
         workspace_list=[]
         for w in workspaces:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).count()>0
+            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).exists()
             workspace_list.append([subscribed_to_user,w])
         return workspace_list
 
     def check_perm(self, user, perm):
         if perm=='admin':
-            return self.admin_users.filter(id=user.id).count()>0
+            return self.admin_users.filter(id=user.id).exists()
         elif perm=='member':
-            return self.get_users().filter(id=user.id).count()>0 or user.is_superuser
+            return self.get_users().filter(id=user.id).exists() or user.is_superuser
         else:
             return user.has_perm(perm, self)
 
@@ -371,7 +371,7 @@ class BodbProfile(models.Model):
             profile=user.get_profile()
         user_list=[]
         for u in users:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=u, user=user).count()>0
+            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=u, user=user).exists()
             user_list.append([subscribed_to_user,u])
         return user_list
 

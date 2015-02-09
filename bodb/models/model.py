@@ -32,9 +32,10 @@ class Module(MPTTModel,Document):
                 html+='<a href="/bodb/module/%d/">%s</a>' % (self.id, self.title)
         else:
             html+=self.title
-        if self.get_children().count()>0:
+        children=self.get_children().all()
+        if children.count()>0:
             html+='<ul>'
-            for submodule in self.get_children().all():
+            for submodule in children:
                 html+=submodule.module.hierarchy_html(selected_id=selected_id)
             html+='</ul>'
         html+='</li>'
@@ -124,9 +125,10 @@ class Model(Module):
                 html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self))
         else:
             html+=str(self)
-        if self.get_children().count()>0:
+        children=self.get_children().all()
+        if children.count()>0:
             html+='<ul>'
-            for submodule in self.get_children().all():
+            for submodule in children:
                 html+=submodule.module.hierarchy_html(selected_id=selected_id)
             html+='</ul>'
         html+='</li></ul>'
@@ -152,11 +154,11 @@ class Model(Module):
         model_list=[]
         for model in models:
             selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=model.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=model.id).count()>0
+                     active_workspace.related_models.filter(id=model.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=model.id).exists()
             subscribed_to_user=profile is not None and \
                                UserSubscription.objects.filter(subscribed_to_user=model.collator, user=user,
-                                   model_type='Model').count()>0
+                                   model_type='Model').exists()
             model_list.append([selected,is_favorite,subscribed_to_user,model])
         return model_list
 
@@ -231,11 +233,11 @@ class RelatedModel(models.Model):
         related_model_list=[]
         for rmod in rmods:
             selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=rmod.model.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=rmod.model.id).count()>0
+                     active_workspace.related_models.filter(id=rmod.model.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=rmod.model.id).exists()
             subscribed_to_user=profile is not None and \
                                UserSubscription.objects.filter(subscribed_to_user=rmod.model.collator, user=user,
-                                   model_type='Model').count()>0
+                                   model_type='Model').exists()
             related_model_list.append([selected,is_favorite,subscribed_to_user,rmod])
         return related_model_list
 
@@ -254,11 +256,11 @@ class RelatedModel(models.Model):
         reverse_related_model_list=[]
         for rrmod in rrmods:
             selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=rrmod.document.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=rrmod.document.id).count()>0
+                     active_workspace.related_models.filter(id=rrmod.document.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=rrmod.document.id).exists()
             subscribed_to_user=profile is not None and \
                                UserSubscription.objects.filter(subscribed_to_user=rrmod.document.collator, user=user,
-                                   model_type='Model').count()>0
+                                   model_type='Model').exists()
             reverse_related_model_list.append([selected,is_favorite,subscribed_to_user,rrmod])
         return reverse_related_model_list
 

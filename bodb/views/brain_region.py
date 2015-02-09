@@ -217,8 +217,8 @@ class BrainRegionView(DetailView):
 
         context=set_context_workspace(context, user)
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).count()>0
-            context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).count()>0
+            context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).exists()
+            context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).exists()
 
         return context
 

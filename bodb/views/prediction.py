@@ -78,9 +78,9 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Prediction').count()>0
+                user=user, model_type='Prediction').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Prediction').count()>0
+                user=user, model_type='Prediction').exists()
         return context
 
 

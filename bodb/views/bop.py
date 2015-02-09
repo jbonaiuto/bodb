@@ -205,13 +205,13 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         if user.is_authenticated() and not user.is_anonymous():
             active_workspace=user.get_profile().active_workspace
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='BOP').count()>0
+                user=user, model_type='BOP').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='BOP').count()>0
+                user=user, model_type='BOP').exists()
         context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
         context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
         if active_workspace is not None:
-            context['selected']=active_workspace.related_bops.filter(id=self.object.id).count()>0
+            context['selected']=active_workspace.related_bops.filter(id=self.object.id).exists()
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
         context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_reverse_related_bops(self.object,user),user)

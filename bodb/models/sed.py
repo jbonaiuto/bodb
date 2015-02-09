@@ -77,10 +77,10 @@ class SED(Document):
                 sed=CoCoMacConnectivitySED.objects.get(id=sed.id)
             if BredeBrainImagingSED.objects.filter(id=sed.id).count():
                 sed=BredeBrainImagingSED.objects.get(id=sed.id)
-            selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=sed.id).count()>0
+            selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=sed.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
-                user=user, model_type='SED').count()>0
+                user=user, model_type='SED').exists()
             sed_list.append([selected,is_favorite,subscribed_to_user,sed])
         return sed_list
 
@@ -290,7 +290,7 @@ class SEDCoord(models.Model):
         }
 
     def is_selected(self, user):
-        return SelectedSEDCoord.objects.filter(selected=True, user__id=user.id, sed_coordinate__id=self.id).distinct().count()>0
+        return SelectedSEDCoord.objects.filter(selected=True, user__id=user.id, sed_coordinate__id=self.id).exists()
 
 
 class BredeBrainImagingSED(BrainImagingSED):
@@ -501,11 +501,11 @@ class BuildSED(models.Model):
         build_sed_list=[]
         for buildsed in bseds:
             selected=active_workspace is not None and \
-                     active_workspace.related_seds.filter(id=buildsed.sed.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).count()>0
+                     active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
             subscribed_to_user=profile is not None and \
                                UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
-                                   model_type='SED').count()>0
+                                   model_type='SED').exists()
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed])
         return build_sed_list
 
@@ -519,11 +519,11 @@ class BuildSED(models.Model):
         build_sed_list=[]
         for (buildsed,coords) in bseds:
             selected=active_workspace is not None and\
-                     active_workspace.related_seds.filter(id=buildsed.sed.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).count()>0
+                     active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
+            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
             subscribed_to_user=profile is not None and\
                                UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
-                                   model_type='SED').count()>0
+                                   model_type='SED').exists()
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed,coords])
         return build_sed_list
 
@@ -597,17 +597,17 @@ class TestSED(models.Model):
         test_sed_list=[]
         for testsed in tseds:
             sed_selected=active_workspace is not None and \
-                         active_workspace.related_seds.filter(id=testsed.sed.id).count()>0
-            sed_is_favorite=profile is not None and profile.favorites.filter(id=testsed.sed.id).count()>0
+                         active_workspace.related_seds.filter(id=testsed.sed.id).exists()
+            sed_is_favorite=profile is not None and profile.favorites.filter(id=testsed.sed.id).exists()
             sed_subscribed_to_user=profile is not None and \
                                    UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=user,
-                                       model_type='SED').count()>0
+                                       model_type='SED').exists()
             ssr_selected=active_workspace is not None and \
-                         active_workspace.related_ssrs.filter(id=testsed.ssr.id).count()>0
-            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.ssr.id).count()>0
+                         active_workspace.related_ssrs.filter(id=testsed.ssr.id).exists()
+            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.ssr.id).exists()
             ssr_subscribed_to_user=profile is not None and\
                                    UserSubscription.objects.filter(subscribed_to_user=testsed.ssr.collator,
-                                       user=user, model_type='SSR').count()>0
+                                       user=user, model_type='SSR').exists()
             test_sed_list.append([sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,
                                   ssr_subscribed_to_user,testsed])
         return test_sed_list

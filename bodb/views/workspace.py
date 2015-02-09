@@ -272,7 +272,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
             subscribed_to=False
             is_admin=False
             if user.is_authenticated() and not user.is_anonymous():
-                subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=user).count()>0
+                subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=user).exists()
                 is_admin=usr in self.object.admin_users.all()
             members.append([usr,is_admin,subscribed_to])
         context['members']=members
