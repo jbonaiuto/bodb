@@ -9,7 +9,7 @@ from bodb.forms.workspace import WorkspaceInvitationForm, WorkspaceForm, Workspa
 from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion, NeurophysiologySED
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from bodb.views.sed import SaveCoordinateSelectionView
 from guardian.mixins import LoginRequiredMixin
@@ -213,7 +213,7 @@ class WorkspaceInvitationResendView(LoginRequiredMixin, JSONResponseMixin, BaseU
         return context
 
 
-class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
+class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
     template_name = 'bodb/workspace/workspace_view.html'
     form_class=WorkspaceInvitationForm
     permission_required = 'member'
@@ -333,6 +333,8 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, BODBView,FormView):
             if coord.sed_coordinate.statistic_value is not None:
                 coord_array['statistic_value']=coord.sed_coordinate.statistic_value.__float__()
             context['selected_coords'].append(coord_array)
+
+        context=set_context_workspace(context, self.request.user)
 
         return context
 

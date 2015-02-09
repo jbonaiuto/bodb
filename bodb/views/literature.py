@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
 from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR, NeurophysiologySED
+from bodb.views.main import BODBView
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
@@ -217,7 +218,7 @@ class LiteraturePubmedView(View):
         return redirect(literature.get_absolute_url())
 
 
-class LiteratureDetailView(TemplateView):
+class LiteratureDetailView(BODBView):
     template_name = 'bodb/literature/literature_view.html'
 
     def get_context_data(self, **kwargs):
@@ -279,8 +280,6 @@ class LiteratureDetailView(TemplateView):
 
         context['is_favorite']=False
         context['selected']=False
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
 
         if user.is_authenticated() and not user.is_anonymous():
             context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).count()>0
@@ -288,10 +287,7 @@ class LiteratureDetailView(TemplateView):
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
                 user=user).count()>0
 
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-            context['selected']=active_workspace.related_literature.filter(id=literature.id).count()>0
+            context['selected']=context['active_workspace'].related_literature.filter(id=literature.id).count()>0
 
         return context
 

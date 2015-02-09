@@ -8,17 +8,20 @@ from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
+def set_context_workspace(context, user):
+    context['can_add_entry']=False
+    context['can_remove_entry']=False
+    context['active_workspace']=None
+    if user.is_authenticated() and not user.is_anonymous():
+        context['active_workspace']=user.get_profile().active_workspace
+        context['can_add_entry']=user.has_perm('add_entry',context['active_workspace'])
+        context['can_remove_entry']=user.has_perm('remove_entry',context['active_workspace'])
+    return context
+
 class BODBView(TemplateView):
     def get_context_data(self, **kwargs):
-        context = super(BODBView, self).get_context_data(**kwargs)
-        user=self.request.user
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=super(BODBView,self).get_context_data()
+        context=set_context_workspace(context, self.request.user)
         return context
 
 

@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import BOPForm, BOPRelatedBOPFormSet

@@ -4,6 +4,7 @@ from Bio import Entrez
 from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from bodb.search.workspace import runWorkspaceSearch
+from bodb.views.main import BODBView, set_context_workspace
 
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.http import HttpResponse
@@ -53,14 +54,7 @@ class SearchView(FormView):
         context['bopBOPGraphId']='bopRelationshipDiagram'
         context['allModelGraphId']='allModelRelationshipDiagram'
         context['modelModelGraphId']='modelRelationshipDiagram'
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        user=self.request.user
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['active_workspace']=active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -417,13 +411,7 @@ class BOPSearchView(FormView):
         context['exclude']=self.request.GET.get('exclude',None)
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        user=self.request.user
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
 
         return context
 
@@ -490,12 +478,7 @@ class BrainRegionSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         if 'fieldName' in self.request.GET:
             context['fieldName']=self.request.GET['fieldName']
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -547,12 +530,7 @@ class LiteratureSearchView(FormView):
         context['searchLabel']='Literature'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -605,13 +583,7 @@ class ModelSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         context['exclude']=self.request.GET.get('exclude',None)
         context['modelGraphId']='modelRelationshipDiagram'
-        user=self.request.user
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -669,12 +641,7 @@ class SEDSearchView(FormView):
         context['type']=self.request.GET.get('type',None)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context=set_context_workspace(context, self.request.user)
 
         return context
 
@@ -719,9 +686,6 @@ class SEDSearchView(FormView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs], user)
         context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs,user)
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-
         if self.request.is_ajax():
             ajax_context={
                 'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
