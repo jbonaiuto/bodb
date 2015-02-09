@@ -7,6 +7,7 @@ from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, 
 from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
+from django.core.cache import cache
 
 def set_context_workspace(context, user):
     context['can_add_entry']=False
@@ -37,23 +38,49 @@ class IndexView(BODBView):
         context['seds'] = SED.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
         context['ssrs'] = SSR.objects.filter(draft=0, public=1).order_by('-creation_time')[:4]
 
-        context['model_count']=Model.objects.filter(draft=0, public=1).count()
-        context['bop_count']=BOP.objects.filter(draft=0, public=1).count()
-        context['sed_count']=SED.objects.filter(draft=0, public=1).count()
-        context['ssr_count']=SSR.objects.filter(draft=0, public=1).count()
+        context['model_date']=cache.get('%d.last_model_date' % self.request.user.id)
+        context['model_count']=cache.get('%d.all_model_count' % self.request.user.id)
+        if not context['model_date']:
+            context['model_date']=''
+            public_models=Model.objects.filter(draft=0, public=1).order_by('-creation_time')
+            context['model_count']=public_models.count()
+            if context['model_count']>0:
+                context['model_date']=public_models[0].creation_time.strftime('%B %d, %Y')
+            cache.set('%d.last_model_date' % self.request.user.id, context['model_date'])
+            cache.set('%d.all_model_count' % self.request.user.id, context['model_count'])
 
-        context['model_date']=''
-        if Model.objects.filter(draft=0, public=1).count()>0:
-            context['model_date']=Model.objects.filter(draft=0, public=1).order_by('-creation_time')[0].creation_time.strftime('%B %d, %Y')
-        context['bop_date']=''
-        if BOP.objects.filter(draft=0, public=1).count()>0:
-            context['bop_date']=BOP.objects.filter(draft=0, public=1).order_by('-creation_time')[0].creation_time.strftime('%B %d, %Y')
-        context['sed_date']=''
-        if SED.objects.filter(draft=0, public=1).count()>0:
-            context['sed_date']=SED.objects.filter(draft=0, public=1).order_by('-creation_time')[0].creation_time.strftime('%B %d, %Y')
-        context['ssr_date']=''
-        if SSR.objects.filter(draft=0, public=1).count()>0:
-            context['ssr_date']=SSR.objects.filter(draft=0, public=1).order_by('-creation_time')[0].creation_time.strftime('%B %d, %Y')
+        context['bop_date']=cache.get('%d.last_bop_date' % self.request.user.id)
+        context['bop_count']=cache.get('%d.all_bop_count' % self.request.user.id)
+        if not context['bop_date']:
+            context['bop_date']=''
+            public_bops=BOP.objects.filter(draft=0, public=1).order_by('-creation_time')
+            context['bop_count']=public_bops.count()
+            if context['bop_count']>0:
+                context['bop_date']=public_bops[0].creation_time.strftime('%B %d, %Y')
+            cache.set('%d.last_bop_date' % self.request.user.id, context['bop_date'])
+            cache.set('%d.all_bop_count' % self.request.user.id, context['bop_count'])
+
+        context['sed_date']=cache.get('%d.last_sed_date' % self.request.user.id)
+        context['sed_count']=cache.get('%d.all_sed_count' % self.request.user.id)
+        if not context['sed_date']:
+            context['sed_date']=''
+            public_seds=SED.objects.filter(draft=0, public=1).order_by('-creation_time')
+            context['sed_count']=public_seds.count()
+            if context['sed_count']>0:
+                context['sed_date']=public_seds[0].creation_time.strftime('%B %d, %Y')
+            cache.set('%d.last_sed_date' % self.request.user.id, context['sed_date'])
+            cache.set('%d.all_sed_count' % self.request.user.id, context['sed_count'])
+
+        context['ssr_date']=cache.get('%d.last_ssr_date' % self.request.user.id)
+        context['ssr_count']=cache.get('%d.all_ssr_count' % self.request.user.id)
+        if not context['ssr_date']:
+            context['ssr_date']=''
+            public_ssrs=SSR.objects.filter(draft=0, public=1).order_by('-creation_time')
+            context['ssr_count']=public_ssrs.count()
+            if context['ssr_count']>0:
+                context['ssr_date']=public_ssrs[0].creation_time.strftime('%B %d, %Y')
+            cache.set('%d.last_ssr_date' % self.request.user.id, context['ssr_date'])
+            cache.set('%d.all_ssr_count' % self.request.user.id, context['ssr_count'])
 
         return context
 
