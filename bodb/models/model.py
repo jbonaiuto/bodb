@@ -171,16 +171,18 @@ class Model(Module):
             map[model.id]=[]
             build_seds=BuildSED.get_building_seds(model,user)
             for build_sed in build_seds:
-                map[model.id].append({'sed_id':build_sed.sed.id,'title':build_sed.sed.__unicode__().replace('\'','\\\''),
-                                      'sed_desc':build_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
-                                      'relationship':build_sed.relationship,
-                                      'relevance_narrative': build_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
+                if build_sed.sed:
+                    map[model.id].append({'sed_id':build_sed.sed.id,'title':build_sed.sed.__unicode__().replace('\'','\\\''),
+                                          'sed_desc':build_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
+                                          'relationship':build_sed.relationship,
+                                          'relevance_narrative': build_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
             test_seds=TestSED.get_testing_seds(model,user)
             for test_sed in test_seds:
-                map[model.id].append({'sed_id':test_sed.sed.id,'title':test_sed.sed.__unicode__().replace('\'','\\\''),
-                                      'sed_desc':test_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
-                                      'relationship':test_sed.relationship,
-                                      'relevance_narrative': test_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
+                if test_sed.sed:
+                    map[model.id].append({'sed_id':test_sed.sed.id,'title':test_sed.sed.__unicode__().replace('\'','\\\''),
+                                          'sed_desc':test_sed.sed.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' '),
+                                          'relationship':test_sed.relationship,
+                                          'relevance_narrative': test_sed.relevance_narrative.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')})
         return map
 
 
