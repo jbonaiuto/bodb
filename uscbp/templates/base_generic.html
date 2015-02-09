@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load guardian_tags %}
 {% load taggit_extras %}
+{% load cache %}
 <head>
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
     <script src="http://java.com/js/deployJava.js"></script>
@@ -140,6 +141,7 @@
         </div>
         <b class="c4f"></b><b class="c3f"></b><b class="c2f"></b><b class="c1f"></b>
         <br>
+        {% cache 500 sidebar request.user.username %}
         <div id="sidebar" style="width:260px">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
@@ -203,6 +205,7 @@
                 </tr>
             </table>
         </div>
+        {% endcache %}
     {% endif %}
     <div {% if not ispopup %}id="content"{% endif %}>
         {% block content%}{%endblock%}
