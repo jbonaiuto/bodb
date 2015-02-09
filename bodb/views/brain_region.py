@@ -7,6 +7,7 @@ from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
 from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem
 from bodb.search.sed import runSEDCoordSearch
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import AdminUpdateView, AdminCreateView
 from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -211,18 +212,13 @@ class BrainRegionView(DetailView):
         context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
         context['helpPage']='view_entry.html'
 
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
         context['is_favorite']=False
         context['selected']=False
 
+        context=set_context_workspace(context, user)
         if user.is_authenticated() and not user.is_anonymous():
             context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).count()>0
-
-            active_workspace=user.get_profile().active_workspace
-            context['selected']=active_workspace.related_regions.filter(id=self.object.id).count()>0
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+            context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).count()>0
 
         return context
 

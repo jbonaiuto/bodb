@@ -8,6 +8,7 @@ from django.views.generic.edit import BaseCreateView
 import sys
 import time
 from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, SelectedSEDCoord
+from bodb.views.main import BODBView, set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
 from uscbp import settings
@@ -38,7 +39,7 @@ class DocumentAPIListView(generics.ListCreateAPIView):
         security_q=Document.get_security_q(user)
         return Document.objects.filter(security_q)
 
-class DocumentDetailView(DetailView):
+class DocumentDetailView( DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
@@ -61,15 +62,11 @@ class DocumentDetailView(DetailView):
         context['selected']=False
         context['can_add_post']=False
         context['public_request_sent']=False
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
+        context=set_context_workspace(context, self.request.user)
         if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
             context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).count()>0
-            context['selected']=active_workspace.related_bops.filter(id=self.object.id).count()>0
+            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).count()>0
             context['can_add_post']=True
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).count()>0
         return context
     

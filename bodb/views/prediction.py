@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import UpdateView, DeleteView, TemplateView
 from bodb.forms.ssr import PredictionForm
 from bodb.models import Prediction, SSR, Document, UserSubscription, Model
 from bodb.serializers import PredictionSerializer
