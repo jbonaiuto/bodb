@@ -112,11 +112,11 @@
     $(document).ready(function()
     {
         {% for u in users %}
-            addUser({{ u.id }},'{{ u.username }}',{% if u.is_active %}true{% else %}false{% endif %},
+            addUser({{ u.id }},'{{ u.username|escapejs }}',{% if u.is_active %}true{% else %}false{% endif %},
                     {% if u.is_staff %}true{% else %}false{% endif %},
                     {% if u.is_superuser %}true{% else %}false{% endif %},
-                    '{% for group in u.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}',
-                    '{{ u.first_name }} {{ u.last_name }}','{{ u.email }}');
+                    '{% for group in u.groups.all %}{{ group.name|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    '{{ u.first_name|escapejs }} {{ u.last_name|escapejs }}','{{ u.email }}');
         {% endfor %}
     });
 </script>

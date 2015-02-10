@@ -60,7 +60,7 @@
     $(document).ready(function()
     {
         {% for group in groups %}
-            addGroup({{ group.id }},'{{ group.name }}')
+            addGroup({{ group.id }},'{{ group.name|escapejs }}')
         {% endfor %}
     });
 </script>
