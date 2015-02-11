@@ -244,7 +244,6 @@ class SEDReportView(FormView):
         context['sed']=get_object_or_404(SED, id=self.kwargs.get('pk', None))
         context=get_sed_report_context(self.request, context)
         context['ispopup']='_popup' in self.request.GET
-        print(context)
         return context
 
     def form_valid(self, form):
