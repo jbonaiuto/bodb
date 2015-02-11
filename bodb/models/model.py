@@ -244,7 +244,7 @@ class RelatedModel(models.Model):
     @staticmethod
     def get_related_models(document, user):
         return RelatedModel.objects.filter(Q(Q(document=document) &
-                                             Document.get_security_q(user, field='model'))).distinct()
+                                             Document.get_security_q(user, field='model'))).distinct().select_related('model')
 
     @staticmethod
     def get_reverse_related_model_list(rrmods, user):

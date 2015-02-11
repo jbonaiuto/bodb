@@ -562,7 +562,8 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
-        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
+        literature=self.object.literature.all().prefetch_related('collator','authors__author')
+        context['references'] = Literature.get_reference_list(literature,user)
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,

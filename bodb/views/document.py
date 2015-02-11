@@ -52,7 +52,7 @@ class DocumentDetailView( DetailView):
         context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
         context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
-        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(RelatedBrainRegion.objects.filter(document=self.object), user)
+        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(RelatedBrainRegion.objects.filter(document=self.object).prefetch_related('brain_region__nomenclature__species'), user)
         context['canEdit']=self.object.check_perm(user,'edit')
         context['canDelete']=self.object.check_perm(user,'delete')
         context['canManage']=self.object.check_perm(user,'manage')
