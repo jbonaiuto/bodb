@@ -68,7 +68,7 @@
                 idx: count,
                 id : {{ bookmark.id }},
                 collator_id: {{ bookmark.collator.id }},
-                collator_username: '{{ bookmark.collator.username }}',
+                collator_username: '{{ bookmark.collator.username|escapejs }}',
                 url: '{{ bookmark.url|escapejs }}',
                 urltrunc: '{{ bookmark.url|urlizetrunc:15|escapejs }}',
                 title: '{{ bookmark.title|escapejs }}',

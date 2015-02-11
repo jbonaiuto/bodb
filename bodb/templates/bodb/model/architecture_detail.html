@@ -170,15 +170,15 @@
     $(document).ready(function(){
         {% for input_form in input_formset.forms %}
             addInput({{ input_form.instance.id }}, '{{ input_form.instance.name|escapejs }}',
-                    '{{ input_form.instance.data_type }}', '{{ input_form.instance.description|escapejs }}');
+                    '{{ input_form.instance.data_type|escapejs }}', '{{ input_form.instance.description|escapejs }}');
         {% endfor %}
         {% for output_form in output_formset.forms %}
             addOutput({{ output_form.instance.id }}, '{{ output_form.instance.name|escapejs }}',
-                    '{{ output_form.instance.data_type }}', '{{ output_form.instance.description|escapejs }}');
+                    '{{ output_form.instance.data_type|escapejs }}', '{{ output_form.instance.description|escapejs }}');
         {% endfor %}
         {% for state_form in state_formset.forms %}
             addState({{ state_form.instance.id }}, '{{ state_form.instance.name|escapejs }}',
-                    '{{ state_form.instance.data_type }}', '{{ state_form.instance.description|escapejs }}');
+                    '{{ state_form.instance.data_type|escapejs }}', '{{ state_form.instance.description|escapejs }}');
         {% endfor %}
         {% for module_form in module_formset.forms %}
             addSubmodule({{ module_form.instance.id }}, '{{ module_form.instance.title|escapejs }}',

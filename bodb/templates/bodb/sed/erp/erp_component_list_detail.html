@@ -164,16 +164,18 @@
 
     $(document).ready(function(){
         {% for erp_component_form in erp_component_formset.forms %}
-            addComponentForm({{ erp_component_form.instance.id }}, '{{ erp_component_form.instance.component_name }}',
-                    '{{ erp_component_form.instance.latency_peak }}',
-                    '{{ erp_component_form.instance.latency_peak_type }}',
-                    '{{ erp_component_form.instance.latency_onset }}',
-                    '{{ erp_component_form.instance.amplitude_peak }}',
-                    '{{ erp_component_form.instance.amplitude_mean }}',
+            addComponentForm({{ erp_component_form.instance.id }},
+                    '{{ erp_component_form.instance.component_name|escapejs }}',
+                    '{{ erp_component_form.instance.latency_peak|escapejs }}',
+                    '{{ erp_component_form.instance.latency_peak_type|escapejs }}',
+                    '{{ erp_component_form.instance.latency_onset|escapejs }}',
+                    '{{ erp_component_form.instance.amplitude_peak|escapejs }}',
+                    '{{ erp_component_form.instance.amplitude_mean|escapejs }}',
                     '{{ erp_component_form.instance.electrode_position.position_system.id }}',
                     '{{ erp_component_form.instance.electrode_position.id }}',
                     '{{ erp_component_form.instance.electrode_cap.id }}',
-                    '{{ erp_component_form.instance.channel_number }}', '{{ erp_component_form.instance.source }}',
+                    '{{ erp_component_form.instance.channel_number|escapejs }}',
+                    '{{ erp_component_form.instance.source|escapejs }}',
                     '{{ erp_component_form.instance.interpretation|escapejs }}');
         {% endfor %}
     });

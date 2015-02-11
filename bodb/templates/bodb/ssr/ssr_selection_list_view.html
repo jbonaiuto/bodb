@@ -15,7 +15,7 @@
                         title_str: '{{ ssr|escapejs }}',
                         draft: {% if ssr.draft %}true{% else %}false{% endif %},
                         collator_id: {{ ssr.collator.id }},
-                        collator: '{{ ssr.get_collator_str }}',
+                        collator: '{{ ssr.get_collator_str|escapejs }}',
                         subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                     }
             );

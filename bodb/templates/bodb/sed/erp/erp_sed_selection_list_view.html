@@ -104,14 +104,14 @@
                                 name: '{{ component.component_name|escapejs }}',
                                 latency_peak: '{{ component.latency_peak|escapejs }}',
                                 latency_peak_type: '{{ component.latency_peak_type|escapejs }}',
-                                position_system: '{% if component.electrode_position %}{{ component.electrode_position.position_system.name }}{% endif %}',
-                                position: '{% if component.electrode_position %}{{ component.electrode_position.name }}{% endif %}'},{% endfor %}],
+                                position_system: '{% if component.electrode_position %}{{ component.electrode_position.position_system.name|escapejs }}{% endif %}',
+                                position: '{% if component.electrode_position %}{{ component.electrode_position.name|escapejs }}{% endif %}'},{% endfor %}],
                             is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
                             selected: {% if selected %}true{% else %}false{% endif %},
                             title_str: '{{ sed|escapejs }}',
                             draft: {% if sed.draft %}true{% else %}false{% endif %},
                             collator_id: {{ sed.collator.id }},
-                            collator: '{{ sed.get_collator_str }}',
+                            collator: '{{ sed.get_collator_str|escapejs }}',
                             subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                         }
                 );

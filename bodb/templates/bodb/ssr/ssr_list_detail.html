@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         {% for ssr in ssrs %}
-            addSSR({{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type }}');
+            addSSR({{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
         {% endfor %}
     });
 </script>
