@@ -142,12 +142,12 @@ class RelatedBOP(models.Model):
     @staticmethod
     def get_related_bops(document, user):
         return RelatedBOP.objects.filter(Q(Q(document=document) &
-                                           Document.get_security_q(user, field='bop'))).distinct()
+                                           Document.get_security_q(user, field='bop'))).distinct().select_related('bop')
 
     @staticmethod
     def get_reverse_related_bops(bop, user):
         return RelatedBOP.objects.filter(Q(Q(bop=bop) & Q(document__bop__isnull=False) &
-                                           Document.get_security_q(user, field='document'))).distinct()
+                                           Document.get_security_q(user, field='document'))).distinct().select_related('bop')
 
     @staticmethod
     def get_brain_region_related_bops(brain_region, user):

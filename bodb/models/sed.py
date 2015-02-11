@@ -529,7 +529,7 @@ class BuildSED(models.Model):
 
     @staticmethod
     def get_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct()
+        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct().select_related('sed')
 
     @staticmethod
     def get_generic_building_seds(document, user):
@@ -615,7 +615,7 @@ class TestSED(models.Model):
     @staticmethod
     def get_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed','ssr')
 
     @staticmethod
     def get_generic_testing_seds(model, user):
