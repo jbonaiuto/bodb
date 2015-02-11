@@ -11,11 +11,11 @@
     $(document).ready(function()
     {
         {% for build_sed_form in build_sed_formset.forms %}
-            addBuildSEDMultiple('{{ build_sed_form.instance.id }}', '{{ build_sed_form.instance.relationship }}',
-                    '{{ build_sed_form.instance.relevance_narrative }}', {{ build_sed_form.instance.sed.id }},
+            addBuildSEDMultiple('{{ build_sed_form.instance.id }}', '{{ build_sed_form.instance.relationship|escapejs }}',
+                    '{{ build_sed_form.instance.relevance_narrative|escapejs }}', {{ build_sed_form.instance.sed.id }},
                     ['{{ build_sed_form.instance.sed.title|escapejs }}',
                         '{{ build_sed_form.instance.sed.brief_description|escapejs }}',
-                        '{{ build_sed_form.instance.sed.type }}'])
+                        '{{ build_sed_form.instance.sed.type|escapejs }}'])
         {% endfor %}
     });
 </script>

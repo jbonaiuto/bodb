@@ -25,11 +25,11 @@
     $(document).ready(function(){
         {% for related_brain_region_form in related_brain_region_formset.forms %}
             addBrainRegionMultiple({{ related_brain_region_form.instance.id }},
-                    '{{ related_brain_region_form.instance.relationship }}',
+                    '{{ related_brain_region_form.instance.relationship|escapejs }}',
                     {{ related_brain_region_form.instance.brain_region.id }},
-                    ['{{ related_brain_region_form.instance.brain_region }}',
-                        '{{ related_brain_region_form.instance.brain_region.nomenclature }}',
-                        '{{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "}}']);
+                    ['{{ related_brain_region_form.instance.brain_region|escapejs }}',
+                        '{{ related_brain_region_form.instance.brain_region.nomenclature|escapejs }}',
+                        '{{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "|escapejs }}']);
         {% endfor %}
     })
 </script>

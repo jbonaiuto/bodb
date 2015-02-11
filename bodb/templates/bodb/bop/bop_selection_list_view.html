@@ -20,7 +20,7 @@
                             title_str: '{{ bop|escapejs }}',
                             draft: {% if bop.draft %}true{% else %}false{% endif %},
                             collator_id: {{ bop.collator.id }},
-                            collator: '{{ bop.get_collator_str }}',
+                            collator: '{{ bop.get_collator_str|escapejs }}',
                             subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                         }
                 );

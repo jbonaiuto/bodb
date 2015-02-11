@@ -20,7 +20,7 @@
                             title_str: '{{ model|escapejs }}',
                             draft: {% if model.draft %}true{% else %}false{% endif %},
                             collator_id: {{ model.collator.id }},
-                            collator: '{{ model.get_collator_str }}',
+                            collator: '{{ model.get_collator_str|escapejs }}',
                             subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                         }
                 );

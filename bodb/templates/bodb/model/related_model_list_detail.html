@@ -24,9 +24,10 @@
 
     $(document).ready(function(){
         {% for related_model_form in related_model_formset.forms %}
-            addModelMultiple({{ related_model_form.instance.id }}, '{{ related_model_form.instance.relationship }}',
-                    {{ related_model_form.instance.model.id }}, ['{{ related_model_form.instance.model.title }}',
-                        '{{ related_model_form.instance.model.brief_description|escapejs }}']);
+            addModelMultiple({{ related_model_form.instance.id }},
+                    '{{ related_model_form.instance.relationship|escapejs }}',
+                    {{ related_model_form.instance.model.id }},
+                    ['{{ related_model_form.instance.model.title|escapejs }}', '{{ related_model_form.instance.model.brief_description|escapejs }}']);
         {% endfor %}
     });
 </script>
