@@ -616,7 +616,6 @@ class ModelSearchView(FormView):
                 'models_start_index':models.start_index(),
                 'models_end_index': models.end_index(),
             }
-            print(ajax_context)
             if models.has_next():
                 ajax_context['models_next_page_number']=models.next_page_number()
             if models.has_previous():
