@@ -44,7 +44,7 @@ function processModelResults(data)
         eval(groupName+"edges=[];");
         for(var i=0; i<data['models'].length; i++)
         {
-            var count = $( this ).children().length;
+            var count = $( this ).children().length-1;
             var tmplMarkup = $('#model-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 {
@@ -133,7 +133,7 @@ function processBOPResults(data)
         eval(groupName+"edges=[];");
         for(var i=0; i<data['bops'].length; i++)
         {
-            var count = $(this).children().length;
+            var count = $(this).children().length-1;
             var tmplMarkup = $('#bop-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 {
@@ -253,7 +253,7 @@ function processSEDResults(data)
         $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
         for(var i=0; i<data['erp_seds'].length; i++)
         {
-            var count = $(this).children().length;
+            var count = $(this).children().length-1;
             var tmplMarkup = $('#erp_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 {
@@ -295,7 +295,7 @@ function processSEDResults(data)
         eval(groupName+"edges=[];");
         for(var i=0; i<data['connectivity_seds'].length; i++)
         {
-            var count = $(this).children().length;
+            var count = $(this).children().length-1;
             var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
             var compiledTmpl = _.template(tmplMarkup,
                 {
