@@ -15,7 +15,7 @@
 
     $(document).ready(function(){
         {% for reference in references %}
-            addLiteratureMultiple({{ reference.id }}, ['{{ reference.author_names }}', '{{ reference.year }}',
+            addLiteratureMultiple({{ reference.id }}, ['{{ reference.author_names|escapejs }}', '{{ reference.year }}',
                 '{{ reference.title|escapejs }}']);
         {% endfor %}
     });

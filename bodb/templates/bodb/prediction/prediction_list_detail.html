@@ -56,12 +56,14 @@
     
     $(document).ready(function(){
         {% for prediction_form in prediction_formset.forms %}
-            addPrediction({{ prediction_form.instance.id }}, '{{ prediction_form.instance.title }}', 
-                    '{{ prediction_form.instance.brief_description }}', {{ prediction_form.instance.collator.id }},
+            addPrediction({{ prediction_form.instance.id }},
+                    '{{ prediction_form.instance.title|escapejs }}',
+                    '{{ prediction_form.instance.brief_description|escapejs }}', {{ prediction_form.instance.collator.id }},
                     {{ prediction_form.instance.draft }}, {{ prediction_form.instance.public }}, 
                     {% if prediction_form.instance.ssr %}{{ prediction_form.instance.ssr.id }},
-                    '{{ prediction_form.instance.ssr.title }}','{{ prediction_form.instance.ssr.brief_description }}',
-                    '{{ prediction_form.instance.ssr.type }}'{% else %}'','','',''{% endif %});
+                    '{{ prediction_form.instance.ssr.title|escapejs }}',
+                    '{{ prediction_form.instance.ssr.brief_description|escapejs }}',
+                    '{{ prediction_form.instance.ssr.type|escapejs }}'{% else %}'','','',''{% endif %});
         {% endfor %}
     });
 </script>

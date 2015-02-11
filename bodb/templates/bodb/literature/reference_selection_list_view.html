@@ -13,9 +13,9 @@
                         is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
                         selected: {% if selected %}true{% else %}false{% endif %},
                         title: '{{ literature.title|escapejs }}',
-                        string: '{{ literature.str }}',
+                        string: '{{ literature.str|escapejs }}',
                         collator_id: {{ literature.collator.id }},
-                        collator: '{{ literature.get_collator_str }}',
+                        collator: '{{ literature.get_collator_str|escapejs }}',
                         subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %},
                         url_str: '{{ literature.html_url_string|escapejs }}'
                     }

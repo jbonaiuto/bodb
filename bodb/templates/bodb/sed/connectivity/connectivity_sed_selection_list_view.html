@@ -21,7 +21,7 @@
                             title_str: '{{ sed|escapejs }}',
                             draft: {% if sed.draft %}true{% else %}false{% endif %},
                             collator_id: {{ sed.collator.id }},
-                            collator: '{{ sed.get_collator_str }}',
+                            collator: '{{ sed.get_collator_str|escapejs }}',
                             subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                         }
                 );

@@ -24,14 +24,15 @@
                         url_str: '{{ sed.html_url_string|escapejs }}',
                         brief_description: '{{ sed.brief_description|escapejs }}',
                         coords: [{% for coord,coord_selected in coords %}[{id:{{ coord.id }},
-                            brain_region:'{{ coord.named_brain_region }}',hemisphere: '{{ coord.hemisphere }}',
-                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}},{% if coord_selected %}true{% else %}false{% endif %}],{% endfor %}],
+                            brain_region:'{{ coord.named_brain_region|escapejs }}',hemisphere: '{{ coord.hemisphere }}',
+                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}},
+                            {% if coord_selected %}true{% else %}false{% endif %}],{% endfor %}],
                         is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
                         selected: {% if selected %}true{% else %}false{% endif %},
                         title_str: '{{ sed|escapejs }}',
                         draft: {% if sed.draft %}true{% else %}false{% endif %},
                         collator_id: {{ sed.collator.id }},
-                        collator: '{{ sed.get_collator_str }}',
+                        collator: '{{ sed.get_collator_str|escapejs }}',
                         subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
                     }
             );

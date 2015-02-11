@@ -115,8 +115,8 @@
             var count = $('#invitationList').children().length;
             var tmplMarkup = $('#invitation-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count,  id: {{ invitation.id }},
-                sent: '{{ invitation.sent }}', user: '{{ invitation.invited_user }}',
-                body: '{{ invitation.invitation_body }}', status: '{{ invitation.status }}'});
+                sent: '{{ invitation.sent }}', user: '{{ invitation.invited_user|escapejs }}',
+                body: '{{ invitation.invitation_body|escapejs }}', status: '{{ invitation.status|escapejs }}'});
             $('#invitationList').append(compiledTmpl);
             $('textarea:not(.processed)').TextAreaResizer();
         {% endfor %}

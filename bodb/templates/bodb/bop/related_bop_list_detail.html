@@ -38,7 +38,7 @@
 
     $(document).ready(function(){
         {% for related_bop_form in related_bop_formset.forms %}
-            addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship }}',
+            addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship|escapejs }}',
                     '{{ related_bop_form.instance.relevance_narrative|escapejs }}',
                     {{ related_bop_form.instance.bop.id }}, ['{{ related_bop_form.instance.bop.title|escapejs }}',
                         '{{ related_bop_form.instance.bop.brief_description|escapejs }}'])
