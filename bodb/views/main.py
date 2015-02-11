@@ -189,7 +189,8 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             literature=Literature.objects.filter(id__in=profile.favorite_literature.all()).prefetch_related('collator','authors__author')
             context['literatures']=Literature.get_reference_list(literature,user)
 
-            context['brain_regions']=BrainRegion.get_region_list(BrainRegion.objects.filter(id__in=profile.favorite_regions.all()),user)
+            brain_regions=BrainRegion.objects.filter(id__in=profile.favorite_regions.all()).prefetch_related('nomenclature__species')
+            context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
 
             models=Model.objects.filter(document_ptr__in=profile.favorites.all()).prefetch_related('collator','authors__author')
             context['models']=Model.get_model_list(models,user)
