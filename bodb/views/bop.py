@@ -204,7 +204,7 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
 
     def get_object(self, queryset=None):
         if not hasattr(self,'object'):
-            self.object=get_object_or_404(BOP.objects.select_related('forum','parent','collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+            self.object=get_object_or_404(BOP.objects.select_related('forum','parent','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
         return self.object
 
     def get_context_data(self, **kwargs):
