@@ -292,10 +292,10 @@ class RelatedModel(models.Model):
     def get_brain_region_related_models(brain_region, user):
         related_regions=RelatedBrainRegion.objects.filter(Q(Q(document__module__model__isnull=False) &
                                                             Q(brain_region=brain_region) &
-                                                            Document.get_security_q(user, field='document'))).distinct()
+                                                            Document.get_security_q(user, field='document'))).distinct().select_related('document')
         related_models=[]
         for related_region in related_regions:
-            related_models.append(RelatedModel(model=Model.objects.get(id=related_region.document.id),
+            related_models.append(RelatedModel(model=Model.objects.select_related('collator').prefetch_related('authors__author').get(id=related_region.document.id),
                 relationship=related_region.relationship))
         return related_models
 

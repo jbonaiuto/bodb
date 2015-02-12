@@ -156,7 +156,7 @@ class RelatedBOP(models.Model):
                                                             Document.get_security_q(user, field='document'))).distinct().select_related('document')
         related_bops=[]
         for related_region in related_regions:
-            related_bops.append(RelatedBOP(bop=BOP.objects.get(id=related_region.document.id),
+            related_bops.append(RelatedBOP(bop=BOP.objects.select_related('collator').get(id=related_region.document.id),
                     relevance_narrative=related_region.relationship))
         return related_bops
 

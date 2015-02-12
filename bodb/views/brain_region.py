@@ -1,6 +1,6 @@
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
@@ -31,7 +31,7 @@ class BrainRegionRequestListView(LoginRequiredMixin,ListView):
         return context
 
     def get_queryset(self):
-        return BrainRegionRequest.objects.filter(user=self.request.user)
+        return BrainRegionRequest.objects.filter(user=self.request.user).select_related('user')
 
 
 class CreateBrainRegionRequestView(LoginRequiredMixin,CreateView):
@@ -60,7 +60,7 @@ class CheckBrainRegionRequestExistsView(LoginRequiredMixin,JSONResponseMixin,Bas
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax() and 'name' in self.request.POST:
             name_str = self.request.POST['name']
-            if not BrainRegionRequest.objects.filter(name=name_str).count():
+            if not BrainRegionRequest.objects.filter(name=name_str).exists():
                 context = {'requestExists': '0'}
             else:
                 context = {'requestExists': '1'}
@@ -112,7 +112,7 @@ class BrainRegionRequestApproveView(AdminCreateView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestApproveView,self).get_context_data(**kwargs)
-        context['request']=BrainRegionRequest.objects.get(activation_key=self.kwargs.get('activation_key'))
+        context['request']=BrainRegionRequest.objects.select_related('user').get(activation_key=self.kwargs.get('activation_key'))
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
@@ -157,6 +157,9 @@ class BrainRegionAPIDetailView(DocumentAPIDetailView):
 class BrainRegionView(DetailView):
     model = BrainRegion
     template_name='bodb/brainRegion/brain_region_view.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(BrainRegion.objects.select_related('nomenclature__literature').prefetch_related('nomenclature__species','nomenclature__lit__authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionView,self).get_context_data(**kwargs)
