@@ -14,6 +14,7 @@ from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.backends.default.views import RegistrationView
 from registration.models import User
+from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 @login_required
@@ -21,7 +22,7 @@ def logout_view(request):
     # perform logout
     logout(request)
     # redirect to index
-    return render_to_response('registration/logout.html')
+    return render_to_response('registration/logout.html', user=User.objects.get(id = settings.ANONYMOUS_USER_ID))
 
 
 # check if a username is unique
