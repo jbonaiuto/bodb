@@ -46,10 +46,15 @@ class DocumentDetailView( DetailView):
         user=self.request.user
         context['helpPage']='index.html'
         context['figures'] = DocumentFigure.objects.filter(document=self.object).order_by('order')
-        context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
-        context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
-        context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)
-        context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
+        context['generic_build_seds']=[]
+        context['connectivity_build_seds']=[]
+        context['imaging_build_seds']=[]
+        context['erp_build_seds']=[]
+        if BuildSED.get_building_seds(self.object,user).exists():
+            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
+            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
+            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)
+            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
         context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
         context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
         context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(RelatedBrainRegion.objects.filter(document=self.object).prefetch_related('brain_region__nomenclature__species'), user)
