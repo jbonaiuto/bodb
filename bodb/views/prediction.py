@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import UpdateView, DeleteView, TemplateView
 from bodb.forms.ssr import PredictionForm
 from bodb.models import Prediction, SSR, Document, UserSubscription, Model
@@ -29,6 +29,11 @@ class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
     form_class = PredictionForm
     template_name = 'bodb/prediction/prediction_detail.html'
     permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Prediction.objects.select_related('collator','ssr__collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePredictionView,self).get_context_data(**kwargs)
@@ -64,12 +69,17 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
     template_name = 'bodb/prediction/prediction_view.html'
     permission_required = 'view'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Prediction.objects.select_related('forum','collator','last_modified_by','ssr__collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(PredictionDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
-        models=Model.objects.filter(Q(prediction=self.object))
+        models=Model.objects.filter(Q(prediction=self.object)).select_related('collator').prefetch_related('authors__author')
         context['model']=None
-        if models.count():
+        if models.exists():
             context['model']=models[0]
         ssrs=[]
         if self.object.ssr:
