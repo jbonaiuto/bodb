@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
-from bodb.models.messaging import Message, UserSubscription
+from bodb.models.messaging import Message, UserSubscription, messageUser
 from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
@@ -166,19 +166,7 @@ class WorkspaceInvitation(models.Model):
         text += 'or<br>'
         text += '<a href="%s">Decline</a>' % decline_url
         self.sent=datetime.datetime.now()
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=self.invited_user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=self.invited_user, subject=subject, read=False)
-            message.text = text
-            message.save()
-
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.invited_user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
+        messageUser(self.invited_user, subject, text)
 
     def save(self, **kwargs):
         if self.id is None:

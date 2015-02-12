@@ -1057,7 +1057,7 @@ class CoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateV
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             # load requested coordinate selection
-            selection=get_object_or_404(SavedSEDCoordSelection, id=self.request.POST['id'])
+            selection=get_object_or_404(SavedSEDCoordSelection.objects.select_related('user','last_modified_by'), id=self.request.POST['id'])
             self.request.user.get_profile().loaded_coordinate_selection=selection
             self.request.user.get_profile().save()
 
@@ -1074,7 +1074,7 @@ class CoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateV
                 'last_modified_by_id':selection.last_modified_by.id,
                 }
 
-            selected_coord_objs=SelectedSEDCoord.objects.filter(saved_selection=selection)
+            selected_coord_objs=SelectedSEDCoord.objects.filter(saved_selection=selection).select_related('sed_coordinate__sed')
 
             context['selected_coords']=[]
             for coord in selected_coord_objs:
