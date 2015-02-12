@@ -185,7 +185,7 @@
                                     selectionId=document.getElementById('id_selectionId').value;
                                     var data = { 'name': selectionName, 'description': selectionDesc, 'id': selectionId,
                                         'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                                    var args = { type: "POST", url: "/bodb/workspace/coord_selection/save/", data: data,
+                                    var args = { type: "POST", url: "/bodb/workspace/{{ workspace.id }}/coord_selection/save/", data: data,
                                         complete: doneSaveCoordinateSelection };
                                     $.ajax(args)
                                 }
