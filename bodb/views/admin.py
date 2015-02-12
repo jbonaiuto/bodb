@@ -3,12 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect
-from django.shortcuts import redirect, render_to_response, render
+from django.shortcuts import redirect, render_to_response, render, get_object_or_404
 from django.views.generic import UpdateView, View, CreateView, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
-from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR
+from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
@@ -106,7 +106,7 @@ class AdminDetailView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             context={'helpPage':'admin.html',
-                     'users': User.objects.all().order_by('username'),
+                     'users': User.objects.all().order_by('username').prefetch_related('groups'),
                      'groups': Group.objects.all().order_by('name'),
                      'nomenclatures': Nomenclature.objects.all().order_by('name')}
             return render(request, self.template, context)
@@ -181,9 +181,14 @@ class UpdateUserView(EditUserMixin,AdminUpdateView):
         return context
 
 
-class UserDetailView(AdminDetailView):
+class UserDetailView(DetailView):
     model = User
     template_name = 'bodb/admin/user_view.html'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(User.objects.prefetch_related('groups'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(UserDetailView,self).get_context_data(**kwargs)
@@ -192,25 +197,37 @@ class UserDetailView(AdminDetailView):
         context['action']=self.request.GET.get('action',None)
         for permission in bodb_permissions:
             context[permission]=self.object.has_perm('bodb.%s' % permission)
-        models=Model.objects.filter(collator=self.object)
+
+        models=Model.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
         context['models']=Model.get_model_list(models,self.request.user)
         context['model_seds']=Model.get_sed_map(models, self.request.user)
-        bops=BOP.objects.filter(collator=self.object)
+
+        bops=BOP.objects.filter(collator=self.object).select_related('collator')
         context['bops']=BOP.get_bop_list(bops,self.request.user)
         context['bop_relationships']=BOP.get_bop_relationships(bops, self.request.user)
-        context['generic_seds']=SED.get_sed_list(SED.objects.filter(type='generic',collator=self.object),self.request.user)
-        conn_seds=ConnectivitySED.objects.filter(collator=self.object)
+
+        generic_seds=SED.objects.filter(type='generic',collator=self.object).select_related('collator')
+        context['generic_seds']=SED.get_sed_list(generic_seds,self.request.user)
+
+        conn_seds=ConnectivitySED.objects.filter(collator=self.object).select_related('collator','target_region__nomenclature','source_region__nomenclature')
         context['connectivity_seds']=SED.get_sed_list(conn_seds,self.request.user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
-        imaging_seds=BrainImagingSED.objects.filter(collator=self.object)
-        coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
+
+        imaging_seds=BrainImagingSED.objects.filter(collator=self.object).select_related('collator')
+        coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,self.request.user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, self.request.user)
-        erp_seds=ERPSED.objects.filter(collator=self.object)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+
+        erp_seds=ERPSED.objects.filter(collator=self.object).select_related('collator')
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['ssrs']=SSR.get_ssr_list(SSR.objects.filter(collator=self.object),self.request.user)
+
+        ssrs=SSR.objects.filter(collator=self.object).select_related('collator')
+        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user)
+
+        literature=Literature.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
+        context['literatures']=Literature.get_reference_list(literature,self.request.user)
         return context
 
 
@@ -351,7 +368,7 @@ class UpdateGroupView(AdminUpdateView):
         return redirect(redirect_url)
 
 
-class GroupDetailView(AdminDetailView):
+class GroupDetailView(DetailView):
     model = Group
     template_name = 'bodb/admin/group_view.html'
 
