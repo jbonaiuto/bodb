@@ -102,12 +102,12 @@ class Literature(models.Model):
         return reverse('lit_view', kwargs={'pk': self.pk})
 
     def str(self):
-        if Journal.objects.filter(id=self.id):
-            return Journal.objects.get(id=self.id).str()
-        elif Book.objects.filter(id=self.id):
-            return Book.objects.get(id=self.id).str()
-        elif Chapter.objects.filter(id=self.id):
-            return Chapter.objects.get(id=self.id).str()
+        if Journal.objects.filter(id=self.id).exists():
+            return Journal.objects.prefetch_related('authors__author').get(id=self.id).str()
+        elif Book.objects.filter(id=self.id).exists():
+            return Book.objects.prefetch_related('authors__author').get(id=self.id).str()
+        elif Chapter.objects.filter(id=self.id).exists():
+            return Chapter.objects.prefetch_related('authors__author').get(id=self.id).str()
         return u'%s, %s,  %s.' % (self.author_names(),str(self.year),self.title)
 
     # print authors

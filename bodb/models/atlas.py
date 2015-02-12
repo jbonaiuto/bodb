@@ -5,7 +5,7 @@ from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
 from bodb.models.workspace import BodbProfile
-from bodb.models.messaging import Message, UserSubscription
+from bodb.models.messaging import Message, UserSubscription, messageUser
 from bodb.models.literature import Literature
 from registration.models import User
 
@@ -278,19 +278,7 @@ class BrainRegionRequest(models.Model):
         users=User.objects.all()
         for user in users:
             if user.is_superuser:
-                # send internal message
-                profile=BodbProfile.objects.get(user__id=user.id)
-                notification_type=profile.notification_preference
-                if notification_type=='message' or notification_type=='both':
-                    message=Message(recipient=user, sender=self.user, subject=subject, read=False)
-                    message.text=text
-                    message.save()
-
-                # send email message
-                if notification_type=='email' or notification_type=='both':
-                    msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [user.email])
-                    msg.content_subtype = "html"  # Main content is now text/html
-                    msg.send(fail_silently=True)
+                messageUser(user, subject, text)
 
     def save(self, **kwargs):
         if self.id is None:

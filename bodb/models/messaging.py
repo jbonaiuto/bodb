@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
+from django.core.cache import cache
 
 class Message(models.Model):
     """
@@ -30,6 +31,7 @@ class Message(models.Model):
         models.Model.save(self,force_update=force_update, force_insert=force_insert, using=using,
             update_fields=update_fields)
         profile=self.recipient.get_profile()
+        cache.set('%d.message_count' % self.recipient.id, cache.get('%d.message_count' % self.recipient.id)+1)
         if profile.new_message_notify:
             msg = EmailMessage(self.subject, self.text, 'uscbrainproject@gmail.com', [self.recipient.email])
             msg.content_subtype = "html"  # Main content is now text/html
@@ -88,12 +90,12 @@ def sendNotifications(document, model_type):
     for subscription in subscriptions:
         # send notification
         if subscription_matches(subscription, document):
-            sendNotification(subscription, document)
+            sendNewEntryNotification(subscription, document)
 
     user_subscriptions=UserSubscription.objects.filter(subscribed_to_user=document.collator).exclude(user=document.collator)
     for subscription in user_subscriptions:
         if subscription_matches(subscription, document):
-            sendNotification(subscription, document)
+            sendNewEntryNotification(subscription, document)
 
 def subscription_matches(subscription, document):
     # if they specified any keywords
@@ -114,7 +116,7 @@ def subscription_matches(subscription, document):
     return False
 
 # send a notification given a subscription and a new document
-def sendNotification(subscription, document):
+def sendNewEntryNotification(subscription, document):
     # message subject
     subject='New %s notification' % subscription.model_type
     # message text
@@ -127,17 +129,20 @@ def sendNotification(subscription, document):
     text+='<b>Name</b>: <a href="%s">%s</a><br>' % (url,document.title)
     text+='<b>Description</b>: %s' % document.brief_description
 
+    messageUser(subscription.user, subject, text)
+
+
+def messageUser(user, subject, message_txt):
     # send internal message
-    profile=subscription.user.get_profile()
+    profile=user.get_profile()
     notification_type=profile.notification_preference
     if notification_type=='message' or notification_type=='both':
-        message=Message(recipient=subscription.user, subject=subject, read=False)
-        message.text=text
+        message=Message(recipient=user, subject=subject, read=False)
+        message.text=message_txt
         message.save()
 
     # send email message
     if notification_type=='email' or notification_type=='both':
-        msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [subscription.user.email])
+        msg = EmailMessage(subject, message_txt, 'uscbrainproject@gmail.com', [user.email])
         msg.content_subtype = "html"  # Main content is now text/html
         msg.send(fail_silently=True)
-

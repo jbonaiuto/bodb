@@ -101,7 +101,7 @@ class Prediction(Document):
     @staticmethod
     def get_predictions(model, user):
         return Prediction.objects.filter(Q(Q(model=model) & Document.get_security_q(user) &
-                                           Document.get_security_q(user, field='ssr'))).distinct()
+                                           Document.get_security_q(user, field='ssr'))).distinct().select_related('ssr__collator')
 
     @staticmethod
     def get_tagged_predictions(name, user):
