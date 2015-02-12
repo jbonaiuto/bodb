@@ -45,15 +45,15 @@ class BOP(MPTTModel,Document):
 
     @staticmethod
     def get_child_bops(bop, user):
-        return bop.get_children().filter(Document.get_security_q(user)).distinct()
+        return bop.get_children().filter(Document.get_security_q(user)).distinct().select_related('collator')
 
     @staticmethod
     def get_literature_bops(literature, user):
-        return BOP.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return BOP.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_tagged_bops(name, user):
-        return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
     @staticmethod
     def get_bop_list(bops, user):
@@ -142,18 +142,18 @@ class RelatedBOP(models.Model):
     @staticmethod
     def get_related_bops(document, user):
         return RelatedBOP.objects.filter(Q(Q(document=document) &
-                                           Document.get_security_q(user, field='bop'))).distinct().select_related('bop')
+                                           Document.get_security_q(user, field='bop'))).distinct().select_related('bop__collator')
 
     @staticmethod
     def get_reverse_related_bops(bop, user):
         return RelatedBOP.objects.filter(Q(Q(bop=bop) & Q(document__bop__isnull=False) &
-                                           Document.get_security_q(user, field='document'))).distinct().select_related('bop')
+                                           Document.get_security_q(user, field='document'))).distinct().select_related('bop__collator')
 
     @staticmethod
     def get_brain_region_related_bops(brain_region, user):
         related_regions=RelatedBrainRegion.objects.filter(Q(Q(document__bop__isnull=False) &
                                                             Q(brain_region=brain_region) &
-                                                            Document.get_security_q(user, field='document'))).distinct()
+                                                            Document.get_security_q(user, field='document'))).distinct().select_related('document')
         related_bops=[]
         for related_region in related_regions:
             related_bops.append(RelatedBOP(bop=BOP.objects.get(id=related_region.document.id),
@@ -163,7 +163,7 @@ class RelatedBOP(models.Model):
     @staticmethod
     def get_sed_related_bops(sed, user):
         related_bops=[]
-        bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct()
+        bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct().select_related('document')
         for bsed in bseds:
             if BOP.objects.filter(id=bsed.document.id).count():
                 bop=BOP.objects.get(id=bsed.document.id)

@@ -284,38 +284,38 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         # Visibility query filter
         visibility = Document.get_security_q(user)
 
-        literature=self.object.related_literature.distinct().prefetch_related('collator','authors__author')
+        literature=self.object.related_literature.distinct().select_related('collator').prefetch_related('authors__author')
         context['literatures']=Literature.get_reference_list(literature,user)
 
-        brain_regions=self.object.related_regions.distinct().prefetch_related('nomenclature__species')
+        brain_regions=self.object.related_regions.distinct().select_related('nomenclature__species')
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
 
-        models=self.object.related_models.filter(visibility).distinct().prefetch_related('collator','authors__author')
+        models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author')
         context['models']=Model.get_model_list(models,user)
         context['model_seds']=Model.get_sed_map(models, user)
 
-        bops=self.object.related_bops.filter(visibility).distinct().prefetch_related('collator')
+        bops=self.object.related_bops.filter(visibility).distinct().select_related('collator')
         context['bops']=BOP.get_bop_list(bops,user)
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
-        generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().prefetch_related('collator')
+        generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().select_related('collator')
         context['generic_seds']=SED.get_sed_list(generic_seds, user)
 
-        ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().prefetch_related('collator')
+        ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
 
-        conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().prefetch_related('collator','target_region__nomenclature','source_region__nomenclature')
+        conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
         context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
-        ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().prefetch_related('collator')
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed).prefetch_related('electrode_position__position_system') for erp_sed in ws_erp_seds]
+        ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in ws_erp_seds]
         context['erp_seds']=SED.get_sed_list(ws_erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        sss=self.object.related_ssrs.filter(visibility).distinct().prefetch_related('collator')
+        sss=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
         context['ssrs']=SSR.get_ssr_list(sss, user)
 
         context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user')
@@ -331,7 +331,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['saved_coord_selections']=self.object.saved_coordinate_selections.all()
 
         # load selected coordinates
-        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).prefetch_related('sed_coordinate__sed','sed_coordinate__coord')
+        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__sed','sed_coordinate__coord')
 
         context['selected_coords']=[]
         for coord in selected_coord_objs:

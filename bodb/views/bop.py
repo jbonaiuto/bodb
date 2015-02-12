@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
@@ -197,6 +197,10 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     template_name = 'bodb/bop/bop_view.html'
     permission_required = 'view'
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(BOP.objects.select_related('forum','parent').prefetch_related('literature'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        #return get_object_or_404(BOP.objects.prefetch_related('tag'),id=self.kwargs.get(self.pk_url_kwarg, None))
+
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
@@ -209,7 +213,7 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='BOP').exists()
         context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
-        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
+        context['references'] = Literature.get_reference_list(self.object.literature.all().prefetch_related('authors').select_related('collator','authors__author'),user)
         if active_workspace is not None:
             context['selected']=active_workspace.related_bops.filter(id=self.object.id).exists()
         context['bop_relationship']=True

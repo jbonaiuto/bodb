@@ -547,7 +547,7 @@ class BuildSED(models.Model):
                                              Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
         build_sed_list=[]
         for build_sed in build_seds:
-            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed)
+            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed).select_related('coord')
             sed_coord_list=[]
             for sed_coord in sed_coords:
                 sed_coord_list.append((sed_coord,sed_coord.is_selected(user)))
@@ -558,7 +558,7 @@ class BuildSED(models.Model):
     @staticmethod
     def get_erp_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__erpsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed')
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
 
 
 def compareBuildSEDs(a, b):
