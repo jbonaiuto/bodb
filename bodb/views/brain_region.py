@@ -1,11 +1,11 @@
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED
+from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED, messageUser
 from bodb.search.sed import runSEDCoordSearch
 from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import AdminUpdateView, AdminCreateView
@@ -31,7 +31,7 @@ class BrainRegionRequestListView(LoginRequiredMixin,ListView):
         return context
 
     def get_queryset(self):
-        return BrainRegionRequest.objects.filter(user=self.request.user)
+        return BrainRegionRequest.objects.filter(user=self.request.user).select_related('user')
 
 
 class CreateBrainRegionRequestView(LoginRequiredMixin,CreateView):
@@ -60,7 +60,7 @@ class CheckBrainRegionRequestExistsView(LoginRequiredMixin,JSONResponseMixin,Bas
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax() and 'name' in self.request.POST:
             name_str = self.request.POST['name']
-            if not BrainRegionRequest.objects.filter(name=name_str).count():
+            if not BrainRegionRequest.objects.filter(name=name_str).exists():
                 context = {'requestExists': '0'}
             else:
                 context = {'requestExists': '1'}
@@ -98,19 +98,7 @@ class BrainRegionRequestDenyView(AdminUpdateView):
         text='Your request for the addition of the region: %s has been denied.<br>' % self.object.name
         text+='Reason for denial: %s' % self.request.POST['reason']
 
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=self.object.user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=self.object.user, sender=self.request.user, subject=subject, read=False)
-            message.text = text
-            message.save()
-
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.object.user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
+        messageUser(self.request.user, subject, text)
 
         context=self.get_context_data(form=form)
         context['msg']='Brain region request denial sent'
@@ -124,7 +112,7 @@ class BrainRegionRequestApproveView(AdminCreateView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestApproveView,self).get_context_data(**kwargs)
-        context['request']=BrainRegionRequest.objects.get(activation_key=self.kwargs.get('activation_key'))
+        context['request']=BrainRegionRequest.objects.select_related('user').get(activation_key=self.kwargs.get('activation_key'))
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
@@ -149,21 +137,8 @@ class BrainRegionRequestApproveView(AdminCreateView):
             ['http://', get_current_site(None).domain, '/bodb/brain_region/%d/' % self.object.id])
         text='Your request for the addition of the region: <a href="%s">%s</a> has been approved.<br>' % (region_url, self.object.name)
 
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=context['request'].user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=context['request'].user, sender=self.request.user, subject=subject, read=False)
-            message.text = text
-            message.save()
+        messageUser(self.request.user, subject, text)
 
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [context['request'].user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
-
-        return redirect(self.get_success_url())
 
 class BrainRegionAPIListView(DocumentAPIListView):
     serializer_class = BrainRegionSerializer
@@ -182,6 +157,9 @@ class BrainRegionAPIDetailView(DocumentAPIDetailView):
 class BrainRegionView(DetailView):
     model = BrainRegion
     template_name='bodb/brainRegion/brain_region_view.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(BrainRegion.objects.select_related('nomenclature__literature').prefetch_related('nomenclature__species','nomenclature__lit__authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionView,self).get_context_data(**kwargs)

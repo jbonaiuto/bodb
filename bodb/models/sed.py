@@ -74,12 +74,12 @@ class SED(Document):
     @staticmethod
     def get_literature_seds(literature, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(literature=literature) &
-                                    Document.get_security_q(user))).distinct()
+                                    Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(related_region_document__brain_region=brain_region) &
-                                    Document.get_security_q(user))).distinct()
+                                    Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_sed_list(seds, user):
@@ -90,9 +90,9 @@ class SED(Document):
             active_workspace=profile.active_workspace
         sed_list=[]
         for sed in seds:
-            if CoCoMacConnectivitySED.objects.filter(id=sed.id).count():
+            if CoCoMacConnectivitySED.objects.filter(id=sed.id).exists():
                 sed=CoCoMacConnectivitySED.objects.get(id=sed.id)
-            if BredeBrainImagingSED.objects.filter(id=sed.id).count():
+            if BredeBrainImagingSED.objects.filter(id=sed.id).exists():
                 sed=BredeBrainImagingSED.objects.get(id=sed.id)
             selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=sed.id).exists()
@@ -131,7 +131,7 @@ class ERPSED(SED):
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return ERPSED.objects.filter(Q(Q(related_region_document__brain_region=brain_region) &
-                                       Document.get_security_q(user))).distinct()
+                                       Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_tagged_seds(name, user):
@@ -249,7 +249,7 @@ class BrainImagingSED(SED):
                  Q(coordinates__coord__brainregionvolume__brain_region__name=brain_region) | \
                  Q(coordinates__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
+        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def augment_sed_list(sed_list, coords, user):
@@ -430,13 +430,13 @@ class ConnectivitySED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
+        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_tagged_seds(name, user):
@@ -546,25 +546,25 @@ class BuildSED(models.Model):
 
     @staticmethod
     def get_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct()
+        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
 
     @staticmethod
     def get_generic_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__type='generic') &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
 
     @staticmethod
     def get_connectivity_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__connectivitysed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
 
     @staticmethod
     def get_imaging_building_seds(document, user):
         build_seds=BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
-                                             Document.get_security_q(user, field='sed'))).distinct()
+                                             Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
         build_sed_list=[]
         for build_sed in build_seds:
-            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed)
+            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed).select_related('coord')
             sed_coord_list=[]
             for sed_coord in sed_coords:
                 sed_coord_list.append((sed_coord,sed_coord.is_selected(user)))
@@ -575,7 +575,7 @@ class BuildSED(models.Model):
     @staticmethod
     def get_erp_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__erpsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
 
 
 def compareBuildSEDs(a, b):
@@ -632,31 +632,31 @@ class TestSED(models.Model):
     @staticmethod
     def get_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
 
     @staticmethod
     def get_generic_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__type='generic') &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
 
     @staticmethod
     def get_connectivity_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__connectivitysed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
 
     @staticmethod
     def get_imaging_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__brainimagingsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
 
     @staticmethod
     def get_erp_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__erpsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
 
 
 def compareTestSEDs(a, b):
