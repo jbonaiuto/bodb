@@ -58,7 +58,7 @@ class SSR(Document):
 
     @staticmethod
     def get_tagged_ssrs(name, user):
-        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 class Prediction(Document):
