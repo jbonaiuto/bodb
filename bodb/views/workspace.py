@@ -369,7 +369,7 @@ class DeleteWorkspaceView(ObjectRolePermissionRequiredMixin, DeleteView):
 
 
 class SaveWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, SaveCoordinateSelectionView):
-    model=SavedSEDCoordSelection
+    model=Workspace
 
     def get_required_permissions(self, request=None):
         context=self.get_context_data()

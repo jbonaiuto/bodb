@@ -142,7 +142,7 @@ class Model(Module):
 
     @staticmethod
     def get_literature_models(literature, user):
-        return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author')
 
     @staticmethod
     def get_model_list(models, user):
