@@ -140,7 +140,7 @@ class ObjectRolePermissionRequiredMixin(object):
 
         :param request: Original request.
         """
-        obj = (getattr(self, 'object', None) or hasattr(self, 'get_object') and self.get_object())
+        obj = (hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None))
 
 
         forbidden = get_403_or_None(request,

@@ -33,10 +33,10 @@ class Module(MPTTModel,Document):
         else:
             html+=self.title
         children=self.get_children().all()
-        if children.count()>0:
+        if children.exists():
             html+='<ul>'
             for submodule in children:
-                html+=submodule.module.hierarchy_html(selected_id=selected_id)
+                html+=submodule.hierarchy_html(selected_id=selected_id)
             html+='</ul>'
         html+='</li>'
         return html
@@ -126,10 +126,10 @@ class Model(Module):
         else:
             html+=str(self)
         children=self.get_children().all()
-        if children.count()>0:
+        if children.exists():
             html+='<ul>'
             for submodule in children:
-                html+=submodule.module.hierarchy_html(selected_id=selected_id)
+                html+=submodule.hierarchy_html(selected_id=selected_id)
             html+='</ul>'
         html+='</li></ul>'
         return html
@@ -164,7 +164,7 @@ class Model(Module):
 
     @staticmethod
     def get_tagged_models(name, user):
-        return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').prefetch_related('authors__author')
 
     @staticmethod
     def get_sed_map(models,user):
@@ -267,7 +267,7 @@ class RelatedModel(models.Model):
     @staticmethod
     def get_reverse_related_models(model, user):
         return RelatedModel.objects.filter(Q(Q(model=model) & Q(document__module__model__isnull=False) &
-                                             Document.get_security_q(user, field='document'))).distinct()
+                                             Document.get_security_q(user, field='document'))).distinct().select_related('document__collator')
 
     @staticmethod
     def get_sed_related_models(sed, user):

@@ -3,7 +3,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.db.models import Q
 from django.forms.forms import Form
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
@@ -503,26 +503,31 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
 class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Model.objects.select_related('collator').prefetch_related('authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateModelView,self).get_context_data(**kwargs)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
-            queryset=ModelAuthor.objects.filter(model=self.object), prefix='model_author')
+            queryset=ModelAuthor.objects.filter(model=self.object).select_related('author'), prefix='model_author')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object), prefix='related_bop')
+            queryset=RelatedBOP.objects.filter(document=self.object).select_related('bop'), prefix='related_bop')
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, instance=self.object,
-            queryset=BuildSED.objects.filter(document=self.object), prefix='build_sed')
+            queryset=BuildSED.objects.filter(document=self.object).select_related('sed'), prefix='build_sed')
         context['test_sed_formset']=TestSEDFormSet(self.request.POST or None, instance=self.object,
-            queryset=TestSED.objects.filter(model=self.object), prefix='test_sed')
+            queryset=TestSED.objects.filter(model=self.object).select_related('sed','ssr'), prefix='test_sed')
         context['prediction_formset']=PredictionFormSet(self.request.POST or None, instance=self.object,
-            queryset=Prediction.objects.filter(model=self.object), prefix='prediction')
+            queryset=Prediction.objects.filter(model=self.object).select_related('ssr','collator'), prefix='prediction')
         context['related_model_formset']=RelatedModelFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedModel.objects.filter(document=self.object), prefix='related_model')
+            queryset=RelatedModel.objects.filter(document=self.object).select_related('model'), prefix='related_model')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('nomenclature').prefetch_related('nomenclature__species'),
             prefix='related_brain_region')
         context['input_formset']=VariableFormSet(self.request.POST or None, instance=self.object,
             queryset=Variable.objects.filter(module=self.object, var_type='Input'), prefix='input')
@@ -532,7 +537,7 @@ class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateV
             queryset=Variable.objects.filter(module=self.object, var_type='State'), prefix='state')
         context['module_formset'] = ModuleFormSet(self.request.POST or None, instance=self.object,
             queryset=Module.objects.filter(parent=self.object), prefix='module')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
         return context
@@ -548,6 +553,11 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     model = Model
     template_name = 'bodb/model/model_view.html'
     permission_required='view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Model.objects.select_related('forum','collator','last_modified_by').prefetch_related('authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
@@ -631,6 +641,11 @@ class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
     form_class = ModuleForm
     template_name = 'bodb/model/module_detail.html'
     permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Module.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(UpdateModuleView,self).get_context_data(**kwargs)
@@ -768,6 +783,11 @@ class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     template_name = 'bodb/model/module_view.html'
     permission_required = 'view'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Module.objects.select_related('forum','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(ModuleDetailView, self).get_context_data(**kwargs)
         user=self.request.user
@@ -776,7 +796,7 @@ class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
-        context['hierarchy_html']=Model.objects.get(id=self.object.get_root().id).hierarchy_html(self.object.id)
+        context['hierarchy_html']=Model.objects.prefetch_related('authors__author').get(id=self.object.get_root().id).hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='Model').exists()
