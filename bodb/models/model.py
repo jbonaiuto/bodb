@@ -272,15 +272,15 @@ class RelatedModel(models.Model):
     @staticmethod
     def get_sed_related_models(sed, user):
         related_models=[]
-        bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct()
+        bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct().select_related('document')
         for bsed in bseds:
-            if Model.objects.filter(id=bsed.document.id).count():
-                model=Model.objects.get(id=bsed.document.id)
+            if Model.objects.filter(id=bsed.document.id).exists():
+                model=Model.objects.prefetch_related('authors__author').get(id=bsed.document.id)
                 related_models.append(RelatedModel(document=sed, model=model, relationship='%s - %s' %
                                                                                            (bsed.relationship,
                                                                                             bsed.relevance_narrative)))
 
-        tseds=TestSED.objects.filter(Document.get_security_q(user, field='model') & Q(sed=sed)).distinct()
+        tseds=TestSED.objects.filter(Document.get_security_q(user, field='model') & Q(sed=sed)).distinct().select_related('model')
         for tsed in tseds:
             related_models.append(RelatedModel(document=sed, model=tsed.model, relationship='%s - %s' %
                                                                                             (tsed.relationship,

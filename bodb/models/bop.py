@@ -165,7 +165,7 @@ class RelatedBOP(models.Model):
         related_bops=[]
         bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct().select_related('document')
         for bsed in bseds:
-            if BOP.objects.filter(id=bsed.document.id).count():
+            if BOP.objects.filter(id=bsed.document.id).exists():
                 bop=BOP.objects.get(id=bsed.document.id)
                 related_bops.append(RelatedBOP(document=sed, bop=bop, relevance_narrative='%s - %s' %
                                                                                           (bsed.relationship,

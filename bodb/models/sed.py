@@ -87,7 +87,7 @@ class SED(Document):
     @staticmethod
     def get_tagged_seds(name, user):
         return SED.objects.filter(Q(type='generic') & Q(tags__name__iexact=name) &
-                                  Document.get_security_q(user)).distinct()
+                                  Document.get_security_q(user)).distinct().select_related('collator')
 
 
 # ERP SED Model, inherits from SED
@@ -109,7 +109,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
@@ -118,7 +118,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 class ElectrodeCap(models.Model):
@@ -245,7 +245,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 # SED coordinate
@@ -413,17 +413,17 @@ class ConnectivitySED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_region_map(conn_seds):
