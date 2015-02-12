@@ -221,7 +221,7 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             context['ssrs']=SSR.get_ssr_list(ssrs,user)
 
             context['loaded_coord_selection']=profile.loaded_coordinate_selection
-            context['saved_coord_selections']=SavedSEDCoordSelection.objects.filter(user=user)
+            context['saved_coord_selections']=SavedSEDCoordSelection.objects.filter(user=user).select_related('user','last_modified_by')
             # load selected coordinates
             selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__coord','sed_coordinate__sed','user')
 
@@ -267,9 +267,9 @@ class ToggleFavoriteView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
                 profile=user.get_profile()
                 document_id=self.request.POST['id']
                 context['icon_id']=self.request.POST['icon_id']
-                if Document.objects.filter(id=document_id).count():
+                if Document.objects.filter(id=document_id).exists():
                     document=Document.objects.get(id=document_id)
-                    if not profile.favorites.filter(id=document_id).count():
+                    if not profile.favorites.filter(id=document_id).exists():
                         profile.favorites.add(document)
                         context['action']='added'
                     else:
@@ -290,9 +290,9 @@ class ToggleFavoriteBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseCre
                 profile=user.get_profile()
                 region_id=self.request.POST['id']
                 context['icon_id']=self.request.POST['icon_id']
-                if BrainRegion.objects.filter(id=region_id).count():
+                if BrainRegion.objects.filter(id=region_id).exists():
                     brain_region=BrainRegion.objects.get(id=region_id)
-                    if not profile.favorite_regions.filter(id=region_id).count():
+                    if not profile.favorite_regions.filter(id=region_id).exists():
                         profile.favorite_regions.add(brain_region)
                         context['action']='added'
                     else:
@@ -313,9 +313,9 @@ class ToggleFavoriteLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseCrea
                 profile=user.get_profile()
                 lit_id=self.request.POST['id']
                 context['icon_id']=self.request.POST['icon_id']
-                if Literature.objects.filter(id=lit_id).count():
+                if Literature.objects.filter(id=lit_id).exists():
                     lit=Literature.objects.get(id=lit_id)
-                    if not profile.favorite_literature.filter(id=lit_id).count():
+                    if not profile.favorite_literature.filter(id=lit_id).exists():
                         profile.favorite_literature.add(lit)
                         context['action']='added'
                     else:
@@ -342,11 +342,11 @@ class TagView(BODBView):
         context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
-        coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
+        coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         context['tagged_predictions']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), user)

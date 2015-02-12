@@ -74,9 +74,9 @@ class SED(Document):
         sed_list=[]
         for sed in seds:
             if CoCoMacConnectivitySED.objects.filter(id=sed.id).exists():
-                sed=CoCoMacConnectivitySED.objects.get(id=sed.id)
+                sed=CoCoMacConnectivitySED.objects.select_related('collator','source_region__cocomacbrainreigon','target_region__cocomacbrainregion').get(id=sed.id)
             if BredeBrainImagingSED.objects.filter(id=sed.id).exists():
-                sed=BredeBrainImagingSED.objects.get(id=sed.id)
+                sed=BredeBrainImagingSED.objects.select_related('collator').get(id=sed.id)
             selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=sed.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
@@ -87,7 +87,7 @@ class SED(Document):
     @staticmethod
     def get_tagged_seds(name, user):
         return SED.objects.filter(Q(type='generic') & Q(tags__name__iexact=name) &
-                                  Document.get_security_q(user)).distinct()
+                                  Document.get_security_q(user)).distinct().select_related('collator')
 
 
 # ERP SED Model, inherits from SED
@@ -109,7 +109,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
@@ -118,7 +118,7 @@ class ERPSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 class ElectrodeCap(models.Model):
@@ -224,7 +224,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
@@ -245,7 +245,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 # SED coordinate
@@ -413,17 +413,17 @@ class ConnectivitySED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
 
     @staticmethod
     def get_region_map(conn_seds):
@@ -446,8 +446,8 @@ class CoCoMacConnectivitySED(ConnectivitySED):
         app_label='bodb'
 
     def html_url_string(self):
-        if CoCoMacBrainRegion.objects.filter(brain_region__id=self.source_region.id) and \
-           CoCoMacBrainRegion.objects.filter(brain_region__id=self.target_region.id):
+        if CoCoMacBrainRegion.objects.filter(brain_region__id=self.source_region.id).exists() and \
+           CoCoMacBrainRegion.objects.filter(brain_region__id=self.target_region.id).exists():
             cocomac_url='http://cocomac.g-node.org/cocomac2/services/axonal_projections.php?axonOriginList='
             #cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
 

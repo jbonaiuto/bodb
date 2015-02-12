@@ -34,9 +34,9 @@ def runBOPSearch(search_data, userId, exclude=None):
 
     # get results
     if q and len(q):
-        results = BOP.objects.filter(q).select_related().distinct()
+        results = BOP.objects.filter(q).select_related('collator').distinct()
     else:
-        results = BOP.objects.all().select_related()
+        results = BOP.objects.all().select_related('collator')
 
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))

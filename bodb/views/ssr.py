@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import UpdateView, DeleteView, CreateView, TemplateView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.document import DocumentFigureFormSet
@@ -69,6 +69,11 @@ class EditSSRMixin():
 class UpdateSSRView(EditSSRMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(SSR.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateSSRView,self).get_context_data(**kwargs)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
@@ -124,11 +129,16 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     serializer_class = SSRSerializer
     permission_required = 'view'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(SSR.objects.select_related('forum','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        models=Model.objects.filter(Q(related_test_sed_document__ssr=self.object) | Q(prediction__ssr=self.object))
+        models=Model.objects.filter(Q(related_test_sed_document__ssr=self.object) | Q(prediction__ssr=self.object)).select_related('collator').prefetch_related('authors__author')
         context['model']=None
         if models.count():
             context['model']=models[0]
