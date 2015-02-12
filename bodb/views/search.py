@@ -97,7 +97,7 @@ class SearchView(FormView):
                 elif sedObj.type=='brain imaging':
                     imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
@@ -127,7 +127,7 @@ class SearchView(FormView):
                 elif sedObj.type=='brain imaging':
                     imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivitySEDs.append(ConnectivitySED.select_related('collator','target_region__nomenclature','source_region__nomenclature').objects.get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
@@ -646,11 +646,11 @@ class SEDSearchView(FormView):
         seds=runSEDSearch(form.cleaned_data, user.id)
         for idx,sedObj in enumerate(seds):
             if sedObj.type=='event related potential':
-                erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
+                erpSEDs.append(ERPSED.objects.select_related('collator').get(id=sedObj.id))
             elif sedObj.type=='brain imaging':
-                imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
             elif sedObj.type=='connectivity':
-                connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
             elif sedObj.type=='generic':
                 genericSEDs.append(sedObj)
         cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
@@ -665,7 +665,7 @@ class SEDSearchView(FormView):
         context['generic_seds']=SED.get_sed_list(genericSEDs,user)
         context['erp_seds']=SED.get_sed_list(erpSEDs, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
-            [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
+            [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erpSEDs])
         context['connectivity_seds']=SED.get_sed_list(connectivitySEDs,user)
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
