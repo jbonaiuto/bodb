@@ -17,11 +17,10 @@ class Module(MPTTModel,Document):
     def save(self, force_insert=False, force_update=False):
         super(Module, self).save()
 
-        if self.public:
-            for module in self.get_children().all():
-                if not module.module.public:
-                    module.module.public=1
-                    module.module.save()
+        for module in self.get_children().all():
+            module.public=self.public
+            module.draft=self.draft
+            module.save()
 
     def hierarchy_html(self, selected_id=None):
         html='<li>'
