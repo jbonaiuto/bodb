@@ -31,7 +31,12 @@ class Message(models.Model):
         models.Model.save(self,force_update=force_update, force_insert=force_insert, using=using,
             update_fields=update_fields)
         profile=self.recipient.get_profile()
-        cache.set('%d.message_count' % self.recipient.id, cache.get('%d.message_count' % self.recipient.id)+1)
+        num_messages=cache.get('%d.message_count' % self.recipient.id)
+        if not num_messages:
+            num_messages=Message.objects.filter(recipient=self.recipient, read=False).count()
+            cache.set('%d.message_count' % self.recipient.id, num_messages)
+        else:
+            cache.set('%d.message_count' % self.recipient.id, num_messages+1)
         if profile.new_message_notify:
             msg = EmailMessage(self.subject, self.text, 'uscbrainproject@gmail.com', [self.recipient.email])
             msg.content_subtype = "html"  # Main content is now text/html

@@ -58,7 +58,7 @@ class SSR(Document):
 
     @staticmethod
     def get_tagged_ssrs(name, user):
-        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
 
 class Prediction(Document):
@@ -101,11 +101,11 @@ class Prediction(Document):
     @staticmethod
     def get_predictions(model, user):
         return Prediction.objects.filter(Q(Q(model=model) & Document.get_security_q(user) &
-                                           Document.get_security_q(user, field='ssr'))).distinct().select_related('ssr__collator')
+                                           Document.get_security_q(user, field='ssr'))).distinct().select_related('collator','ssr__collator')
 
     @staticmethod
     def get_tagged_predictions(name, user):
-        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','ssr__collator')
 
     def save(self, force_insert=False, force_update=False):
         notify=False

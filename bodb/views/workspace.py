@@ -48,7 +48,7 @@ class WorkspaceUserToggleAdminView(ObjectRolePermissionRequiredMixin, JSONRespon
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
-            workspace=Workspace.objects.get(id=self.kwargs.get('pk',None))
+            workspace=Workspace.objects.prefetch_related('admin_users').get(id=self.kwargs.get('pk',None))
             user=User.objects.get(id=self.request.POST['user_id'])
             if self.request.POST['admin']=='true':
                 if not user in workspace.admin_users.all():
@@ -70,7 +70,7 @@ class WorkspaceUserRemoveView(ObjectRolePermissionRequiredMixin, JSONResponseMix
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
-            workspace=Workspace.objects.get(id=self.kwargs.get('pk',None))
+            workspace=Workspace.objects.prefetch_related('admin_users').get(id=self.kwargs.get('pk',None))
             user=User.objects.get(id=self.request.POST['user_id'])
             if user in workspace.admin_users.all():
                 workspace.admin_users.remove(user)
@@ -108,7 +108,7 @@ class ActiveWorkspaceDetailView(LoginRequiredMixin, View):
 class WorkspaceInvitationResponseView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceInvitationResponseView,self).get_context_data(**kwargs)
-        context['invitation']=get_object_or_404(WorkspaceInvitation,activation_key=context['activation_key'])
+        context['invitation']=get_object_or_404(WorkspaceInvitation.objects.select_related('workspace__group','invited_user'),activation_key=context['activation_key'])
         return context
 
     def get(self, request, *args, **kwargs):
@@ -120,7 +120,7 @@ class WorkspaceInvitationResponseView(LoginRequiredMixin, TemplateView):
             self.template_name='bodb/workspace/workspace_invitation_decline.html'
         elif context['action']=='accept':
             context['invitation'].status='accepted'
-            user=User.objects.get(id=context['invitation'].invited_user.id)
+            user=User.objects.prefetch_related('groups').get(id=context['invitation'].invited_user.id)
             # Add workspace group to user's groups
             user.groups.add(context['invitation'].workspace.group)
             user.save()
@@ -130,7 +130,7 @@ class WorkspaceInvitationResponseView(LoginRequiredMixin, TemplateView):
             activity.save()
             self.template_name='bodb/workspace/workspace_invitation_accept.html'
             visibility_q=Q(created_by__is_active=True)
-            if not self.self.request.user.is_superuser:
+            if not self.request.user.is_superuser:
                 visibility_q=Q(visibility_q & Q(group__in=self.request.user.groups.all()))
             workspaces=Workspace.objects.filter(visibility_q).order_by('title')
             cache.set('%d.workspaces' % self.request.user.id, list(workspaces))
@@ -179,6 +179,11 @@ class UpdateWorkspaceView(ObjectRolePermissionRequiredMixin, EditWorkspaceMixin,
     help_page='BODB-Edit-Workspace'
     permission_required = 'admin'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Workspace.objects.select_related('created_by').prefetch_related('admin_users'),id=self.kwargs.get('pk',None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context=super(UpdateWorkspaceView,self).get_context_data(**kwargs)
         context['helpPage']=self.help_page
@@ -220,7 +225,7 @@ class WorkspaceInvitationResendView(LoginRequiredMixin, JSONResponseMixin, BaseU
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
-            invitation=WorkspaceInvitation.objects.get(id=kwargs.get('pk',None))
+            invitation=WorkspaceInvitation.objects.select_related('invited_user').get(id=kwargs.get('pk',None))
             invitation.send()
             context={'id':invitation.id, 'username': invitation.invited_user.username, 'sent': invitation.sent.strftime("%b %d, %Y, %I:%M %p")}
         return context
@@ -232,7 +237,9 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
     permission_required = 'member'
 
     def get_object(self):
-        return get_object_or_404(Workspace, id=self.kwargs.get('pk', None))
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Workspace.objects.select_related('created_by','group','forum').prefetch_related('admin_users','related_models'), id=self.kwargs.get('pk', None))
+        return self.object
 
     def get(self, request, *args, **kwargs):
         self.object=self.get_object()
@@ -279,7 +286,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         if context['admin']:
             context['invitations']=WorkspaceInvitation.objects.filter(workspace=self.object).select_related('invited_user','invited_by')
         context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted'))
-        context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object)
+        context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object).select_related('collator')
 
         # Visibility query filter
         visibility = Document.get_security_q(user)
@@ -319,7 +326,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         ssrs=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
         context['ssrs']=SSR.get_ssr_list(ssrs, user)
 
-        context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user')
+        context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user__get_profile')
 
         # loaded coordinate selection
         context['loaded_coord_selection']=None
@@ -329,10 +336,10 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
                 context['loaded_coord_selection']=user.get_profile().loaded_coordinate_selection
                 SelectedSEDCoord.objects.filter(saved_selection__id=context['loaded_coord_selection'].id).update(selected=True)
         # load saved selections
-        context['saved_coord_selections']=self.object.saved_coordinate_selections.all()
+        context['saved_coord_selections']=self.object.saved_coordinate_selections.all().select_related('user','last_modified_by')
 
         # load selected coordinates
-        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__sed','sed_coordinate__coord')
+        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__sed','sed_coordinate__coord','user')
 
         context['selected_coords']=[]
         for coord in selected_coord_objs:
@@ -406,18 +413,25 @@ class DeleteWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, 
 
 
 class WorkspaceUserDetailView(ObjectRolePermissionRequiredMixin, DetailView):
-    model = User
+    model = Workspace
     template_name = 'bodb/workspace/user_view.html'
     permission_required = 'admin'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Workspace.objects.prefetch_related('admin_users'),id=self.kwargs.get('pk',None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(WorkspaceUserDetailView,self).get_context_data(**kwargs)
-        context['workspace']=Workspace.objects.get(id=self.kwargs['id'])
+        context['user']=User.objects.prefetch_related('groups').get(id=self.kwargs['id'])
         context['helpPage']='BODB-View-Workspace-User'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
         for permission in workspace_permissions:
-            context[permission]=self.object.has_perm('%s' % permission,context['workspace'])
+            context[permission]=context['user'].has_perm('%s' % permission,self.object)
+        context['workspace']=self.object
+        context['object']=context['user']
         return context
 
 
@@ -428,33 +442,29 @@ class UpdateWorkspaceUserView(ObjectRolePermissionRequiredMixin,SingleObjectTemp
     permission_required = 'admin'
 
     def get_object(self):
-        return Workspace.objects.get(id=self.kwargs['id'])
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Workspace.objects.prefetch_related('admin_users'), id=self.kwargs.get('id',None))
+        return self.object
+
+    def get_form(self, form_class):
+        return form_class(self.request.POST or None)
 
     def get_form_class(self):
         return WorkspaceUserForm
 
-    def get_form(self, form_class):
-        return form_class(self.request.POST or None, instance=self.object)
-
-    def get(self, request, *args, **kwargs):
-        self.object=User.objects.get(id=self.kwargs.get('pk',None))
-        return super(UpdateWorkspaceUserView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object=User.objects.get(id=self.kwargs.get('pk',None))
-        return super(UpdateWorkspaceUserView, self).post(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = {}
-        context['form']=self.get_form(self.get_form_class())
-        context['workspace']=Workspace.objects.get(id=self.kwargs['id'])
+        context['user']=User.objects.get(id=self.kwargs.get('pk',None))
+        context['form']=self.form_class(self.request.POST or None, instance=context['user'])
         context['helpPage']=self.helpPage
         context['ispopup']=('_popup' in self.request.GET)
         for permission in workspace_permissions:
             if self.request.POST:
                 context[permission]=permission in self.request.POST
             else:
-                context[permission]=self.object.check_perm('%s' % permission,context['workspace'])
+                context[permission]=context['user'].has_perm('%s' % permission,self.object)
+        context['workspace']=self.object
+        context['object']=context['user']
         return context
 
     def form_valid(self, form):

@@ -113,14 +113,19 @@ class CreateSEDView(EditSEDMixin, PermissionRequiredMixin, CreateView):
 class UpdateSEDView(EditSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(SED.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateSEDView,self).get_context_data(**kwargs)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['helpPage']='insert_data.html#insert-generic-sed'
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -200,6 +205,9 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     template_name = 'bodb/sed/generic/generic_sed_view.html'
     permission_required = 'view'
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model.objects.select_related('forum','collator','last_modified_by','coord_space','source__region__nomenclature','target_region__nomenclature'),id=self.kwargs.get(self.pk_url_kwarg, None))
+
     def get(self, request, *args, **kwargs):
         id=self.kwargs.get('pk', None)
         type=SED.objects.get(id=id).type
@@ -208,12 +216,12 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             self.template_name = 'bodb/sed/erp/erp_sed_view.html'
         elif type=='brain imaging':
             self.model=BrainImagingSED
-            if BredeBrainImagingSED.objects.filter(id=id).count():
+            if BredeBrainImagingSED.objects.filter(id=id).exists():
                 self.model=BredeBrainImagingSED
             self.template_name = 'bodb/sed/brain_imaging/brain_imaging_sed_view.html'
         elif type=='connectivity':
             self.model=ConnectivitySED
-            if CoCoMacConnectivitySED.objects.filter(id=id).count():
+            if CoCoMacConnectivitySED.objects.filter(id=id).exists():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
         elif type=='neurophysiology':
@@ -269,7 +277,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
             # load coordinates
-            coords=SEDCoord.objects.filter(sed=self.object)
+            coords=SEDCoord.objects.filter(sed=self.object).select_related('coord')
 
             # create list of columns
             cols=['Brain Region','Hemisphere']
@@ -319,10 +327,10 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             # load selected coordinate Ids
             context['selected_coords']=[]
             if user.is_authenticated() and not user.is_anonymous():
-                coords=SelectedSEDCoord.objects.filter(selected=True, user=user)
+                coords=SelectedSEDCoord.objects.filter(selected=True, user=user).select_related('sed_coordinate')
                 for coord in coords:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
-        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
+        context['references'] = Literature.get_reference_list(self.object.literature.all().select_related('collator').prefetch_related('authors__author'),user)
         context['related_models'] = RelatedModel.get_reverse_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
         context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
         if user.is_authenticated() and not user.is_anonymous():
@@ -559,9 +567,14 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, PermissionRequiredMixi
 class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(BrainImagingSED.objects.select_related('collator','coord_space'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_initial(self):
         # load coordinates
-        coords=SEDCoord.objects.filter(sed=self.object)
+        coords=SEDCoord.objects.filter(sed=self.object).select_related('coord')
 
         # construct column list - core headers
         header_str=self.object.core_header_1+' | '+self.object.core_header_2+' | '+self.object.core_header_3 + ' | '+\
@@ -610,9 +623,9 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, ObjectRolePermissionRe
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['helpPage']='insert_data.html#summary-of-brain-imaging-summary-data'
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -626,7 +639,7 @@ class CleanBrainImagingSEDView(TemplateView):
 
     def get_initial(self):
         id=self.kwargs.get('pk', None)
-        coords=SEDCoord.objects.filter(sed__id=id)
+        coords=SEDCoord.objects.filter(sed__id=id).select_related('coord')
         # look for errors in each coord
         init=[]
         for coord in coords:
@@ -671,7 +684,7 @@ class CleanBrainImagingSEDView(TemplateView):
         if sedCoordCleanFormSet.is_valid():
             # update coords
             for form in sedCoordCleanFormSet.forms:
-                coord=SEDCoord.objects.get(id=form.cleaned_data['sed_coord_id'])
+                coord=SEDCoord.objects.select_related('coord').get(id=form.cleaned_data['sed_coord_id'])
                 if form.cleaned_data['hemisphere_error']=='1':
                     if form.cleaned_data['hemisphere_options']=='hemisphere':
                         if atof(coord.coord.x)<0:
@@ -789,14 +802,19 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, PermissionRequiredMixi
 class UpdateConnectivitySEDView(EditConnectivitySEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(ConnectivitySED.objects.select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateConnectivitySEDView,self).get_context_data(**kwargs)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['helpPage']='insert_data.html#summary-of-connectivity-data'
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -910,22 +928,27 @@ class CreateERPSEDView(EditERPSEDMixin, PermissionRequiredMixin, CreateView):
 class UpdateERPSEDView(EditERPSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(ERPSED.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateERPSEDView,self).get_context_data(**kwargs)
         context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
         context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, instance=self.object,
-            queryset=ERPComponent.objects.filter(erp_sed=self.object),prefix='erp_component')
+            queryset=ERPComponent.objects.filter(erp_sed=self.object).select_related('electrode_cap','electrode_position__position_system'),prefix='erp_component')
         for subform in context['erp_component_formset'].forms:
             if 'electrode_position' in subform.initial and subform.initial['electrode_position'] is not None:
-                position=ElectrodePosition.objects.get(id=subform.initial['electrode_position'])
+                position=ElectrodePosition.objects.select_related('position_system').get(id=subform.initial['electrode_position'])
                 subform.initial['electrode_position_system']=position.position_system.id
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['helpPage']='insert_data.html#summary-of-event-related-potential-data'
         context['action']='edit'
         context['ispopup']=('_popup' in self.request.GET)
@@ -1009,7 +1032,7 @@ class SEDTaggedView(BODBView):
         context['erp_seds']=SED.get_sed_list(erp_seds, user)
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
-        coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
+        coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         context['connectionGraphId']='connectivitySEDDiagram'
@@ -1063,7 +1086,7 @@ class SelectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
             if self.request.user.get_profile().loaded_coordinate_selection:
                 selectedCoord.saved_selection=self.request.user.get_profile().loaded_coordinate_selection
                 # set shape and color to be same as other selected coords from same SED
-            if len(SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id))>0:
+            if SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id).exists():
                 otherCoord=SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id)[0]
                 selectedCoord.twod_shape=otherCoord.twod_shape
                 selectedCoord.threed_shape=otherCoord.threed_shape
@@ -1084,7 +1107,7 @@ class UnselectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView
             sed_id=None
             # load selected SED coordinate pointing to atlas coord
             for selectedCoord in SelectedSEDCoord.objects.filter(sed_coordinate__id=self.request.POST['coordId'], selected=True,
-                user=self.request.user):
+                user=self.request.user).select_related('sed_coordinate__sed'):
                 sed_id=selectedCoord.sed_coordinate.sed.id
                 # delete selected SED coordinate (SED coordinate remains intact)
                 selectedCoord.delete()

@@ -7,7 +7,7 @@
         $(document).ready(function()
         {
             {% for selected,is_favorite,subscribed,model in models %}
-                var count = $('#models').children().length;
+                var count = $('#models').children().length-1;
                 var tmplMarkup = $('#model-template').html();
                 var compiledTmpl = _.template(tmplMarkup,
                         {

@@ -37,9 +37,9 @@ def runWorkspaceSearch(search_data, userId):
 
     # get results
     if q and len(q):
-        results = Workspace.objects.filter(q).select_related().distinct()
+        results = Workspace.objects.filter(q).select_related('created_by').distinct()
     else:
-        results = Workspace.objects.all().select_related()
+        results = Workspace.objects.all().select_related('created_by')
 
     return results.order_by('title')
 

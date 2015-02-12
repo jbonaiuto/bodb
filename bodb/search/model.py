@@ -33,9 +33,9 @@ def runModelSearch(search_data, userId, exclude=None):
 
     # get results
     if q and len(q):
-        results = Model.objects.filter(q).select_related().distinct()
+        results = Model.objects.filter(q).select_related('collator').prefetch_related('authors__author').distinct()
     else:
-        results = Model.objects.all().select_related()
+        results = Model.objects.all().select_related('collator').prefetch_related('authors__author')
 
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))

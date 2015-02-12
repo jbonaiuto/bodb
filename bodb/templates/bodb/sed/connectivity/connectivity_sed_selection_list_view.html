@@ -6,7 +6,7 @@
         $(document).ready(function()
         {
             {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
-                var count = $('#connectivity_seds').children().length;
+                var count = $('#connectivity_seds').children().length-1;
                 var tmplMarkup = $('#connectivity_sed_{{ connectionGraphId }}-template').html();
                 var compiledTmpl = _.template(tmplMarkup,
                         {
