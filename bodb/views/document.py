@@ -175,13 +175,13 @@ class DocumentPublicRequestView(JSONResponseMixin,BaseCreateView):
         if self.request.is_ajax() and 'documentId' in self.request.POST:
             document = Document.objects.get(id=self.request.POST['documentId'])
             type=''
-            if Model.objects.filter(id=self.request.POST['documentId']).count():
+            if Model.objects.filter(id=self.request.POST['documentId']).exists():
                 type='Model'
-            elif BOP.objects.filter(id=self.request.POST['documentId']).count():
+            elif BOP.objects.filter(id=self.request.POST['documentId']).exists():
                 type='BOP'
-            elif SED.objects.filter(id=self.request.POST['documentId']).count():
+            elif SED.objects.filter(id=self.request.POST['documentId']).exists():
                 type='SED'
-            elif SSR.objects.filter(id=self.request.POST['documentId']).count():
+            elif SSR.objects.filter(id=self.request.POST['documentId']).exists():
                 type='SSR'
             public_request=DocumentPublicRequest(user=self.request.user, document=document, type=type)
             public_request.save()

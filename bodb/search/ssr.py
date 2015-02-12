@@ -31,7 +31,7 @@ def runSSRSearch(search_data, userId):
 
     # get results
     if q and len(q):
-        results = SSR.objects.filter(q).select_related().distinct()
+        results = SSR.objects.filter(q).select_related('collator').distinct()
     else:
-        results = SSR.objects.all().select_related()
+        results = SSR.objects.all().select_related('collator')
     return results.order_by('title')

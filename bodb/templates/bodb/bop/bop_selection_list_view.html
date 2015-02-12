@@ -7,7 +7,7 @@
         $(document).ready(function()
         {
             {% for selected,is_favorite,subscribed,bop in bops %}
-                var count = $('#bops').children().length;
+                var count = $('#bops').children().length-1;
                 var tmplMarkup = $('#bop-template').html();
                 var compiledTmpl = _.template(tmplMarkup,
                         {

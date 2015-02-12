@@ -91,7 +91,7 @@
             }
 
             {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
-                var count = $('#erp_seds').children().length;
+                var count = $('#erp_seds').children().length-1;
                 var tmplMarkup = $('#erp_sed_{{ erpGraphId }}-template').html();
                 var compiledTmpl = _.template(tmplMarkup,
                         {

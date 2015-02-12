@@ -159,7 +159,7 @@ class BrainRegionView(DetailView):
     template_name='bodb/brainRegion/brain_region_view.html'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(BrainRegion.objects.select_related('nomenclature__literature').prefetch_related('nomenclature__species','nomenclature__lit__authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return get_object_or_404(BrainRegion.objects.select_related('nomenclature__lit').prefetch_related('nomenclature__species','nomenclature__lit__authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionView,self).get_context_data(**kwargs)

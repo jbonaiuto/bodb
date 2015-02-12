@@ -94,11 +94,11 @@ class SearchView(FormView):
             seds=runSEDSearch(sed_form.cleaned_data, user.id)
             for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
-                    erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
+                    erpSEDs.append(ERPSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                    imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').get(id=sedObj.id))
                 elif sedObj.type=='neurophysiology':
                     neurophysiologySEDs.append(NeurophysiologySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
@@ -126,11 +126,11 @@ class SearchView(FormView):
             seds=runSEDSearch(form.cleaned_data, user.id)
             for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
-                    erpSEDs.append(ERPSED.objects.get(id=sedObj.id))
+                    erpSEDs.append(ERPSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='brain imaging':
-                    imagingSEDs.append(BrainImagingSED.objects.get(id=sedObj.id))
+                    imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
-                    connectivitySEDs.append(ConnectivitySED.objects.get(id=sedObj.id))
+                    connectivitySEDs.append(ConnectivitySED.select_related('collator','target_region__nomenclature','source_region__nomenclature').objects.get(id=sedObj.id))
                 elif sedObj.type=='neurophysiology':
                     neurophysiologySEDs.append(NeurophysiologySED.objects.get(id=sedObj.id))
                 elif sedObj.type=='generic':
