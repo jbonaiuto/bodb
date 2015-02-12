@@ -13,9 +13,10 @@ from bodb.models import BredeBrainImagingSED, Journal, Author, LiteratureAuthor,
 def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
-    search_local=False
+    search_local=True
     if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='brain imaging'):
         if hasattr(searcher,'search_brede') and searcher.search_brede:
+            search_local=False
             print('Trying to search Brede')
             woBibsDoc=None
             try:
@@ -86,8 +87,8 @@ def runBredeSearch(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())
-        return list(BredeBrainImagingSED.objects.all())
+            return list(BredeBrainImagingSED.objects.filter(q).select_related('collator').distinct())
+        return list(BredeBrainImagingSED.objects.all().select_related('collator'))
 
     return results
 

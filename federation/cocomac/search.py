@@ -15,9 +15,10 @@ from taggit.utils import parse_tags
 
 def runCoCoMacSearch2(search_data, userId):
     results=[]
-    search_local=False
+    search_local=True
     if 'type' not in search_data or search_data['type']=='connectivity':
         if 'search_cocomac' in search_data and search_data['search_cocomac']:
+            search_local=False
             print('Trying to search CoCoMac2')
             try:
                 origin_search_string=''
@@ -138,8 +139,8 @@ def runCoCoMacSearch2(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
-        return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
+            return list(CoCoMacConnectivitySED.objects.filter(q).select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
+        return list(CoCoMacConnectivitySED.objects.all().select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
 
     return results
 
@@ -248,6 +249,7 @@ def runCoCoMacSearch(search_data, userId):
 
         # get results
         if q and len(q):
+            print(q)
             return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
         return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
 
