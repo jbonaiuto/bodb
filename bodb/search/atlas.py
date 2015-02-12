@@ -25,9 +25,9 @@ def runBrainRegionSearch(search_data):
 
     # get results
     if q and len(q):
-        results = BrainRegion.objects.filter(q).distinct()
+        results = BrainRegion.objects.filter(q).distinct().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
     else:
-        results = BrainRegion.objects.all()
+        results = BrainRegion.objects.all().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
     return results
 
 

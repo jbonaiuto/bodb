@@ -27,14 +27,14 @@ def runLiteratureSearch(search_data, userId):
     if len(q):
         # filter by literature type if given
         if 'type' in search_data and len(search_data['type']):
-            results = eval(search_data['type']).objects.filter(q).select_related().distinct()
+            results = eval(search_data['type']).objects.filter(q).select_related('collator').prefetch_related('authors__author').distinct()
         else:
-            results = Literature.objects.filter(q).select_related().distinct()
+            results = Literature.objects.filter(q).select_related('collator').prefetch_related('authors__author').distinct()
     # filter by literature type if given
     elif 'type' in search_data and len(search_data['type']):
-        results = eval(search_data['type']).objects.all()
+        results = eval(search_data['type']).objects.all().select_related('collator').prefetch_related('authors__author')
     else:
-        results = Literature.objects.all()
+        results = Literature.objects.all().select_related('collator').prefetch_related('authors__author')
     results=list(results)
     results.sort(key=Literature.author_names)
     return results
