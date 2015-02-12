@@ -287,7 +287,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         literature=self.object.related_literature.distinct().select_related('collator').prefetch_related('authors__author')
         context['literatures']=Literature.get_reference_list(literature,user)
 
-        brain_regions=self.object.related_regions.distinct().select_related('nomenclature__species')
+        brain_regions=self.object.related_regions.distinct().select_related('nomenclature').prefetch_related('nomenclature__species')
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
 
         models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author')

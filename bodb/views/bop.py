@@ -151,21 +151,26 @@ class CreateBOPView(EditBOPMixin,PermissionRequiredMixin,CreateView):
 class UpdateBOPView(EditBOPMixin,ObjectRolePermissionRequiredMixin,UpdateView):
     permission_required='edit'
 
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(BOP.objects.select_related('parent','collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateBOPView,self).get_context_data(**kwargs)
         context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure', instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object))
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, prefix='build_sed',
-            instance=self.object, queryset=BuildSED.objects.filter(document=self.object))
+            instance=self.object, queryset=BuildSED.objects.filter(document=self.object).select_related('sed'))
         context['related_bop_formset']=BOPRelatedBOPFormSet(self.request.POST or None, prefix='related_bop',
-            instance=self.object, queryset=RelatedBOP.objects.filter(document=self.object))
+            instance=self.object, queryset=RelatedBOP.objects.filter(document=self.object).select_related('bop'))
         context['related_model_formset']=RelatedModelFormSet(self.request.POST or None, prefix='related_model',
-            instance=self.object, queryset=RelatedModel.objects.filter(document=self.object))
+            instance=self.object, queryset=RelatedModel.objects.filter(document=self.object).select_related('model'))
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region', instance=self.object,
-            queryset=RelatedBrainRegion.objects.filter(document=self.object))
-        context['references'] = self.object.literature.all()
+            queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'))
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=True
         return context
@@ -198,8 +203,9 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     permission_required = 'view'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(BOP.objects.select_related('forum','parent').prefetch_related('literature'),id=self.kwargs.get(self.pk_url_kwarg, None))
-        #return get_object_or_404(BOP.objects.prefetch_related('tag'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(BOP.objects.select_related('forum','parent','collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
@@ -213,7 +219,7 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='BOP').exists()
         context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
-        context['references'] = Literature.get_reference_list(self.object.literature.all().prefetch_related('authors').select_related('collator','authors__author'),user)
+        context['references'] = Literature.get_reference_list(self.object.literature.all().select_related('collator').prefetch_related('authors__author'),user)
         if active_workspace is not None:
             context['selected']=active_workspace.related_bops.filter(id=self.object.id).exists()
         context['bop_relationship']=True
