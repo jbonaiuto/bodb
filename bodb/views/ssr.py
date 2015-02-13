@@ -6,7 +6,7 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -147,7 +147,7 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
                 user=user, model_type='SSR').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='SSR').exists()
-            context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).exists()
+            context['selected']=context['active_workspace'].related_ssrs.filter(id=self.object.id).exists()
         context['action']=self.request.GET.get('action',None)
         context['type']=self.request.GET.get('type',None)
         context['idx']=self.request.GET.get('idx',None)
@@ -162,29 +162,28 @@ class ToggleSelectSSRView(LoginRequiredMixin, JSONResponseMixin,BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             ssr=SSR.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            ws_context=set_context_workspace({},self.request.user)
 
             context={
                 'ssr_id': ssr.id,
-                'workspace': active_workspace.title
+                'workspace': ws_context['active_workspace'].title
             }
-            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=ssr in active_workspace.related_ssrs.all()
+                remove=ssr in ws_context['active_workspace'].related_ssrs.all()
             if remove:
-                active_workspace.related_ssrs.remove(ssr)
+                ws_context['active_workspace'].related_ssrs.remove(ssr)
                 context['selected']=False
                 activity.text='%s removed the SSR: <a href="%s">%s</a> from the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             else:
-                active_workspace.related_ssrs.add(ssr)
+                ws_context['active_workspace'].related_ssrs.add(ssr)
                 context['selected']=True
                 activity.text='%s added the SSR: <a href="%s">%s</a> to the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             activity.save()
-            active_workspace.save()
+            ws_context['active_workspace'].save()
 
         return context
 
@@ -199,5 +198,5 @@ class SSRTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user),user)
+        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user),user, context['active_workspace'])
         return context

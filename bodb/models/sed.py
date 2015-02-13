@@ -65,12 +65,10 @@ class SED(Document):
                                     Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
-    def get_sed_list(seds, user):
+    def get_sed_list(seds, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         sed_list=[]
         for sed in seds:
             if CoCoMacConnectivitySED.objects.filter(id=sed.id).exists():
@@ -492,12 +490,10 @@ class BuildSED(models.Model):
         ordering=['sed__title']
 
     @staticmethod
-    def get_building_sed_list(bseds, user):
+    def get_building_sed_list(bseds, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         build_sed_list=[]
         for buildsed in bseds:
             selected=active_workspace is not None and \
@@ -510,12 +506,10 @@ class BuildSED(models.Model):
         return build_sed_list
 
     @staticmethod
-    def get_imaging_building_sed_list(bseds, user):
+    def get_imaging_building_sed_list(bseds, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         build_sed_list=[]
         for (buildsed,coords) in bseds:
             selected=active_workspace is not None and\
@@ -588,12 +582,10 @@ class TestSED(models.Model):
         super(TestSED, self).save(*args, **kwargs)
 
     @staticmethod
-    def get_testing_sed_list(tseds, user):
+    def get_testing_sed_list(tseds, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         test_sed_list=[]
         for testsed in tseds:
             sed_selected=active_workspace is not None and \

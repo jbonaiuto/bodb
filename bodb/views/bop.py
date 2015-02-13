@@ -9,7 +9,7 @@ from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, Literature, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -211,20 +211,20 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
         user=self.request.user
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='BOP').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='BOP').exists()
-        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
-        context['references'] = Literature.get_reference_list(self.object.literature.all().select_related('collator').prefetch_related('authors__author'),user)
-        if active_workspace is not None:
-            context['selected']=active_workspace.related_bops.filter(id=self.object.id).exists()
+        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user, context['active_workspace'])
+        literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
+        context['references'] = Literature.get_reference_list(literature,user,context['active_workspace'])
+        if context['active_workspace'] is not None:
+            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
-        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_reverse_related_bops(self.object,user),user)
+        rrbops=RelatedBOP.get_reverse_related_bops(self.object,user)
+        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops,user,context['active_workspace'])
         return context
 
 
@@ -236,27 +236,27 @@ class ToggleSelectBOPView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
         if self.request.is_ajax():
             bop=BOP.objects.get(id=self.kwargs.get('pk', None))
             # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            ws_context=set_context_workspace({},self.request.user)
 
             context={
                 'bop_id': bop.id,
-                'workspace': active_workspace.title
+                'workspace': ws_context['active_workspace'].title
             }
-            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=bop in active_workspace.related_bops.all()
+                remove=bop in ws_context['active_workspace'].related_bops.all()
             if remove:
-                active_workspace.related_bops.remove(bop)
+                ws_context['active_workspace'].related_bops.remove(bop)
                 context['selected']=False
                 activity.text='%s removed the BOP: <a href="%s">%s</a> from the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             else:
-                active_workspace.related_bops.add(bop)
+                ws_context['active_workspace'].related_bops.add(bop)
                 context['selected']=True
                 activity.text='%s added the BOP: <a href="%s">%s</a> to the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             activity.save()
-            active_workspace.save()
+            ws_context['active_workspace'].save()
 
         return context
 
@@ -286,7 +286,7 @@ class BOPTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user)
+        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user,context['active_workspace'])
         context['bopGraphId']='bopRelationshipDiagram'
         return context
 

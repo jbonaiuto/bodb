@@ -247,36 +247,36 @@ class LiteratureDetailView(BODBView):
             literature=Unpublished.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
         else:
             raise Http404
-        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature).select_related('nomenclature').prefetch_related('nomenclature__species')
+        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature).select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
 
         user=self.request.user
         context['helpPage']='view_entry.html'
         context['literature']=literature
         context['url']=literature.html_url_string()
         context['literatureType']=literatureType
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user,context['active_workspace'])
         context['ispopup']=('_popup' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         models=Model.get_literature_models(literature, user)
-        context['models']=Model.get_model_list(models, user)
+        context['models']=Model.get_model_list(models, user,context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, user)
         bops=BOP.get_literature_bops(literature, user)
-        context['bops']=BOP.get_bop_list(bops, user)
+        context['bops']=BOP.get_bop_list(bops, user, context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
-        context['generic_seds']=SED.get_sed_list(SED.get_literature_seds(literature, user), user)
+        context['generic_seds']=SED.get_sed_list(SED.get_literature_seds(literature, user), user, context['active_workspace'])
         imaging_seds=BrainImagingSED.get_literature_seds(literature, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds,user, context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         conn_seds=ConnectivitySED.get_literature_seds(literature,user)
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, user, context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_literature_seds(literature, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=SED.get_sed_list(erp_seds, user, context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         context['is_favorite']=False
@@ -323,31 +323,30 @@ class ToggleSelectLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseUpdate
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             lit=Literature.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            ws_context=set_context_workspace({},self.request.user)
 
             context={
                 'literature_id': lit.id,
-                'workspace': active_workspace.title
+                'workspace': ws_context['active_workspace'].title
             }
-            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=lit in active_workspace.related_literature.all()
+                remove=lit in ws_context['active_workspace'].related_literature.all()
             if remove:
-                active_workspace.related_literature.remove(lit)
+                ws_context['active_workspace'].related_literature.remove(lit)
                 context['selected']=False
                 activity.text='%s removed the literature: <a href="%s">%s</a> from the workspace' % \
                               (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
             else:
-                active_workspace.related_literature.add(lit)
+                ws_context['active_workspace'].related_literature.add(lit)
                 context['selected']=True
                 activity.text='%s added the literature: <a href="%s">%s</a> to the workspace' % \
                               (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
             activity.save()
-            active_workspace.save()
+            ws_context['active_workspace'].save()
 
         return context
 

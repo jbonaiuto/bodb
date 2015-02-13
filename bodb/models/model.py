@@ -144,12 +144,10 @@ class Model(Module):
         return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author')
 
     @staticmethod
-    def get_model_list(models, user):
+    def get_model_list(models, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         model_list=[]
         for model in models:
             selected=active_workspace is not None and \
@@ -223,12 +221,10 @@ class RelatedModel(models.Model):
         ordering=['model__title']
 
     @staticmethod
-    def get_related_model_list(rmods, user):
+    def get_related_model_list(rmods, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         related_model_list=[]
         for rmod in rmods:
             selected=active_workspace is not None and \
@@ -246,12 +242,10 @@ class RelatedModel(models.Model):
                                              Document.get_security_q(user, field='model'))).distinct().select_related('model__collator').prefetch_related('model__authors__author')
 
     @staticmethod
-    def get_reverse_related_model_list(rrmods, user):
+    def get_reverse_related_model_list(rrmods, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         reverse_related_model_list=[]
         for rrmod in rrmods:
             selected=active_workspace is not None and \

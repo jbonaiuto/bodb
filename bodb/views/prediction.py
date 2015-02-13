@@ -84,7 +84,7 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
         ssrs=[]
         if self.object.ssr:
             ssrs.append(self.object.ssr)
-        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user)
+        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user, context['active_workspace'])
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
@@ -104,5 +104,5 @@ class PredictionTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user)
+        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user, context['active_workspace'])
         return context

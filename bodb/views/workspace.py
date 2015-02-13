@@ -29,11 +29,11 @@ class ActivateWorkspaceView(ObjectRolePermissionRequiredMixin, JSONResponseMixin
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
-            workspace=Workspace.objects.get(id=self.kwargs.get('pk',None))
+            workspace=Workspace.objects.select_related('created_by','group','forum').prefetch_related('admin_users','related_models','related_bops','related_seds','related_ssrs','related_literature','related_regions','saved_coordinate_selections').get(id=self.kwargs.get('pk',None))
             profile=self.request.user.get_profile()
             profile.active_workspace=workspace
             profile.save()
-
+            cache.set('%d.active_workspace' % self.request.user.id, workspace)
             context={
                 'id': workspace.id,
                 'title': workspace.title
@@ -165,6 +165,7 @@ class CreateWorkspaceView(LoginRequiredMixin, EditWorkspaceMixin, CreateView):
 
         self.request.user.get_profile().active_workspace=self.object
         self.request.user.get_profile().save()
+        cache.set('%d.active_workspace' % self.request.user.id, Workspace.objects.select_related('created_by','group','forum').prefetch_related('admin_users','related_models','related_bops','related_seds','related_ssrs','related_literature','related_regions','saved_coordinate_selections').get(id=self.object.id))
 
         visibility_q=Q(created_by__is_active=True)
         if not self.self.request.user.is_superuser:
@@ -248,6 +249,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceDetailView,self).get_context_data(**kwargs)
         user=self.request.user
+        context=set_context_workspace(context, self.request.user)
         context['helpPage']='workspaces.html#workspace-tabs'
         context['workspace']=self.object
         context['showTour']='show_tour' in self.request.GET
@@ -292,38 +294,38 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         visibility = Document.get_security_q(user)
 
         literature=self.object.related_literature.distinct().select_related('collator').prefetch_related('authors__author')
-        context['literatures']=Literature.get_reference_list(literature,user)
+        context['literatures']=Literature.get_reference_list(literature,user,context['active_workspace'])
 
         brain_regions=self.object.related_regions.distinct().select_related('nomenclature').prefetch_related('nomenclature__species')
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user,context['active_workspace'])
 
         models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author')
-        context['models']=Model.get_model_list(models,user)
+        context['models']=Model.get_model_list(models,user,context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, user)
 
         bops=self.object.related_bops.filter(visibility).distinct().select_related('collator')
-        context['bops']=BOP.get_bop_list(bops,user)
+        context['bops']=BOP.get_bop_list(bops,user,context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().select_related('collator')
-        context['generic_seds']=SED.get_sed_list(generic_seds, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, user, context['active_workspace'])
 
         ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(ws_imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(ws_imaging_seds,user, context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
 
         conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, user, context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
         ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in ws_erp_seds]
-        context['erp_seds']=SED.get_sed_list(ws_erp_seds, user)
+        context['erp_seds']=SED.get_sed_list(ws_erp_seds, user, context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         sss=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
-        context['ssrs']=SSR.get_ssr_list(sss, user)
+        context['ssrs']=SSR.get_ssr_list(sss, user, context['active_workspace'])
 
         context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user__get_profile')
 
@@ -364,8 +366,6 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
                 coord_array['statistic_value']=coord.sed_coordinate.statistic_value.__float__()
             context['selected_coords'].append(coord_array)
 
-        context=set_context_workspace(context, self.request.user)
-
         return context
 
 
@@ -389,10 +389,10 @@ class SaveWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, Sa
         if self.request.is_ajax():
             context=super(SaveWorkspaceCoordinateSelectionView,self).get_context_data(**kwargs)
             if context['action']=='add':
+                ws_context=set_context_workspace({},self.request.user)
                 coord_selection=SavedSEDCoordSelection.objects.get(id=context['id'])
-                active_workspace=self.request.user.get_profile().active_workspace
-                active_workspace.saved_coordinate_selections.add(coord_selection)
-                active_workspace.save()
+                ws_context['active_workspace'].saved_coordinate_selections.add(coord_selection)
+                ws_context['active_workspace'].save()
                 coord_selection_created.send(sender=coord_selection)
         return context
 
@@ -404,10 +404,10 @@ class DeleteWorkspaceCoordinateSelectionView(ObjectRolePermissionRequiredMixin, 
     def get_context_data(self, **kwargs):
         # load selection
         coordSelection=get_object_or_404(SavedSEDCoordSelection, id=self.request.POST['id'])
-        active_workspace=self.request.user.get_profile().active_workspace
-        if coordSelection in active_workspace.saved_coordinate_selections.all():
-            active_workspace.saved_coordinate_selections.remove(coordSelection)
-            active_workspace.save()
+        ws_context=set_context_workspace({},self.request.user)
+        if coordSelection in ws_context['active_workspace'].saved_coordinate_selections.all():
+            ws_context['active_workspace'].saved_coordinate_selections.remove(coordSelection)
+            ws_context['active_workspace'].save()
         return super(DeleteWorkspaceCoordinateSelectionView,self).get_context_data(**kwargs)
 
 

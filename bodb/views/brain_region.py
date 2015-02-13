@@ -165,9 +165,10 @@ class BrainRegionView(DetailView):
         context = super(BrainRegionView,self).get_context_data(**kwargs)
 
         user = self.request.user
+        context=set_context_workspace(context, user)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
+        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user, context['active_workspace'])
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
         search_data={'type':'brain imaging','coordinate_brain_region':self.object.name, 'search_options':'all'}
         sedCoords=runSEDCoordSearch(imaging_seds, search_data, user.id)
@@ -177,23 +178,24 @@ class BrainRegionView(DetailView):
                 coords.append(sedCoords[sed.id])
             else:
                 coords.append([])
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds,user, context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
-        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user)
+        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user, context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectionSEDs)
         erp_seds=ERPSED.get_brain_region_seds(self.object, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=SED.get_sed_list(erp_seds, user, context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
-        context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
+        rbops=RelatedBOP.get_brain_region_related_bops(self.object, user)
+        context['related_bops']=RelatedBOP.get_related_bop_list(rbops,user,context['active_workspace'])
+        rmods=RelatedModel.get_brain_region_related_models(self.object, user)
+        context['related_models']=RelatedModel.get_related_model_list(rmods,user,context['active_workspace'])
         context['helpPage']='view_entry.html'
 
         context['is_favorite']=False
         context['selected']=False
 
-        context=set_context_workspace(context, user)
         if user.is_authenticated() and not user.is_anonymous():
             context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).exists()
             context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).exists()
@@ -208,28 +210,27 @@ class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdat
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             region=BrainRegion.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            ws_context=set_context_workspace({}, self.request.user)
 
             context={
                 'region_id': region.id,
-                'workspace': active_workspace.title
+                'workspace': ws_context['active_workspace'].title
             }
-            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=region in active_workspace.related_regions.all()
+                remove=region in ws_context['active_workspace'].related_regions.all()
             if remove:
-                active_workspace.related_regions.remove(region)
+                ws_context['active_workspace'].related_regions.remove(region)
                 context['selected']=False
                 activity.text='%s removed the brain region: <a href="%s">%s</a> from the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
             else:
-                active_workspace.related_regions.add(region)
+                ws_context['active_workspace'].related_regions.add(region)
                 context['selected']=True
                 activity.text='%s added the brain region: <a href="%s">%s</a> to the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
             activity.save()
-            active_workspace.save()
+            ws_context['active_workspace'].save()
 
         return context

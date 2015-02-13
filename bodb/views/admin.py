@@ -9,6 +9,7 @@ from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
 from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature
+from bodb.views.main import set_context_workspace
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
@@ -193,6 +194,7 @@ class UserDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserDetailView,self).get_context_data(**kwargs)
+        set_context_workspace(context, self.request.user)
         context['helpPage']='admin.html#view-user'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
@@ -200,35 +202,35 @@ class UserDetailView(DetailView):
             context[permission]=self.object.has_perm('bodb.%s' % permission)
 
         models=Model.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
-        context['models']=Model.get_model_list(models,self.request.user)
+        context['models']=Model.get_model_list(models,self.request.user,context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, self.request.user)
 
         bops=BOP.objects.filter(collator=self.object).select_related('collator')
-        context['bops']=BOP.get_bop_list(bops,self.request.user)
+        context['bops']=BOP.get_bop_list(bops,self.request.user, context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, self.request.user)
 
         generic_seds=SED.objects.filter(type='generic',collator=self.object).select_related('collator')
-        context['generic_seds']=SED.get_sed_list(generic_seds,self.request.user)
+        context['generic_seds']=SED.get_sed_list(generic_seds,self.request.user, context['active_workspace'])
 
         conn_seds=ConnectivitySED.objects.filter(collator=self.object).select_related('collator','target_region__nomenclature','source_region__nomenclature')
-        context['connectivity_seds']=SED.get_sed_list(conn_seds,self.request.user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,self.request.user, context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
         imaging_seds=BrainImagingSED.objects.filter(collator=self.object).select_related('collator')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,self.request.user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds,self.request.user, context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, self.request.user)
 
         erp_seds=ERPSED.objects.filter(collator=self.object).select_related('collator')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user)
+        context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user, context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         ssrs=SSR.objects.filter(collator=self.object).select_related('collator')
-        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user)
+        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user, context['active_workspace'])
 
         literature=Literature.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
-        context['literatures']=Literature.get_reference_list(literature,self.request.user)
+        context['literatures']=Literature.get_reference_list(literature,self.request.user,context['active_workspace'])
         return context
 
 

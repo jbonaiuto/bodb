@@ -384,6 +384,8 @@ def create_user_profile(user):
     profile=BodbProfile(user=user, active_workspace=default_workspace)
     profile.save()
 
+    cache.set('%d.active_workspace' % user.id, default_workspace)
+
     # check if this user is already allocated to a group
     allocatedAccount=None
     if AllocatedUserAccount.objects.filter(username=user.username):

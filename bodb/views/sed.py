@@ -11,7 +11,7 @@ from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, C
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
@@ -290,9 +290,12 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                 coords=SelectedSEDCoord.objects.filter(selected=True, user=user).select_related('sed_coordinate')
                 for coord in coords:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
-        context['references'] = Literature.get_reference_list(self.object.literature.all().select_related('collator').prefetch_related('authors__author'),user)
-        context['related_models'] = RelatedModel.get_reverse_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
-        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
+        references=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
+        context['references'] = Literature.get_reference_list(references,user,context['active_workspace'])
+        rmods=RelatedModel.get_sed_related_models(self.object,user)
+        context['related_models'] = RelatedModel.get_reverse_related_model_list(rmods,user,context['active_workspace'])
+        rbops=RelatedBOP.get_sed_related_bops(self.object,user)
+        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(rbops,user,context['active_workspace'])
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='SED').exists()
@@ -929,28 +932,27 @@ class ToggleSelectSEDView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             sed=SED.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            ws_context=set_context_workspace({},self.request.user)
 
             context={
                 'sed_id': sed.id,
-                'workspace': active_workspace.title
+                'workspace': ws_context['active_workspace'].title
             }
-            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=sed in active_workspace.related_seds.all()
+                remove=sed in ws_context['active_workspace'].related_seds.all()
             if remove:
-                active_workspace.related_seds.remove(sed)
+                ws_context['active_workspace'].related_seds.remove(sed)
                 context['selected']=False
                 activity.text='%s removed the SED: <a href="%s">%s</a> from the workspace' % (self.request.user.username, sed.get_absolute_url(), sed.__unicode__())
             else:
-                active_workspace.related_seds.add(sed)
+                ws_context['active_workspace'].related_seds.add(sed)
                 context['selected']=True
                 activity.text='%s added the SED: <a href="%s">%s</a> to the workspace' % (self.request.user.username, sed.get_absolute_url(), sed.__unicode__())
             activity.save()
-            active_workspace.save()
+            ws_context['active_workspace'].save()
 
         return context
 
@@ -982,17 +984,17 @@ class SEDTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user)
+        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user, context['active_workspace'])
         conn_seds=ConnectivitySED.get_tagged_seds(name, user)
-        context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,user, context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        context['erp_seds']=SED.get_sed_list(erp_seds, user, context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds,user, context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'

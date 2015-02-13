@@ -39,11 +39,12 @@ class DocumentAPIListView(generics.ListCreateAPIView):
         security_q=Document.get_security_q(user)
         return Document.objects.filter(security_q)
 
-class DocumentDetailView( DetailView):
+class DocumentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
         user=self.request.user
+        context=set_context_workspace(context, self.request.user)
         context['helpPage']='index.html'
         context['figures'] = DocumentFigure.objects.filter(document=self.object).order_by('order')
         context['generic_build_seds']=[]
@@ -51,14 +52,16 @@ class DocumentDetailView( DetailView):
         context['imaging_build_seds']=[]
         context['erp_build_seds']=[]
         if BuildSED.get_building_seds(self.object,user).exists():
-            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user)
-            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user)
-            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user)
-            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user)
-        context['related_bops'] = RelatedBOP.get_related_bop_list(RelatedBOP.get_related_bops(self.object, user),user)
-        context['related_models'] = RelatedModel.get_related_model_list(RelatedModel.get_related_models(self.object, user),user)
+            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user, context['active_workspace'])
+            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user, context['active_workspace'])
+            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user, context['active_workspace'])
+            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user, context['active_workspace'])
+        rbops=RelatedBOP.get_related_bops(self.object, user)
+        context['related_bops'] = RelatedBOP.get_related_bop_list(rbops,user,context['active_workspace'])
+        rmods=RelatedModel.get_related_models(self.object, user)
+        context['related_models'] = RelatedModel.get_related_model_list(rmods,user,context['active_workspace'])
         related_regions=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species')
-        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions, user)
+        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions, user, context['active_workspace'])
         context['canEdit']=self.object.check_perm(user,'edit')
         context['canDelete']=self.object.check_perm(user,'delete')
         context['canManage']=self.object.check_perm(user,'manage')
@@ -68,7 +71,7 @@ class DocumentDetailView( DetailView):
         context['selected']=False
         context['can_add_post']=False
         context['public_request_sent']=False
-        context=set_context_workspace(context, self.request.user)
+
         if user.is_authenticated() and not user.is_anonymous():
             context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).exists()
             context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()

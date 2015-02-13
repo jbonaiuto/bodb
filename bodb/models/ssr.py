@@ -41,12 +41,10 @@ class SSR(Document):
             sendNotifications(self, 'SSR')
 
     @staticmethod
-    def get_ssr_list(ssrs, user):
+    def get_ssr_list(ssrs, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         ssr_list=[]
         for ssr in ssrs:
             selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).exists()
@@ -78,12 +76,10 @@ class Prediction(Document):
         return reverse('prediction_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_prediction_list(predictions, user):
+    def get_prediction_list(predictions, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         prediction_list=[]
         for prediction in predictions:
             if prediction.ssr is None:

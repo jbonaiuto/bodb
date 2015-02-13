@@ -158,12 +158,10 @@ class Literature(models.Model):
         return ''
 
     @staticmethod
-    def get_reference_list(references, user):
+    def get_reference_list(references, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         reference_list=[]
         for reference in references:
             selected=active_workspace is not None and\

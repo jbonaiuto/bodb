@@ -18,6 +18,7 @@ from bodb.forms.ssr import SSRReportForm
 from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
 from bodb.forms.model import ModelReportForm
 from bodb.forms.sed import SEDReportForm
+from bodb.views.main import set_context_workspace
 from uscbp.image_utils import get_thumbnail
 import json
 from bodb.serializers.sed import SEDSerializer
@@ -42,7 +43,7 @@ styles = getSampleStyleSheet()
 def get_sed_report_context(request, context):
     # load related entries
     context['figures'] = list(DocumentFigure.objects.filter(document=context['sed']).order_by('order'))
-    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),request.user))
+    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),request.user,context['active_workspace']))
     context['related_models'] = RelatedModel.get_sed_related_models(context['sed'], request.user)
     context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['sed']))
     context['references'] = list(context['sed'].literature.all())
@@ -117,6 +118,7 @@ class BOPReportView(FormView):
             }
             for buildsed in context['building_seds'] :
                 bsed_context={'sed':buildsed.sed}
+                set_context_workspace(bsed_context,self.request.user)
                 bsed_context = get_sed_report_context(self.request, bsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
@@ -210,6 +212,7 @@ class ModelReportView(FormView):
             }
             for buildsed in context['building_seds'] :
                 bsed_context={'sed':buildsed.sed}
+                set_context_workspace(bsed_context,self.request.user)
                 bsed_context = get_sed_report_context(self.request, bsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(bsed_context, display_settings, doc=doc)
@@ -218,6 +221,7 @@ class ModelReportView(FormView):
 
             for testsed in context['testing_seds']:
                 tsed_context={'sed':testsed.sed}
+                set_context_workspace(tsed_context,self.request.user)
                 tsed_context = get_sed_report_context(self.request, tsed_context)
                 if format=='rtf':
                     doc=sed_report_rtf(tsed_context, display_settings, doc=doc)
@@ -242,6 +246,7 @@ class SEDReportView(FormView):
     def get_context_data(self, **kwargs):
         context=super(SEDReportView,self).get_context_data(**kwargs)
         context['sed']=get_object_or_404(SED, id=self.kwargs.get('pk', None))
+        set_context_workspace(context,self.request.user)
         context=get_sed_report_context(self.request, context)
         context['ispopup']='_popup' in self.request.GET
         return context

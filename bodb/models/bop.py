@@ -56,12 +56,10 @@ class BOP(MPTTModel,Document):
         return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
     @staticmethod
-    def get_bop_list(bops, user):
+    def get_bop_list(bops, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         bop_list=[]
         for bop in bops:
             selected=active_workspace is not None and active_workspace.related_bops.filter(id=bop.id).exists()
@@ -106,12 +104,10 @@ class RelatedBOP(models.Model):
         ordering=['bop__title']
 
     @staticmethod
-    def get_related_bop_list(rbops, user):
+    def get_related_bop_list(rbops, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         related_bop_list=[]
         for rbop in rbops:
             selected=active_workspace is not None and active_workspace.related_bops.filter(id=rbop.bop.id).exists()
@@ -122,12 +118,10 @@ class RelatedBOP(models.Model):
         return related_bop_list
 
     @staticmethod
-    def get_reverse_related_bop_list(rrbops, user):
+    def get_reverse_related_bop_list(rrbops, user, active_workspace):
         profile=None
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
             profile=user.get_profile()
-            active_workspace=profile.active_workspace
         reverse_related_bop_list=[]
         for rrbop in rrbops:
             selected=active_workspace is not None and \
