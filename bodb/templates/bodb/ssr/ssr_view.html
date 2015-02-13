@@ -61,9 +61,9 @@
         {% if ispopup and action %}
             {% if action == "add" %}
                 {% ifequal type 'testsed' %}
-                    opener.setTestingSEDSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type }}');
+                    opener.setTestingSEDSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
                 {% else %}
-                    opener.setPredictionSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type }}');
+                    opener.setPredictionSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
                 {% endifequal %}
             {% endif %}
             self.close();

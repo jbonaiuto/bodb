@@ -18,9 +18,9 @@
             {% if multiple %}
                 {% if action == "add" %}
                     {% ifequal type 'build' %}
-                        opener.addBuildSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type }}']);
+                        opener.addBuildSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type|escapejs }}']);
                     {% else %}
-                        opener.addTestSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type }}'],'', []);
+                        opener.addTestSEDMultiple('', '', '', {{ brainimagingsed.id }}, ['{{ brainimagingsed.title|escapejs }}', '{{ brainimagingsed.brief_description|escapejs }}', '{{ brainimagingsed.type|escapejs }}'],'', []);
                     {% endifequal %}
                 {% endif %}
             {% endif %}
