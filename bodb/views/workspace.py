@@ -171,7 +171,7 @@ class CreateWorkspaceView(LoginRequiredMixin, EditWorkspaceMixin, CreateView):
         cache.set('%d.active_workspace' % self.request.user.id, Workspace.objects.select_related('created_by','group','forum').prefetch_related('admin_users','related_models','related_bops','related_seds','related_ssrs','related_literature','related_regions','saved_coordinate_selections').get(id=self.object.id))
 
         visibility_q=Q(created_by__is_active=True)
-        if not self.self.request.user.is_superuser:
+        if not self.request.user.is_superuser:
             visibility_q=Q(visibility_q & Q(group__in=self.request.user.groups.all()))
         workspaces=Workspace.objects.filter(visibility_q).order_by('title')
         cache.set('%d.workspaces' % self.request.user.id, list(workspaces))
