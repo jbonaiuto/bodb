@@ -24,7 +24,7 @@ def logout_view(request):
     # perform logout
     logout(request)
     # redirect to index
-    return render_to_response('registration/logout.html', dictionary={'user':None})
+    return render_to_response('registration/logout.html', dictionary={'user':User.objects.get(id = settings.ANONYMOUS_USER_ID)})
 
 
 # check if a username is unique

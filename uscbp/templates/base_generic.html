@@ -110,7 +110,7 @@
                     </div>
                 </td>
                 <td width="110px" align=right valign="top">
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and not user.is_anonymous%}
                         <div id="user_img">
                             <a href="/bodb/messages/" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img id="messagesLink" src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
                             {% if profile.avatar %}
