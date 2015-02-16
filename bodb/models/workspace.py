@@ -115,12 +115,9 @@ class Workspace(models.Model):
 
     @staticmethod
     def get_workspace_list(workspaces, user):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
         workspace_list=[]
         for w in workspaces:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).exists()
+            subscribed_to_user=user.is_authenticated() and not user.is_anonymous() and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).exists()
             workspace_list.append([subscribed_to_user,w])
         return workspace_list
 
@@ -219,27 +216,30 @@ class WorkspaceActivityItem(models.Model):
 
 @receiver(forum_post_added)
 def workspace_forum_post_added(sender, **kwargs):
-    if Workspace.objects.filter(forum=sender.forum):
+    try:
         workspace=Workspace.objects.get(forum=sender.forum)
+    except (Workspace.DoesNotExist, Workspace.MultipleObjectsReturned), err:
+        workspace=None
+    if workspace is not None:
         activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
         activity.text='%s added a comment to the workspace: %s' % (sender.author.username, sender.body)
         activity.save()
-    for workspace in Workspace.objects.filter(related_models__forum=sender.forum):
-        for model in workspace.related_models.filter(forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_models__forum').filter(related_models__forum=sender.forum):
+        for model in workspace.related_models.filter(forum=sender.forum).prefetch_related('authors__author'):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the model <a href="%s">%s</a>: %s' % (sender.author.username,model.get_absolute_url(), model.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_bops__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_bops__forum').filter(related_bops__forum=sender.forum):
         for bop in workspace.related_bops.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the BOP <a href="%s">%s</a>: %s' % (sender.author.username, bop.get_absolute_url(), bop.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_seds__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_seds__forum').filter(related_seds__forum=sender.forum):
         for sed in workspace.related_seds.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the SED <a href="%s">%s</a>: %s' % (sender.author.username, sed.get_absolute_url(), sed.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_ssrs__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related__ssrs__forum').filter(related_ssrs__forum=sender.forum):
         for ssr in workspace.related_ssrs.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the SSR <a href="%s">%s</a>: %s' % (sender.author.username, ssr.get_absolute_url(), ssr.__unicode__(), sender.body)
@@ -354,12 +354,9 @@ class BodbProfile(models.Model):
 
     @staticmethod
     def get_user_list(users, user):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
         user_list=[]
         for u in users:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=u, user=user).exists()
+            subscribed_to_user=user.is_authenticated() and not user.is_anonymous() and UserSubscription.objects.filter(subscribed_to_user=u, user=user).exists()
             user_list.append([subscribed_to_user,u])
         return user_list
 
@@ -383,6 +380,8 @@ def create_user_profile(user):
     # create a profile
     profile=BodbProfile(user=user, active_workspace=default_workspace)
     profile.save()
+
+    cache.set('%d.active_workspace' % user.id, default_workspace)
 
     # check if this user is already allocated to a group
     allocatedAccount=None

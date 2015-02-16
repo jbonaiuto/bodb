@@ -98,9 +98,9 @@ class UserSearch(object):
     def search_bop(self, userId):
         if self.bop:
             # restrict to user's own entries or those of other users that are not drafts
-            if User.objects.filter(id=userId):
+            try:
                 user=User.objects.get(id=userId)
-            else:
+            except (User.DoesNotExist, User.MultipleObjectsReturned), err:
                 user=User.get_anonymous()
             op=operator.or_
             if self.bop_options=='all':
@@ -117,9 +117,9 @@ class UserSearch(object):
     def search_model(self, userId):
         if self.model:
             # restrict to user's own entries or those of other users that are not drafts
-            if User.objects.filter(id=userId):
+            try:
                 user=User.objects.get(id=userId)
-            else:
+            except (User.DoesNotExist, User.MultipleObjectsReturned), err:
                 user=User.get_anonymous()
             op=operator.or_
             if self.model_options=='all':
@@ -136,9 +136,9 @@ class UserSearch(object):
     def search_sed(self, userId):
         if self.sed:
             # restrict to user's own entries or those of other users that are not drafts
-            if User.objects.filter(id=userId):
+            try:
                 user=User.objects.get(id=userId)
-            else:
+            except (User.DoesNotExist, User.MultipleObjectsReturned), err:
                 user=User.get_anonymous()
             op=operator.or_
             if self.sed_options=='all':
@@ -155,9 +155,9 @@ class UserSearch(object):
     def search_ssr(self, userId):
         if self.ssr:
             # restrict to user's own entries or those of other users that are not drafts
-            if User.objects.filter(id=userId):
+            try:
                 user=User.objects.get(id=userId)
-            else:
+            except (User.DoesNotExist, User.MultipleObjectsReturned), err:
                 user=User.get_anonymous()
             op=operator.or_
             if self.ssr_options=='all':

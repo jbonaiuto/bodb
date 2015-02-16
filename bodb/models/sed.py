@@ -54,11 +54,16 @@ class SED(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        elif SED.objects.filter(id=self.id).count():
-            made_public=not SED.objects.get(id=self.id).public and self.public
-            made_not_draft=SED.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_sed=SED.objects.get(id=self.id)
+            except (SED.DoesNotExist, SED.MultipleObjectsReturned), err:
+                existing_sed=None
+            if existing_sed is not None:
+                made_public=not existing_sed.public and self.public
+                made_not_draft=existing_sed.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(SED, self).save(*args, **kwargs)
 
@@ -82,22 +87,25 @@ class SED(Document):
                                     Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
-    def get_sed_list(seds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_sed_list(seds, profile, active_workspace):
         sed_list=[]
         for sed in seds:
-            if CoCoMacConnectivitySED.objects.filter(id=sed.id).exists():
-                sed=CoCoMacConnectivitySED.objects.select_related('collator','source_region__cocomacbrainreigon','target_region__cocomacbrainregion').get(id=sed.id)
-            if BredeBrainImagingSED.objects.filter(id=sed.id).exists():
-                sed=BredeBrainImagingSED.objects.select_related('collator').get(id=sed.id)
+            try:
+                cocomac_sed=CoCoMacConnectivitySED.objects.select_related('collator','source_region__cocomacbrainreigon','target_region__cocomacbrainregion').get(id=sed.id)
+            except (CoCoMacConnectivitySED.DoesNotExist, CoCoMacConnectivitySED.MultipleObjectsReturned), err:
+                cocomac_sed=None
+            if cocomac_sed is not None:
+                sed=cocomac_sed
+            try:
+                brede_sed=BredeBrainImagingSED.objects.select_related('collator').get(id=sed.id)
+            except (BredeBrainImagingSED.DoesNotExist, BredeBrainImagingSED.MultipleObjectsReturned), err:
+                brede_sed=None
+            if brede_sed is not None:
+                sed=brede_sed
             selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=sed.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
-                user=user, model_type='SED').exists()
+                user=profile.user, model_type='SED').exists()
             sed_list.append([selected,is_favorite,subscribed_to_user,sed])
         return sed_list
 
@@ -463,12 +471,17 @@ class CoCoMacConnectivitySED(ConnectivitySED):
         app_label='bodb'
 
     def html_url_string(self):
-        if CoCoMacBrainRegion.objects.filter(brain_region__id=self.source_region.id).exists() and \
-           CoCoMacBrainRegion.objects.filter(brain_region__id=self.target_region.id).exists():
+        try:
+            cocomac_source=CoCoMacBrainRegion.objects.get(brain_region__id=self.source_region.id)
+            cocomac_target=CoCoMacBrainRegion.objects.get(brain_region__id=self.target_region.id)
+        except (CoCoMacBrainRegion.DoesNotExist, CoCoMacBrainRegion.MultipleObjectsReturned), err:
+            cocomac_source=None
+            cocomac_target=None
+
+        if cocomac_source is not None and cocomac_target is not None:
             cocomac_url='http://cocomac.g-node.org/cocomac2/services/axonal_projections.php?axonOriginList='
             #cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
 
-            cocomac_source=CoCoMacBrainRegion.objects.get(brain_region__id=self.source_region.id)
             source_id=cocomac_source.cocomac_id.split('-',1)
             cocomac_url+='%s-%s' % (source_id[0],source_id[1])
 #            cocomac_url+="(\\'"+source_id[0]+"\\')[SourceMap]"
@@ -476,7 +489,6 @@ class CoCoMacConnectivitySED(ConnectivitySED):
 #            cocomac_url+="(\\'"+source_id[1]+"\\') [SourceSite]"
 #            cocomac_url+=" AND "
 
-            cocomac_target=CoCoMacBrainRegion.objects.get(brain_region__id=self.target_region.id)
             target_id=cocomac_target.cocomac_id.split('-',1)
             cocomac_url+='&axonTerminalList=%s-%s' % (target_id[0],target_id[1])
 #            cocomac_url+="(\\'"+target_id[0]+"\\')[TargetMap]"
@@ -509,37 +521,27 @@ class BuildSED(models.Model):
         ordering=['sed__title']
 
     @staticmethod
-    def get_building_sed_list(bseds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_building_sed_list(bseds, profile, active_workspace):
         build_sed_list=[]
         for buildsed in bseds:
             selected=active_workspace is not None and \
                      active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
             subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=profile.user,
                                    model_type='SED').exists()
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed])
         return build_sed_list
 
     @staticmethod
-    def get_imaging_building_sed_list(bseds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_imaging_building_sed_list(bseds, profile, active_workspace):
         build_sed_list=[]
         for (buildsed,coords) in bseds:
             selected=active_workspace is not None and\
                      active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
             subscribed_to_user=profile is not None and\
-                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=profile.user,
                                    model_type='SED').exists()
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed,coords])
         return build_sed_list
@@ -605,26 +607,21 @@ class TestSED(models.Model):
         super(TestSED, self).save(*args, **kwargs)
 
     @staticmethod
-    def get_testing_sed_list(tseds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_testing_sed_list(tseds, profile, active_workspace):
         test_sed_list=[]
         for testsed in tseds:
             sed_selected=active_workspace is not None and \
                          active_workspace.related_seds.filter(id=testsed.sed.id).exists()
             sed_is_favorite=profile is not None and profile.favorites.filter(id=testsed.sed.id).exists()
             sed_subscribed_to_user=profile is not None and \
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=user,
+                                   UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=profile.user,
                                        model_type='SED').exists()
             ssr_selected=active_workspace is not None and \
                          active_workspace.related_ssrs.filter(id=testsed.ssr.id).exists()
             ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.ssr.id).exists()
             ssr_subscribed_to_user=profile is not None and\
                                    UserSubscription.objects.filter(subscribed_to_user=testsed.ssr.collator,
-                                       user=user, model_type='SSR').exists()
+                                       user=profile.user, model_type='SSR').exists()
             test_sed_list.append([sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,
                                   ssr_subscribed_to_user,testsed])
         return test_sed_list

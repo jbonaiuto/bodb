@@ -1,10 +1,9 @@
 import datetime
 import json
 from Bio import Entrez
-from django.core import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from bodb.search.workspace import runWorkspaceSearch
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.main import set_context_workspace
 
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.http import HttpResponse
@@ -19,9 +18,9 @@ from bodb.search.ssr import runSSRSearch
 from federation.modeldb.search import runModelDBSearch
 from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
-from federation.cocomac.search import runCoCoMacSearch, runCoCoMacSearch2
+from federation.cocomac.search import runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, SelectedSEDCoord, ERPComponent, BodbProfile, Workspace, NeurophysiologySED, Species, stop_words
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, ERPComponent, BodbProfile, Workspace, NeurophysiologySED, Species, stop_words
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -29,6 +28,7 @@ class SearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='search_data.html'
         context['showTour']='show_tour' in self.request.GET
         context['showTabs']=True
@@ -54,7 +54,6 @@ class SearchView(FormView):
         context['bopBOPGraphId']='bopRelationshipDiagram'
         context['allModelGraphId']='allModelRelationshipDiagram'
         context['modelModelGraphId']='modelRelationshipDiagram'
-        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -148,23 +147,23 @@ class SearchView(FormView):
             users=runUserSearch(form.cleaned_data, user.id)
             workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
 
-        context['bops']=BOP.get_bop_list(bops, user)
+        context['bops']=BOP.get_bop_list(bops, context['profile'], context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
-        context['models']=Model.get_model_list(models, user)
+        context['models']=Model.get_model_list(models, context['profile'], context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, user)
-        context['generic_seds']=SED.get_sed_list(genericSEDs, user)
-        context['erp_seds']=SED.get_sed_list(erpSEDs, user)
+        context['generic_seds']=SED.get_sed_list(genericSEDs, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erpSEDs, context['profile'], context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
-            [ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erpSEDs])
-        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, user)
+            [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erpSEDs])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['profile'], context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
-        context['imaging_seds']=SED.get_sed_list(imagingSEDs, user)
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['profile'], context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs], user)
-        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs, user)
-        context['ssrs']=SSR.get_ssr_list(ssrs, user)
-        context['literatures']=Literature.get_reference_list(literature,user)
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs, context['profile'], context['active_workspace'])
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
+        context['literatures']=Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
         context['users']=BodbProfile.get_user_list(users,user)
         context['workspaces']=Workspace.get_workspace_list(workspaces,user)
 
@@ -403,6 +402,7 @@ class BOPSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BOPSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='search_data.html#bops'
         context['bop_search_form']=context.get('form')
         context['bopGraphId']='bopRelationshipDiagram'
@@ -411,7 +411,6 @@ class BOPSearchView(FormView):
         context['exclude']=self.request.GET.get('exclude',None)
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context=set_context_workspace(context, self.request.user)
 
         return context
 
@@ -421,7 +420,7 @@ class BOPSearchView(FormView):
 
         bops=runBOPSearch(form.cleaned_data, user.id, exclude=context['exclude'])
 
-        context['bops']=BOP.get_bop_list(bops, user)
+        context['bops']=BOP.get_bop_list(bops, context['profile'], context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         if self.request.is_ajax():
@@ -469,6 +468,7 @@ class BrainRegionSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         user=self.request.user
         context['helpPage']='search_data.html#brain-regions'
         context['brain_region_search_form']=context.get('form')
@@ -478,7 +478,6 @@ class BrainRegionSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         if 'fieldName' in self.request.GET:
             context['fieldName']=self.request.GET['fieldName']
-        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -487,7 +486,7 @@ class BrainRegionSearchView(FormView):
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
         user=self.request.user
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
         if self.request.is_ajax():
             brain_region_list=[(selected,is_favorite,region.as_json())
                                for (selected,is_favorite,region) in context['brain_regions']]
@@ -523,6 +522,7 @@ class LiteratureSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(LiteratureSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         user=self.request.user
         context['helpPage']='search_data.html#literature'
         context['literature_search_form']=context.get('form')
@@ -530,7 +530,6 @@ class LiteratureSearchView(FormView):
         context['searchLabel']='Literature'
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
-        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -539,7 +538,7 @@ class LiteratureSearchView(FormView):
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
         user=self.request.user
-        context['literatures']=Literature.get_reference_list(literatures,user)
+        context['literatures']=Literature.get_reference_list(literatures,context['profile'],context['active_workspace'])
         if self.request.is_ajax():
             literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
                              for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
@@ -575,6 +574,7 @@ class ModelSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ModelSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='search_data.html#models'
         context['model_search_form']=context.get('form')
         context['searchType']='models'
@@ -583,7 +583,6 @@ class ModelSearchView(FormView):
         context['multiple']=('_multiple' in self.request.GET)
         context['exclude']=self.request.GET.get('exclude',None)
         context['modelGraphId']='modelRelationshipDiagram'
-        context=set_context_workspace(context, self.request.user)
         return context
 
     def form_valid(self, form):
@@ -591,7 +590,7 @@ class ModelSearchView(FormView):
         user=self.request.user
 
         models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
-        context['models']=Model.get_model_list(models, user)
+        context['models']=Model.get_model_list(models, context['profile'], context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, user)
 
         if self.request.is_ajax():
@@ -630,6 +629,7 @@ class SEDSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SEDSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         user=self.request.user
         context['helpPage']='search_data.html#summary-of-experimental-data'
         context['sed_search_form']=context.get('form')
@@ -640,7 +640,6 @@ class SEDSearchView(FormView):
         context['type']=self.request.GET.get('type',None)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context=set_context_workspace(context, self.request.user)
 
         return context
 
@@ -675,16 +674,16 @@ class SEDSearchView(FormView):
         sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
 
         # load selected sed ids
-        context['generic_seds']=SED.get_sed_list(genericSEDs,user)
-        context['erp_seds']=SED.get_sed_list(erpSEDs, user)
+        context['generic_seds']=SED.get_sed_list(genericSEDs, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erpSEDs, context['profile'], context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
-            [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erpSEDs])
-        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs,user)
+            [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erpSEDs])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['profile'], context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
-        context['imaging_seds']=SED.get_sed_list(imagingSEDs,user)
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['profile'], context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
             [sedCoords[sed.id] for sed in imagingSEDs], user)
-        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs,user)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs,context['profile'], context['active_workspace'])
         if self.request.is_ajax():
             ajax_context={
                 'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
@@ -709,6 +708,7 @@ class ModelDBSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context=super(ModelDBSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#search-modeldb'
         context['ispopup']=('_popup' in self.request.GET)
         return context
@@ -731,6 +731,7 @@ class PubmedSearchView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(PubmedSearchView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#pubmed-search'
         context['ispopup']=('_popup' in self.request.GET)
         return context
@@ -809,7 +810,7 @@ class PubmedSearchView(FormView):
                     # create a pubmedresult object
                     pm_result=PubMedResult()
                     pm_result.pubmedId=str(article_record['Id'])
-                    if len(Literature.objects.filter(pubmed_id=pm_result.pubmedId)):
+                    if Literature.objects.filter(pubmed_id=pm_result.pubmedId).exists():
                         pm_result.exists=True
                     if 'AuthorList' in article_record:
                         pm_result.authors_display=", ".join(article_record['AuthorList'])

@@ -100,9 +100,9 @@ class Document(models.Model):
             return user.is_authenticated() and (self.collator==user or user.is_superuser or
                                                 user.has_perm(perm,Document.objects.get(id=self.id)))
 
-    def isFavorite(self, user):
-        if user.is_authenticated() and not user.is_anonymous():
-            return user.get_profile().favorites.filter(id=self.id).exists()
+    def isFavorite(self, profile):
+        if profile is not None:
+            return profile.favorites.filter(id=self.id).exists()
         return False
 
     def save(self, *args, **kwargs):
