@@ -102,12 +102,18 @@ class Literature(models.Model):
         return reverse('lit_view', kwargs={'pk': self.pk})
 
     def str(self):
-        if Journal.objects.filter(id=self.id).exists():
+        try:
             return Journal.objects.prefetch_related('authors__author').get(id=self.id).str()
-        elif Book.objects.filter(id=self.id).exists():
+        except (Journal.DoesNotExist, Journal.MultipleObjectsReturned), err:
+            pass
+        try:
             return Book.objects.prefetch_related('authors__author').get(id=self.id).str()
-        elif Chapter.objects.filter(id=self.id).exists():
+        except (Book.DoesNotExist, Book.MultipleObjectsReturned), err:
+            pass
+        try:
             return Chapter.objects.prefetch_related('authors__author').get(id=self.id).str()
+        except (Chapter.DoesNotExist, Chapter.MultipleObjectsReturned), err:
+            pass
         return u'%s, %s,  %s.' % (self.author_names(),str(self.year),self.title)
 
     # print authors
@@ -158,17 +164,14 @@ class Literature(models.Model):
         return ''
 
     @staticmethod
-    def get_reference_list(references, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_reference_list(references, profile, active_workspace):
         reference_list=[]
         for reference in references:
             selected=active_workspace is not None and\
                      active_workspace.related_literature.filter(id=reference.id).exists()
             is_favorite=profile is not None and profile.favorite_literature.filter(id=reference.id).exists()
             subscribed_to_user=profile is not None and\
-                               UserSubscription.objects.filter(subscribed_to_user=reference.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=reference.collator, user=profile.user,
                                    model_type='Model').exists()
             reference_list.append([selected,is_favorite,subscribed_to_user,reference])
         return reference_list
@@ -368,11 +371,15 @@ def reference_export(format, references, file_name):
     # loop through list of references
     for reference in references:
         # only export journal and book references
-        if Journal.objects.filter(id=reference.id):
+        try:
             reference=Journal.objects.get(id=reference.id)
-        elif Book.objects.filter(id=reference.id):
+        except (Journal.DoesNotExist, Journal.MultipleObjectsReturned), err:
+            reference=None
+        try:
             reference=Book.objects.get(id=reference.id)
-        else:
+        except (Book.DoesNotExist, Book.MultipleObjectsReturned), err:
+            reference=None
+        if reference is None:
             continue
 
         # write the reference to the file - each reference type knows how to
@@ -417,7 +424,7 @@ class PubMedResult:
 
 
 def importPubmedLiterature(pubmed_id):
-    if Literature.objects.filter(pubmed_id=pubmed_id):
+    if Literature.objects.filter(pubmed_id=pubmed_id).exists():
         lit=Literature.objects.filter(pubmed_id=pubmed_id)[0]
     else:
         article_handles=Entrez.esummary(db="pubmed", id=pubmed_id)
@@ -454,7 +461,7 @@ def importPubmedLiterature(pubmed_id):
                     first_name = full_name[1]
 
                 # get Id if author exists
-                if Author.objects.filter(first_name=first_name, last_name=last_name):
+                if Author.objects.filter(first_name=first_name, last_name=last_name).exists():
                     orderedAuth=LiteratureAuthor(author=Author.objects.filter(first_name=first_name, last_name=last_name)[0], order=idx)
                     orderedAuth.save()
                     lit.authors.add(orderedAuth)

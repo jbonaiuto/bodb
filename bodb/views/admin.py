@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response, render, get_object_or_404
-from django.views.generic import UpdateView, View, CreateView, DetailView
+from django.views.generic import UpdateView, View, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
@@ -12,18 +12,19 @@ from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, Connectivity
 from bodb.views.main import set_context_workspace
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
-from guardian.shortcuts import assign_perm, remove_perm, get_perms
+from guardian.shortcuts import assign_perm, remove_perm
 from registration.backends.default.views import RegistrationView
 from registration.models import User
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
+from django.core.cache import cache
 
 @login_required
 def logout_view(request):
     # perform logout
     logout(request)
     # redirect to index
-    return render_to_response('registration/logout.html', user=User.objects.get(id = settings.ANONYMOUS_USER_ID))
+    return render_to_response('registration/logout.html', context={'user':User.objects.get(id = settings.ANONYMOUS_USER_ID)})
 
 
 # check if a username is unique
@@ -32,7 +33,7 @@ def username_available(request):
     if request.is_ajax() and 'username' in request.POST:
         username_str = request.POST['username']
         # return response if username is unique
-        if not User.objects.filter(username=username_str).count():
+        if not User.objects.filter(username=username_str).exists():
             return HttpResponse(username_str)
         # return error if already taken
         else:
@@ -51,6 +52,7 @@ class UpdateUserProfileView(LoginRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserProfileView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='user_profile.html'
         context['subscription_formset']=SubscriptionFormSet(self.request.POST or None,instance=self.request.user,
             prefix='subscription')
@@ -97,6 +99,8 @@ class UpdateUserProfileView(LoginRequiredMixin,UpdateView):
                 user.set_password(self.request.POST['password1'])
             user.save()
 
+            cache.set('%d.profile' % user.id, self.object)
+
             return redirect(self.success_url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -111,6 +115,7 @@ class AdminDetailView(View):
                      'users': User.objects.all().order_by('username').prefetch_related('groups'),
                      'groups': Group.objects.all().order_by('name'),
                      'nomenclatures': Nomenclature.objects.all().order_by('name')}
+            context=set_context_workspace(context, self.request)
             return render(request, self.template, context)
         else:
             return HttpResponseRedirect('/bodb/index.html')
@@ -156,6 +161,7 @@ class CreateUserView(EditUserMixin,AdminCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#insert-user'
         context['ispopup']=('_popup' in self.request.GET)
         if self.request.POST:
@@ -172,6 +178,7 @@ class UpdateUserView(EditUserMixin,AdminUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#edit-user'
         context['ispopup']=('_popup' in self.request.GET)
         if self.request.POST:
@@ -194,7 +201,7 @@ class UserDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserDetailView,self).get_context_data(**kwargs)
-        set_context_workspace(context, self.request.user)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#view-user'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
@@ -202,18 +209,18 @@ class UserDetailView(DetailView):
             context[permission]=self.object.has_perm('bodb.%s' % permission)
 
         models=Model.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
-        context['models']=Model.get_model_list(models,self.request.user,context['active_workspace'])
+        context['models']=Model.get_model_list(models,context['profile'],context['active_workspace'])
         context['model_seds']=Model.get_sed_map(models, self.request.user)
 
         bops=BOP.objects.filter(collator=self.object).select_related('collator')
-        context['bops']=BOP.get_bop_list(bops,self.request.user, context['active_workspace'])
+        context['bops']=BOP.get_bop_list(bops,context['profile'], context['active_workspace'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, self.request.user)
 
         generic_seds=SED.objects.filter(type='generic',collator=self.object).select_related('collator')
-        context['generic_seds']=SED.get_sed_list(generic_seds,self.request.user, context['active_workspace'])
+        context['generic_seds']=SED.get_sed_list(generic_seds,context['profile'], context['active_workspace'])
 
         conn_seds=ConnectivitySED.objects.filter(collator=self.object).select_related('collator','target_region__nomenclature','source_region__nomenclature')
-        context['connectivity_seds']=SED.get_sed_list(conn_seds,self.request.user, context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(conn_seds,context['profile'], context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
         imaging_seds=BrainImagingSED.objects.filter(collator=self.object).select_related('collator')
@@ -222,15 +229,15 @@ class UserDetailView(DetailView):
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, self.request.user)
 
         erp_seds=ERPSED.objects.filter(collator=self.object).select_related('collator')
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, self.request.user, context['active_workspace'])
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         ssrs=SSR.objects.filter(collator=self.object).select_related('collator')
-        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user, context['active_workspace'])
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
 
         literature=Literature.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
-        context['literatures']=Literature.get_reference_list(literature,self.request.user,context['active_workspace'])
+        context['literatures']=Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
         return context
 
 
@@ -310,6 +317,7 @@ class CreateGroupView(AdminCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGroupView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#insert-group'
         if self.request.POST:
             for permission in bodb_permissions:
@@ -327,9 +335,9 @@ class CreateGroupView(AdminCreateView):
 
         for permission in bodb_permissions:
             if context[permission]:
-                assign_perm(permission, group)
+                assign_perm('bodb.%s' % permission, group)
             else:
-                remove_perm(permission, group)
+                remove_perm('bodb.%s' % permission, group)
 
         redirect_url='%s?action=add' % reverse('group_view', kwargs={'pk': group.id})
         if context['ispopup']:
@@ -344,6 +352,7 @@ class UpdateGroupView(AdminUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#edit-group'
         if self.request.POST:
             for permission in bodb_permissions:
@@ -361,9 +370,9 @@ class UpdateGroupView(AdminUpdateView):
 
         for permission in bodb_permissions:
             if context[permission]:
-                assign_perm(permission, group)
+                assign_perm('bodb.%s' % permission, group)
             else:
-                remove_perm(permission, group)
+                remove_perm('bodb.%s' % permission, group)
 
         redirect_url='%s?action=edit' % reverse('group_view', kwargs={'pk': group.id})
         if context['ispopup']:
@@ -377,6 +386,7 @@ class GroupDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetailView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='admin.html#view-group'
         context['ispopup']=('_popup' in self.request.GET)
         context['action']=self.request.GET.get('action',None)
@@ -395,7 +405,7 @@ class DeleteGroupView(JSONResponseMixin,BaseUpdateView):
             group=Group.objects.get(id=self.kwargs.get('pk', None))
 
             # remove users
-            related_users=User.objects.filter(groups__id=self.request.POST['id'])
+            related_users=User.objects.filter(groups__id=self.request.POST['id']).prefetch_related('groups')
             for user in related_users:
                 user.groups.remove(group)
                 user.save()
@@ -410,6 +420,7 @@ class BodbRegistrationView(RegistrationView):
 
     def get_context_data(self, **kwargs):
         context=super(RegistrationView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='login_register.html'
         return context
 
@@ -421,6 +432,8 @@ class BodbRegistrationView(RegistrationView):
         new_user.save()
         profile.affiliation=request.POST['affiliation']
         profile.save()
+        cache.set('%d.profile' % new_user.id, self.object)
+
         success_url = self.get_success_url(request, new_user)
 
         # success_url may be a simple string, or a tuple providing the

@@ -1,3 +1,4 @@
+{% load cache %}
 <script type="text/javascript">
     function post(formId, formPrefix, parentDiv, margin)
     {
@@ -40,9 +41,11 @@
     <table class="tab_panel">
         <tr>
             <td width=60px>
-                {% if user.get_profile.avatar %}
-                    <img height=55 src="{{ user.get_profile.avatar.url }}"/>
-                {% endif %}
+                {% cache 1000 avatar profile.user.id %}
+                    {% if profile.avatar %}
+                        <img height=55 src="{{ profile.avatar.url }}"/>
+                    {% endif %}
+                {% endcache %}
             </td>
             <td width=300px>
                 <form id="postForm" name="postForm" action="" method="post">
@@ -67,9 +70,11 @@
             <table class="tab_panel">
                 <tr>
                     <td width=60px rowspan="2">
-                        {% if node.author.get_profile.avatar %}
-                            <img height=55 src="{{ node.author.get_profile.avatar.url }}"/>
-                        {% endif %}
+                        {% cache 1000 avatar node.author.id %}
+                            {% if node.author.get_profile.avatar %}
+                                <img height=55 src="{{ node.author.get_profile.avatar.url }}"/>
+                            {% endif %}
+                        {% endcache %}
                     </td>
                     <td>{{ node.author.username }} - {{ node.posted }}</td>
                 </tr>

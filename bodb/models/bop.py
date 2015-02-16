@@ -31,11 +31,16 @@ class BOP(MPTTModel,Document):
         # creating a new object
         if self.id is None:
             notify=True
-        elif BOP.objects.filter(id=self.id).count():
-            made_public=not BOP.objects.get(id=self.id).public and self.public
-            made_not_draft=BOP.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_bop=BOP.objects.get(id=self.id)
+            except (BOP.DoesNotExist, BOP.MultipleObjectsReturned), err:
+                existing_bop=None
+            if existing_bop is not None:
+                made_public=not existing_bop.public and self.public
+                made_not_draft=existing_bop.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(BOP, self).save()
 
@@ -56,16 +61,13 @@ class BOP(MPTTModel,Document):
         return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
     @staticmethod
-    def get_bop_list(bops, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_bop_list(bops, profile, active_workspace):
         bop_list=[]
         for bop in bops:
             selected=active_workspace is not None and active_workspace.related_bops.filter(id=bop.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=bop.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=bop.collator,
-                user=user, model_type='BOP').exists()
+                user=profile.user, model_type='BOP').exists()
             bop_list.append([selected,is_favorite,subscribed_to_user,bop])
         return bop_list
 
@@ -104,31 +106,25 @@ class RelatedBOP(models.Model):
         ordering=['bop__title']
 
     @staticmethod
-    def get_related_bop_list(rbops, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_related_bop_list(rbops, profile, active_workspace):
         related_bop_list=[]
         for rbop in rbops:
             selected=active_workspace is not None and active_workspace.related_bops.filter(id=rbop.bop.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=rbop.bop.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=rbop.bop.collator,
-                user=user, model_type='BOP').exists()
+                user=profile.user, model_type='BOP').exists()
             related_bop_list.append([selected,is_favorite,subscribed_to_user,rbop])
         return related_bop_list
 
     @staticmethod
-    def get_reverse_related_bop_list(rrbops, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_reverse_related_bop_list(rrbops, profile, active_workspace):
         reverse_related_bop_list=[]
         for rrbop in rrbops:
             selected=active_workspace is not None and \
                      active_workspace.related_bops.filter(id=rrbop.document.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=rrbop.document.id).exists()
             subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rrbop.document.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=rrbop.document.collator, user=profile.user,
                                    model_type='BOP').exists()
             reverse_related_bop_list.append([selected,is_favorite,subscribed_to_user,rrbop])
         return reverse_related_bop_list
@@ -159,8 +155,11 @@ class RelatedBOP(models.Model):
         related_bops=[]
         bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct().select_related('document')
         for bsed in bseds:
-            if BOP.objects.filter(id=bsed.document.id).exists():
+            try:
                 bop=BOP.objects.get(id=bsed.document.id)
+            except (BOP.DoesNotExist, BOP.MultipleObjectsReturned), err:
+                bop=None
+            if bop is not None:
                 related_bops.append(RelatedBOP(document=sed, bop=bop, relevance_narrative='%s - %s' %
                                                                                           (bsed.relationship,
                                                                                            bsed.relevance_narrative)))

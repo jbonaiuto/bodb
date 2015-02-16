@@ -1,3 +1,4 @@
+from bodb.models import BodbProfile, Workspace
 from bodb.models.messaging import Message
 from django.core.cache import cache
 
@@ -7,8 +8,7 @@ def unread_messages(request):
     if request.user.is_authenticated() and not request.user.is_anonymous():
         user_message_count=cache.get('%d.message_count' % request.user.id)
         if not user_message_count:
-            messages=Message.objects.filter(recipient=request.user, read=False)
-            user_message_count=messages.count()
+            user_message_count=Message.objects.filter(recipient=request.user, read=False).count()
             cache.set('%d.message_count' % request.user.id, user_message_count)
         message_count=user_message_count
     return {'message_count': message_count}

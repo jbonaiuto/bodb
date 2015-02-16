@@ -9,18 +9,12 @@ from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, Literature, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers.bop import BOPSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
 class EditBOPMixin():
     model = BOP
@@ -135,6 +129,7 @@ class CreateBOPView(EditBOPMixin,PermissionRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBOPView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
@@ -158,6 +153,7 @@ class UpdateBOPView(EditBOPMixin,ObjectRolePermissionRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBOPView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure', instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object))
@@ -180,6 +176,7 @@ class DeleteBOPView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=BOP
     success_url = '/bodb/index.html'
     permission_required = 'delete'
+
 
 class BOPAPIListView(DocumentAPIListView):
     serializer_class = BOPSerializer
@@ -216,15 +213,15 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
                 user=user, model_type='BOP').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='BOP').exists()
-        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user, context['active_workspace'])
+        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), context['profile'], context['active_workspace'])
         literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
-        context['references'] = Literature.get_reference_list(literature,user,context['active_workspace'])
+        context['references'] = Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
         if context['active_workspace'] is not None:
             context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
         rrbops=RelatedBOP.get_reverse_related_bops(self.object,user)
-        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops,user,context['active_workspace'])
+        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops,context['profile'],context['active_workspace'])
         return context
 
 
@@ -235,28 +232,27 @@ class ToggleSelectBOPView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             bop=BOP.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            ws_context=set_context_workspace({},self.request.user)
 
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
             context={
                 'bop_id': bop.id,
-                'workspace': ws_context['active_workspace'].title
+                'workspace': active_workspace.title
             }
-            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=bop in ws_context['active_workspace'].related_bops.all()
+                remove=bop in active_workspace.related_bops.all()
             if remove:
-                ws_context['active_workspace'].related_bops.remove(bop)
+                active_workspace.related_bops.remove(bop)
                 context['selected']=False
                 activity.text='%s removed the BOP: <a href="%s">%s</a> from the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             else:
-                ws_context['active_workspace'].related_bops.add(bop)
+                active_workspace.related_bops.add(bop)
                 context['selected']=True
                 activity.text='%s added the BOP: <a href="%s">%s</a> to the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             activity.save()
-            ws_context['active_workspace'].save()
+            active_workspace.save()
 
         return context
 
@@ -286,7 +282,7 @@ class BOPTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user,context['active_workspace'])
+        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),context['profile'],context['active_workspace'])
         context['bopGraphId']='bopRelationshipDiagram'
         return context
 

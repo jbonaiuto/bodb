@@ -151,10 +151,7 @@ class BrainRegion(models.Model):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_region_list(regions, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_region_list(regions, profile, active_workspace):
         region_list=[]
         for region in regions:
             selected=active_workspace is not None and\
@@ -197,10 +194,7 @@ class RelatedBrainRegion(models.Model):
         ordering=['brain_region__nomenclature', 'brain_region__name']
 
     @staticmethod
-    def get_related_brain_region_list(rregions, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_related_brain_region_list(rregions, profile, active_workspace):
         related_region_list=[]
         for rregion in rregions:
             selected=active_workspace is not None and\

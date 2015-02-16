@@ -6,19 +6,12 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SSRSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
-
 
 class EditSSRMixin():
     model = SSR
@@ -76,6 +69,7 @@ class UpdateSSRView(EditSSRMixin, ObjectRolePermissionRequiredMixin, UpdateView)
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSSRView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['ispopup']=('_popup' in self.request.GET)
@@ -93,6 +87,7 @@ class CreateSSRView(EditSSRMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateSSRView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['ispopup']=('_popup' in self.request.GET)
@@ -100,6 +95,7 @@ class CreateSSRView(EditSSRMixin, PermissionRequiredMixin, CreateView):
         context['idx']=self.request.GET.get('idx',-1)
         context['action']='add'
         return context
+
 
 class DeleteSSRView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=SSR
@@ -162,28 +158,28 @@ class ToggleSelectSSRView(LoginRequiredMixin, JSONResponseMixin,BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             ssr=SSR.objects.get(id=self.kwargs.get('pk', None))
-            ws_context=set_context_workspace({},self.request.user)
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
                 'ssr_id': ssr.id,
-                'workspace': ws_context['active_workspace'].title
+                'workspace': active_workspace.title
             }
-            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=ssr in ws_context['active_workspace'].related_ssrs.all()
+                remove=ssr in active_workspace.related_ssrs.all()
             if remove:
-                ws_context['active_workspace'].related_ssrs.remove(ssr)
+                active_workspace.related_ssrs.remove(ssr)
                 context['selected']=False
                 activity.text='%s removed the SSR: <a href="%s">%s</a> from the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             else:
-                ws_context['active_workspace'].related_ssrs.add(ssr)
+                active_workspace.related_ssrs.add(ssr)
                 context['selected']=True
                 activity.text='%s added the SSR: <a href="%s">%s</a> to the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             activity.save()
-            ws_context['active_workspace'].save()
+            active_workspace.save()
 
         return context
 
@@ -198,5 +194,5 @@ class SSRTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user),user, context['active_workspace'])
+        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), context['profile'], context['active_workspace'])
         return context

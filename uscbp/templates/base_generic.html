@@ -102,7 +102,7 @@
                     <div id="user_info">
                         {% if user.is_authenticated and not user.is_anonymous  %}
                             Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>, <a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
-                            <br>[<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ active_workspace.title }}</span></a>] [Change Active Workspace: <select id="id_active_workspace_select" name="active_workspace_select" onchange="selectActiveWorkspace(this.value,'{{ csrf_token }}')">{% for workspace in user.get_profile.get_workspaces %}<option value="{{ workspace.id }}" {% if workspace.id == active_workspace.id %}selected{% endif %}>{{ workspace.title|truncatechars:25 }}</option>{% endfor %}</select>]
+                            <br>[<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ active_workspace.title }}</span></a>] [Change Active Workspace: <select id="id_active_workspace_select" name="active_workspace_select" onchange="selectActiveWorkspace(this.value,'{{ csrf_token }}')">{% for workspace in profile.get_workspaces %}<option value="{{ workspace.id }}" {% if workspace.id == active_workspace.id %}selected{% endif %}>{{ workspace.title|truncatechars:25 }}</option>{% endfor %}</select>]
                         {% else %}
                             <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
                             <br>{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
@@ -113,8 +113,8 @@
                     {% if user.is_authenticated %}
                         <div id="user_img">
                             <a href="/bodb/messages/" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img id="messagesLink" src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
-                            {% if user.get_profile.avatar %}
-                                <img height=55 src="{{ user.get_profile.avatar.url }}"/>
+                            {% if profile.avatar %}
+                                <img height=55 src="{{ profile.avatar.url }}"/>
                             {% else %}
                                 <img height=55 src="{% static 'bodb/images/default_avatar.png' %}"/>
                             {% endif %}
@@ -141,7 +141,7 @@
         </div>
         <b class="c4f"></b><b class="c3f"></b><b class="c2f"></b><b class="c1f"></b>
         <br>
-        {% cache 500 sidebar user.username %}
+        {% cache 1000 sidebar user.id %}
         <div id="sidebar" style="width:260px">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>

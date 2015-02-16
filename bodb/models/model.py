@@ -102,11 +102,16 @@ class Model(Module):
         # creating a new object
         if self.id is None:
             notify=True
-        elif Model.objects.filter(id=self.id).count():
-            made_public=not Model.objects.get(id=self.id).public and self.public
-            made_not_draft=Model.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_model=Model.objects.get(id=self.id)
+            except (Model.DoesNotExist, Model.MultipleObjectsReturned), err:
+                existing_model=None
+            if existing_model is not None:
+                made_public=not existing_model.public and self.public
+                made_not_draft=existing_model.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
 
         super(Model, self).save()
@@ -144,17 +149,14 @@ class Model(Module):
         return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author')
 
     @staticmethod
-    def get_model_list(models, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_model_list(models, profile, active_workspace):
         model_list=[]
         for model in models:
             selected=active_workspace is not None and \
                      active_workspace.related_models.filter(id=model.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=model.id).exists()
             subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=model.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=model.collator, user=profile.user,
                                    model_type='Model').exists()
             model_list.append([selected,is_favorite,subscribed_to_user,model])
         return model_list
@@ -221,17 +223,14 @@ class RelatedModel(models.Model):
         ordering=['model__title']
 
     @staticmethod
-    def get_related_model_list(rmods, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_related_model_list(rmods, profile, active_workspace):
         related_model_list=[]
         for rmod in rmods:
             selected=active_workspace is not None and \
                      active_workspace.related_models.filter(id=rmod.model.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=rmod.model.id).exists()
             subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rmod.model.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=rmod.model.collator, user=profile.user,
                                    model_type='Model').exists()
             related_model_list.append([selected,is_favorite,subscribed_to_user,rmod])
         return related_model_list
@@ -242,17 +241,14 @@ class RelatedModel(models.Model):
                                              Document.get_security_q(user, field='model'))).distinct().select_related('model__collator').prefetch_related('model__authors__author')
 
     @staticmethod
-    def get_reverse_related_model_list(rrmods, user, active_workspace):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
+    def get_reverse_related_model_list(rrmods, profile, active_workspace):
         reverse_related_model_list=[]
         for rrmod in rrmods:
             selected=active_workspace is not None and \
                      active_workspace.related_models.filter(id=rrmod.document.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=rrmod.document.id).exists()
             subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rrmod.document.collator, user=user,
+                               UserSubscription.objects.filter(subscribed_to_user=rrmod.document.collator, user=profile.user,
                                    model_type='Model').exists()
             reverse_related_model_list.append([selected,is_favorite,subscribed_to_user,rrmod])
         return reverse_related_model_list
@@ -267,8 +263,11 @@ class RelatedModel(models.Model):
         related_models=[]
         bseds=BuildSED.objects.filter(Document.get_security_q(user, field='document') & Q(sed=sed)).distinct().select_related('document')
         for bsed in bseds:
-            if Model.objects.filter(id=bsed.document.id).exists():
+            try:
                 model=Model.objects.prefetch_related('authors__author').get(id=bsed.document.id)
+            except (Model.DoesNotExist, Model.MultipleObjectsReturned), err:
+                model=None
+            if model is not None:
                 related_models.append(RelatedModel(document=sed, model=model, relationship='%s - %s' %
                                                                                            (bsed.relationship,
                                                                                             bsed.relevance_narrative)))

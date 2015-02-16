@@ -1,28 +1,16 @@
-import Image
-import fileinput
-import os
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-import sys
-import time
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, SelectedSEDCoord
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR
+from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
-from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import DocumentSerializer
 from bodb.permissions import IsEditorOrReadOnly
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
 from rest_framework import generics
-from rest_framework import permissions
 
 from rest_framework.renderers import JSONRenderer, XMLRenderer
 from bodb.renderers import BODBBrowsableAPIRenderer
@@ -43,8 +31,8 @@ class DocumentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         user=self.request.user
-        context=set_context_workspace(context, self.request.user)
         context['helpPage']='index.html'
         context['figures'] = DocumentFigure.objects.filter(document=self.object).order_by('order')
         context['generic_build_seds']=[]
@@ -52,28 +40,28 @@ class DocumentDetailView(DetailView):
         context['imaging_build_seds']=[]
         context['erp_build_seds']=[]
         if BuildSED.get_building_seds(self.object,user).exists():
-            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user),user, context['active_workspace'])
-            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user),user, context['active_workspace'])
-            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user),user, context['active_workspace'])
-            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user),user, context['active_workspace'])
+            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user), context['profile'], context['active_workspace'])
+            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user), context['profile'], context['active_workspace'])
+            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user), context['profile'], context['active_workspace'])
+            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user), context['profile'], context['active_workspace'])
         rbops=RelatedBOP.get_related_bops(self.object, user)
-        context['related_bops'] = RelatedBOP.get_related_bop_list(rbops,user,context['active_workspace'])
+        context['related_bops'] = RelatedBOP.get_related_bop_list(rbops,context['profile'],context['active_workspace'])
         rmods=RelatedModel.get_related_models(self.object, user)
-        context['related_models'] = RelatedModel.get_related_model_list(rmods,user,context['active_workspace'])
+        context['related_models'] = RelatedModel.get_related_model_list(rmods,context['profile'],context['active_workspace'])
         related_regions=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species')
-        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions, user, context['active_workspace'])
+        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions, context['profile'], context['active_workspace'])
         context['canEdit']=self.object.check_perm(user,'edit')
         context['canDelete']=self.object.check_perm(user,'delete')
         context['canManage']=self.object.check_perm(user,'manage')
         context['ispopup']=('_popup' in self.request.GET)
-        context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted'))
+        context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted').select_related('author'))
         context['is_favorite']=False
         context['selected']=False
         context['can_add_post']=False
         context['public_request_sent']=False
 
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorites.filter(id=self.object.id).exists()
+            context['is_favorite']=context['profile'].favorites.filter(id=self.object.id).exists()
             context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
             context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
@@ -132,6 +120,7 @@ class ManageDocumentPermissionsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context=super(DetailView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['document']=self.object
         context['helpPage']='permissions.html#individual-entry-permissions'
         context['users']=User.objects.all().exclude(id=self.request.user.id)

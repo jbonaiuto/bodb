@@ -6,7 +6,7 @@ from django.forms.forms import Form
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
+from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
@@ -16,19 +16,13 @@ from bodb.forms.ssr import PredictionFormSet
 from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription
 from bodb.models.ssr import Prediction
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import ModelSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
 class EditModelMixin():
     model = Model
@@ -266,6 +260,7 @@ class CreateModelView(EditModelMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateModelView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
@@ -313,6 +308,7 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context=super(CreateModelWizardView,self).get_context_data(form, **kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['showAuthors']=True
@@ -510,6 +506,7 @@ class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateV
 
     def get_context_data(self, **kwargs):
         context = super(UpdateModelView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
@@ -527,7 +524,7 @@ class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateV
         context['related_model_formset']=RelatedModelFormSet(self.request.POST or None, instance=self.object,
             queryset=RelatedModel.objects.filter(document=self.object).select_related('model'), prefix='related_model')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('nomenclature').prefetch_related('nomenclature__species'),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
         context['input_formset']=VariableFormSet(self.request.POST or None, instance=self.object,
             queryset=Variable.objects.filter(module=self.object, var_type='Input'), prefix='input')
@@ -563,17 +560,17 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['generic_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_generic_testing_seds(self.object,user),user, context['active_workspace'])
-        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_connectivity_testing_seds(self.object,user),user, context['active_workspace'])
-        context['imaging_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_imaging_testing_seds(self.object, user),user, context['active_workspace'])
-        context['erp_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_erp_testing_seds(self.object, user),user, context['active_workspace'])
-        context['predictions'] = Prediction.get_prediction_list(Prediction.get_predictions(self.object,user),user, context['active_workspace'])
+        context['generic_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_generic_testing_seds(self.object,user), context['profile'], context['active_workspace'])
+        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_connectivity_testing_seds(self.object,user), context['profile'], context['active_workspace'])
+        context['imaging_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_imaging_testing_seds(self.object, user), context['profile'], context['active_workspace'])
+        context['erp_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_erp_testing_seds(self.object, user), context['profile'], context['active_workspace'])
+        context['predictions'] = Prediction.get_prediction_list(Prediction.get_predictions(self.object,user), context['profile'], context['active_workspace'])
         context['inputs'] = Variable.objects.filter(var_type='Input',module=self.object)
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
         literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
-        context['references'] = Literature.get_reference_list(literature,user,context['active_workspace'])
+        context['references'] = Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
@@ -585,7 +582,7 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         rrmods=RelatedModel.get_reverse_related_models(self.object,user)
-        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,user,context['active_workspace'])
+        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,context['profile'],context['active_workspace'])
         return context
 
 
@@ -596,28 +593,28 @@ class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView)
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             model=Model.objects.get(id=self.kwargs.get('pk', None))
-            ws_context=set_context_workspace({},self.request.user)
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
                 'model_id': model.id,
-                'workspace': ws_context['active_workspace'].title
+                'workspace': active_workspace.title
             }
-            activity=WorkspaceActivityItem(workspace=ws_context['active_workspace'], user=self.request.user)
+            activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
                 remove=self.request.POST['select']=='false'
             else:
-                remove=model in ws_context['active_workspace'].related_models.all()
+                remove=model in active_workspace.related_models.all()
             if remove:
-                ws_context['active_workspace'].related_models.remove(model)
+                active_workspace.related_models.remove(model)
                 context['selected']=False
                 activity.text='%s removed the model: <a href="%s">%s</a> from the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
             else:
-                ws_context['active_workspace'].related_models.add(model)
+                active_workspace.related_models.add(model)
                 context['selected']=True
                 activity.text='%s added the model: <a href="%s">%s</a> to the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
             activity.save()
-            ws_context['active_workspace'].save()
+            active_workspace.save()
 
         return context
 
@@ -632,7 +629,7 @@ class ModelTaggedView(BODBView):
         context['helpPage']= 'tags.html'
         context['tag']= name
         context['modelGraphId']='modelRelationshipDiagram'
-        context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),user,context['active_workspace'])
+        context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),context['profile'],context['active_workspace'])
         return context
 
 
@@ -649,6 +646,7 @@ class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateModuleView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['showFigure']=True
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
@@ -821,7 +819,7 @@ class SimilarModelView(LoginRequiredMixin,JSONResponseMixin, BaseDetailView):
         return self.render_to_response(data)
 
 
-class BenchmarkModelView(TemplateView):
+class BenchmarkModelView(BODBView):
     template_name = 'bodb/model/model_benchmark.html'
 
     def post(self, request, *args, **kwargs):
@@ -917,7 +915,7 @@ class BenchmarkModelView(TemplateView):
         return context
 
 
-class ReverseBenchmarkModelView(TemplateView):
+class ReverseBenchmarkModelView(BODBView):
     template_name = 'bodb/model/model_reverse_benchmark.html'
 
     def post(self, request, *args, **kwargs):

@@ -325,7 +325,7 @@
                                                 <table class="tab_panel" style="width:100%;table-layout: fixed;">
                                                     <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                         <td width=75px>
-                                                            <div name="loadDiv" id="loadDiv-{{ selection.id }}" style="display:{% ifequal selection user.get_profile.loaded_coordinate_selection %}none{% else %}inline{% endifequal %}">
+                                                            <div name="loadDiv" id="loadDiv-{{ selection.id }}" style="display:{% ifequal selection profile.loaded_coordinate_selection %}none{% else %}inline{% endifequal %}">
                                                                 <a href="" onclick="return loadCoordinateSelection('{{ selection.id }}');">Load</a>
                                                             </div>
                                                             {% if can_delete_coord_selection %}
