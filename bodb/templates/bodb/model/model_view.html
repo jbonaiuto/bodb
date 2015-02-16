@@ -97,7 +97,7 @@
                 <td colspan="2"><strong>Last modified:</strong> {{ model.get_modified_str }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Tags:</strong> {{ model.tags.all|join:', ' }}</td>
+                <td colspan="2"><strong>Tags:</strong> {% for tag in model.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/model/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="2">{{ model.get_modeldb_url|safe }}</td>

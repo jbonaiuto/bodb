@@ -112,7 +112,7 @@
                 </tr>
             {% endif %}
             <tr valign="top">
-                <td colspan="2"><strong>Tags:</strong> {{ bop.tags.all|join:', ' }}</td>
+                <td colspan="2"><strong>Tags:</strong> {% for tag in bop.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/bop/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
             </tr>
             <tr class="section_subheader">
                 <td colspan=2>Brief Description</td>

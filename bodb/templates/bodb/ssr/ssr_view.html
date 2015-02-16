@@ -97,7 +97,7 @@
             <td colspan="2"><strong>Last modified:</strong> {{ ssr.get_modified_str }}</td>
         </tr>
         <tr valign="top">
-            <td colspan="2"><strong>Tags:</strong> {{ ssr.tags.all|join:', ' }}</td>
+            <td colspan="2"><strong>Tags:</strong> {% for tag in ssr.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/ssr/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
         </tr>
         <tr class="section_subheader">
             <td colspan=2>Brief Description</td>
