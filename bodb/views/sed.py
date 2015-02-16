@@ -6,14 +6,13 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
-from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, NeurophysiologySEDExportRequestForm
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, NeurophysiologySED, NeurophysiologyCondition, Unit, Event, GraspObservationCondition, GraspPerformanceCondition, NeurophysiologySEDExportRequest, Message
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap, Event
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
-from bodb.views.main import BODBView
+from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from guardian.shortcuts import assign_perm
@@ -21,14 +20,9 @@ from registration.models import User
 from uscbp import settings
 from uscbp.settings import MEDIA_ROOT
 from uscbp.views import JSONResponseMixin
-
 from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
-from django.http import Http404, HttpResponse, HttpResponseForbidden
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
+from django.http import HttpResponseForbidden
+from django.core.cache import cache
 
 class EditSEDMixin():
     model = SED
@@ -98,6 +92,7 @@ class CreateSEDView(EditSEDMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -120,6 +115,7 @@ class UpdateSEDView(EditSEDMixin, ObjectRolePermissionRequiredMixin, UpdateView)
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -139,6 +135,7 @@ class DeleteSEDView(ObjectRolePermissionRequiredMixin,DeleteView):
     success_url = '/bodb/index.html'
     permission_required='delete'
 
+
 class SEDAPIListView(DocumentAPIListView):
     serializer_class = SEDSerializer
     model = SED
@@ -147,6 +144,7 @@ class SEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return SED.objects.filter(security_q)
+
 
 class ERPSEDAPIListView(DocumentAPIListView):
     serializer_class = ERPSEDSerializer
@@ -157,6 +155,7 @@ class ERPSEDAPIListView(DocumentAPIListView):
         security_q=Document.get_security_q(user)
         return ERPSED.objects.filter(security_q)
 
+
 class BrainImagingSEDAPIListView(DocumentAPIListView):
     serializer_class = BrainImagingSEDSerializer
     model = BrainImagingSED
@@ -166,6 +165,7 @@ class BrainImagingSEDAPIListView(DocumentAPIListView):
         security_q=Document.get_security_q(user)
         return BrainImagingSED.objects.filter(security_q)
 
+
 class ConnectivitySEDAPIListView(DocumentAPIListView):
     serializer_class = ConnectivitySEDSerializer
     model = ConnectivitySED
@@ -174,6 +174,7 @@ class ConnectivitySEDAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return ConnectivitySED.objects.filter(security_q)
+
 
 class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = SEDSerializer
@@ -189,15 +190,16 @@ class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
         elif type=='brain imaging':
             self.serializer_class = BrainImagingSEDSerializer
             self.model=BrainImagingSED
-            if BredeBrainImagingSED.objects.filter(id=id).count():
+            if BredeBrainImagingSED.objects.filter(id=id).exists():
                 self.model=BredeBrainImagingSED
         elif type=='connectivity':
             self.serializer_class = ConnectivitySEDSerializer
             self.model=ConnectivitySED
-            if CoCoMacConnectivitySED.objects.filter(id=id).count():
+            if CoCoMacConnectivitySED.objects.filter(id=id).exists():
                 self.model=CoCoMacConnectivitySED
         self.queryset = self.model.objects.all()
         return super(SEDAPIDetailView, self).get(request, *args, **kwargs)
+
 
 class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
 
@@ -237,7 +239,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         user=self.request.user
         context['helpPage']='view_entry.html'
         if self.object.type=='event related potential':
-            context['erp_components'] = ERPComponent.objects.filter(erp_sed=self.object)
+            context['erp_components'] = ERPComponent.objects.filter(erp_sed=self.object).select_related('electrode_cap','electrode_position__position_system')
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
@@ -330,15 +332,18 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                 coords=SelectedSEDCoord.objects.filter(selected=True, user=user).select_related('sed_coordinate')
                 for coord in coords:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
-        context['references'] = Literature.get_reference_list(self.object.literature.all().select_related('collator').prefetch_related('authors__author'),user)
-        context['related_models'] = RelatedModel.get_reverse_related_model_list(RelatedModel.get_sed_related_models(self.object,user),user)
-        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(self.object,user),user)
+        references=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
+        context['references'] = Literature.get_reference_list(references,context['profile'],context['active_workspace'])
+        rmods=RelatedModel.get_sed_related_models(self.object,user)
+        context['related_models'] = RelatedModel.get_reverse_related_model_list(rmods,context['profile'],context['active_workspace'])
+        rbops=RelatedBOP.get_sed_related_bops(self.object,user)
+        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(rbops,context['profile'],context['active_workspace'])
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
                 user=user, model_type='SED').exists()
             context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
                 user=user, model_type='SED').exists()
-            context['selected']=user.get_profile().active_workspace.related_seds.filter(id=self.object.id).exists()
+            context['selected']=context['active_workspace'].related_seds.filter(id=self.object.id).exists()
         context['type']=self.request.GET.get('type',None)
         context['action']=self.request.GET.get('action',None)
         context['ispopup']=('_popup' in self.request.GET)
@@ -435,9 +440,7 @@ class EditBrainImagingSEDMixin():
             coords=SEDCoord.objects.filter(sed=self.object)
             for coord in coords:
                 # delete selections of this coordinate
-                selected_coords=SelectedSEDCoord.objects.filter(sed_coordinate=coord)
-                for selected_coord in selected_coords:
-                    selected_coord.delete()
+                SelectedSEDCoord.objects.filter(sed_coordinate=coord).delete()
                 coord.delete()
 
             # process each row
@@ -472,9 +475,13 @@ class EditBrainImagingSEDMixin():
                         y=float(row_elems[yIdx])
                     if zIdx>-1:
                         z=float(row_elems[zIdx])
-                    if ThreeDCoord.objects.filter(x=x, y=y, z=z):
+
+                    try:
                         coord.coord=ThreeDCoord.objects.get(x=x, y=y, z=z)
-                    else:
+                    except (ThreeDCoord.DoesNotExist, ThreeDCoord.MultipleObjectsReturned), err:
+                        coord.coord=None
+
+                    if coord.coord is None:
                         realCoord=ThreeDCoord(x=x, y=y, z=z)
                         realCoord.save()
                         coord.coord=realCoord
@@ -552,6 +559,7 @@ class CreateBrainImagingSEDView(EditBrainImagingSEDMixin, PermissionRequiredMixi
 
     def get_context_data(self, **kwargs):
         context = super(CreateBrainImagingSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -620,6 +628,7 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, ObjectRolePermissionRe
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBrainImagingSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -634,7 +643,7 @@ class UpdateBrainImagingSEDView(EditBrainImagingSEDMixin, ObjectRolePermissionRe
         return context
 
 
-class CleanBrainImagingSEDView(TemplateView):
+class CleanBrainImagingSEDView(BODBView):
     template_name = 'bodb/sed/brain_imaging/brain_imaging_sed_clean.html'
 
     def get_initial(self):
@@ -787,6 +796,7 @@ class CreateConnectivitySEDView(EditConnectivitySEDMixin, PermissionRequiredMixi
 
     def get_context_data(self, **kwargs):
         context = super(CreateConnectivitySEDView, self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -809,6 +819,7 @@ class UpdateConnectivitySEDView(EditConnectivitySEDMixin, ObjectRolePermissionRe
 
     def get_context_data(self, **kwargs):
         context = super(UpdateConnectivitySEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -910,6 +921,7 @@ class CreateERPSEDView(EditERPSEDMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateERPSEDView, self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
         context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, prefix='erp_component')
@@ -935,6 +947,7 @@ class UpdateERPSEDView(EditERPSEDMixin, ObjectRolePermissionRequiredMixin, Updat
 
     def get_context_data(self, **kwargs):
         context = super(UpdateERPSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['electrode_position_systems']=ElectrodePositionSystem.objects.all()
         context['electrode_caps']=ElectrodeCap.objects.all()
         context['erp_component_formset']=ERPComponentFormSet(self.request.POST or None, instance=self.object,
@@ -970,8 +983,7 @@ class ToggleSelectSEDView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             sed=SED.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
                 'sed_id': sed.id,
@@ -1023,18 +1035,20 @@ class SEDTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user),user)
+        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user), context['profile'], context['active_workspace'])
         conn_seds=ConnectivitySED.get_tagged_seds(name, user)
-        context['connectivity_seds']=SED.get_sed_list(conn_seds,user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        neurophys_seds=NeurophysiologySED.get_tagged_seds(name, user)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds, context['profile'], context['active_workspace'])
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context
@@ -1076,6 +1090,7 @@ class SelectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            profile=get_profile(self.request)
             # created selected SED coord
             selectedCoord=SelectedSEDCoord()
             # load SED coord
@@ -1083,8 +1098,8 @@ class SelectSEDCoordView(LoginRequiredMixin, JSONResponseMixin, BaseCreateView):
             selectedCoord.selected=True
             selectedCoord.user=self.request.user
             # add to currently loaded selection (if one is currently loaded)
-            if self.request.user.get_profile().loaded_coordinate_selection:
-                selectedCoord.saved_selection=self.request.user.get_profile().loaded_coordinate_selection
+            if profile.loaded_coordinate_selection:
+                selectedCoord.saved_selection=profile.loaded_coordinate_selection
                 # set shape and color to be same as other selected coords from same SED
             if SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id).exists():
                 otherCoord=SelectedSEDCoord.objects.filter(selected=True, sed_coordinate__sed__id=selectedCoord.sed_coordinate.sed.id)[0]
@@ -1120,10 +1135,12 @@ class CoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCreateV
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            profile=get_profile(self.request)
             # load requested coordinate selection
             selection=get_object_or_404(SavedSEDCoordSelection.objects.select_related('user','last_modified_by'), id=self.request.POST['id'])
-            self.request.user.get_profile().loaded_coordinate_selection=selection
-            self.request.user.get_profile().save()
+            profile.loaded_coordinate_selection=selection
+            profile.save()
+            cache.set('%d.profile' % self.request.user.id, profile)
 
             # unselect currently selected atlas coords
             SelectedSEDCoord.objects.filter(selected=True, user=self.request.user).exclude(saved_selection__id=self.request.POST['id']).update(selected=False)
@@ -1171,11 +1188,14 @@ class CloseCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseCr
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            profile=get_profile(self.request)
+
             # unload all other selections
             # unload other coordinate selections
-            if self.request.user.get_profile().loaded_coordinate_selection:
-                self.request.user.get_profile().loaded_coordinate_selection=None
-                self.request.user.get_profile().save()
+            if profile.loaded_coordinate_selection:
+                profile.loaded_coordinate_selection=None
+                profile.save()
+                cache.set('%d.profile' % self.request.user.id, profile)
                 # unselect all coordinates belonging to loaded selection
             if 'id' in self.request.POST and len(self.request.POST['id']):
                 SelectedSEDCoord.objects.filter(selected=True, saved_selection__id=self.request.POST['id'],
@@ -1189,15 +1209,15 @@ class DeleteCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseC
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            profile=get_profile(self.request)
             # delete coordinates in selection
-            coords=SelectedSEDCoord.objects.filter(saved_selection__id=self.request.POST['id'])
-            for coord in coords:
-                coord.delete()
-                # load selection
+            SelectedSEDCoord.objects.filter(saved_selection__id=self.request.POST['id']).delete()
+            # load selection
             coordSelection=get_object_or_404(SavedSEDCoordSelection, id=self.request.POST['id'])
-            if self.request.user.get_profile().loaded_coordinate_selection==coordSelection:
-                self.request.user.get_profile().loaded_coordinate_selection=None
-                self.request.user.get_profile().save()
+            if profile.loaded_coordinate_selection==coordSelection:
+                profile.loaded_coordinate_selection=None
+                profile.save()
+                cache.set('%d.profile' % self.request.user.id, profile)
                 # delete selection
             coordSelection.delete()
             context = {'id': self.request.POST['id']}
@@ -1209,6 +1229,7 @@ class SaveCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseUpd
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
+            profile=get_profile(self.request)
             # create new coordinate selection
             coordSelection=SavedSEDCoordSelection()
             action='add'
@@ -1221,8 +1242,10 @@ class SaveCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseUpd
             else:
                 coordSelection.user=self.request.user
                 # unload other loaded coordinate selections
-                if self.request.user.get_profile().loaded_coordinate_selection:
-                    self.request.user.get_profile().loaded_coordinate_selection=None
+                if profile.loaded_coordinate_selection:
+                    profile.loaded_coordinate_selection=None
+                    profile.save()
+                    cache.set('%d.profile' % self.request.user.id, profile)
             coordSelection.last_modified_by=self.request.user
 
             # set selection info
@@ -1231,12 +1254,12 @@ class SaveCoordinateSelectionView(LoginRequiredMixin, JSONResponseMixin, BaseUpd
 
             # save selection
             coordSelection.save()
-            self.request.user.get_profile().loaded_coordinate_selection=coordSelection
-            self.request.user.get_profile().save()
-
+            profile.loaded_coordinate_selection=coordSelection
+            profile.save()
+            cache.set('%d.profile' % self.request.user.id, profile)
 
             # load selected coordinates
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user=self.request.user)
+            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user=self.request.user).select_related('saved_selection')
 
             # process each coordinate
             for coord in selected_coords:

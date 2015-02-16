@@ -4,6 +4,7 @@ from bodb.models import BodbProfile, BrainRegionRequest
 from registration.forms import RegistrationForm
 from registration.models import User
 from uscbp.widgets import ImageWidget
+from django.core.cache import cache
 
 class UserForm(forms.ModelForm):
     groups = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
@@ -47,6 +48,8 @@ class BodbRegistrationForm(RegistrationForm):
         profile = new_user.get_profile()
         profile.affiliation = self.cleaned_data['affiliation']
         profile.save()
+
+        cache.set('%d.profile' % new_user.id, profile)
 
         return new_user
 

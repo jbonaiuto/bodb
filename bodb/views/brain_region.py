@@ -1,25 +1,17 @@
 from django.contrib.sites.models import get_current_site
-from django.core.mail import EmailMessage
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
-from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
+from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED, messageUser
+from bodb.models import BrainRegionRequest, BrainRegion, SED, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, ERPComponent, WorkspaceActivityItem, NeurophysiologySED, messageUser
 from bodb.search.sed import runSEDCoordSearch
-from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
 from bodb.views.security import AdminUpdateView, AdminCreateView
 from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
-
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView
 from bodb.serializers import BrainRegionSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
 class BrainRegionRequestListView(LoginRequiredMixin,ListView):
     model=BrainRegionRequest
@@ -27,6 +19,7 @@ class BrainRegionRequestListView(LoginRequiredMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestListView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#requesting-a-brain-region'
         return context
 
@@ -41,6 +34,7 @@ class CreateBrainRegionRequestView(LoginRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBrainRegionRequestView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#requesting-a-brain-region'
         context['ispopup']=('_popup' in self.request.GET)
         return context
@@ -75,6 +69,7 @@ class BrainRegionRequestDenyView(AdminUpdateView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestDenyView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
@@ -112,6 +107,7 @@ class BrainRegionRequestApproveView(AdminCreateView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestApproveView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['request']=BrainRegionRequest.objects.select_related('user').get(activation_key=self.kwargs.get('activation_key'))
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
@@ -163,11 +159,11 @@ class BrainRegionView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(BrainRegionView,self).get_context_data(**kwargs)
-
+        context=set_context_workspace(context, self.request)
         user = self.request.user
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
+        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), context['profile'], context['active_workspace'])
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
         search_data={'type':'brain imaging','coordinate_brain_region':self.object.name, 'search_options':'all'}
         sedCoords=runSEDCoordSearch(imaging_seds, search_data, user.id)
@@ -177,26 +173,27 @@ class BrainRegionView(DetailView):
                 coords.append(sedCoords[sed.id])
             else:
                 coords.append([])
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
-        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user)
+        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, context['profile'], context['active_workspace'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectionSEDs)
         erp_seds=ERPSED.get_brain_region_seds(self.object, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),user)
-        context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
-        context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),context['profile'],context['active_workspace'])
+        rbops=RelatedBOP.get_brain_region_related_bops(self.object, user)
+        context['related_bops']=RelatedBOP.get_related_bop_list(rbops,context['profile'],context['active_workspace'])
+        rmods=RelatedModel.get_brain_region_related_models(self.object, user)
+        context['related_models']=RelatedModel.get_related_model_list(rmods,context['profile'],context['active_workspace'])
         context['helpPage']='view_entry.html'
 
         context['is_favorite']=False
         context['selected']=False
 
-        context=set_context_workspace(context, user)
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).exists()
+            context['is_favorite']=context['profile'].favorite_regions.filter(id=self.object.id).exists()
             context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).exists()
 
         return context
@@ -209,13 +206,14 @@ class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdat
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             region=BrainRegion.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
-                'region_id': region.id,
+                'region_id':region.id,
                 'workspace': active_workspace.title
             }
+
             activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             remove=False
             if 'select' in self.request.POST:

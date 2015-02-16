@@ -19,9 +19,9 @@
             {% if multiple %}
                 {% if action == "add" %}
                     {% ifequal type 'build' %}
-                        opener.addBuildSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type }}']);
+                        opener.addBuildSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type|escapejs }}']);
                     {% else %}
-                        opener.addTestSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type }}'],'', []);
+                        opener.addTestSEDMultiple('', '', '', {{ erpsed.id }}, ['{{ erpsed.title|escapejs }}', '{{ erpsed.brief_description|escapejs }}', '{{ erpsed.type|escapejs }}'],'', []);
                     {% endifequal %}
                 {% endif %}
             {% endif %}

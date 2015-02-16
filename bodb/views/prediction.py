@@ -5,7 +5,7 @@ from bodb.forms.ssr import PredictionForm
 from bodb.models import Prediction, SSR, Document, UserSubscription, Model
 from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 
 class PredictionAPIListView(DocumentAPIListView):
@@ -37,6 +37,7 @@ class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePredictionView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['ssrs']=[self.object.ssr]
         context['ispopup']=('_popup' in self.request.GET)
         return context
@@ -84,7 +85,7 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
         ssrs=[]
         if self.object.ssr:
             ssrs.append(self.object.ssr)
-        context['ssrs']=SSR.get_ssr_list(ssrs,self.request.user)
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
             context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
@@ -104,5 +105,5 @@ class PredictionTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user)
+        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), context['profile'], context['active_workspace'])
         return context

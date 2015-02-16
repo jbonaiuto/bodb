@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, DeleteView
 from bodb.forms.messaging import MessageForm
 from bodb.models import Message
+from bodb.views.main import set_context_workspace
 from guardian.mixins import LoginRequiredMixin
 
 class UserMessageListView(LoginRequiredMixin,View):
@@ -15,6 +16,7 @@ class UserMessageListView(LoginRequiredMixin,View):
         context['sent']=request.user.message_sender_set.all().select_related('sender','recipient')
         context['helpPage']='messages.html'
         context['ispopup']=('_popup' in request.GET)
+        context=set_context_workspace(context, self.request)
         return context
 
     def get(self, request, *args, **kwargs):
@@ -46,6 +48,7 @@ class CreateUserMessageView(LoginRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateUserMessageView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='messages.html#composing-a-new-message'
         return context
 
@@ -83,6 +86,7 @@ class ReadReplyUserMessageView(LoginRequiredMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReadReplyUserMessageView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='messages.html#viewing-messages'
         return context
 

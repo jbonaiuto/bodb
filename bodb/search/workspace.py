@@ -24,9 +24,9 @@ def runWorkspaceSearch(search_data, userId):
             filters.append(dispatch(userId))
 
     # restrict to user's own entries or those of other users that are not drafts
-    if User.objects.filter(id=userId):
+    try:
         user=User.objects.get(id=userId)
-    else:
+    except (User.DoesNotExist, User.MultipleObjectsReturned), err:
         user=User.get_anonymous()
 
     visibility_q=Q(created_by__is_active=True)

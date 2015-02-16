@@ -5,24 +5,20 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from PyRTF import *
 import PyRTF
-import reportlab
-from reportlab.lib import colors
-from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import *
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import View, FormView
+from django.views.generic import FormView
 from bodb.forms.bop import BOPReportForm
 from bodb.forms.ssr import SSRReportForm
 from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
 from bodb.forms.model import ModelReportForm
 from bodb.forms.sed import SEDReportForm
+from bodb.views.main import get_profile, get_active_workspace
 from uscbp.image_utils import get_thumbnail
 import json
 from bodb.serializers.sed import SEDSerializer
 from rest_framework.renderers import UnicodeJSONRenderer
-#from rest_framework.response import Response
 
 def report_json(context, display_settings):
     response = HttpResponse(mimetype='application/json')
@@ -40,9 +36,11 @@ thin_frame  = FramePS( thin_edge,  thin_edge,  thin_edge,  thin_edge )
 styles = getSampleStyleSheet()
 
 def get_sed_report_context(request, context):
+    context['profile']=get_profile(request)
+    context['active_workspace']=get_active_workspace(context['profile'],request)
     # load related entries
     context['figures'] = list(DocumentFigure.objects.filter(document=context['sed']).order_by('order'))
-    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),request.user))
+    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),context['profile'],context['active_workspace']))
     context['related_models'] = RelatedModel.get_sed_related_models(context['sed'], request.user)
     context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['sed']))
     context['references'] = list(context['sed'].literature.all())

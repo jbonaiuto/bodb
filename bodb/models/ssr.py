@@ -28,11 +28,16 @@ class SSR(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        elif SSR.objects.filter(id=self.id).count():
-            made_public=not SSR.objects.get(id=self.id).public and self.public
-            made_not_draft=SSR.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_ssr=SSR.objects.get(id=self.id)
+            except (SSR.DoesNotExist, SSR.MultipleObjectsReturned), err:
+                existing_ssr=None
+            if existing_ssr is not None:
+                made_public=not existing_ssr.public and self.public
+                made_not_draft=existing_ssr.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(SSR, self).save()
 
@@ -41,18 +46,13 @@ class SSR(Document):
             sendNotifications(self, 'SSR')
 
     @staticmethod
-    def get_ssr_list(ssrs, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_ssr_list(ssrs, profile, active_workspace):
         ssr_list=[]
         for ssr in ssrs:
             selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).exists()
             is_favorite=profile is not None and profile.favorites.filter(id=ssr.id).exists()
             subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=ssr.collator,
-                user=user, model_type='SSR').exists()
+                user=profile.user, model_type='SSR').exists()
             ssr_list.append([selected,is_favorite,subscribed_to_user,ssr])
         return ssr_list
 
@@ -78,12 +78,7 @@ class Prediction(Document):
         return reverse('prediction_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_prediction_list(predictions, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_prediction_list(predictions, profile, active_workspace):
         prediction_list=[]
         for prediction in predictions:
             if prediction.ssr is None:
@@ -94,7 +89,7 @@ class Prediction(Document):
                 ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.ssr.id).exists()
                 ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.ssr.id).exists()
                 ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.ssr.collator,
-                    user=user, model_type='SSR').exists()
+                    user=profile.user, model_type='SSR').exists()
             prediction_list.append([ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction])
         return prediction_list
 
@@ -112,11 +107,16 @@ class Prediction(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        elif Prediction.objects.filter(id=self.id).count():
-            made_public=not Prediction.objects.get(id=self.id).public and self.public
-            made_not_draft=Prediction.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_prediction=Prediction.objects.get(id=self.id)
+            except (Prediction.DoesNotExist, Prediction.MultipleObjectsReturned), err:
+                existing_prediction=None
+            if existing_prediction is not None:
+                made_public=not existing_prediction.public and self.public
+                made_not_draft=existing_prediction.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(Prediction, self).save()
 

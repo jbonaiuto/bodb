@@ -18,9 +18,9 @@
             {% if multiple %}
                 {% if action == "add" %}
                     {% ifequal type 'build' %}
-                        opener.addBuildSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}']);
+                        opener.addBuildSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type|escapejs }}']);
                     {% else %}
-                        opener.addTestSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}'],'', []);
+                        opener.addTestSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type|escapejs }}'],'', []);
                     {% endifequal %}
                 {% endif %}
             {% endif %}
