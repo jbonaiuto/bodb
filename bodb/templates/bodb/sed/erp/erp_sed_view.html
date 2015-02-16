@@ -105,7 +105,7 @@
                 <td colspan="3"><strong>Last modified:</strong> {{ erpsed.get_modified_str }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Tags:</strong> {{ erpsed.tags.all|join:', ' }}</td>
+                <td colspan="3"><strong>Tags:</strong> {% for tag in erpsed.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/sed/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
             </tr>
             <tr class="section_subheader">
                 <td colspan=3>Brief Description</td>
