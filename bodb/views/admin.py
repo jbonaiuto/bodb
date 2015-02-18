@@ -432,7 +432,7 @@ class BodbRegistrationView(RegistrationView):
         new_user.save()
         profile.affiliation=request.POST['affiliation']
         profile.save()
-        cache.set('%d.profile' % new_user.id, self.object)
+        cache.set('%d.profile' % new_user.id, profile)
 
         success_url = self.get_success_url(request, new_user)
 
