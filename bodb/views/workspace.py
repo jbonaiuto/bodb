@@ -298,38 +298,45 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         visibility = Document.get_security_q(user)
 
         literature=self.object.related_literature.distinct().select_related('collator').prefetch_related('authors__author')
-        context['literatures']=Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
+        context['literatures']=Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
 
         brain_regions=self.object.related_regions.distinct().select_related('nomenclature').prefetch_related('nomenclature__species')
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
+            context['fav_regions'])
 
         models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author')
-        context['models']=Model.get_model_list(models,context['profile'],context['active_workspace'])
+        context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
 
         bops=self.object.related_bops.filter(visibility).distinct().select_related('collator')
-        context['bops']=BOP.get_bop_list(bops,context['profile'],context['active_workspace'])
+        context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().select_related('collator')
-        context['generic_seds']=SED.get_sed_list(generic_seds, context['profile'], context['active_workspace'])
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
 
         ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(ws_imaging_seds, context['profile'], context['active_workspace'])
+        context['imaging_seds']=SED.get_sed_list(ws_imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
 
         conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
         ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in ws_erp_seds]
-        context['erp_seds']=SED.get_sed_list(ws_erp_seds, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(ws_erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        sss=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
-        context['ssrs']=SSR.get_ssr_list(sss, context['profile'], context['active_workspace'])
+        ssrs=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
         context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user')
 

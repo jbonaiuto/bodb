@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, Workspace, BodbProfile
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, Workspace, BodbProfile, UserSubscription
 from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
@@ -37,10 +37,28 @@ def set_context_workspace(context, request):
     context['active_workspace']=None
     context['profile']=get_profile(request)
     context['active_workspace']=get_active_workspace(context['profile'], request)
+    context['fav_lit']=[]
+    context['fav_regions']=[]
+    context['fav_docs']=[]
+    context['workspace_literature']=[]
+    context['workspace_regions']=[]
+    context['workspace_models']=[]
+    context['workspace_bops']=[]
+    context['workspace_seds']=[]
+    context['workspace_ssrs']=[]
     if request.user.is_authenticated() and not request.user.is_anonymous():
         context['can_add_entry'] = request.user.has_perm('add_entry', context['active_workspace'])
         context['can_remove_entry'] = request.user.has_perm('remove_entry', context['active_workspace'])
-
+        context['fav_lit']=context['profile'].favorite_literature.all().values_list('id',flat=True)
+        context['fav_regions']=context['profile'].favorite_regions.all().values_list('id',flat=True)
+        context['fav_docs']=context['profile'].favorites.all().values_list('id',flat=True)
+        context['subscriptions']=UserSubscription.objects.filter(user=context['profile'].user,).values_list('subscribed_to_user__id','model_type')
+        context['workspace_literature']=context['active_workspace'].related_literature.all().values_list('id',flat='True')
+        context['workspace_regions']=context['active_workspace'].related_regions.all().values_list('id',flat=True)
+        context['workspace_models']=context['active_workspace'].related_models.all().values_list('id',flat=True)
+        context['workspace_bops']=context['active_workspace'].related_bops.all().values_list('id',flat=True)
+        context['workspace_seds']=context['active_workspace'].related_seds.all().values_list('id',flat=True)
+        context['workspace_ssrs']=context['active_workspace'].related_ssrs.all().values_list('id',flat=True)
     return context
 
 
@@ -151,32 +169,37 @@ class DraftListView(LoginRequiredMixin,BODBView):
         user=self.request.user
 
         models=Model.objects.filter(collator=user,draft=1).select_related('collator').prefetch_related('authors__author')
-        context['models']=Model.get_model_list(models,context['profile'],context['active_workspace'])
+        context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
 
         bops=BOP.objects.filter(collator=user,draft=1).select_related('collator')
-        context['bops']=BOP.get_bop_list(bops,context['profile'],context['active_workspace'])
+        context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         generic_seds=SED.objects.filter(type='generic',collator=user,draft=1).select_related('collator')
-        context['generic_seds']=SED.get_sed_list(generic_seds, context['profile'], context['active_workspace'])
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
 
         conn_seds=ConnectivitySED.objects.filter(collator=user,draft=1).select_related('collator','target_region__nomenclature','source_region__nomenclature')
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
         imaging_seds=BrainImagingSED.objects.filter(collator=user,draft=1).select_related('collator')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
 
         erp_seds=ERPSED.objects.filter(collator=user,draft=1).select_related('collator')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
         ssrs=SSR.objects.filter(collator=user,draft=1).select_related('collator')
-        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
@@ -210,42 +233,7 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
         context['ssrs']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
-            literature=Literature.objects.filter(id__in=context['profile'].favorite_literature.all()).select_related('collator').prefetch_related('authors__author')
-            context['literatures']=Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
 
-            brain_regions=BrainRegion.objects.filter(id__in=context['profile'].favorite_regions.all()).select_related('nomenclature').prefetch_related('nomenclature__species')
-            context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
-
-            models=Model.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator').prefetch_related('authors__author')
-            context['models']=Model.get_model_list(models,context['profile'],context['active_workspace'])
-            context['model_seds']=Model.get_sed_map(models, user)
-
-            bops=BOP.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator')
-            context['bops']=BOP.get_bop_list(bops,context['profile'],context['active_workspace'])
-            context['bop_relationships']=BOP.get_bop_relationships(bops, user)
-
-            generic_seds=SED.objects.filter(type='generic',document_ptr__in=context['profile'].favorites.all()).select_related('collator')
-            context['generic_seds']=SED.get_sed_list(generic_seds, context['profile'], context['active_workspace'])
-
-            conn_seds=ConnectivitySED.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator','target_region__nomenclature','source_region__nomenclature')
-            context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
-            context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
-
-            imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator')
-            coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
-            context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
-            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
-
-            erp_seds=ERPSED.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator')
-            components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
-            context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
-            context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-
-            ssrs=SSR.objects.filter(document_ptr__in=context['profile'].favorites.all()).select_related('collator')
-            context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
-
-            context['loaded_coord_selection']=context['profile'].loaded_coordinate_selection
-            context['saved_coord_selections']=SavedSEDCoordSelection.objects.filter(user=user).select_related('user','last_modified_by')
             # load selected coordinates
             selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__coord','sed_coordinate__sed','user')
 
@@ -277,6 +265,54 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             context['can_delete_coord_selection']=True
             context['can_add_coord_selection']=True
             context['can_change_coord_selection']=True
+
+            literature=Literature.objects.filter(id__in=context['fav_lit']).select_related('collator').prefetch_related('authors__author')
+            context['literatures']=Literature.get_reference_list(literature,context['workspace_literature'],
+                context['fav_lit'], context['subscriptions'])
+
+            brain_regions=BrainRegion.objects.filter(id__in=context['fav_regions']).select_related('nomenclature').prefetch_related('nomenclature__species')
+            context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
+                context['fav_regions'])
+
+            models=Model.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator').prefetch_related('authors__author')
+            context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+                context['subscriptions'])
+            context['model_seds']=Model.get_sed_map(models, user)
+
+            bops=BOP.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator')
+            context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'],
+                context['subscriptions'])
+            context['bop_relationships']=BOP.get_bop_relationships(bops, user)
+
+            generic_seds=SED.objects.filter(type='generic',document_ptr__in=context['fav_docs']).select_related('collator')
+            context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+
+            conn_seds=ConnectivitySED.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator','target_region__nomenclature','source_region__nomenclature')
+            context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
+
+            imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator')
+            coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
+            context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user,
+                selected_coords=selected_coord_objs.values_list('sed_coordinate__id',flat=True))
+
+            erp_seds=ERPSED.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator')
+            components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+            context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+
+            ssrs=SSR.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator')
+            context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
+                context['subscriptions'])
+
+            context['loaded_coord_selection']=context['profile'].loaded_coordinate_selection
+            context['saved_coord_selections']=SavedSEDCoordSelection.objects.filter(user=user).select_related('user','last_modified_by')
+
         return context
 
 
@@ -376,22 +412,35 @@ class TagView(BODBView):
         context['helpPage']='tags.html'
         context['tag']=name
 
-        context['tagged_bops']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),context['profile'],context['active_workspace'])
-        context['tagged_models']=Model.get_model_list(Model.get_tagged_models(name, user),context['profile'],context['active_workspace'])
-        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user), context['profile'], context['active_workspace'])
+        bops=BOP.get_tagged_bops(name,user)
+        context['tagged_bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
+        models=Model.get_tagged_models(name, user)
+        context['tagged_models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
+        generic_seds=SED.get_tagged_seds(name, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         conn_seds=ConnectivitySED.get_tagged_seds(name, user)
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
-        context['tagged_predictions']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), context['profile'], context['active_workspace'])
-        context['tagged_ssrs']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), context['profile'], context['active_workspace'])
+        predictions=Prediction.get_tagged_predictions(name, user)
+        context['tagged_predictions']=Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
+            context['fav_docs'], context['subscriptions'])
+        ssrs=SSR.get_tagged_ssrs(name, user)
+        context['tagged_ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
+            context['subscriptions'])
 
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'

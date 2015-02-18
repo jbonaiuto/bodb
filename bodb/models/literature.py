@@ -164,15 +164,12 @@ class Literature(models.Model):
         return ''
 
     @staticmethod
-    def get_reference_list(references, profile, active_workspace):
+    def get_reference_list(references, workspace_lit, fav_lit, subscriptions):
         reference_list=[]
         for reference in references:
-            selected=active_workspace is not None and\
-                     active_workspace.related_literature.filter(id=reference.id).exists()
-            is_favorite=profile is not None and profile.favorite_literature.filter(id=reference.id).exists()
-            subscribed_to_user=profile is not None and\
-                               UserSubscription.objects.filter(subscribed_to_user=reference.collator, user=profile.user,
-                                   model_type='Model').exists()
+            selected=reference.id in workspace_lit
+            is_favorite=reference.id in fav_lit
+            subscribed_to_user=(reference.collator.id,'All') in subscriptions
             reference_list.append([selected,is_favorite,subscribed_to_user,reference])
         return reference_list
 

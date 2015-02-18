@@ -70,7 +70,7 @@ class SED(Document):
                                     Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
-    def get_sed_list(seds, profile, active_workspace):
+    def get_sed_list(seds, workspace_seds, fav_docs, subscriptions):
         sed_list=[]
         for sed in seds:
             try:
@@ -79,16 +79,17 @@ class SED(Document):
                 cocomac_sed=None
             if cocomac_sed is not None:
                 sed=cocomac_sed
+
             try:
                 brede_sed=BredeBrainImagingSED.objects.select_related('collator').get(id=sed.id)
             except (BredeBrainImagingSED.DoesNotExist, BredeBrainImagingSED.MultipleObjectsReturned), err:
                 brede_sed=None
             if brede_sed is not None:
                 sed=brede_sed
-            selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=sed.id).exists()
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
-                user=profile.user, model_type='SED').exists()
+
+            selected=sed.id in workspace_seds
+            is_favorite=sed.id in fav_docs
+            subscribed_to_user=(sed.collator.id,'SED') in subscriptions
             sed_list.append([selected,is_favorite,subscribed_to_user,sed])
         return sed_list
 
@@ -243,11 +244,14 @@ class BrainImagingSED(SED):
         return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
-    def augment_sed_list(sed_list, coords, user):
+    def augment_sed_list(sed_list, coords, user, selected_coords=None):
         for sed_list_item,coord_list in zip(sed_list,coords):
             sed_coord_list=[]
-            for i in range(coord_list.count()):
-                sed_coord_list.append((coord_list[i],coord_list[i].is_selected(user)))
+            for coord in coord_list:
+                if selected_coords is None:
+                    sed_coord_list.append((coord,coord.is_selected(user)))
+                else:
+                    sed_coord_list.append((coord,coord.id in selected_coords))
             sed_list_item.append(sed_coord_list)
         return sed_list
 
@@ -504,28 +508,22 @@ class BuildSED(models.Model):
         ordering=['sed__title']
 
     @staticmethod
-    def get_building_sed_list(bseds, profile, active_workspace):
+    def get_building_sed_list(bseds, workspace_seds, fav_docs, subscriptions):
         build_sed_list=[]
         for buildsed in bseds:
-            selected=active_workspace is not None and \
-                     active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=profile.user,
-                                   model_type='SED').exists()
+            selected=buildsed.sed.id in workspace_seds
+            is_favorite=buildsed.sed.id in fav_docs
+            subscribed_to_user=(buildsed.sed.collator.id, 'SED') in subscriptions
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed])
         return build_sed_list
 
     @staticmethod
-    def get_imaging_building_sed_list(bseds, profile, active_workspace):
+    def get_imaging_building_sed_list(bseds, workspace_seds, fav_docs, subscriptions):
         build_sed_list=[]
         for (buildsed,coords) in bseds:
-            selected=active_workspace is not None and\
-                     active_workspace.related_seds.filter(id=buildsed.sed.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).exists()
-            subscribed_to_user=profile is not None and\
-                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=profile.user,
-                                   model_type='SED').exists()
+            selected=buildsed.sed.id in workspace_seds
+            is_favorite=buildsed.sed.id in fav_docs
+            subscribed_to_user=(buildsed.sed.collator.id, 'SED') in subscriptions
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed,coords])
         return build_sed_list
 
@@ -590,21 +588,15 @@ class TestSED(models.Model):
         super(TestSED, self).save(*args, **kwargs)
 
     @staticmethod
-    def get_testing_sed_list(tseds, profile, active_workspace):
+    def get_testing_sed_list(tseds, workspace_seds, workspace_ssrs, fav_docs, subscriptions):
         test_sed_list=[]
         for testsed in tseds:
-            sed_selected=active_workspace is not None and \
-                         active_workspace.related_seds.filter(id=testsed.sed.id).exists()
-            sed_is_favorite=profile is not None and profile.favorites.filter(id=testsed.sed.id).exists()
-            sed_subscribed_to_user=profile is not None and \
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=profile.user,
-                                       model_type='SED').exists()
-            ssr_selected=active_workspace is not None and \
-                         active_workspace.related_ssrs.filter(id=testsed.ssr.id).exists()
-            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.ssr.id).exists()
-            ssr_subscribed_to_user=profile is not None and\
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.ssr.collator,
-                                       user=profile.user, model_type='SSR').exists()
+            sed_selected=testsed.sed.id in workspace_seds
+            sed_is_favorite=testsed.sed.id in fav_docs
+            sed_subscribed_to_user=(testsed.sed.collator.id,'SED') in subscriptions
+            ssr_selected=testsed.ssr.id in workspace_ssrs
+            ssr_is_favorite=testsed.ssr.id in fav_docs
+            ssr_subscribed_to_user=(testsed.ssr.collator.id,'SSR') in subscriptions
             test_sed_list.append([sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,
                                   ssr_subscribed_to_user,testsed])
         return test_sed_list
