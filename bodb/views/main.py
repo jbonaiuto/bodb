@@ -46,6 +46,7 @@ def set_context_workspace(context, request):
     context['workspace_bops']=[]
     context['workspace_seds']=[]
     context['workspace_ssrs']=[]
+    context['selected_sed_coords']=[]
     if request.user.is_authenticated() and not request.user.is_anonymous():
         context['can_add_entry'] = request.user.has_perm('add_entry', context['active_workspace'])
         context['can_remove_entry'] = request.user.has_perm('remove_entry', context['active_workspace'])
@@ -59,6 +60,7 @@ def set_context_workspace(context, request):
         context['workspace_bops']=context['active_workspace'].related_bops.all().values_list('id',flat=True)
         context['workspace_seds']=context['active_workspace'].related_seds.all().values_list('id',flat=True)
         context['workspace_ssrs']=context['active_workspace'].related_ssrs.all().values_list('id',flat=True)
+        context['selected_sed_coords']=SelectedSEDCoord.objects.filter(selected=True, user__id=context['profile'].user.id).select_related('sed_coordinate__coord','sed_coordinate__sed','user')
     return context
 
 
@@ -190,7 +192,8 @@ class DraftListView(LoginRequiredMixin,BODBView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
 
         erp_seds=ERPSED.objects.filter(collator=user,draft=1).select_related('collator')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
@@ -235,10 +238,8 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
         if user.is_authenticated() and not user.is_anonymous():
 
             # load selected coordinates
-            selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__coord','sed_coordinate__sed','user')
-
             context['selected_coords']=[]
-            for coord in selected_coord_objs:
+            for coord in context['selected_sed_coords']:
                 coord_array={
                     'sed_name':coord.sed_coordinate.sed.title,
                     'sed_id':coord.sed_coordinate.sed.id,
@@ -297,8 +298,8 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
             context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
                 context['subscriptions'])
-            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user,
-                selected_coords=selected_coord_objs.values_list('sed_coordinate__id',flat=True))
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
 
             erp_seds=ERPSED.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator')
             components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
@@ -434,7 +435,8 @@ class TagView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         predictions=Prediction.get_tagged_predictions(name, user)
         context['tagged_predictions']=Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
             context['fav_docs'], context['subscriptions'])

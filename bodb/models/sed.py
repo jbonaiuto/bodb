@@ -244,14 +244,11 @@ class BrainImagingSED(SED):
         return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator')
 
     @staticmethod
-    def augment_sed_list(sed_list, coords, user, selected_coords=None):
+    def augment_sed_list(sed_list, coords, selected_coords):
         for sed_list_item,coord_list in zip(sed_list,coords):
             sed_coord_list=[]
             for coord in coord_list:
-                if selected_coords is None:
-                    sed_coord_list.append((coord,coord.is_selected(user)))
-                else:
-                    sed_coord_list.append((coord,coord.id in selected_coords))
+                sed_coord_list.append((coord,coord.id in selected_coords))
             sed_list_item.append(sed_coord_list)
         return sed_list
 

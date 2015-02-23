@@ -285,7 +285,8 @@ class LiteratureDetailView(TemplateView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         conn_seds=ConnectivitySED.get_literature_seds(literature,user)
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])

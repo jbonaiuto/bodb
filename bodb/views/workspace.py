@@ -285,7 +285,9 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
             subscribed_to=False
             is_admin=False
             if user.is_authenticated() and not user.is_anonymous():
-                subscribed_to=UserSubscription.objects.filter(subscribed_to_user=usr, user=user).exists()
+                subscribed_to=(user.id,'All') in context['subscriptions'] or (user.id,'Model') in context['subscriptions'] or\
+                              (user.id,'BOP') in context['subscriptions'] or (user.id,'SED') in context['subscriptions'] or \
+                              (user.id,'Prediction') in context['subscriptions'] or (user.id,'SSR') in context['subscriptions']
                 is_admin=self.object.admin_users.filter(id=usr.id).exists()
             members.append([usr,is_admin,subscribed_to])
         context['members']=members
@@ -322,7 +324,8 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
 
         conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
@@ -351,10 +354,8 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['saved_coord_selections']=self.object.saved_coordinate_selections.all().select_related('user','last_modified_by')
 
         # load selected coordinates
-        selected_coord_objs=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id).select_related('sed_coordinate__sed','sed_coordinate__coord','user')
-
         context['selected_coords']=[]
-        for coord in selected_coord_objs:
+        for coord in context['selected_sed_coords']:
             coord_array={
                 'sed_name':coord.sed_coordinate.sed.title,
                 'sed_id':coord.sed_coordinate.sed.id,

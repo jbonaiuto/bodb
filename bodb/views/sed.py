@@ -287,8 +287,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             # load selected coordinate Ids
             context['selected_coords']=[]
             if user.is_authenticated() and not user.is_anonymous():
-                coords=SelectedSEDCoord.objects.filter(selected=True, user=user).select_related('sed_coordinate')
-                for coord in coords:
+                for coord in context['selected_sed_coords']:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
         references=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
         context['references'] = Literature.get_reference_list(references,context['workspace_literature'],
@@ -1008,7 +1007,8 @@ class SEDTaggedView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context
