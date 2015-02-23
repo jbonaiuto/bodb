@@ -149,15 +149,12 @@ class Model(Module):
         return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author')
 
     @staticmethod
-    def get_model_list(models, profile, active_workspace):
+    def get_model_list(models, workspace_models, fav_docs, subscriptions):
         model_list=[]
         for model in models:
-            selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=model.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=model.id).exists()
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=model.collator, user=profile.user,
-                                   model_type='Model').exists()
+            selected=model.id in workspace_models
+            is_favorite=model.id in fav_docs
+            subscribed_to_user=(model.collator.id,'Model') in subscriptions
             model_list.append([selected,is_favorite,subscribed_to_user,model])
         return model_list
 
@@ -223,15 +220,12 @@ class RelatedModel(models.Model):
         ordering=['model__title']
 
     @staticmethod
-    def get_related_model_list(rmods, profile, active_workspace):
+    def get_related_model_list(rmods, workspace_models, fav_docs, subscriptions):
         related_model_list=[]
         for rmod in rmods:
-            selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=rmod.model.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=rmod.model.id).exists()
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rmod.model.collator, user=profile.user,
-                                   model_type='Model').exists()
+            selected=rmod.model.id in workspace_models
+            is_favorite=rmod.model.id in fav_docs
+            subscribed_to_user=(rmod.model.collator.id, 'Model') in subscriptions
             related_model_list.append([selected,is_favorite,subscribed_to_user,rmod])
         return related_model_list
 
@@ -241,15 +235,12 @@ class RelatedModel(models.Model):
                                              Document.get_security_q(user, field='model'))).distinct().select_related('model__collator').prefetch_related('model__authors__author')
 
     @staticmethod
-    def get_reverse_related_model_list(rrmods, profile, active_workspace):
+    def get_reverse_related_model_list(rrmods, workspace_models, fav_docs, subscriptions):
         reverse_related_model_list=[]
         for rrmod in rrmods:
-            selected=active_workspace is not None and \
-                     active_workspace.related_models.filter(id=rrmod.document.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=rrmod.document.id).exists()
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rrmod.document.collator, user=profile.user,
-                                   model_type='Model').exists()
+            selected=rrmod.document.id in workspace_models
+            is_favorite=rrmod.document.id in fav_docs
+            subscribed_to_user=(rrmod.document.collator.id, 'Model') in subscriptions
             reverse_related_model_list.append([selected,is_favorite,subscribed_to_user,rrmod])
         return reverse_related_model_list
 

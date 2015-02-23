@@ -560,29 +560,38 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['generic_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_generic_testing_seds(self.object,user), context['profile'], context['active_workspace'])
-        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_connectivity_testing_seds(self.object,user), context['profile'], context['active_workspace'])
-        context['imaging_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_imaging_testing_seds(self.object, user), context['profile'], context['active_workspace'])
-        context['erp_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_erp_testing_seds(self.object, user), context['profile'], context['active_workspace'])
-        context['predictions'] = Prediction.get_prediction_list(Prediction.get_predictions(self.object,user), context['profile'], context['active_workspace'])
+        generic_test_seds=TestSED.get_generic_testing_seds(self.object,user)
+        context['generic_test_seds'] = TestSED.get_testing_sed_list(generic_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        conn_test_seds=TestSED.get_connectivity_testing_seds(self.object,user)
+        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(conn_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        imaging_test_seds=TestSED.get_imaging_testing_seds(self.object, user)
+        context['imaging_test_seds'] = TestSED.get_testing_sed_list(imaging_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        erp_test_seds=TestSED.get_erp_testing_seds(self.object, user)
+        context['erp_test_seds'] = TestSED.get_testing_sed_list(erp_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        predictions=Prediction.get_predictions(self.object,user)
+        context['predictions'] = Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
+            context['fav_docs'], context['subscriptions'])
         context['inputs'] = Variable.objects.filter(var_type='Input',module=self.object)
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
         literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
-        context['references'] = Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
+        context['references'] = Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').exists()
-            context['selected']=context['active_workspace'].related_models.filter(id=self.object.id).exists()
+        context['subscribed_to_collator']=(self.object.collator.id, 'Model') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Model') in context['subscriptions']
+        context['selected']=self.object.id in context['workspace_models']
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
         rrmods=RelatedModel.get_reverse_related_models(self.object,user)
-        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,context['profile'],context['active_workspace'])
+        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,
+            context['workspace_models'],context['fav_docs'], context['subscriptions'])
         return context
 
 
@@ -629,7 +638,9 @@ class ModelTaggedView(BODBView):
         context['helpPage']= 'tags.html'
         context['tag']= name
         context['modelGraphId']='modelRelationshipDiagram'
-        context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),context['profile'],context['active_workspace'])
+        models=Model.get_tagged_models(name, user)
+        context['tagged_items']= Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         return context
 
 
@@ -795,11 +806,8 @@ class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
         context['hierarchy_html']=Model.objects.prefetch_related('authors__author').get(id=self.object.get_root().id).hierarchy_html(self.object.id)
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').exists()
+        context['subscribed_to_collator']=(self.object.collator.id, 'Model') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Model') in context['subscriptions']
         return context
 
 

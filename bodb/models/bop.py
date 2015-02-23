@@ -61,13 +61,12 @@ class BOP(MPTTModel,Document):
         return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
 
     @staticmethod
-    def get_bop_list(bops, profile, active_workspace):
+    def get_bop_list(bops, workspace_bops, fav_docs, subscriptions):
         bop_list=[]
         for bop in bops:
-            selected=active_workspace is not None and active_workspace.related_bops.filter(id=bop.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=bop.id).exists()
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=bop.collator,
-                user=profile.user, model_type='BOP').exists()
+            selected=bop.id in workspace_bops
+            is_favorite=bop.id in fav_docs
+            subscribed_to_user=(bop.collator.id,'BOP') in subscriptions
             bop_list.append([selected,is_favorite,subscribed_to_user,bop])
         return bop_list
 
@@ -106,26 +105,22 @@ class RelatedBOP(models.Model):
         ordering=['bop__title']
 
     @staticmethod
-    def get_related_bop_list(rbops, profile, active_workspace):
+    def get_related_bop_list(rbops, workspace_bops, fav_docs, subscriptions):
         related_bop_list=[]
         for rbop in rbops:
-            selected=active_workspace is not None and active_workspace.related_bops.filter(id=rbop.bop.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=rbop.bop.id).exists()
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=rbop.bop.collator,
-                user=profile.user, model_type='BOP').exists()
+            selected=rbop.bop.id in workspace_bops
+            is_favorite=rbop.bop.id in fav_docs
+            subscribed_to_user=(rbop.bop.collator.id, 'BOP') in subscriptions
             related_bop_list.append([selected,is_favorite,subscribed_to_user,rbop])
         return related_bop_list
 
     @staticmethod
-    def get_reverse_related_bop_list(rrbops, profile, active_workspace):
+    def get_reverse_related_bop_list(rrbops, workspace_bops, fav_docs, subscriptions):
         reverse_related_bop_list=[]
         for rrbop in rrbops:
-            selected=active_workspace is not None and \
-                     active_workspace.related_bops.filter(id=rrbop.document.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=rrbop.document.id).exists()
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=rrbop.document.collator, user=profile.user,
-                                   model_type='BOP').exists()
+            selected=rrbop.document.id in workspace_bops
+            is_favorite=rrbop.document.id in fav_docs
+            subscribed_to_user=(rrbop.document.collator.id, 'BOP') in subscriptions
             reverse_related_bop_list.append([selected,is_favorite,subscribed_to_user,rrbop])
         return reverse_related_bop_list
 

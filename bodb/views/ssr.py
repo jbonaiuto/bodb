@@ -138,12 +138,9 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         context['model']=None
         if models.count():
             context['model']=models[0]
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='SSR').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='SSR').exists()
-            context['selected']=context['active_workspace'].related_ssrs.filter(id=self.object.id).exists()
+        context['subscribed_to_collator']=(self.object.collator.id, 'SSR') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'SSR') in context['subscriptions']
+        context['selected']=self.object.id in context['workspace_ssrs']
         context['action']=self.request.GET.get('action',None)
         context['type']=self.request.GET.get('type',None)
         context['idx']=self.request.GET.get('idx',None)
@@ -194,5 +191,7 @@ class SSRTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user), context['profile'], context['active_workspace'])
+        ssrs=SSR.get_tagged_ssrs(name, user)
+        context['tagged_items']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
+            context['subscriptions'])
         return context

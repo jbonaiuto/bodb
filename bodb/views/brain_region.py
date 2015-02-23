@@ -163,7 +163,9 @@ class BrainRegionView(DetailView):
         user = self.request.user
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), context['profile'], context['active_workspace'])
+        generic_seds=SED.get_brain_region_seds(self.object, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
         search_data={'type':'brain imaging','coordinate_brain_region':self.object.name, 'search_options':'all'}
         sedCoords=runSEDCoordSearch(imaging_seds, search_data, user.id)
@@ -173,28 +175,30 @@ class BrainRegionView(DetailView):
                 coords.append(sedCoords[sed.id])
             else:
                 coords.append([])
-        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
-        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectionSEDs)
         erp_seds=ERPSED.get_brain_region_seds(self.object, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),context['profile'],context['active_workspace'])
         rbops=RelatedBOP.get_brain_region_related_bops(self.object, user)
-        context['related_bops']=RelatedBOP.get_related_bop_list(rbops,context['profile'],context['active_workspace'])
+        context['related_bops']=RelatedBOP.get_related_bop_list(rbops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
         rmods=RelatedModel.get_brain_region_related_models(self.object, user)
-        context['related_models']=RelatedModel.get_related_model_list(rmods,context['profile'],context['active_workspace'])
+        context['related_models']=RelatedModel.get_related_model_list(rmods, context['workspace_models'],
+            context['fav_docs'], context['subscriptions'])
         context['helpPage']='view_entry.html'
 
-        context['is_favorite']=False
-        context['selected']=False
-
-        if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=context['profile'].favorite_regions.filter(id=self.object.id).exists()
-            context['selected']=context['active_workspace'].related_regions.filter(id=self.object.id).exists()
+        context['is_favorite']=self.object.id in context['fav_regions']
+        context['selected']=self.object.id in context['workspace_regions']
 
         return context
 

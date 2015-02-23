@@ -46,13 +46,12 @@ class SSR(Document):
             sendNotifications(self, 'SSR')
 
     @staticmethod
-    def get_ssr_list(ssrs, profile, active_workspace):
+    def get_ssr_list(ssrs, workspace_ssrs, fav_docs, subscriptions):
         ssr_list=[]
         for ssr in ssrs:
-            selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).exists()
-            is_favorite=profile is not None and profile.favorites.filter(id=ssr.id).exists()
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=ssr.collator,
-                user=profile.user, model_type='SSR').exists()
+            selected=ssr.id in workspace_ssrs
+            is_favorite=ssr.id in fav_docs
+            subscribed_to_user=(ssr.collator.id,'SSR') in subscriptions
             ssr_list.append([selected,is_favorite,subscribed_to_user,ssr])
         return ssr_list
 
@@ -78,7 +77,7 @@ class Prediction(Document):
         return reverse('prediction_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_prediction_list(predictions, profile, active_workspace):
+    def get_prediction_list(predictions, workspace_ssrs, fav_docs, subscriptions):
         prediction_list=[]
         for prediction in predictions:
             if prediction.ssr is None:
@@ -86,10 +85,9 @@ class Prediction(Document):
                 ssr_is_favorite=False
                 ssr_subscribed_to_user=False
             else:
-                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.ssr.id).exists()
-                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.ssr.id).exists()
-                ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.ssr.collator,
-                    user=profile.user, model_type='SSR').exists()
+                ssr_selected=prediction.ssr.id in workspace_ssrs
+                ssr_is_favorite=prediction.ssr.id in fav_docs
+                ssr_subscribed_to_user=(prediction.ssr.collator.id,'SSR') in subscriptions
             prediction_list.append([ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction])
         return prediction_list
 
