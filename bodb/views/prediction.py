@@ -85,13 +85,10 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
         ssrs=[]
         if self.object.ssr:
             ssrs.append(self.object.ssr)
-        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
-        user=self.request.user
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Prediction').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Prediction').exists()
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        context['subscribed_to_collator']=(self.object.collator.id, 'Prediction') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Prediction') in \
+                                                  context['subscriptions']
         return context
 
 
@@ -105,5 +102,7 @@ class PredictionTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user), context['profile'], context['active_workspace'])
+        predictions=Prediction.get_tagged_predictions(name, user)
+        context['tagged_items']=Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
+            context['fav_docs'], context['subscriptions'])
         return context

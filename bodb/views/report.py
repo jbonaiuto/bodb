@@ -14,7 +14,7 @@ from bodb.forms.ssr import SSRReportForm
 from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
 from bodb.forms.model import ModelReportForm
 from bodb.forms.sed import SEDReportForm
-from bodb.views.main import get_profile, get_active_workspace
+from bodb.views.main import set_context_workspace
 from uscbp.image_utils import get_thumbnail
 import json
 from bodb.serializers.sed import SEDSerializer
@@ -36,11 +36,12 @@ thin_frame  = FramePS( thin_edge,  thin_edge,  thin_edge,  thin_edge )
 styles = getSampleStyleSheet()
 
 def get_sed_report_context(request, context):
-    context['profile']=get_profile(request)
-    context['active_workspace']=get_active_workspace(context['profile'],request)
+    context=set_context_workspace(context,request)
     # load related entries
     context['figures'] = list(DocumentFigure.objects.filter(document=context['sed']).order_by('order'))
-    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_sed_related_bops(context['sed'],request.user),context['profile'],context['active_workspace']))
+    rbops=RelatedBOP.get_sed_related_bops(context['sed'],request.user)
+    context['related_bops'] = list(RelatedBOP.get_reverse_related_bop_list(rbops, context['workspace_bops'],
+        context['fav_docs'], context['subscriptions']))
     context['related_models'] = RelatedModel.get_sed_related_models(context['sed'], request.user)
     context['related_brain_regions'] = list(RelatedBrainRegion.objects.filter(document=context['sed']))
     context['references'] = list(context['sed'].literature.all())

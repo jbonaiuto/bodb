@@ -329,21 +329,20 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             # load selected coordinate Ids
             context['selected_coords']=[]
             if user.is_authenticated() and not user.is_anonymous():
-                coords=SelectedSEDCoord.objects.filter(selected=True, user=user).select_related('sed_coordinate')
-                for coord in coords:
+                for coord in context['selected_sed_coords']:
                     context['selected_coords'].append(str(coord.sed_coordinate.id))
         references=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
-        context['references'] = Literature.get_reference_list(references,context['profile'],context['active_workspace'])
+        context['references'] = Literature.get_reference_list(references,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
         rmods=RelatedModel.get_sed_related_models(self.object,user)
-        context['related_models'] = RelatedModel.get_reverse_related_model_list(rmods,context['profile'],context['active_workspace'])
+        context['related_models'] = RelatedModel.get_reverse_related_model_list(rmods, context['workspace_models'],
+            context['fav_docs'], context['subscriptions'])
         rbops=RelatedBOP.get_sed_related_bops(self.object,user)
-        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(rbops,context['profile'],context['active_workspace'])
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='SED').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='SED').exists()
-            context['selected']=context['active_workspace'].related_seds.filter(id=self.object.id).exists()
+        context['related_bops'] = RelatedBOP.get_reverse_related_bop_list(rbops, context['workspace_bops'],
+            context['fav_docs'], context['subscriptions'])
+        context['subscribed_to_collator']=(self.object.collator.id, 'SED') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'SED') in context['subscriptions']
+        context['selected']=self.object.id in context['workspace_seds']
         context['type']=self.request.GET.get('type',None)
         context['action']=self.request.GET.get('action',None)
         context['ispopup']=('_popup' in self.request.GET)
@@ -1035,20 +1034,27 @@ class SEDTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['generic_seds']=SED.get_sed_list(SED.get_tagged_seds(name, user), context['profile'], context['active_workspace'])
+        generic_seds=SED.get_tagged_seds(name, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         conn_seds=ConnectivitySED.get_tagged_seds(name, user)
-        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
         erp_seds=ERPSED.get_tagged_seds(name, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, context['profile'], context['active_workspace'])
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
         imaging_seds=BrainImagingSED.get_tagged_seds(name, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['profile'], context['active_workspace'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, user)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         neurophys_seds=NeurophysiologySED.get_tagged_seds(name, user)
-        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds, context['profile'], context['active_workspace'])
+        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context

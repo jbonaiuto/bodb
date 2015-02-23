@@ -201,19 +201,21 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         context['helpPage']='view_entry.html'
         user=self.request.user
         if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='BOP').exists()
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='BOP').exists()
-        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), context['profile'], context['active_workspace'])
+            context['subscribed_to_collator']=(self.object.collator.id, 'BOP') in context['subscriptions']
+            context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'BOP') in \
+                                                      context['subscriptions']
+        child_bops=BOP.get_child_bops(self.object,user)
+        context['child_bops']=BOP.get_bop_list(child_bops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
         literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
-        context['references'] = Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
-        if context['active_workspace'] is not None:
-            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
+        context['references'] = Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
+        context['selected']=self.object.id in context['workspace_bops']
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
         rrbops=RelatedBOP.get_reverse_related_bops(self.object,user)
-        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops,context['profile'],context['active_workspace'])
+        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops, context['workspace_bops'],
+            context['fav_docs'], context['subscriptions'])
         return context
 
 
@@ -274,7 +276,9 @@ class BOPTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),context['profile'],context['active_workspace'])
+        bops=BOP.get_tagged_bops(name,user)
+        context['tagged_items']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
         context['bopGraphId']='bopRelationshipDiagram'
         return context
 
