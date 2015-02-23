@@ -151,12 +151,11 @@ class BrainRegion(models.Model):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_region_list(regions, profile, active_workspace):
+    def get_region_list(regions, workspace_regions, fav_regions):
         region_list=[]
         for region in regions:
-            selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=region.id).exists()
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).exists()
+            selected=region.id in workspace_regions
+            is_favorite=region.id in fav_regions
             region_list.append([selected,is_favorite,region])
         return region_list
 
@@ -194,12 +193,11 @@ class RelatedBrainRegion(models.Model):
         ordering=['brain_region__nomenclature', 'brain_region__name']
 
     @staticmethod
-    def get_related_brain_region_list(rregions, profile, active_workspace):
+    def get_related_brain_region_list(rregions, workspace_regions, fav_regions):
         related_region_list=[]
         for rregion in rregions:
-            selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=rregion.brain_region.id).exists()
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=rregion.brain_region.id).exists()
+            selected=rregion.brain_region.id in workspace_regions
+            is_favorite=rregion.brain_region.id in fav_regions
             related_region_list.append([selected,is_favorite,rregion])
         return related_region_list
 

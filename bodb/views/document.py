@@ -40,29 +40,37 @@ class DocumentDetailView(DetailView):
         context['imaging_build_seds']=[]
         context['erp_build_seds']=[]
         if BuildSED.get_building_seds(self.object,user).exists():
-            context['generic_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_generic_building_seds(self.object, user), context['profile'], context['active_workspace'])
-            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_connectivity_building_seds(self.object, user), context['profile'], context['active_workspace'])
-            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(BuildSED.get_imaging_building_seds(self.object, user), context['profile'], context['active_workspace'])
-            context['erp_build_seds'] = BuildSED.get_building_sed_list(BuildSED.get_erp_building_seds(self.object, user), context['profile'], context['active_workspace'])
+            generic_build_seds=BuildSED.get_generic_building_seds(self.object, user)
+            context['generic_build_seds'] = BuildSED.get_building_sed_list(generic_build_seds,
+                context['workspace_seds'], context['fav_docs'], context['subscriptions'])
+            conn_build_seds=BuildSED.get_connectivity_building_seds(self.object, user)
+            context['connectivity_build_seds'] = BuildSED.get_building_sed_list(conn_build_seds,
+                context['workspace_seds'], context['fav_docs'], context['subscriptions'])
+            imaging_build_seds=BuildSED.get_imaging_building_seds(self.object, user)
+            context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(imaging_build_seds,
+                context['workspace_seds'], context['fav_docs'], context['subscriptions'])
+            erp_build_seds=BuildSED.get_erp_building_seds(self.object, user)
+            context['erp_build_seds'] = BuildSED.get_building_sed_list(erp_build_seds, context['workspace_seds'],
+                context['fav_docs'], context['subscriptions'])
         rbops=RelatedBOP.get_related_bops(self.object, user)
-        context['related_bops'] = RelatedBOP.get_related_bop_list(rbops,context['profile'],context['active_workspace'])
+        context['related_bops'] = RelatedBOP.get_related_bop_list(rbops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
         rmods=RelatedModel.get_related_models(self.object, user)
-        context['related_models'] = RelatedModel.get_related_model_list(rmods,context['profile'],context['active_workspace'])
+        context['related_models'] = RelatedModel.get_related_model_list(rmods, context['workspace_models'],
+            context['fav_docs'], context['subscriptions'])
         related_regions=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species')
-        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions, context['profile'], context['active_workspace'])
+        context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions,
+            context['workspace_regions'], context['fav_regions'])
         context['canEdit']=self.object.check_perm(user,'edit')
         context['canDelete']=self.object.check_perm(user,'delete')
         context['canManage']=self.object.check_perm(user,'manage')
         context['ispopup']=('_popup' in self.request.GET)
         context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted').select_related('author'))
-        context['is_favorite']=False
-        context['selected']=False
+        context['is_favorite']=self.object.id in context['fav_docs']
+
         context['can_add_post']=False
         context['public_request_sent']=False
-
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=context['profile'].favorites.filter(id=self.object.id).exists()
-            context['selected']=context['active_workspace'].related_bops.filter(id=self.object.id).exists()
             context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
         return context

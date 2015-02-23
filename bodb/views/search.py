@@ -142,22 +142,30 @@ class SearchView(FormView):
             users=runUserSearch(form.cleaned_data, user.id)
             workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
 
-        context['bops']=BOP.get_bop_list(bops, context['profile'], context['active_workspace'])
+        context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
-        context['models']=Model.get_model_list(models, context['profile'], context['active_workspace'])
+        context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
-        context['generic_seds']=SED.get_sed_list(genericSEDs, context['profile'], context['active_workspace'])
-        context['erp_seds']=SED.get_sed_list(erpSEDs, context['profile'], context['active_workspace'])
+        context['generic_seds']=SED.get_sed_list(genericSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['erp_seds']=SED.get_sed_list(erpSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
             [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erpSEDs])
-        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
-        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['profile'], context['active_workspace'])
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs], user)
-        context['ssrs']=SSR.get_ssr_list(ssrs, context['profile'], context['active_workspace'])
-        context['literatures']=Literature.get_reference_list(literature,context['profile'],context['active_workspace'])
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
+            [sedCoords[sed.id] for sed in imagingSEDs],
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        context['literatures']=Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
+            context['fav_regions'])
         context['users']=BodbProfile.get_user_list(users,user)
         context['workspaces']=Workspace.get_workspace_list(workspaces,user)
 
@@ -410,7 +418,7 @@ class BOPSearchView(FormView):
 
         bops=runBOPSearch(form.cleaned_data, user.id, exclude=context['exclude'])
 
-        context['bops']=BOP.get_bop_list(bops, context['profile'], context['active_workspace'])
+        context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
         if self.request.is_ajax():
@@ -476,7 +484,8 @@ class BrainRegionSearchView(FormView):
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
         user=self.request.user
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['profile'],context['active_workspace'])
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
+            context['fav_regions'])
         if self.request.is_ajax():
             brain_region_list=[(selected,is_favorite,region.as_json())
                                for (selected,is_favorite,region) in context['brain_regions']]
@@ -527,8 +536,8 @@ class LiteratureSearchView(FormView):
 
         # first request for search page - start with all record search
         context=self.get_context_data(form=form)
-        user=self.request.user
-        context['literatures']=Literature.get_reference_list(literatures,context['profile'],context['active_workspace'])
+        context['literatures']=Literature.get_reference_list(literatures,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
         if self.request.is_ajax():
             literature_list=[(selected,is_favorite,subscribed_to_user,reference.as_json())
                              for (selected,is_favorite,subscribed_to_user,reference) in context['literatures']]
@@ -580,7 +589,8 @@ class ModelSearchView(FormView):
         user=self.request.user
 
         models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
-        context['models']=Model.get_model_list(models, context['profile'], context['active_workspace'])
+        context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
 
         if self.request.is_ajax():
@@ -661,15 +671,20 @@ class SEDSearchView(FormView):
         sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
 
         # load selected sed ids
-        context['generic_seds']=SED.get_sed_list(genericSEDs, context['profile'], context['active_workspace'])
-        context['erp_seds']=SED.get_sed_list(erpSEDs, context['profile'], context['active_workspace'])
+        context['generic_seds']=SED.get_sed_list(genericSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['erp_seds']=SED.get_sed_list(erpSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],
             [ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erpSEDs])
-        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['profile'], context['active_workspace'])
+        context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
-        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['profile'], context['active_workspace'])
+        context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs], user)
+            [sedCoords[sed.id] for sed in imagingSEDs],
+            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         if self.request.is_ajax():
             ajax_context={
                 'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
