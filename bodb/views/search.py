@@ -158,9 +158,13 @@ class SearchView(FormView):
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs],
-            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+                [sedCoords[sed.id] for sed in imagingSEDs],
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+                [sedCoords[sed.id] for sed in imagingSEDs], [])
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
         context['literatures']=Literature.get_reference_list(literature,context['workspace_literature'],
             context['fav_lit'], context['subscriptions'])
@@ -682,9 +686,13 @@ class SEDSearchView(FormView):
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
-            [sedCoords[sed.id] for sed in imagingSEDs],
-            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+                [sedCoords[sed.id] for sed in imagingSEDs],
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],
+                [sedCoords[sed.id] for sed in imagingSEDs], [])
         if self.request.is_ajax():
             ajax_context={
                 'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())

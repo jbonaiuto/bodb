@@ -1007,8 +1007,11 @@ class SEDTaggedView(BODBView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
-            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context

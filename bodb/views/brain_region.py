@@ -177,8 +177,11 @@ class BrainRegionView(DetailView):
                 coords.append([])
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
-            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
         context['connectivity_seds']=SED.get_sed_list(connectionSEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
