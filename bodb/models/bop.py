@@ -79,7 +79,7 @@ class BOP(MPTTModel,Document):
                 related_bop=BOP.objects.get(id=rrbop.document.id)
                 if related_bop in bops:
                     map.append({'from':related_bop.id, 'to': bop.id, 'relationship': rrbop.relationship ,
-                                'relevance_narrative': rrbop.relevance_narrative.replace('\'','\\\'').replace('\n',' ').replace('\r',' ')})
+                                'relevance_narrative': rrbop.relevance_narrative})
             child_bops=BOP.get_child_bops(bop, user)
             for child_bop in child_bops:
                 if child_bop in bops:

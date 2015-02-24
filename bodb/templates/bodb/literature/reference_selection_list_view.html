@@ -69,7 +69,7 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
-                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= authors.replaceAll('\'','\\\'') %>', '<%= year %>', '<%= title.replaceAll('\'','\\\'') %>']);">Select</a>
+                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= _.escape(authors) %>', '<%= _.escape(year) %>', '<%= _.escape(title) %>']);">Select</a>
                         {% else %}
                             <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature(<%= id %>,'favIconLiterature-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIconLiterature-<%= id %>" name="favIconLiterature-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
@@ -81,8 +81,8 @@
                     {% endif %}
                     <input type=hidden name="selectedLiterature" id="selectedLiterature_<%= id %>" value="<%= id %>"/>
                 </td>
-                <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= string %></a></td>
-                <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td><input type="hidden" name="literature" value="<%= id %>"/><a href="/bodb/literature/<%= id %>/" onclick="return openInNewTab('/bodb/literature/<%= id %>/');"><%= _.escape(string) %></a></td>
+                <td width=100px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
                 <td width=150px><%= url_str %></td>
                 <td width=100px><span id="literature_<%= id %>_message" name="literature_<%= id %>_message" class="messages"></span> </td>
             </tr>

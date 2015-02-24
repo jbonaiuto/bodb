@@ -62,9 +62,9 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../" onclick="return opener.addBrainRegionMultiple('', '', <%= id %>, ['<%= name.replaceAll('\'','\\\'') %>', '<%= nomenclature.replaceAll('\'','\\\'') %>', '<%= species.replaceAll('\'','\\\'') %>']);">Select</a>
+                                <a href="../" onclick="return opener.addBrainRegionMultiple('', '', <%= id %>, ['<%= _.escape(name) %>', '<%= _.escape(nomenclature) %>', '<%= _.escape(species) %>']);">Select</a>
                             {% else %}
-                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= name.replaceAll('\'','\\\'') %>', '<%= nomenclature.replaceAll('\'','\\\'') %>', '<%= species.replaceAll('\'','\\\'') %>'], '{{ fieldName }}');self.close();">Select</a>
+                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= _.escape(name) %>', '<%= _.escape(nomenclature) %>', '<%= _.escape(species) %>'], '{{ fieldName }}');self.close();">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLinkRegion" href="" onclick="return toggleFavoriteBrainRegion(<%= id %>,'favIconRegion-<%= id %>','{{ csrf_token }}');">
@@ -78,22 +78,22 @@
                     <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_<%= id %>" value="<%= id %>"/>
                 </td>
                 <td width=250px>
-                    <a href="/bodb/brain_region/<%= id %>/" onclick="return openInNewTab('/bodb/brain_region/<%= id %>/');"><%= name %></a>
+                    <a href="/bodb/brain_region/<%= id %>/" onclick="return openInNewTab('/bodb/brain_region/<%= id %>/');"><%= _.escape(name) %></a>
                 </td>
                 <td width=125px>
-                    <%= abbreviation %>
+                    <%= _.escape(abbreviation) %>
                 </td>
                 <td width=150px>
-                    <%= type %>
+                    <%= _.escape(type) %>
                 </td>
                 <td width=200px>
-                    <%= parent_region %>
+                    <%= _.escape(parent_region) %>
                 </td>
                 <td width=200px>
-                    <%= nomenclature %>
+                    <%= _.escape(nomenclature) %>
                 </td>
                 <td>
-                    <%= species %>
+                    <%= _.escape(species) %>
                 </td>
                 <td width=100px><span id="brain_region_<%= id %>_message" name="brain_region_<%= id %>_message" class="messages"></span> </td>
             </tr>

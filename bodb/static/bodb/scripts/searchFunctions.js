@@ -1,3 +1,7 @@
+function addslashes( str ) {
+    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+}
+
 function processModelResults(data)
 {
 
@@ -62,7 +66,7 @@ function processModelResults(data)
                 }
             );
             $( this ).append(compiledTmpl);
-            eval(groupName+"nodes.push({id: "+data['models'][i][3]['id']+", label:'"+data['models'][i][3]['title']+"', shape:'box', title:'"+data['models'][i][3]['brief_description']+"'});");
+            eval(groupName+"nodes.push({id: "+data['models'][i][3]['id']+", label:'"+addslashes(data['models'][i][3]['title'])+"', shape:'box', title:'"+addslashes(data['models'][i][3]['brief_description'])+"'});");
         }
         for(var model_id in data['model_seds'])
         {
@@ -72,7 +76,7 @@ function processModelResults(data)
                 eval('for(var j=0; j<'+groupName+'nodes.length; j++){ if('+groupName+'nodes[j]["id"]=='+data['model_seds'][model_id][i]['sed_id']+'){ found=true; break; }}');
                 if(!found)
                 {
-                    eval(groupName+"nodes.push({id: "+data['model_seds'][model_id][i]['sed_id']+", label:'"+data['model_seds'][model_id][i]['title']+"', title:'"+data['model_seds'][model_id][i]['sed_desc']+"'});");
+                    eval(groupName+"nodes.push({id: "+data['model_seds'][model_id][i]['sed_id']+", label:'"+addslashes(data['model_seds'][model_id][i]['title'])+"', title:'"+addslashes(data['model_seds'][model_id][i]['sed_desc'])+"'});");
                 }
             }
         }
@@ -80,7 +84,7 @@ function processModelResults(data)
         {
             for(var i=0; i<data['model_seds'][model_id].length; i++)
             {
-                eval(groupName+"edges.push({from: "+data['model_seds'][model_id][i]['sed_id']+", to:"+model_id+", label: '"+data['model_seds'][model_id][i]['relationship']+"', title: '"+data['model_seds'][model_id][i]['relevance_narrative']+"'});");
+                eval(groupName+"edges.push({from: "+data['model_seds'][model_id][i]['sed_id']+", to:"+model_id+", label: '"+addslashes(data['model_seds'][model_id][i]['relationship'])+"', title: '"+addslashes(data['model_seds'][model_id][i]['relevance_narrative'])+"'});");
             }
         }
     });
@@ -151,7 +155,7 @@ function processBOPResults(data)
                 }
             );
             $(this).append(compiledTmpl);
-            eval(groupName+"nodes.push({id: "+data['bops'][i][3]['id']+", label:'"+data['bops'][i][3]['title']+"', title:'"+data['bops'][i][3]['brief_description']+"'});");
+            eval(groupName+"nodes.push({id: "+data['bops'][i][3]['id']+", label:'"+addslashes(data['bops'][i][3]['title'])+"', title:'"+addslashes(data['bops'][i][3]['brief_description'])+"'});");
         }
     });
     document.getElementById('searchingMsg').style.display = 'none';
@@ -314,12 +318,12 @@ function processSEDResults(data)
                 }
             );
             $(this).append(compiledTmpl);
-            eval(groupName+"edges.push({from: "+data['connectivity_seds'][i][3]['source_region']+", to:"+data['connectivity_seds'][i][3]['target_region']+", id:"+data['connectivity_seds'][i][3]['id']+", title:'"+data['connectivity_seds'][i][3]['brief_description']+"'});");
+            eval(groupName+"edges.push({from: "+addslashes(data['connectivity_seds'][i][3]['source_region'])+", to:"+addslashes(data['connectivity_seds'][i][3]['target_region'])+", id:"+data['connectivity_seds'][i][3]['id']+", title:'"+addslashes(data['connectivity_seds'][i][3]['brief_description'])+"'});");
         }
         for(var region_id in data['connectivity_sed_regions'])
         {
-            var title='Name: '+data['connectivity_sed_regions'][region_id]['name']+'<br>Abbreviation: '+data['connectivity_sed_regions'][region_id]['abbreviation']+'<br>Nomenclature: '+data['connectivity_sed_regions'][region_id]['nomenclature'];
-            eval(groupName+"nodes.push({id:"+region_id+", label:'"+data['connectivity_sed_regions'][region_id]['str']+"', title:'"+title+"'});");
+            var title='Name: '+addslashes(data['connectivity_sed_regions'][region_id]['name'])+'<br>Abbreviation: '+addslashes(data['connectivity_sed_regions'][region_id]['abbreviation'])+'<br>Nomenclature: '+addslashes(data['connectivity_sed_regions'][region_id]['nomenclature']);
+            eval(groupName+"nodes.push({id:"+region_id+", label:'"+addslashes(data['connectivity_sed_regions'][region_id]['str'])+"', title:'"+title+"'});");
         }
     });
 

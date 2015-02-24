@@ -193,7 +193,7 @@ class ERPComponent(models.Model):
     def as_json(self):
         json={
             'id': self.id,
-            'name': self.component_name.replace('\'','\\\''),
+            'name': self.component_name,
             'latency_peak': self.latency_peak.__str__(),
             'latency_peak_type': self.latency_peak_type,
             'position_system': '',
@@ -309,7 +309,7 @@ class SEDCoord(models.Model):
     def as_json(self):
         return {
             'id': self.id,
-            'brain_region': self.named_brain_region.replace('\'','\\\''),
+            'brain_region': self.named_brain_region,
             'hemisphere': self.hemisphere,
             'x': self.coord.x,
             'y': self.coord.y,

@@ -96,7 +96,7 @@
                     <a href="" onclick="return deleteGroup('<%= id %>')">Delete</a>
                 </td>
                 <td>
-                    <div id="group-<%= id %>-name" class="group_name"><a href="/bodb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/');"><%= name %></a></div>
+                    <div id="group-<%= id %>-name" class="group_name"><a href="/bodb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/bodb/group/<%= id %>/');"><%= _.escape(name) %></a></div>
                 </td>
             </tr>
         </table>

@@ -249,7 +249,7 @@
                         </select>
                     </td>
                     <td>
-                        <input id="id_subscription-<%= idx %>-keywords" maxlength="500" name="subscription-<%= idx %>-keywords" type="text" value="<%= keywords %>"/>
+                        <input id="id_subscription-<%= idx %>-keywords" maxlength="500" name="subscription-<%= idx %>-keywords" type="text" value="<%= _.escape(keywords) %>"/>
                     </td>
                 </tr>
             </table>

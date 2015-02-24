@@ -150,10 +150,10 @@ class Literature(models.Model):
             'id': self.id,
             'authors': self.author_names(),
             'year': self.year,
-            'title': self.title.replace('\'','\\\''),
+            'title': self.title,
             'collator_id': self.collator.id,
             'collator': self.get_collator_str(),
-            'string': self.str().replace('\'','\\\''),
+            'string': self.str(),
             'url_str': self.html_url_string()
         }
 

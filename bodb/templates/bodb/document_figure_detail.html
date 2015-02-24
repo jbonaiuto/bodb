@@ -95,10 +95,10 @@
                     <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" width="600" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
                 </td>
                 <td style="width:250px">
-                    <input id="id_figure-<%= idx %>-title" maxlength="100" name="figure-<%= idx %>-title" type="text" value="<%= title %>"/>
+                    <input id="id_figure-<%= idx %>-title" maxlength="100" name="figure-<%= idx %>-title" type="text" value="<%= _.escape(title) %>"/>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_figure-<%= idx %>-caption" name="figure-<%= idx %>-caption" rows="10"><%= caption %></textarea>
+                    <textarea cols="40" id="id_figure-<%= idx %>-caption" name="figure-<%= idx %>-caption" rows="10"><%= _.escape(caption) %></textarea>
                 </td>
             </tr>
         </table>

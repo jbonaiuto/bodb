@@ -87,7 +87,7 @@
                     </select>
                 </td>
                 <td>
-                    <textarea cols="37" id="id_test_sed-<%= idx %>-relevance_narrative" name="test_sed-<%= idx %>-relevance_narrative" rows="3"><%= relevance_narrative %></textarea>
+                    <textarea cols="37" id="id_test_sed-<%= idx %>-relevance_narrative" name="test_sed-<%= idx %>-relevance_narrative" rows="3"><%= _.escape(relevance_narrative) %></textarea>
                 </td>
                 <td class="myerrors">
                     <span id="test_sed_<%= idx %>_errors">
@@ -110,13 +110,13 @@
                         <tr class="<%= getTRTag(idx) %>">
                             <td>&nbsp;</td>
                             <td>
-                                <%= sed_title %>
+                                <%= _.escape(sed_title) %>
                             </td>
                             <td>
-                                <%= sed_brief_description %>
+                                <%= _.escape(sed_brief_description) %>
                             </td>
                             <td>
-                                <%= sed_type %>
+                                <%= _.escape(sed_type) %>
                             </td>
                         </tr>
                     </table>
@@ -144,13 +144,13 @@
                         <tr class="<%= getTRTag(idx) %>" valign=top>
                             <td style="width:120px">&nbsp;</td>
                             <td style="width:200px">
-                                <div id="id_test_sed-<%= idx %>_ssr_title"><%= ssr_title %></div>
+                                <div id="id_test_sed-<%= idx %>_ssr_title"><%= _.escape(ssr_title) %></div>
                             </td>
                             <td>
-                                <div id="id_test_sed-<%= idx %>_ssr_brief_description"><%= ssr_brief_description %></div>
+                                <div id="id_test_sed-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description) %></div>
                             </td>
                             <td style="width:100px">
-                                <div id="id_test_sed-<%= idx %>_ssr_type"><%= ssr_type %></div>
+                                <div id="id_test_sed-<%= idx %>_ssr_type"><%= _.escape(ssr_type) %></div>
                             </td>
                         </tr>
                     </table>
