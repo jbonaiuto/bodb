@@ -97,7 +97,9 @@ class BrainRegionSearch(object):
             if self.nomenclature_options=='all':
                 op=operator.and_
             words=parse_tags(self.nomenclature)
-            keyword_filters=[Q(nomenclature__name__icontains=word) for word in words]
+            keyword_filters=[Q(Q(nomenclature__name__icontains=word) | Q(nomenclature__lit__title__icontains=word) |
+                               Q(nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 

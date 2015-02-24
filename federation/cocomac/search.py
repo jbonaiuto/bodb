@@ -7,6 +7,7 @@ from pyexpat import ExpatError
 from django.db.models import Q
 import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
+from bodb.search.document import DocumentWithLiteratureSearch
 from bodb.search.sed import SEDSearch
 from federation.cocomac.import_data import addNomenclature
 from federation.cocomac.import_data2 import addNomenclature2, perform_query
@@ -318,7 +319,7 @@ class CoCoMacSearch():
         return ""
 
 
-class LocalCoCoMacSearch(SEDSearch):
+class LocalCoCoMacSearch(DocumentWithLiteratureSearch):
     def __init__(self, search_data):
         self.__dict__.update(search_data)
 
@@ -335,9 +336,13 @@ class LocalCoCoMacSearch(SEDSearch):
     def search_source_region_nomenclature(self, userId):
         if self.source_region_nomenclature:
             words=self.source_region_nomenclature.split()
+            keyword_filters=[Q() for word in words]
             keyword_q=Q()
             for word in words:
-                keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word)
+                keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word) | \
+                            Q(source_region__nomenclature__lit__title__icontains=word) | \
+                            Q(source_region__nomenclature__lit__authors__author__first_name__icontains=word) | \
+                            Q(source_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 
@@ -356,7 +361,10 @@ class LocalCoCoMacSearch(SEDSearch):
             words=self.target_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
-                keyword_q = keyword_q | Q(target_region__nomenclature__name__icontains=word)
+                keyword_q = keyword_q | Q(target_region__nomenclature__name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__title__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 
@@ -377,7 +385,13 @@ class LocalCoCoMacSearch(SEDSearch):
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word) |\
-                            Q(target_region__nomenclature__name__icontains=word)
+                            Q(source_region__nomenclature__lit__title__icontains=word) |\
+                            Q(source_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(source_region__nomenclature__lit__authors__author__last_name__icontains=word) |\
+                            Q(target_region__nomenclature__name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__title__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 

@@ -1,6 +1,7 @@
 import urllib
 from Bio import Entrez
 from django.db.models import Q
+from bodb.search.document import DocumentWithLiteratureSearch
 from bodb.search.sed import SEDSearch
 from taggit.utils import parse_tags
 
@@ -361,7 +362,7 @@ class BredeSearch:
         return xpath_string
 
 
-class LocalBredeSearch(SEDSearch):
+class LocalBredeSearch(DocumentWithLiteratureSearch):
 
     # search by control condition
     def search_control_condition(self, userId):
