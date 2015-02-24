@@ -59,7 +59,10 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.source_region_nomenclature_options=='all':
                 op=operator.and_
             words=parse_tags(self.source_region_nomenclature)
-            keyword_filters=[Q(connectivitysed__source_region__nomenclature__name__icontains=word) for word in words]
+            keyword_filters=[Q(Q(connectivitysed__source_region__nomenclature__name__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__title__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
@@ -80,7 +83,10 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.target_region_nomenclature_options=='all':
                 op=operator.and_
             words=parse_tags(self.target_region_nomenclature)
-            keyword_filters=[Q(connectivitysed__target_region__nomenclature__name__icontains=word) for word in words]
+            keyword_filters=[Q(Q(connectivitysed__target_region__nomenclature__name__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__title__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
@@ -102,8 +108,14 @@ class SEDSearch(DocumentWithLiteratureSearch):
             if self.connection_region_nomenclature_options=='all':
                 op=operator.and_
             words=parse_tags(self.connection_region_nomenclature)
-            keyword_filters=[Q(Q(connectivitysed__source_region__nomenclature__name__icontains=word) |\
-                            Q(connectivitysed__target_region__nomenclature__name__icontains=word)) for word in words]
+            keyword_filters=[Q(Q(connectivitysed__source_region__nomenclature__name__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__title__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(connectivitysed__source_region__nomenclature__lit__authors__author__last_name__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__name__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__title__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(connectivitysed__target_region__nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
         return Q()
 
