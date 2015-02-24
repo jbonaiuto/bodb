@@ -99,12 +99,14 @@ class SearchView(FormView):
                     connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
-            cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
-            for connSED in cococmacConnSEDs:
-                connectivitySEDs.append(connSED)
-            bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
-            for imagingSED in bredeImagingSEDs:
-                imagingSEDs.append(imagingSED)
+            if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='connectivity':
+                cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
+                for connSED in cococmacConnSEDs:
+                    connectivitySEDs.append(connSED)
+            if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='imaging':
+                bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
+                for imagingSED in bredeImagingSEDs:
+                    imagingSEDs.append(imagingSED)
             sedCoords=runSEDCoordSearch(imagingSEDs, sed_form.cleaned_data, user.id)
         elif searchType=='ssrs' and ssr_form.is_valid():
             ssrs=runSSRSearch(ssr_form.cleaned_data, user.id)
