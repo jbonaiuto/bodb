@@ -123,10 +123,10 @@ class Document(models.Model):
             'id': self.id,
             'collator_id': self.collator.id,
             'collator': self.get_collator_str(),
-            'title': self.title.replace('\'','\\\''),
-            'title_str': self.__unicode__().replace('\'','\\\''),
+            'title': self.title,
+            'title_str': self.__unicode__(),
             'draft': self.draft,
-            'brief_description': self.brief_description.replace('\'', '\\\'').replace('\n',' ').replace('\r',' ')
+            'brief_description': self.brief_description
         }
 
     @staticmethod

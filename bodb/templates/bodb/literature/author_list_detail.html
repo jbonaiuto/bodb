@@ -59,13 +59,13 @@
                     <a href="" onclick="return deleteInlineForm('{{ groupName }}_author', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:175px">
-                    <input id="id_{{ groupName }}_author-<%= idx %>-author_first_name" name="{{ groupName }}_author-<%= idx %>-author_first_name" size="13" type="text" value="<%= first_name %>"/>
+                    <input id="id_{{ groupName }}_author-<%= idx %>-author_first_name" name="{{ groupName }}_author-<%= idx %>-author_first_name" size="13" type="text" value="<%= _.escape(first_name) %>"/>
                 </td>
                 <td style="width:150px">
-                    <input id="id_{{ groupName }}_author-<%= idx %>-author_middle_name" name="{{ groupName }}_author-<%= idx %>-author_middle_name" size="10" type="text" value="<%= middle_name %>"/>
+                    <input id="id_{{ groupName }}_author-<%= idx %>-author_middle_name" name="{{ groupName }}_author-<%= idx %>-author_middle_name" size="10" type="text" value="<%= _.escape(middle_name) %>"/>
                 </td>
                 <td style="width:300px">
-                    <input id="id_{{ groupName }}_author-<%= idx %>-author_last_name" name="{{ groupName }}_author-<%= idx %>-author_last_name" size="26" type="text" value="<%= last_name %>"/>
+                    <input id="id_{{ groupName }}_author-<%= idx %>-author_last_name" name="{{ groupName }}_author-<%= idx %>-author_last_name" size="26" type="text" value="<%= _.escape(last_name) %>"/>
                 </td>
                 <td>
                     <input id="id_{{ groupName }}_author-<%= idx %>-order" name="{{ groupName }}_author-<%= idx %>-order" size="3" type="text" value="<%= idx %>"/>

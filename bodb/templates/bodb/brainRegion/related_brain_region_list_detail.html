@@ -74,16 +74,16 @@
                     <a href="" onclick="return deleteInlineForm('related_brain_region', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <a href="/bodb/brain_region/<%= region %>/"><%= name %></a>
+                    <a href="/bodb/brain_region/<%= region %>/"><%= _.escape(name) %></a>
                 </td>
                 <td style="width:150px">
-                    <%= nomenclature %>
+                    <%= _.escape(nomenclature) %>
                 </td>
                 <td style="width:150px">
-                    <%= species %>
+                    <%= _.escape(species) %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_brain_region-<%= idx %>-relationship" name="related_brain_region-<%= idx %>-relationship" rows="3"><%= relationship %></textarea>
+                    <textarea cols="40" id="id_related_brain_region-<%= idx %>-relationship" name="related_brain_region-<%= idx %>-relationship" rows="3"><%= _.escape(relationship) %></textarea>
                 </td>
             </tr>
         </table>

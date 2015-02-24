@@ -131,10 +131,10 @@
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=120px><a href="" onclick="return deleteBookmark(<%= id %>);">Delete</a></td>
-                <td width=100px><%= collator_username %></td>
-                <td width=150px><%= title %></td>
+                <td width=100px><%= _.escape(collator_username) %></td>
+                <td width=150px><%= _.escape(title) %></td>
                 <td width=200px><a href="<%= url %>"><%= urltrunc %></a></td>
-                <td><%= description %></td>
+                <td><%= _.escape(description) %></td>
             </tr>
         </table>
     </div>

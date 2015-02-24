@@ -25,10 +25,10 @@
                     {% if user.is_authenticated and not user.is_anonymous %}<% if(id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}
                 </td>
                 <td style="width:120px">
-                    <a href="/bodb/user/<%= id %>/"><%= username %></a>
+                    <a href="/bodb/user/<%= id %>/"><%= _.escape(username) %></a>
                 </td>
                 <td>
-                    <%= first_name %> <%= last_name %>
+                    <%= _.escape(first_name) %> <%= _.escape(last_name) %>
                 </td>
                 <td style="width:200px">
                     <%= email %>

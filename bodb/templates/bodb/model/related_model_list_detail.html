@@ -69,13 +69,13 @@
                     <a href="" onclick="return deleteInlineForm('related_model', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <%= title %>
+                    <%= _.escape(title) %>
                 </td>
                 <td style="width:350px">
-                    <%= brief_description %>
+                    <%= _.escape(brief_description) %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_model-<%= idx %>-relationship" name="related_model-<%= idx %>-relationship" rows="3"><%= relationship %></textarea>
+                    <textarea cols="40" id="id_related_model-<%= idx %>-relationship" name="related_model-<%= idx %>-relationship" rows="3"><%= _.escape(relationship) %></textarea>
                 </td>
             </tr>
         </table>

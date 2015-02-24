@@ -325,13 +325,13 @@
                     <a href="" onclick="return deleteInlineForm('input', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_input-<%= idx %>-name" name="input-<%= idx %>-name" size="13" type="text" value="<%= name %>"/>
+                    <input id="id_input-<%= idx %>-name" name="input-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_input-<%= idx %>-data_type" name="input-<%= idx %>-data_type" size="10" type="text" value="<%= data_type %>"/>
+                    <input id="id_input-<%= idx %>-data_type" name="input-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_input-<%= idx %>-description" name="input-<%= idx %>-description" rows="3"><%= description %></textarea>
+                    <textarea cols="42" id="id_input-<%= idx %>-description" name="input-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
@@ -353,13 +353,13 @@
                     <a href="" onclick="return deleteInlineForm('output', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_output-<%= idx %>-name" name="output-<%= idx %>-name" size="13" type="text" value="<%= name %>"/>
+                    <input id="id_output-<%= idx %>-name" name="output-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_output-<%= idx %>-data_type" name="output-<%= idx %>-data_type" size="10" type="text" value="<%= data_type %>"/>
+                    <input id="id_output-<%= idx %>-data_type" name="output-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_output-<%= idx %>-description" name="output-<%= idx %>-description" rows="3"><%= description %></textarea>
+                    <textarea cols="42" id="id_output-<%= idx %>-description" name="output-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
@@ -381,13 +381,13 @@
                     <a href="" onclick="return deleteInlineForm('state', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_state-<%= idx %>-name" name="state-<%= idx %>-name" size="13" type="text" value="<%= name %>"/>
+                    <input id="id_state-<%= idx %>-name" name="state-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_state-<%= idx %>-data_type" name="state-<%= idx %>-data_type" size="10" type="text" value="<%= data_type %>"/>
+                    <input id="id_state-<%= idx %>-data_type" name="state-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_state-<%= idx %>-description" name="state-<%= idx %>-description" rows="3"><%= description %></textarea>
+                    <textarea cols="42" id="id_state-<%= idx %>-description" name="state-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
@@ -408,10 +408,10 @@
                     <a href="" onclick="return deleteInlineForm('module', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_module-<%= idx %>-title" name="module-<%= idx %>-title" size="13" type="text" value="<%= title %>"/>
+                    <input id="id_module-<%= idx %>-title" name="module-<%= idx %>-title" size="13" type="text" value="<%= _.escape(title) %>"/>
                 </td>
                 <td colspan=2>
-                    <textarea cols="47" id="id_module-<%= idx %>-brief_description" name="module-<%= idx %>-brief_description" rows="3"><%= brief_description %></textarea>
+                    <textarea cols="47" id="id_module-<%= idx %>-brief_description" name="module-<%= idx %>-brief_description" rows="3"><%= _.escape(brief_description) %></textarea>
                 </td>
             </tr>
         </table>
