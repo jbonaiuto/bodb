@@ -45,6 +45,7 @@
                                     </td>
                                     <td width=150px>
                                         <a href="/bodb/sed/{{ buildsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ buildsed.sed.id }}/');">{{ buildsed.sed.title }}</a>
+                                        {% if buildsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                                     </td>
                                     <td width=300px>{{ buildsed.sed.brief_description }}</td>
                                     <td width=120px>{{ buildsed.relationship }}</td>
@@ -93,6 +94,7 @@
                                     </td>
                                     <td width=150px>
                                         <a href="/bodb/sed/{{ buildsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ buildsed.sed.id }}/');">{{ buildsed.sed.title }}</a>
+                                        {% if buildsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                                     </td>
                                     <td width=300px>{{ buildsed.sed.brief_description }}</td>
                                     <td width=120px>{{ buildsed.relationship }}</td>
@@ -164,6 +166,7 @@
                                     </td>
                                     <td width=150px>
                                         <a href="/bodb/sed/{{ buildsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ buildsed.sed.id }}/');">{{ buildsed.sed.title }}</a>
+                                        {% if buildsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                                     </td>
                                     <td width=300px>{{ buildsed.sed.brief_description }}</td>
                                     <td width=120px>{{ buildsed.relationship }}</td>
@@ -260,6 +263,7 @@
                                     </td>
                                     <td width=150px>
                                         <a href="/bodb/sed/{{ buildsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ buildsed.sed.id }}/');">{{ buildsed.sed.title }}</a>
+                                        {% if buildsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                                     </td>
                                     <td width=300px>{{ buildsed.sed.brief_description }}</td>
                                     <td width=120px>{{ buildsed.relationship }}</td>
