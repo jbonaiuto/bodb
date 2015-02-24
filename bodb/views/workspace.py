@@ -324,8 +324,11 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
-            context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
 
         conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
