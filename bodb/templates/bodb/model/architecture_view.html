@@ -71,8 +71,7 @@
                     <ul>
                         {% for module in modules %}
                             <li>
-                                <a href="/bodb/module/{{ module.id }}/">{{ module.title }}</a> - {{ module.brief_description }}
-                                {% if module.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                                <a href="/bodb/module/{{ module.id }}/">{{ module.title }}</a> {% if module.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %} - {{ module.brief_description }}
                             </li>
                         {% endfor %}
                     </ul>
