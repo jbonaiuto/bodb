@@ -213,14 +213,14 @@
                 </td>
                 <td style="width:120px">Name*</td>
                 <td colspan="6">
-                    <input id="id_erp_component-<%= idx %>-component_name" name="erp_component-<%= idx %>-component_name" size="50" type="text" value="<%= name %>"/>
+                    <input id="id_erp_component-<%= idx %>-component_name" name="erp_component-<%= idx %>-component_name" size="50" type="text" value="<%= _.escape(name) %>"/>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Peak latency*</td>
                 <td style="width:120px">
-                    <input id="id_erp_component-<%= idx %>-latency_peak" name="erp_component-<%= idx %>-latency_peak" size="10" type="text" <% if(latency_peak!='None'){ %>value="<%= latency_peak %>"<% } %>/>
+                    <input id="id_erp_component-<%= idx %>-latency_peak" name="erp_component-<%= idx %>-latency_peak" size="10" type="text" <% if(latency_peak!='None'){ %>value="<%= _.escape(latency_peak) %>"<% } %>/>
                 </td>
                 <td style="width:120px;">Peak Latency type*</td>
                 <td style="width:120px">
@@ -232,18 +232,18 @@
                 </td>
                 <td style="width:120px;">Peak latency onset</td>
                 <td>
-                    <input id="id_erp_component-<%= idx %>-latency_onset" name="erp_component-<%= idx %>-latency_onset" size="10" type="text" <% if(latency_onset!='None'){ %>value="<%= latency_onset %>"<% } %>/>
+                    <input id="id_erp_component-<%= idx %>-latency_onset" name="erp_component-<%= idx %>-latency_onset" size="10" type="text" <% if(latency_onset!='None'){ %>value="<%= _.escape(latency_onset) %>"<% } %>/>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Peak amplitude</td>
                 <td>
-                    <input id="id_erp_component-<%= idx %>-amplitude_peak" name="erp_component-<%= idx %>-amplitude_peak" size="10" type="text" <% if(amplitude_peak!='None'){ %>value="<%= amplitude_peak %>"<% } %>/>
+                    <input id="id_erp_component-<%= idx %>-amplitude_peak" name="erp_component-<%= idx %>-amplitude_peak" size="10" type="text" <% if(amplitude_peak!='None'){ %>value="<%= _.escape(amplitude_peak) %>"<% } %>/>
                 </td>
                 <td>Mean amplitude</td>
                 <td colspan="3">
-                    <input id="id_erp_component-<%= idx %>-amplitude_mean" name="erp_component-<%= idx %>-amplitude_mean" size="10" type="text" <% if(amplitude_mean!='None'){ %>value="<%= amplitude_mean %>"<% } %>/>
+                    <input id="id_erp_component-<%= idx %>-amplitude_mean" name="erp_component-<%= idx %>-amplitude_mean" size="10" type="text" <% if(amplitude_mean!='None'){ %>value="<%= _.escape(amplitude_mean) %>"<% } %>/>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>
@@ -276,21 +276,21 @@
                     </select>
                 </td>
                 <td colspan="3">
-                    Channel <input id="id_erp_component-<%= idx %>-channel_number" name="erp_component-<%= idx %>-channel_number" size="5" type="text" value="<%= channel_number %>"/>
+                    Channel <input id="id_erp_component-<%= idx %>-channel_number" name="erp_component-<%= idx %>-channel_number" size="5" type="text" value="<%= _.escape(channel_number) %>"/>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Source</td>
                 <td colspan="5">
-                    <input id="id_erp_component-<%= idx %>-source" name="erp_component-<%= idx %>-source" size="50" type="text" value="<%= source %>"/>
+                    <input id="id_erp_component-<%= idx %>-source" name="erp_component-<%= idx %>-source" size="50" type="text" value="<%= _.escape(source) %>"/>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Interpretation*</td>
                 <td colspan="5">
-                    <textarea cols="57" id="id_erp_component-<%= idx %>-interpretation" name="erp_component-<%= idx %>-interpretation" rows="3"><%= interpretation %></textarea>
+                    <textarea cols="57" id="id_erp_component-<%= idx %>-interpretation" name="erp_component-<%= idx %>-interpretation" rows="3"><%= _.escape(interpretation) %></textarea>
                 </td>
             </tr>
             <tr class="<%= getTRTag(idx) %>" valign=top>

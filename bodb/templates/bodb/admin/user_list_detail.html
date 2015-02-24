@@ -158,7 +158,7 @@
                     <a href="/bodb/user/<%= id %>/edit/" onclick="return showPopup('edit_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/edit/');">Edit</a>
                 </td>
                 <td style="width:300px">
-                    <div id="user-<%= id %>-name" class="user_name"><a href="/bodb/user/<%= id %>/" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/');"><%= username %></a> (<%= name %>)</div>
+                    <div id="user-<%= id %>-name" class="user_name"><a href="/bodb/user/<%= id %>/" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/');"><%= _.escape(username) %></a> (<%= _.escape(name) %>)</div>
                 </td>
                 <td style="width:40px" align=center>
                     <input type=checkbox name="activeCheckbox" id="activeCheckbox_<%= id %>" value="<%= id %>" <% if(active) { %>checked=True<% } %> onclick="toggleActive(this.value, this.checked);"/>
@@ -170,7 +170,7 @@
                     <input type=checkbox name="adminCheckbox" id="adminCheckbox_<%= id %>" value="<%= id %>" <% if(admin) { %>checked=True<% } %> onclick="toggleAdmin(this.value, this.checked);"/>
                 </td>
                 <td style="width:300px">
-                    <%= groups %>
+                    <%= _.escape(groups) %>
                 </td>
                 <td style="width:150px">
                     <%= email %>

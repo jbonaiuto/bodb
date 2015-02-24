@@ -61,13 +61,13 @@
                     <a href="" onclick="return deleteInlineForm('build_sed', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <%= title %>
+                    <%= _.escape(title) %>
                 </td>
                 <td style="width:300px">
-                    <%= brief_description %>
+                    <%= _.escape(brief_description) %>
                 </td>
                 <td style="width:100px">
-                    <%= type %>
+                    <%= _.escape(type) %>
                 </td>
                 <td style="width:120px">
                     <select id="id_build_sed-<%= idx %>-relationship" name="build_sed-<%= idx %>-relationship" style="font-size: 80%;font-family: verdana, sans-serif">
@@ -76,7 +76,7 @@
                     </select>
                 </td>
                 <td>
-                    <textarea cols="37" id="id_build_sed-<%= idx %>-relevance_narrative" name="build_sed-<%= idx %>-relevance_narrative" rows="3"><%= relevance_narrative %></textarea>
+                    <textarea cols="37" id="id_build_sed-<%= idx %>-relevance_narrative" name="build_sed-<%= idx %>-relevance_narrative" rows="3"><%= _.escape(relevance_narrative) %></textarea>
                 </td>
             </tr>
         </table>

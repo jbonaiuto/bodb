@@ -51,13 +51,13 @@
                     <a href="" onclick="return removeReference(<%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <%= authors %>
+                    <%= _.escape(authors) %>
                 </td>
                 <td style="width:120px">
-                    <%= year %>
+                    <%= _.escape(year) %>
                 </td>
                 <td>
-                    <%= title %>
+                    <%= _.escape(title) %>
                 </td>
             </tr>
         </table>

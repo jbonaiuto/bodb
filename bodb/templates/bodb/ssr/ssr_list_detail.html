@@ -34,13 +34,13 @@
                     <a href="" onclick="return removeSSR(<%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:200px">
-                    <%= title %>
+                    <%= _.escape(title) %>
                 </td>
                 <td>
-                    <%= brief_description %>
+                    <%= _.escape(brief_description) %>
                 </td>
                 <td style="width:100px">
-                    <%= type %>
+                    <%= _.escape(type) %>
                 </td>
             </tr>
         </table>

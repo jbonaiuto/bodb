@@ -86,10 +86,10 @@
                     <a href="" onclick="return deleteInlineForm('related_bop', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <%= title %>
+                    <%= _.escape(title) %>
                 </td>
                 <td style="width:350px">
-                    <%= brief_description %>
+                    <%= _.escape(brief_description) %>
                 </td>
                 {% if bop_relationship %}
                     <td style="width:150px">
@@ -100,7 +100,7 @@
                     </td>
                 {% endif %}
                 <td>
-                    <textarea cols="40" id="id_related_bop-<%= idx %>-relevance_narrative" name="related_bop-<%= idx %>-relevance_narrative" rows="3"><%= relevance_narrative %></textarea>
+                    <textarea cols="40" id="id_related_bop-<%= idx %>-relevance_narrative" name="related_bop-<%= idx %>-relevance_narrative" rows="3"><%= _.escape(relevance_narrative) %></textarea>
                 </td>
             </tr>
         </table>

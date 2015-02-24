@@ -368,9 +368,9 @@
                         <br><a href="" onclick="return deleteCoordinateSelection('<%= id %>','<%= name %>');">Delete</a>
                     {% endif %}
                 </td>
-                <td width=200px style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-name"><%= name %></span></td>
-                <td width=100px style="word-wrap: break-word;"><a href="/bodb/user/<%= collator_id %>"><%= collator %></a></td>
-                <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= description %></span></td>
+                <td width=200px style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-name"><%= _.escape(name) %></span></td>
+                <td width=100px style="word-wrap: break-word;"><a href="/bodb/user/<%= collator_id %>"><%= _.escape(collator) %></a></td>
+                <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= _.escape(description) %></span></td>
             </tr>
         </table>
     </div>
@@ -383,9 +383,9 @@
                 <td width=25px>
                     <input type=checkbox name="sed_<%= sed_id %>_coord_select" value="<%= id %>" onclick="selectedCoordSelect(this.checked, this.value);" checked=True/>
                 </td>
-                <td width=100px style="word-wrap:break-word;"><a href="/bodb/user/<%= collator_id %>"><%= collator %></a></td>
-                <td width=200px style="word-wrap:break-word;"><%= brain_region %></td>
-                <td width=100px style="word-wrap:break-word;"><%= hemisphere %></td>
+                <td width=100px style="word-wrap:break-word;"><a href="/bodb/user/<%= collator_id %>"><%= _.escape(collator) %></a></td>
+                <td width=200px style="word-wrap:break-word;"><%= _.escape(brain_region) %></td>
+                <td width=100px style="word-wrap:break-word;"><%= _.escape(hemisphere) %></td>
                 <td width=50px style="word-wrap:break-word;"><%= x %></td>
                 <td width=50px style="word-wrap:break-word;"><%= y %></td>
                 <td width=50px style="word-wrap:break-word;"><%= z %></td>
@@ -402,7 +402,7 @@
     <div id="sed-<%= sed_id %>">
         <table class="tab_panel">
             <tr class="col_header">
-                <td>SED: <%= sed_name %></td>
+                <td>SED: <%= _.escape(sed_name) %></td>
             </tr>
             <tr>
                 <td style="padding:0px">
