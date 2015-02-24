@@ -27,7 +27,9 @@
         <tr>
             <td>
                 <div id="modelData" style="display:none">
-                    {% include 'bodb/model/model_selection_list_view.html' %}
+                    {% with delete_mode as delete_mode %}
+                        {% include 'bodb/model/model_selection_list_view.html' %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
@@ -51,7 +53,9 @@
         <tr>
             <td>
                 <div id="bopData" style="display:none">
-                    {% include 'bodb/bop/bop_selection_list_view.html' %}
+                    {% with delete_mode as delete_mode %}
+                        {% include 'bodb/bop/bop_selection_list_view.html' %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
@@ -75,7 +79,9 @@
         <tr>
             <td>
                 <div id="sedData" style="display:none;">
-                    {% include 'bodb/sed/sed_selection_list_view.html' %}
+                    {% with delete_mode as delete_mode %}
+                        {% include 'bodb/sed/sed_selection_list_view.html' %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
@@ -99,7 +105,9 @@
         <tr>
             <td>
                 <div id="ssrData" style="display:none">
-                    {% include 'bodb/ssr/ssr_selection_list_view.html' %}
+                    {% with delete_mode as delete_mode %}
+                        {% include 'bodb/ssr/ssr_selection_list_view.html' %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>

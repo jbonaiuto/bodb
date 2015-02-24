@@ -1,4 +1,6 @@
+import json
 from string import atof
+from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.views.generic.detail import BaseDetailView
@@ -127,6 +129,17 @@ class DeleteSEDView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=SED
     success_url = '/bodb/index.html'
     permission_required='delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
 class SEDAPIListView(DocumentAPIListView):
@@ -685,6 +698,18 @@ class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):
     success_url = '/bodb/index.html'
     permission_required = 'delete'
 
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
+
 
 class EditConnectivitySEDMixin():
     model = ConnectivitySED
@@ -794,6 +819,18 @@ class DeleteConnectivitySEDView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=ConnectivitySED
     success_url = '/bodb/index.html'
     permission_required='delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
 class EditERPSEDMixin():
@@ -930,6 +967,18 @@ class DeleteERPSEDView(PermissionRequiredMixin, DeleteView):
     model=ERPSED
     success_url = '/bodb/index.html'
     permission_required='delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
 class ToggleSelectSEDView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
