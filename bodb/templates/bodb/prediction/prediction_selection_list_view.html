@@ -22,6 +22,7 @@
                 <td>{{ forloop.counter }}</td>
                 <td>
                     <a href="/bodb/prediction/{{ prediction.id }}/" onclick="return openInNewTab('/bodb/prediction/{{ prediction.id }}/');">{{ prediction.title }}</a>
+                    {% if prediction.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
                 </td>
                 <td>{{ prediction.brief_description }}</td>
                 <td align=center style="width:45px">
@@ -33,7 +34,10 @@
                     {% endif %}
                     <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.ssr.id }}" value="{{ prediction.ssr.id }}"/>
                 </td>
-                <td>{{ prediction.ssr.title }}</td>
+                <td>
+                    {{ prediction.ssr.title }}
+                    {% if prediction.ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
+                </td>
                 <td>{{ prediction.ssr.brief_description }}</td>
                 <td><span id="ssr_{{ prediction.ssr.id }}_message" name="ssr_{{ prediction.ssr.id }}_message" class="messages"></span></td>
             </tr>
