@@ -204,7 +204,9 @@ class DraftListView(LoginRequiredMixin,BODBView):
         context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(collator=user,draft=1),context['profile'], context['active_workspace'])
+        neurophys_seds=NeurophysiologySED.objects.filter(collator=user,draft=1)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds,context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         ssrs=SSR.objects.filter(collator=user,draft=1).select_related('collator')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
