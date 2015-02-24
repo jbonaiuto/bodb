@@ -39,6 +39,31 @@
             $('#imaging_seds').append(compiledTmpl);
         {% endfor %}
     });
+
+    function deleteImagingSED(id, idx)
+    {
+        if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
+        {
+            document.getElementById('deletingMsg').style.display = 'block';
+            document.getElementById('deletingOver').style.display = 'block';
+            var data={'csrfmiddlewaretoken': '{{ csrf_token }}', 'idx': idx};
+            var args={type:"POST", url:"/bodb/sed/"+id+"/delete/", data: data, complete: doneDeleteImagingSED };
+            $.ajax(args);
+        }
+        return false;
+    }
+
+    function doneDeleteImagingSED(res, status)
+    {
+        var txt = res.responseText;
+        var data = eval('('+txt+')');
+        if(status=="success")
+        {
+            document.getElementById('imaging_sed-'+data.idx).style.display='none';
+        }
+        document.getElementById('deletingMsg').style.display = 'none';
+        document.getElementById('deletingOver').style.display = 'none';
+    }
 </script>
 <div id="imagingSEDData">
     <table class="tab_panel">
@@ -57,6 +82,9 @@
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            {% if delete_mode %}
+                <td style="width:45px">&nbsp;</td>
+            {% endif %}
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
             <td>Description</td>
@@ -94,6 +122,9 @@
                     {% endif %}
                     <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
                 </td>
+                {% if delete_mode %}
+                    <td width=45px><a href="" onclick="return deleteImagingSED(<%= id %>, <%= idx %>);">Delete</a></td>
+                {% endif %}
                 <td width=200px>
                     <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= _.escape(title_str) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>

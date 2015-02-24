@@ -84,6 +84,31 @@
             document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view BOP details.";
             return false;
         }
+
+        function deleteBOP(id, idx)
+        {
+            if(confirm('This will delete this BOP as well as all links to it from other entries. Do you really want to delete the current BOP?'))
+            {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}', 'idx': idx};
+                var args={type:"POST", url:"/bodb/bop/"+id+"/delete/", data: data, complete: doneDeleteBOP };
+                $.ajax(args);
+            }
+            return false;
+        }
+
+        function doneDeleteBOP(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                document.getElementById('bop-'+data.idx).style.display='none';
+            }
+            document.getElementById('deletingMsg').style.display = 'none';
+            document.getElementById('deletingOver').style.display = 'none';
+        }
     </script>
 {% endblock %}
 <div id="bop_list" name="bop_list" style="display:{% if bops|length %}block{% else %}none{% endif %}">
@@ -100,6 +125,9 @@
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            {% if delete_mode %}
+                <td style="width:45px">&nbsp;</td>
+            {% endif %}
             <td width=200px>Title</td>
             <td width=200px>Collator</td>
             <td>Description</td>
@@ -156,6 +184,9 @@
                         <input type=checkbox name="selectedBOPCheckbox" class="selectedBOPCheckbox" id="selectedBOPCheckbox_<%= id %>" value="<%= id %>" style="display:none"/>
                     {% endif %}
                 </td>
+                {% if delete_mode %}
+                    <td width=45px><a href="" onclick="return deleteBOP(<%= id %>, <%= idx %>);">Delete</a></td>
+                {% endif %}
                 <td width=200px>
                     <a href="/bodb/bop/<%= id %>/" onclick="return openInNewTab('/bodb/bop/<%= id %>/');"><%= _.escape(title) %></a> <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
