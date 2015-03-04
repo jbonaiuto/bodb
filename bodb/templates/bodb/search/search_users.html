@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('userAdvancedOptions', 'fade=1');
 
+    var userSortOrderBy='username';
+    var userSortDirection='ascending';
+
     function userJumpPage(page)
     {
         document.getElementById('id_user_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#user_search_form');
+        var data = frm.serialize()+'&order_by='+userSortOrderBy+'&direction='+userSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processUserResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortUsers(order_by, direction, up_image, down_image)
+    {
+        userSortOrderBy=order_by;
+        userSortDirection=direction;
+        submitSearchUsers();
+        return false;
     }
 
     $( document ).ready(function() {

@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('bopAdvancedOptions', 'fade=1');
 
+    var bopSortOrderBy='title';
+    var bopSortDirection='ascending';
+
     function bopJumpPage(page)
     {
         document.getElementById('id_bop_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#bop_search_form');
+        var data=frm.serialize()+'&order_by='+bopSortOrderBy+'&direction='+bopSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processBOPResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortBOPs(order_by, direction, up_image, down_image)
+    {
+        bopSortOrderBy=order_by;
+        bopSortDirection=direction;
+        submitSearchBOPs();
+        return false;
     }
 
     $( document ).ready(function() {

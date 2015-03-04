@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
 
+    var modelSortOrderBy='title';
+    var modelSortDirection='ascending';
+
     function modelJumpPage(page)
     {
         document.getElementById('id_model_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#model_search_form');
+        var data=frm.serialize()+'&order_by='+modelSortOrderBy+'&direction='+modelSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processModelResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortModels(order_by, direction, up_image, down_image)
+    {
+        modelSortOrderBy=order_by;
+        modelSortDirection=direction;
+        submitSearchModels();
+        return false;
     }
 
     $( document ).ready(function() {

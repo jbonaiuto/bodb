@@ -7,6 +7,29 @@
 <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
     <script type="text/javascript">
 
+        var erp_seds=[];
+        {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
+            erp_seds.push({
+                id: {{ sed.id }},
+                title: '{{ sed.title|escapejs }}',
+                sed_type: 'erp',
+                brief_description: '{{ sed.brief_description|escapejs }}',
+                components: [{% for component in components %}{id: {{ component.id }},
+                    name: '{{ component.component_name|escapejs }}',
+                    latency_peak: '{{ component.latency_peak|escapejs }}',
+                    latency_peak_type: '{{ component.latency_peak_type|escapejs }}',
+                    position_system: '{% if component.electrode_position %}{{ component.electrode_position.position_system.name|escapejs }}{% endif %}',
+                    position: '{% if component.electrode_position %}{{ component.electrode_position.name|escapejs }}{% endif %}'},{% endfor %}],
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ sed|escapejs }}',
+                draft: {% if sed.draft %}true{% else %}false{% endif %},
+                collator_id: {{ sed.collator.id }},
+                collator: '{{ sed.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
+
         function show{{ erpGraphId }}ComponentPopup(electrode_name)
         {
             var txt=electrode_name;
@@ -57,6 +80,22 @@
             return false;
         }
 
+        function addERPSEDs()
+        {
+            $('[name=erp_seds]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                $(this).empty();
+                $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+                var tmplMarkup = $('#erp_sed_'+groupName+'-template').html();
+                for(var idx=0; idx<erp_seds.length; idx++)
+                {
+                    erp_seds[idx]['idx']=$(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, erp_seds[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
+        }
+
         $(document).ready(function()
         {
             $('#{{ erpGraphId }}topPositionMap,#{{ erpGraphId }}leftPositionMap,#{{ erpGraphId }}rightPositionMap,#{{ erpGraphId }}bottomPositionMap').bind("click", {{ erpGraphId }}moveButtonClickHandler);
@@ -90,33 +129,7 @@
                 $('#{{ erpGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
             }
 
-            {% for selected,is_favorite,subscribed,sed,components in erp_seds %}
-                var count = $('#erp_seds').children().length-1;
-                var tmplMarkup = $('#erp_sed_{{ erpGraphId }}-template').html();
-                var compiledTmpl = _.template(tmplMarkup,
-                        {
-                            idx : count+1,
-                            id: {{ sed.id }},
-                            title: '{{ sed.title|escapejs }}',
-                            sed_type: 'erp',
-                            brief_description: '{{ sed.brief_description|escapejs }}',
-                            components: [{% for component in components %}{id: {{ component.id }},
-                                name: '{{ component.component_name|escapejs }}',
-                                latency_peak: '{{ component.latency_peak|escapejs }}',
-                                latency_peak_type: '{{ component.latency_peak_type|escapejs }}',
-                                position_system: '{% if component.electrode_position %}{{ component.electrode_position.position_system.name|escapejs }}{% endif %}',
-                                position: '{% if component.electrode_position %}{{ component.electrode_position.name|escapejs }}{% endif %}'},{% endfor %}],
-                            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                            selected: {% if selected %}true{% else %}false{% endif %},
-                            title_str: '{{ sed|escapejs }}',
-                            draft: {% if sed.draft %}true{% else %}false{% endif %},
-                            collator_id: {{ sed.collator.id }},
-                            collator: '{{ sed.get_collator_str|escapejs }}',
-                            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
-                        }
-                );
-                $('#erp_seds').append(compiledTmpl);
-            {% endfor %}
+            addERPSEDs();
             load{{ erpGraphId }}Popups();
         });
 
@@ -149,12 +162,12 @@
 <div id="erpSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=6>ERP SEDs (1-<span id="numERPSEDResults" name="numERPSEDResults">{{ erp_seds|length }}</span>)</td>
+            <td colspan={% if delete_mode %}7{% else %}6{% endif %}>ERP SEDs (1-<span id="numERPSEDResults" name="numERPSEDResults">{{ erp_seds|length }}</span>)</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=6>
+                    <td colspan={% if delete_mode %}7{% else %}6{% endif %}>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAll{{ erpGraphId }}ERPSEDSelect('ERP',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
@@ -166,13 +179,13 @@
             {% if delete_mode %}
                 <td style="width:45px">&nbsp;</td>
             {% endif %}
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
+            <td width=200px><a id="id_erp_sed_sort_title" href="" onclick="return sortERPSEDs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_erp_sed_sort_title_dir" name="erp_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_erp_sed_sort_collator" href="" onclick="return sortERPSEDs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_erp_sed_sort_collator_dir" name="erp_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_erp_sed_sort_brief_description" href="" onclick="return sortERPSEDs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_erp_sed_sort_brief_description_dir" name="erp_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=10px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                 <div id="erp_seds" name="erp_seds">
                     <input type="hidden" id="groupName" value="{{ erpGraphId }}"/>
                 </div>
@@ -180,12 +193,12 @@
         </tr>
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <a href="" onclick="return show{{ erpGraphId }}Diagram();">Show ERP Diagram</a>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <div id="{{ erpGraphId }}Div" style="display: none;" class="zoomContainer">
                         <div id="positionButtonDiv">
                             <p>Zoom :
@@ -356,7 +369,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="6">Hover the mouse over an electrode position to see a list of ERP SEDs with components at that location.</td>
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">Hover the mouse over an electrode position to see a list of ERP SEDs with components at that location.</td>
             </tr>
         {% endif %}
     </table>
@@ -371,7 +384,7 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>'],'', []);{% endifequal %}">Select</a>
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>'],'', []);{% endifequal %}">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

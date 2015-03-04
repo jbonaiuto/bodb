@@ -62,12 +62,12 @@ class SED(Document):
     @staticmethod
     def get_literature_seds(literature, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(literature=literature) &
-                                    Document.get_security_q(user))).distinct().select_related('collator')
+                                    Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(related_region_document__brain_region=brain_region) &
-                                    Document.get_security_q(user))).distinct().select_related('collator')
+                                    Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_sed_list(seds, workspace_seds, fav_docs, subscriptions):
@@ -96,7 +96,7 @@ class SED(Document):
     @staticmethod
     def get_tagged_seds(name, user):
         return SED.objects.filter(Q(type='generic') & Q(tags__name__iexact=name) &
-                                  Document.get_security_q(user)).distinct().select_related('collator')
+                                  Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 # ERP SED Model, inherits from SED
@@ -118,16 +118,16 @@ class ERPSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
+        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return ERPSED.objects.filter(Q(Q(related_region_document__brain_region=brain_region) &
-                                       Document.get_security_q(user))).distinct().select_related('collator')
+                                       Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
+        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 class ElectrodeCap(models.Model):
@@ -233,7 +233,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
+        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
@@ -242,7 +242,7 @@ class BrainImagingSED(SED):
                  Q(coordinates__coord__brainregionvolume__brain_region__name=brain_region) | \
                  Q(coordinates__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator')
+        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def augment_sed_list(sed_list, coords, selected_coords):
@@ -255,7 +255,7 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
+        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 # SED coordinate
@@ -423,17 +423,17 @@ class ConnectivitySED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species')
+        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
     @staticmethod
     def get_region_map(conn_seds):
@@ -505,6 +505,15 @@ class BuildSED(models.Model):
         app_label='bodb'
         ordering=['sed__title']
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'document_id': self.document.id,
+            'sed': self.sed.as_json(),
+            'relationship': self.relationship,
+            'relevance_narrative': self.relevance_narrative,
+        }
+
     @staticmethod
     def get_building_sed_list(bseds, workspace_seds, fav_docs, subscriptions):
         build_sed_list=[]
@@ -527,22 +536,22 @@ class BuildSED(models.Model):
 
     @staticmethod
     def get_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
+        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_generic_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__type='generic') &
-                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_connectivity_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__connectivitysed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_imaging_building_seds(document, user):
         build_seds=BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
-                                             Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
+                                             Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
         build_sed_list=[]
         for build_sed in build_seds:
             sed_coords=SEDCoord.objects.filter(sed=build_sed.sed).select_related('coord')
@@ -556,7 +565,7 @@ class BuildSED(models.Model):
     @staticmethod
     def get_erp_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__erpsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator')
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
 
 def compareBuildSEDs(a, b):
@@ -585,6 +594,16 @@ class TestSED(models.Model):
     def save(self, *args, **kwargs):
         super(TestSED, self).save(*args, **kwargs)
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'model_id': self.model.id,
+            'sed': self.sed.as_json(),
+            'ssr': self.ssr.as_json(),
+            'relationship': self.relationship,
+            'relevance_narrative': self.relevance_narrative,
+        }
+
     @staticmethod
     def get_testing_sed_list(tseds, workspace_seds, workspace_ssrs, fav_docs, subscriptions):
         test_sed_list=[]
@@ -602,31 +621,31 @@ class TestSED(models.Model):
     @staticmethod
     def get_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_generic_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__type='generic') &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_connectivity_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__connectivitysed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_imaging_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__brainimagingsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_erp_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__erpsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator')
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
 
 def compareTestSEDs(a, b):

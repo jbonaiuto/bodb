@@ -28,6 +28,20 @@ def runBrainRegionSearch(search_data):
         results = BrainRegion.objects.filter(q).distinct().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
     else:
         results = BrainRegion.objects.all().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
+
+    if 'order_by' in search_data:
+        if search_data['order_by']=='nomenclature':
+            results=results.order_by('nomenclature__name')
+        elif search_data['order_by']=='parent_region':
+            results=list(results)
+            results.sort(key=BrainRegion.parent_region_name,reverse=search_data['direction']=='descending')
+        elif search_data['order_by']=='species':
+            results=list(results)
+            results.sort(key=BrainRegion.species_name,reverse=search_data['direction']=='descending')
+        else:
+            results=results.order_by(search_data['order_by'])
+            if 'direction' in search_data and search_data['direction']=='descending':
+                results=results.reverse()
     return results
 
 

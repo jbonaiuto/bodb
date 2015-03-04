@@ -19,17 +19,28 @@
 
     var searchFinished=false;
 
+    var imagingSEDSortOrderBy='title';
+    var imagingSEDSortDirection='ascending';
+    var connectivitySEDSortOrderBy='title';
+    var connectivitySEDSortDirection='ascending'
+    var erpSEDSortOrderBy='title';
+    var erpSEDSortDirection='ascending'
+    var genericSEDSortOrderBy='title';
+    var genericSEDSortDirection='ascending'
+
+
     function submitSearchSEDs()
     {
         searchFinished=false;
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#sed_search_form');
+        var data=frm.serialize()+'&generic_order_by='+genericSEDSortOrderBy+'&generic_direction='+genericSEDSortDirection+'&imaging_order_by='+imagingSEDSortOrderBy+'&imaging_direction='+imagingSEDSortDirection+'&connectivity_order_by='+connectivitySEDSortOrderBy+'&connectivity_direction='+connectivitySEDSortDirection+'&erp_order_by='+erpSEDSortOrderBy+'&erp_direction='+erpSEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             aysnc: false,
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: sedSearchFinished,
             error: function(data) {
                 alert("Something went wrong!");
@@ -42,6 +53,38 @@
         processSEDResults(data);
         load{{ erpGraphId }}Popups();
         searchFinished=true;
+    }
+
+    function sortImagingSEDs(order_by, direction, up_image, down_image)
+    {
+        imagingSEDSortOrderBy=order_by;
+        imagingSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortConnectivitySEDs(order_by, direction, up_image, down_image)
+    {
+        connectivitySEDSortOrderBy=order_by;
+        connectivitySEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortERPSEDs(order_by, direction, up_image, down_image)
+    {
+        erpSEDSortOrderBy=order_by;
+        erpSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortGenericSEDs(order_by, direction, up_image, down_image)
+    {
+        genericSEDSortOrderBy=order_by;
+        genericSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
     }
 
     animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');

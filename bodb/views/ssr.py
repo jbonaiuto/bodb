@@ -9,6 +9,7 @@ from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
+from bodb.views.model import CreateModelView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -208,4 +209,31 @@ class SSRTaggedView(BODBView):
         ssrs=SSR.get_tagged_ssrs(name, user)
         context['tagged_items']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
             context['subscriptions'])
+        return context
+
+
+class SortSSRListView(LoginRequiredMixin,JSONResponseMixin,CreateModelView):
+    model = SSR
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax() and 'ssr_list' in self.request.POST:
+            ws_context=set_context_workspace(context, self.request)
+            ssrs = self.request.POST.getlist('ssr_list')
+            order_by=self.request.POST.get('order_by',None)
+            direction=self.request.POST.get('direction','descending')
+            ssrs=SSR.objects.filter(id__in=ssrs)
+            if order_by is not None:
+                ssrs=ssrs.order_by(order_by)
+            if direction is not None and direction=='descending':
+                ssrs=ssrs.reverse()
+            ssr_list=SSR.get_ssr_list(ssrs, ws_context['workspace_ssrs'], ws_context['fav_docs'],
+                ws_context['subscriptions'])
+            context={
+                'ssrs': [(selected,is_favorite,subscribed_to_user,ssr.as_json())
+                         for (selected,is_favorite,subscribed_to_user,ssr) in ssr_list],
+                'ssrs_start_index': 1,
+                'order_by': order_by,
+                'direction': direction
+            }
         return context

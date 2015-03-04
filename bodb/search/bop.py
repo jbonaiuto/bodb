@@ -41,7 +41,14 @@ def runBOPSearch(search_data, userId, exclude=None):
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))
 
-    return results.order_by('title')
+    if 'order_by' in search_data:
+        results=results.order_by(search_data['order_by'])
+    else:
+        results=results.order_by('title')
+    if 'direction' in search_data and search_data['direction']=='descending':
+        results=results.reverse()
+
+    return results
 
 
 class BOPSearch(DocumentWithLiteratureSearch):

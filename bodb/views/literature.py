@@ -7,6 +7,7 @@ from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
 from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, ERPComponent, WorkspaceActivityItem, UserSubscription
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
+from bodb.views.model import CreateModelView
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
@@ -257,7 +258,7 @@ class LiteratureDetailView(TemplateView):
 
         if literature is None:
             raise Http404
-        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature).select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
+        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature).select_related('nomenclature','parent_region').prefetch_related('nomenclature__species').order_by('name')
 
         user=self.request.user
         context['helpPage']='view_entry.html'
@@ -271,16 +272,20 @@ class LiteratureDetailView(TemplateView):
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
+
         models=Model.get_literature_models(literature, user)
         context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
             context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
+
         bops=BOP.get_literature_bops(literature, user)
         context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
+
         generic_seds=SED.get_literature_seds(literature, user)
         context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
+
         imaging_seds=BrainImagingSED.get_literature_seds(literature, user)
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
@@ -290,10 +295,12 @@ class LiteratureDetailView(TemplateView):
                 context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         else:
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
+
         conn_seds=ConnectivitySED.get_literature_seds(literature,user)
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
+
         erp_seds=ERPSED.get_literature_seds(literature, user)
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
@@ -387,3 +394,4 @@ def exportPubmedResources():
     FILE=open(settings.MEDIA_ROOT+'/pubmed/resources.xml','w')
     FILE.write(str)
     FILE.close()
+

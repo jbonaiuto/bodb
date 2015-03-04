@@ -35,8 +35,18 @@ def runLiteratureSearch(search_data, userId):
         results = eval(search_data['type']).objects.all().select_related('collator').prefetch_related('authors__author')
     else:
         results = Literature.objects.all().select_related('collator').prefetch_related('authors__author')
-    results=list(results)
-    results.sort(key=Literature.author_names)
+
+    if 'order_by' in search_data:
+        if search_data['order_by']=='string':
+            results=list(results)
+            results.sort(key=Literature.str, reverse=search_data['direction']=='descending')
+        else:
+            results=results.order_by(search_data['order_by'])
+            if 'direction' in search_data and search_data['direction']=='descending':
+                results=results.reverse()
+    else:
+        results=list(results)
+        results.sort(key=Literature.author_names)
     return results
 
 

@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('ssrAdvancedOptions', 'fade=1');
 
+    var ssrSortOrderBy='title';
+    var ssrSortDirection='ascending';
+
     function ssrJumpPage(page)
     {
         document.getElementById('id_ssr_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#ssr_search_form');
+        var data=frm.serialize()+'&order_by='+ssrSortOrderBy+'&direction='+ssrSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processSSRResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortSSRs(order_by, direction, up_image, down_image)
+    {
+        ssrSortOrderBy=order_by;
+        ssrSortDirection=direction;
+        submitSearchSSRs();
+        return false;
     }
 
     $( document ).ready(function() {

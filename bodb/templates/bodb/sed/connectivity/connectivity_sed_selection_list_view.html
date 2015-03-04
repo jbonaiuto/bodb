@@ -3,30 +3,43 @@
 {% block extrahead %}
     <script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
     <script type="text/javascript">
+
+        var connectivity_seds=[];
+        {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
+            connectivity_seds.push({
+                id: {{ sed.id }},
+                title: '{{ sed.title|escapejs }}',
+                sed_type: 'connectivity',
+                brief_description: '{{ sed.brief_description|escapejs }}',
+                url_str: '{{ sed.html_url_string|escapejs }}',
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ sed|escapejs }}',
+                draft: {% if sed.draft %}true{% else %}false{% endif %},
+                collator_id: {{ sed.collator.id }},
+                collator: '{{ sed.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
+        
+        function addConnectivitySEDs()
+        {
+            $('[name=connectivity_seds]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                $(this).empty();
+                $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+                var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
+                for(var idx=0; idx<connectivity_seds.length; idx++)
+                {
+                    connectivity_seds[idx]['idx'] = $(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, connectivity_seds[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
+        }
         $(document).ready(function()
         {
-            {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
-                var count = $('#connectivity_seds').children().length-1;
-                var tmplMarkup = $('#connectivity_sed_{{ connectionGraphId }}-template').html();
-                var compiledTmpl = _.template(tmplMarkup,
-                        {
-                            idx : count+1,
-                            id: {{ sed.id }},
-                            title: '{{ sed.title|escapejs }}',
-                            sed_type: 'connectivity',
-                            brief_description: '{{ sed.brief_description|escapejs }}',
-                            url_str: '{{ sed.html_url_string|escapejs }}',
-                            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                            selected: {% if selected %}true{% else %}false{% endif %},
-                            title_str: '{{ sed|escapejs }}',
-                            draft: {% if sed.draft %}true{% else %}false{% endif %},
-                            collator_id: {{ sed.collator.id }},
-                            collator: '{{ sed.get_collator_str|escapejs }}',
-                            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
-                        }
-                );
-                $('#connectivity_seds').append(compiledTmpl);
-            {% endfor %}
+            addConnectivitySEDs();
         });
 
         var {{ connectionGraphId }}nodes=[
@@ -115,12 +128,12 @@
 <div id="connectivitySEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=7>Connectivity SEDs (1-<span id="numConnectivitySEDResults" name="numConnectivitySEDResults">{{ connectivity_seds|length }}</span>)</td>
+            <td colspan={% if delete_mode %}8{% else %}7{% endif %}>Connectivity SEDs (1-<span id="numConnectivitySEDResults" name="numConnectivitySEDResults">{{ connectivity_seds|length }}</span>)</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=7>
+                    <td colspan={% if delete_mode %}8{% else %}7{% endif %}>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
@@ -132,14 +145,14 @@
             {% if delete_mode %}
                 <td style="width:45px">&nbsp;</td>
             {% endif %}
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
+            <td width=200px><a id="id_connectivity_sed_sort_title" href="" onclick="return sortConnectivitySEDs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_connectivity_sed_sort_title_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_connectivity_sed_sort_collator" href="" onclick="return sortConnectivitySEDs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_connectivity_sed_sort_collator_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_connectivity_sed_sort_brief_description" href="" onclick="return sortConnectivitySEDs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_connectivity_sed_sort_brief_description_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=150px>&nbsp;</td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                 <div id="connectivity_seds" name="connectivity_seds">
                     <input type="hidden" id="groupName" value="{{ connectionGraphId }}"/>
                 </div>
@@ -147,17 +160,17 @@
         </tr>
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="7">
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                     <a id="{{ connectionGraphId }}Link" href="" onclick="return generateConnDiagram('{{ connectionGraphId }}',{{ connectionGraphId }}nodes,{{ connectionGraphId }}edges);">Generate Connectivity Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="7">
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                     <div id="{{ connectionGraphId }}Div" style="background: #ffffff;"></div>
                 </td>
             </tr>
             <tr>
-                <td colspan="7">
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                     <span id="{{ connectionGraphId }}Msg"></span>
                 </td>
             </tr>
@@ -175,7 +188,7 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>'],'', []);{% endifequal %}">Select</a>
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>'],'', []);{% endifequal %}">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

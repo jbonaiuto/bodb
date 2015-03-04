@@ -26,7 +26,17 @@ def runUserSearch(search_data, userId):
             results=results.filter(filter)
     else:
         results=results.filter(reduce(operator.or_,filters))
-    return results.order_by('username').select_related().distinct()
+
+    results=results.select_related().distinct()
+
+    if 'order_by' in search_data:
+        results=results.order_by(search_data['order_by'])
+    else:
+        results=results.order_by('username')
+    if 'direction' in search_data and search_data['direction']=='descending':
+        results=results.reverse()
+
+    return results
 
 
 class UserSearch(object):

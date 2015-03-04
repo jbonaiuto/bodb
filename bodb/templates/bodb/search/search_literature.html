@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
 
+    var literatureSortOrderBy='string';
+    var literatureSortDirection='ascending';
+
     function literatureJumpPage(page)
     {
         document.getElementById('id_literature_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#literature_search_form');
+        var data=frm.serialize()+'&order_by='+literatureSortOrderBy+'&direction='+literatureSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processLiteratureResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortLiterature(order_by, direction, up_image, down_image)
+    {
+        literatureSortOrderBy=order_by;
+        literatureSortDirection=direction;
+        submitSearchLiterature();
+        return false;
     }
 
     $( document ).ready(function() {

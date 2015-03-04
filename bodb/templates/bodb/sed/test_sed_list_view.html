@@ -1,4 +1,105 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    var generic_test_seds=[];
+    {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in generic_test_seds %}
+        generic_test_seds.push({
+            id: {{ testsed.id }},
+            sed_id: {{ testsed.sed.id }},
+            sed_title: '{{ testsed.sed|escapejs }}',
+            sed_brief_description: '{{ testsed.sed.brief_description|escapejs }}',
+            sed_is_favorite: {% if sed_is_favorite %}true{% else %}false{% endif %},
+            sed_selected: {% if sed_selected %}true{% else %}false{% endif %},
+            sed_draft: {% if testsed.sed.draft %}true{% else %}false{% endif %},
+            ssr_id: {% if testsed.ssr %}{{ testsed.ssr.id }}{% else %}-1{% endif %},
+            ssr_title: {% if testsed.ssr %}'{{ testsed.ssr|escapejs }}'{% else %}''{% endif %},
+            ssr_brief_description: {% if testsed.ssr %}'{{ testsed.ssr.brief_description|escapejs }}'{% else %}''{% endif    %},
+            ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
+            ssr_draft: {% if testsed.ssr.draft %}true{% else %}false{% endif %},
+            relationship: '{{ testsed.relationship|escapejs }}',
+            relevance_narrative: '{{ testsed.relevance_narrative|escapejs }}',
+        });
+    {% endfor %}
+    var connectivity_test_seds=[];
+    {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in connectivity_test_seds %}
+        connectivity_test_seds.push({
+            id: {{ testsed.id }},
+            sed_id: {{ testsed.sed.id }},
+            sed_title: '{{ testsed.sed|escapejs }}',
+            sed_brief_description: '{{ testsed.sed.brief_description|escapejs }}',
+            sed_is_favorite: {% if sed_is_favorite %}true{% else %}false{% endif %},
+            sed_selected: {% if sed_selected %}true{% else %}false{% endif %},
+            sed_draft: {% if testsed.sed.draft %}true{% else %}false{% endif %},
+            ssr_id: {{ testsed.ssr.id }},
+            ssr_title: '{{ testsed.ssr.title|escapejs }}',
+            ssr_brief_description: '{{ testsed.ssr.brief_description|escapejs }}',
+            ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
+            ssr_draft: {% if testsed.ssr.draft %}true{% else %}false{% endif %},
+            relationship: '{{ testsed.relationship|escapejs }}',
+            relevance_narrative: '{{ testsed.relevance_narrative|escapejs }}',
+        });
+    {% endfor %}
+    var imaging_test_seds=[];
+    {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in imaging_test_seds %}
+        imaging_test_seds.push({
+            id: {{ testsed.id }},
+            sed_id: {{ testsed.sed.id }},
+            sed_title: '{{ testsed.sed|escapejs }}',
+            sed_brief_description: '{{ testsed.sed.brief_description|escapejs }}',
+            sed_is_favorite: {% if sed_is_favorite %}true{% else %}false{% endif %},
+            sed_selected: {% if sed_selected %}true{% else %}false{% endif %},
+            sed_draft: {% if testsed.sed.draft %}true{% else %}false{% endif %},
+            ssr_id: {{ testsed.ssr.id }},
+            ssr_title: '{{ testsed.ssr.title|escapejs }}',
+            ssr_brief_description: '{{ testsed.ssr.brief_description|escapejs }}',
+            ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
+            ssr_draft: {% if testsed.ssr.draft %}true{% else %}false{% endif %},
+            relationship: '{{ testsed.relationship|escapejs }}',
+            relevance_narrative: '{{ testsed.relevance_narrative|escapejs }}',
+        });
+    {% endfor %}
+    var erp_test_seds=[];
+    {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in erp_test_seds %}
+        erp_test_seds.push({
+            id: {{ testsed.id }},
+            sed_id: {{ testsed.sed.id }},
+            sed_title: '{{ testsed.sed|escapejs }}',
+            sed_brief_description: '{{ testsed.sed.brief_description|escapejs }}',
+            sed_is_favorite: {% if sed_is_favorite %}true{% else %}false{% endif %},
+            sed_selected: {% if sed_selected %}true{% else %}false{% endif %},
+            sed_draft: {% if testsed.sed.draft %}true{% else %}false{% endif %},
+            ssr_id: {{ testsed.ssr.id }},
+            ssr_title: '{{ testsed.ssr.title|escapejs }}',
+            ssr_brief_description: '{{ testsed.ssr.brief_description|escapejs }}',
+            ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
+            ssr_draft: {% if testsed.ssr.draft %}true{% else %}false{% endif %},
+            relationship: '{{ testsed.relationship|escapejs }}',
+            relevance_narrative: '{{ testsed.relevance_narrative|escapejs }}',
+        });
+    {% endfor %}
+
+    function addTestSEDs(sed_type, testing_seds)
+    {
+        $('#'+sed_type+'_test_seds').empty();
+        var tmplMarkup = $('#testsed-template').html();
+        for(var idx=0; idx<testing_seds.length; idx++)
+        {
+            testing_seds[idx]['idx']=$('#'+sed_type+'_test_seds').children().length+1;
+            var compiledTmpl = _.template(tmplMarkup, testing_seds[idx]);
+            $('#'+sed_type+'_test_seds').append(compiledTmpl);
+        }
+    }
+
+    $(document).ready(function(){
+        addTestSEDs('generic', generic_test_seds);
+        addTestSEDs('connectivity', connectivity_test_seds);
+        addTestSEDs('imaging', imaging_test_seds);
+        addTestSEDs('erp', erp_test_seds);
+    });
+</script>
 <div id="testSEDData">
     <table style="background:#e6e8ed;width:100%">
         {% if generic_test_seds %}
@@ -14,60 +115,22 @@
             {% endif %}
             <tr class="col_header">
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SED Title</td>
-                <td style="width:200px">SED Description</td>
-                <td style="width:50px">&nbsp;</td>
+                <td style="width:125px"><a id="id_generic_test_sed_sort_sed_title" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'sed_title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SED Title <img id="id_generic_test_sed_sort_sed_title_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></td>
+                <td style="width:200px"><a id="id_generic_test_sed_sort_sed_brief_description" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'sed_brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SED Description <img id="id_generic_test_sed_sort_sed_brief_description_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td style="width:50px">&nbsp;</td>                
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SSR Title</td>
-                <td style="width:200px">SSR Description</td>
+                <td style="width:125px"><a id="id_generic_test_sed_sort_ssr_title" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'ssr_title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SSR Title <img id="id_generic_test_sed_sort_ssr_title_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></td>
+                <td style="width:200px"><a id="id_generic_test_sed_sort_ssr_brief_description" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'ssr_brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SSR Description <img id="id_generic_test_sed_sort_ssr_brief_description_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
-                <td style="width:120px">Relationship</td>
-                <td>Relevance Narrative</td>
+                <td style="width:120px"><a id="id_generic_test_sed_sort_relationship" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'relationship',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Relationship <img id="id_generic_test_sed_sort_relationship_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td><a id="id_generic_test_sed_sort_relevance_narrative" href="" onclick="return sortTestingSEDs('generic', generic_test_seds, 'relevance_narrative',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Relevance narrative <img id="id_generic_test_sed_sort_relevance_narrative_dir" name="generic_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             </tr>
-            {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in generic_test_seds %}
-                <tr>
-                    <td colspan="10">
-                        <div id="test_sed-{{ testsed.id }}">
-                            <table style="background:#e6e8ed;width:100%">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.sed.id }},'favIcon-{{ testsed.sed.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.sed.id }}" name="favIcon-{{ testsed.sed.id }}" src="{% if sed_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedGenericSEDCheckbox" name="selectedSEDCheckbox_{{ testsed.sed.id }}" id="selectedGenericSEDCheckbox_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}" {% if sed_selected %}checked=True{% endif %} {% if sed_selected and not can_remove_entry or not sed_selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSED" id="selectedSED_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ testsed.sed.id }}/');">{{ testsed.sed.title }}</a>
-                                        {% if testsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedGenericSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedGenericSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
-                                        {% if testsed.ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
-                                    <td style="width:120px">{{ testsed.relationship }}</td>
-                                    <td>{{ testsed.relevance_narrative }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td colspan="10">
+                    <div id="generic_test_seds">
+                    </div>
+                </td>
+            </tr>
         {% endif %}
         {% if connectivity_test_seds %}
             <tr class="section_subheader">
@@ -82,60 +145,22 @@
             {% endif %}
             <tr class="col_header">
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SED Title</td>
-                <td style="width:200px">SED Description</td>
+                <td style="width:125px"><a id="id_connectivity_test_sed_sort_sed_title" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'sed_title',this.value);" value="descending">SED Title <img id="id_connectivity_test_sed_sort_sed_title_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></td>
+                <td style="width:200px"><a id="id_connectivity_test_sed_sort_sed_brief_description" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'sed_brief_description',this.value);" value="descending">SED Description <img id="id_connectivity_test_sed_sort_sed_brief_description_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SSR Title</td>
-                <td style="width:200px">SSR Description</td>
+                <td style="width:125px"><a id="id_connectivity_test_sed_sort_ssr_title" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'ssr_title',this.value);" value="descending">SSR Title <img id="id_connectivity_test_sed_sort_ssr_title_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></td>
+                <td style="width:200px"><a id="id_connectivity_test_sed_sort_ssr_brief_description" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'ssr_brief_description',this.value);" value="descending">SSR Description <img id="id_connectivity_test_sed_sort_ssr_brief_description_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
-                <td style="width:120px">Relationship</td>
-                <td>Relevance Narrative</td>
+                <td style="width:120px"><a id="id_connectivity_test_sed_sort_relationship" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'relationship',this.value);" value="descending">Relationship <img id="id_connectivity_test_sed_sort_relationship_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td><a id="id_connectivity_test_sed_sort_relevance_narrative" href="" onclick="return sortTestingSEDs('connectivity', connectivity_test_seds, 'relevance_narrative',this.value);" value="descending">Relevance narrative <img id="id_connectivity_test_sed_sort_relevance_narrative_dir" name="connectivity_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             </tr>
-            {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in connectivity_test_seds %}
-                <tr>
-                    <td colspan="10">
-                        <div id="test_sed-{{ testsed.id }}">
-                            <table style="background:#e6e8ed;width:100%">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.sed.id }},'favIcon-{{ testsed.sed.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.sed.id }}" name="favIcon-{{ testsed.sed.id }}" src="{% if sed_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ testsed.sed.id }}" id="selectedConnectivitySEDCheckbox_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}" {% if sed_selected %}checked=True{% endif %} {% if sed_selected and not can_remove_entry or not sed_selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSED" id="selectedSED_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ testsed.sed.id }}/');">{{ testsed.sed.title }}</a>
-                                        {% if testsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedConnectivitySEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedConnectivitySEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
-                                        {% if testsed.ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
-                                    <td style="width:120px">{{ testsed.relationship }}</td>
-                                    <td>{{ testsed.relevance_narrative }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td colspan="10">
+                    <div id="connectivity_test_seds">
+                    </div>
+                </td>
+            </tr>
             <tr class="col_header">
                 <td colspan="10">
                     Graph Generation Tool:&nbsp;
@@ -172,60 +197,22 @@
             {% endif %}
             <tr class="col_header">
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SED Title</td>
-                <td style="width:200px">SED Description</td>
+                <td style="width:125px"><a id="id_imaging_test_sed_sort_sed_title" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'sed_title',this.value);" value="descending">SED Title <img id="id_imaging_test_sed_sort_sed_title_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></td>
+                <td style="width:200px"><a id="id_imaging_test_sed_sort_sed_brief_description" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'sed_brief_description',this.value);" value="descending">SED Description <img id="id_imaging_test_sed_sort_sed_brief_description_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SSR Title</td>
-                <td style="width:200px">SSR Description</td>
+                <td style="width:125px"><a id="id_imaging_test_sed_sort_ssr_title" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'ssr_title',this.value);" value="descending">SSR Title <img id="id_imaging_test_sed_sort_ssr_title_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></td>
+                <td style="width:200px"><a id="id_imaging_test_sed_sort_ssr_brief_description" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'ssr_brief_description',this.value);" value="descending">SSR Description <img id="id_imaging_test_sed_sort_ssr_brief_description_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
-                <td style="width:120px">Relationship</td>
-                <td>Relevance Narrative</td>
+                <td style="width:120px"><a id="id_imaging_test_sed_sort_relationship" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'relationship',this.value);" value="descending">Relationship <img id="id_imaging_test_sed_sort_relationship_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td><a id="id_imaging_test_sed_sort_relevance_narrative" href="" onclick="return sortTestingSEDs('imaging', imaging_test_seds, 'relevance_narrative',this.value);" value="descending">Relevance narrative <img id="id_imaging_test_sed_sort_relevance_narrative_dir" name="imaging_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             </tr>
-            {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in imaging_test_seds %}
-                <tr>
-                    <td colspan="10">
-                        <div id="test_sed-{{ testsed.id }}">
-                            <table style="background:#e6e8ed;width:100%">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.sed.id }},'favIcon-{{ testsed.sed.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.sed.id }}" name="favIcon-{{ testsed.sed.id }}" src="{% if sed_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedImagingSEDCheckbox" name="selectedSEDCheckbox_{{ testsed.sed.id }}" id="selectedImagingSEDCheckbox_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}" {% if sed_selected %}checked=True{% endif %} {% if sed_selected and not can_remove_entry or not sed_selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSED" id="selectedSED_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ testsed.sed.id }}/');">{{ testsed.sed.title }}</a>
-                                        {% if testsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedImagingSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedImagingSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
-                                        {% if testsed.ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
-                                    <td style="width:120px">{{ testsed.relationship }}</td>
-                                    <td>{{ testsed.relevance_narrative }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td colspan="10">
+                    <div id="imaging_test_seds">
+                    </div>
+                </td>
+            </tr>
         {% endif %}
         {% if erp_test_seds %}
             <tr class="section_subheader">
@@ -240,60 +227,63 @@
             {% endif %}
             <tr class="col_header">
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SED Title</td>
-                <td style="width:200px">SED Description</td>
+                <td style="width:125px"><a id="id_erp_test_sed_sort_sed_title" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'sed_title',this.value);" value="descending">SED Title <img id="id_erp_test_sed_sort_sed_title_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></td>
+                <td style="width:200px"><a id="id_erp_test_sed_sort_sed_brief_description" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'sed_brief_description',this.value);" value="descending">SED Description <img id="id_erp_test_sed_sort_sed_brief_description_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
                 <td style="width:45px">&nbsp;</td>
-                <td style="width:125px">SSR Title</td>
-                <td style="width:200px">SSR Description</td>
+                <td style="width:125px"><a id="id_erp_test_sed_sort_ssr_title" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'ssr_title',this.value);" value="descending">SSR Title <img id="id_erp_test_sed_sort_ssr_title_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></td>
+                <td style="width:200px"><a id="id_erp_test_sed_sort_ssr_brief_description" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'ssr_brief_description',this.value);" value="descending">SSR Description <img id="id_erp_test_sed_sort_ssr_brief_description_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td style="width:50px">&nbsp;</td>
-                <td style="width:120px">Relationship</td>
-                <td>Relevance Narrative</td>
+                <td style="width:120px"><a id="id_erp_test_sed_sort_relationship" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'relationship',this.value);" value="descending">Relationship <img id="id_erp_test_sed_sort_relationship_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td><a id="id_erp_test_sed_sort_relevance_narrative" href="" onclick="return sortTestingSEDs('erp', erp_test_seds, 'relevance_narrative',this.value);" value="descending">Relevance narrative <img id="id_erp_test_sed_sort_relevance_narrative_dir" name="erp_test_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             </tr>
-            {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in erp_test_seds %}
-                <tr>
-                    <td colspan="10">
-                        <div id="test_sed-{{ testsed.id }}">
-                            <table style="background:#e6e8ed;width:100%">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.sed.id }},'favIcon-{{ testsed.sed.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.sed.id }}" name="favIcon-{{ testsed.sed.id }}" src="{% if sed_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedERPSEDCheckbox" name="selectedSEDCheckbox_{{ testsed.sed.id }}" id="selectedERPSEDCheckbox_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}" {% if sed_selected %}checked=True{% endif %} {% if sed_selected and not can_remove_entry or not sed_selected and not can_add_entry %}disabled="True"{% endif %} onclick="return toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSED" id="selectedSED_{{ testsed.sed.id }}" value="{{ testsed.sed.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/sed/{{ testsed.sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ testsed.sed.id }}/');">{{ testsed.sed.title }}</a>
-                                        {% if testsed.sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.sed.brief_description }}</td>
-                                    <td style="width:50px"><span id="sed_{{ testsed.sed.id }}_message" name="sed_{{ testsed.sed.id }}_message" class="messages"></span></td>
-                                    <td align=center style="width:45px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            <a id="favLink" href="" onclick="return toggleFavorite({{ testsed.ssr.id }},'favIcon-{{ testsed.ssr.id }}','{{ csrf_token }}');">
-                                                <img id="favIcon-{{ testsed.ssr.id }}" name="favIcon-{{ testsed.ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                            </a>
-                                            <input type=checkbox class="selectedERPSEDSSRCheckbox" name="selectedSEDSSRCheckbox_{{ testsed.ssr.id }}" id="selectedERPSEDSSRCheckbox_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                                            <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_{{ testsed.ssr.id }}" value="{{ testsed.ssr.id }}"/>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:125px">
-                                        <a href="/bodb/ssr/{{ testsed.ssr.id }}/" onclick="return openInNewTab('/bodb/ssr/{{ testsed.ssr.id }}/');">{{ testsed.ssr.title }}</a>
-                                        {% if testsed.ssr.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td style="width:200px">{{ testsed.ssr.brief_description }}</td>
-                                    <td style="width:50px"><span id="ssr_{{ testsed.ssr.id }}_message" name="ssr_{{ testsed.ssr.id }}_message" class="messages"></span></td>
-                                    <td style="width:120px">{{ testsed.relationship }}</td>
-                                    <td>{{ testsed.relevance_narrative }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td colspan="10">
+                    <div id="erp_test_seds">
+                    </div>
+                </td>
+            </tr>
         {% endif %}
     </table>
 </div>
+
+<script type="text/html" id="testsed-template">
+    <div id="test_sed-<%= id %>">
+        <table style="background:#e6e8ed;width:100%">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td align=center style="width:45px">
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        <a id="favLink" href="" onclick="return toggleFavorite(<%= sed_id %>,'favIcon-<%= sed_id %>','{{ csrf_token }}');">
+                            <img id="favIcon-<%= sed_id %>" name="favIcon-<%= sed_id %>" src="<% if(sed_is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
+                        </a>
+                        <input type=checkbox class="selectedGenericSEDCheckbox" name="selectedSEDCheckbox_<%= sed_id %>" id="selectedGenericSEDCheckbox_<%= sed_id %>" value="<%= sed_id %>" <% if(sed_selected){ %>checked=True<% } %> <% if(sed_selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                        <input type=hidden name="selectedSED" id="selectedSED_<%= sed_id %>" value="<%= sed_id %>"/>
+                    {% endif %}
+                </td>
+                <td style="width:125px">
+                    <a href="/bodb/sed/<%= sed_id %>/" onclick="return openInNewTab('/bodb/sed/<%= sed_id %>/');"><%= _.escape(sed_title) %></a>
+                    <% if(sed_draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
+                </td>
+                <td style="width:200px"><%= _.escape(sed_brief_description) %></td>
+                <td style="width:50px"><span id="sed_<%= sed_id %>_message" name="sed_<%= sed_id %>_message" class="messages"></span></td>
+                <td align=center style="width:45px">
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        <a id="favLink" href="" onclick="return toggleFavorite(<%= ssr_id %>,'favIcon-<%= ssr_id %>','{{ csrf_token }}');">
+                            <img id="favIcon-<%= ssr_id %>" name="favIcon-<%= ssr_id %>" src="<% if(ssr_is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
+                        </a>
+                        <input type=checkbox class="selectedGenericSEDSSRCheckbox" name="selectedSEDSSRCheckbox_<%= ssr_id %>" id="selectedGenericSEDSSRCheckbox_<%= ssr_id %>" value="<%= ssr_id %>" <% if(ssr_selected){ %>checked=True<% } %> <% if(ssr_selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                        <input type=hidden name="selectedSEDSSR" id="selectedSEDSSR_<%= ssr_id %>" value="<%= ssr_id %>"/>
+                    {% endif %}
+                </td>
+                <td style="width:125px">
+                    <a href="/bodb/ssr/<%= ssr_id %>/" onclick="return openInNewTab('/bodb/ssr/<%= ssr_id %>/');"><%= _.escape(ssr_title) %></a>
+                    <% if(ssr_draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
+                </td>
+                <td style="width:200px"><%= _.escape(ssr_brief_description) %></td>
+                <td style="width:50px"><span id="ssr_<%= ssr_id %>_message" name="ssr_<%= ssr_id %>_message" class="messages"></span></td>
+                <td style="width:120px"><%= _.escape(relationship) %></td>
+                <td><%= _.escape(relevance_narrative) %></td>
+            </tr>
+        </table>
+    </div>
+</script> 

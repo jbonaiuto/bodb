@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('workspaceAdvancedOptions', 'fade=1');
 
+    var workspaceSortOrderBy='title';
+    var workspaceSortDirection='ascending';
+
     function workspaceJumpPage(page)
     {
         document.getElementById('id_workspace_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#workspace_search_form');
+        var data = frm.serialize()+'&order_by='+workspaceSortOrderBy+'&direction='+workspaceSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processWorkspaceResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortWorkspaces(order_by, direction, up_image, down_image)
+    {
+        workspaceSortOrderBy=order_by;
+        workspaceSortDirection=direction;
+        submitSearchWorkspaces();
+        return false;
     }
 
     $( document ).ready(function() {

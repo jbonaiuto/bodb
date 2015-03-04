@@ -1,11 +1,31 @@
+{% load static %}
+<script type="text/javascript">
+    var users=[];
+    
+    function addUsers()
+    {
+        $('[name=users]').each(function(index, element){
+            $(this).empty();
+            var tmplMarkup = $('#user-template').html();
+            for(var i=0; i<users.length; i++)
+            {
+                users[i]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, users[i]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+</script>
+
+
 <div id="user_list" name="user_list" style="display:{% if users|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:120px">&nbsp;</td>
-            <td style="width:120px">Username</td>
-            <td>Real Name</td>
-            <td style="width:200px">Email</td>
+            <td style="width:120px"><a id="id_user_sort_username" href="" onclick="return sortUsers('username',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Username <img id="id_user_sort_username_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td><a id="id_user_sort_first_name" href="" onclick="return sortUsers('first_name',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Real name <img id="id_user_sort_first_name_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display: none;"/></a></td>
+            <td style="width:200px"><a id="id_user_sort_email" href="" onclick="return sortUsers('email',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Email <img id="id_user_sort_email_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display: none;"/></a></td>
         </tr>
         <tr>
             <td colspan="5">

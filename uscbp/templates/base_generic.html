@@ -44,7 +44,7 @@
         function createWebStartLink(jnlp, text, minimumVersion)
         {
 
-            if (deployJava.returnPage == null) {
+            if (typeof(deployJava) != 'undefined' && deployJava.returnPage == null) {
                 // if there is an install, come back and run the jnlp file
                 deployJava.returnPage = jnlp;
             }

@@ -1,5 +1,27 @@
 {% load staticfiles %}
 <script type="text/javascript">
+    var imaging_seds=[];
+    {% for selected,is_favorite,subscribed,sed,coords in imaging_seds %}
+        imaging_seds.push({
+            id: {{ sed.id }},
+            title: '{{ sed.title|escapejs }}',
+            sed_type: 'imaging',
+            url_str: '{{ sed.html_url_string|escapejs }}',
+            brief_description: '{{ sed.brief_description|escapejs }}',
+            coords: [{% for coord,coord_selected in coords %}[{id:{{ coord.id }},
+                brain_region:'{{ coord.named_brain_region|escapejs }}',hemisphere: '{{ coord.hemisphere }}',
+                x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}},
+                {% if coord_selected %}true{% else %}false{% endif %}],{% endfor %}],
+            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+            selected: {% if selected %}true{% else %}false{% endif %},
+            title_str: '{{ sed|escapejs }}',
+            draft: {% if sed.draft %}true{% else %}false{% endif %},
+            collator_id: {{ sed.collator.id }},
+            collator: '{{ sed.get_collator_str|escapejs }}',
+            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+        });
+    {% endfor %}
+    
     function setAllSEDSelectedCoords(sed_id, selected)
     {
         var boxes=$('.sed_'+sed_id+'_coord_select');
@@ -11,33 +33,22 @@
         return false;
     }
 
-    $(document).ready(function(){
-        {% for selected,is_favorite,subscribed,sed,coords in imaging_seds %}
-            var count = $('#imaging_seds').children().length;
+    function addImagingSEDs()
+    {
+        $('[name=imaging_seds]').each(function(index, element){
+            $(this).empty();
             var tmplMarkup = $('#imaging_sed-template').html();
-            var compiledTmpl = _.template(tmplMarkup,
-                    {
-                        idx : count+1,
-                        id: {{ sed.id }},
-                        title: '{{ sed.title|escapejs }}',
-                        sed_type: 'imaging',
-                        url_str: '{{ sed.html_url_string|escapejs }}',
-                        brief_description: '{{ sed.brief_description|escapejs }}',
-                        coords: [{% for coord,coord_selected in coords %}[{id:{{ coord.id }},
-                            brain_region:'{{ coord.named_brain_region|escapejs }}',hemisphere: '{{ coord.hemisphere }}',
-                            x: {{ coord.coord.x }}, y: {{ coord.coord.y }}, z: {{ coord.coord.z }}},
-                            {% if coord_selected %}true{% else %}false{% endif %}],{% endfor %}],
-                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                        selected: {% if selected %}true{% else %}false{% endif %},
-                        title_str: '{{ sed|escapejs }}',
-                        draft: {% if sed.draft %}true{% else %}false{% endif %},
-                        collator_id: {{ sed.collator.id }},
-                        collator: '{{ sed.get_collator_str|escapejs }}',
-                        subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
-                    }
-            );
-            $('#imaging_seds').append(compiledTmpl);
-        {% endfor %}
+            for(var idx=0; idx<imaging_seds.length; idx++)
+            {
+                imaging_seds[idx]['idx'] = $(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, imaging_seds[idx]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+    
+    $(document).ready(function(){
+        addImagingSEDs();
     });
 
     function deleteImagingSED(id, idx)
@@ -68,12 +79,12 @@
 <div id="imagingSEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=7>Brain imaging SEDs (1-<span id="numImagingSEDResults" name="numImagingSEDResults">{{ imaging_seds|length }}</span>)</td>
+            <td colspan={% if delete_mode %}8{% else %}7{% endif %}>Brain imaging SEDs (1-<span id="numImagingSEDResults" name="numImagingSEDResults">{{ imaging_seds|length }}</span>)</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=7>
+                    <td colspan={% if delete_mode %}8{% else %}7{% endif %}>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Imaging',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Imaging',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
@@ -85,14 +96,14 @@
             {% if delete_mode %}
                 <td style="width:45px">&nbsp;</td>
             {% endif %}
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
+            <td width=200px><a id="id_imaging_sed_sort_title" href="" onclick="return sortImagingSEDs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_imaging_sed_sort_title_dir" name="imaging_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_imaging_sed_sort_collator" href="" onclick="return sortImagingSEDs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_imaging_sed_sort_collator_dir" name="imaging_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_imaging_sed_sort_brief_description" href="" onclick="return sortImagingSEDs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_imaging_sed_sort_brief_description_dir" name="imaging_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=150px>&nbsp;</td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                 <div id="imaging_seds" name="imaging_seds">
                 </div>
             </td>
@@ -109,7 +120,7 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>', '<%= _.escape(sed_type) %>'],'',[]);{% endifequal %}">Select</a>
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>'],'',[]);{% endifequal %}">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

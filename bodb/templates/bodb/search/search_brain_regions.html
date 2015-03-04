@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('brainRegionAdvancedOptions', 'fade=1');
 
+    var regionSortOrderBy='name';
+    var regionSortDirection='ascending';
+
     function brainRegionJumpPage(page)
     {
         document.getElementById('id_brain_region_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#brain_region_search_form');
+        var data=frm.serialize()+'&order_by='+regionSortOrderBy+'&direction='+regionSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processBrainRegionResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortBrainRegions(order_by, direction, up_image, down_image)
+    {
+        regionSortOrderBy=order_by;
+        regionSortDirection=direction;
+        submitSearchBrainRegions();
+        return false;
     }
 
     $( document ).ready(function() {
