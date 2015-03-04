@@ -35,7 +35,7 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#sed_search_form');
-        var data=frm.serialize()+'&generic_order_by='+genericSEDSortOrderBy+'&generic_direction='+genericSEDSortDirection+'&imaging_order_by='+imagingSEDSortOrderBy+'&imaging_direction='+imagingSEDSortDirection+'&connectivity_order_by='+connectivitySEDSortOrderBy+'&connectivity_direction='+connectivitySEDSortDirection+'&erp_order_by='+erpSEDSortOrderBy+'&erp_direction='+erpSEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
+        var data=frm.serialize()+'&generic_sed_order_by='+genericSEDSortOrderBy+'&generic_sed_direction='+genericSEDSortDirection+'&imaging_sed_order_by='+imagingSEDSortOrderBy+'&imaging_sed_direction='+imagingSEDSortDirection+'&connectivity_sed_order_by='+connectivitySEDSortOrderBy+'&connectivity_sed_direction='+connectivitySEDSortDirection+'&erp_sed_order_by='+erpSEDSortOrderBy+'&erp_sed_direction='+erpSEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             aysnc: false,
             type: frm.attr('method'),

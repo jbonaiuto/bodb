@@ -17,7 +17,7 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#ssr_search_form');
-        var data=frm.serialize()+'&order_by='+ssrSortOrderBy+'&direction='+ssrSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
+        var data=frm.serialize()+'&ssr_order_by='+ssrSortOrderBy+'&ssr_direction='+ssrSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),

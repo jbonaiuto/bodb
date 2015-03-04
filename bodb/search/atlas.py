@@ -29,19 +29,20 @@ def runBrainRegionSearch(search_data):
     else:
         results = BrainRegion.objects.all().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
 
-    if 'order_by' in search_data:
-        if search_data['order_by']=='nomenclature':
+    if 'region_order_by' in search_data:
+        if search_data['region_order_by']=='nomenclature':
             results=results.order_by('nomenclature__name')
-        elif search_data['order_by']=='parent_region':
+        elif search_data['region_order_by']=='parent_region':
             results=list(results)
-            results.sort(key=BrainRegion.parent_region_name,reverse=search_data['direction']=='descending')
-        elif search_data['order_by']=='species':
+            results.sort(key=BrainRegion.parent_region_name,reverse=search_data['region_direction']=='descending')
+        elif search_data['region_order_by']=='species':
             results=list(results)
-            results.sort(key=BrainRegion.species_name,reverse=search_data['direction']=='descending')
+            results.sort(key=BrainRegion.species_name,reverse=search_data['region_direction']=='descending')
         else:
-            results=results.order_by(search_data['order_by'])
-            if 'direction' in search_data and search_data['direction']=='descending':
-                results=results.reverse()
+            results=results.order_by(search_data['region_order_by'])
+        if not search_data['region_order_by']=='parent_region' and not search_data['region_order_by']=='species' and \
+           'region_direction' in search_data and search_data['region_direction']=='descending':
+            results=results.reverse()
     return results
 
 

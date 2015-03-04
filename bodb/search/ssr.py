@@ -35,11 +35,15 @@ def runSSRSearch(search_data, userId):
     else:
         results = SSR.objects.all().select_related('collator')
 
-    if 'order_by' in search_data:
-        results=results.order_by(search_data['order_by'])
+    if 'ssr_order_by' in search_data:
+        if search_data['ssr_order_by']=='collator':
+            results=list(results)
+            results.sort(key=SSR.get_collator_str, reverse=search_data['ssr_direction']=='descending')
+        else:
+            results=results.order_by(search_data['ssr_order_by'])
+            if 'ssr_direction' in search_data and search_data['ssr_direction']=='descending':
+                results=results.reverse()
     else:
         results=results.order_by('title')
-    if 'direction' in search_data and search_data['direction']=='descending':
-        results=results.reverse()
 
     return results

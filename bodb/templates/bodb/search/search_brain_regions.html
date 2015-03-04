@@ -17,7 +17,7 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#brain_region_search_form');
-        var data=frm.serialize()+'&order_by='+regionSortOrderBy+'&direction='+regionSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
+        var data=frm.serialize()+'&regin_order_by='+regionSortOrderBy+'&region_direction='+regionSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),

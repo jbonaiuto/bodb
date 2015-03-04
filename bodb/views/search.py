@@ -83,35 +83,47 @@ class SearchView(FormView):
         users=User.objects.none()
         workspaces=Workspace.objects.none()
 
-        order_by=self.request.POST.get('order_by','title')
-        direction=self.request.POST.get('direction','ascending')
-        generic_order_by=self.request.POST.get('generic_order_by','title')
-        generic_direction=self.request.POST.get('generic_direction','ascending')
-        erp_order_by=self.request.POST.get('erp_order_by','title')
-        erp_direction=self.request.POST.get('erp_direction','ascending')
-        connectivity_order_by=self.request.POST.get('connectivity_order_by','title')
-        connectivity_direction=self.request.POST.get('connectivity_direction','ascending')
-        imaging_order_by=self.request.POST.get('imaging_order_by','title')
-        imaging_direction=self.request.POST.get('imaging_direction','ascending')
+        bop_order_by=self.request.POST.get('bop_order_by','title')
+        bop_direction=self.request.POST.get('bop_direction','ascending')
+        region_order_by=self.request.POST.get('region_order_by','name')
+        region_direction=self.request.POST.get('region_direction','ascending')
+        literature_order_by=self.request.POST.get('literature_order_by','string')
+        literature_direction=self.request.POST.get('literature_direction','ascending')
+        model_order_by=self.request.POST.get('model_order_by','title')
+        model_direction=self.request.POST.get('model_direction','ascending')
+        generic_sed_order_by=self.request.POST.get('generic_sed_order_by','title')
+        generic_sed_direction=self.request.POST.get('generic_sed_direction','ascending')
+        erp_sed_order_by=self.request.POST.get('erp_sed_order_by','title')
+        erp_sed_direction=self.request.POST.get('erp_sed_direction','ascending')
+        connectivity_sed_order_by=self.request.POST.get('connectivity_sed_order_by','title')
+        connectivity_sed_direction=self.request.POST.get('connectivity_sed_direction','ascending')
+        imaging_sed_order_by=self.request.POST.get('imaging_sed_order_by','title')
+        imaging_sed_direction=self.request.POST.get('imaging_sed_direction','ascending')
+        ssr_order_by=self.request.POST.get('ssr_order_by','title')
+        ssr_direction=self.request.POST.get('ssr_direction','ascending')
+        user_order_by=self.request.POST.get('user_order_by','username')
+        user_direction=self.request.POST.get('user_direction','ascending')
+        workspace_order_by=self.request.POST.get('workspace_order_by','title')
+        workspace_direction=self.request.POST.get('workspace_direction','ascending')
 
         searchType=self.request.POST['searchType']
         if searchType=='bops' and bop_form.is_valid():
-            bop_form.cleaned_data['order_by']=order_by
-            bop_form.cleaned_data['direction']=direction
+            bop_form.cleaned_data['bop_order_by']=bop_order_by
+            bop_form.cleaned_data['bop_direction']=bop_direction
             bops=runBOPSearch(bop_form.cleaned_data, user.id)
         elif searchType=='models' and model_form.is_valid():
-            model_form.cleaned_data['order_by']=order_by
-            model_form.cleaned_data['direction']=direction
+            model_form.cleaned_data['model_order_by']=model_order_by
+            model_form.cleaned_data['model_direction']=model_direction
             models=runModelSearch(model_form.cleaned_data, user.id)
         elif searchType=='seds' and sed_form.is_valid():
-            sed_form.cleaned_data['generic_order_by']=generic_order_by
-            sed_form.cleaned_data['generic_direction']=generic_direction
-            sed_form.cleaned_data['connectivity_order_by']=connectivity_order_by
-            sed_form.cleaned_data['connectivity_direction']=connectivity_direction
-            sed_form.cleaned_data['erp_order_by']=erp_order_by
-            sed_form.cleaned_data['erp_direction']=erp_direction
-            sed_form.cleaned_data['imaging_order_by']=imaging_order_by
-            sed_form.cleaned_data['imaging_direction']=imaging_direction
+            sed_form.cleaned_data['generic_sed_order_by']=generic_sed_order_by
+            sed_form.cleaned_data['generic_sed_direction']=generic_sed_direction
+            sed_form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
+            sed_form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+            sed_form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
+            sed_form.cleaned_data['erp_sed_direction']=erp_sed_direction
+            sed_form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
+            sed_form.cleaned_data['imaging_sed_direction']=imaging_sed_direction
             seds=runSEDSearch(sed_form.cleaned_data, user.id)
             for idx,sedObj in enumerate(seds):
                 if sedObj.type=='event related potential':
@@ -130,75 +142,81 @@ class SearchView(FormView):
                 bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
                 for imagingSED in bredeImagingSEDs:
                     imagingSEDs.append(imagingSED)
-            if 'generic_order_by' in sed_form.cleaned_data:
-                if sed_form.cleaned_data['generic_order_by']=='title':
-                    genericSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['generic_direction']=='descending')
-                elif sed_form.cleaned_data['generic_order_by']=='collator':
-                    genericSEDs.sort(key=SED.get_collator_str,reverse=sed_form.cleaned_data['generic_direction']=='descending')
-                elif sed_form.cleaned_data['generic_order_by']=='brief_description':
-                    genericSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['generic_direction']=='descending')
+            if 'generic_sed_order_by' in sed_form.cleaned_data:
+                if sed_form.cleaned_data['generic_sed_order_by']=='title':
+                    genericSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['generic_sed_direction']=='descending')
+                elif sed_form.cleaned_data['generic_sed_order_by']=='collator':
+                    genericSEDs.sort(key=SED.get_collator_str,reverse=sed_form.cleaned_data['generic_sed_direction']=='descending')
+                elif sed_form.cleaned_data['generic_sed_order_by']=='brief_description':
+                    genericSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['generic_sed_direction']=='descending')
 
-            if 'connectivity_order_by' in sed_form.cleaned_data:
-                if sed_form.cleaned_data['connectivity_order_by']=='title':
-                    connectivitySEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['connectivity_direction']=='descending')
-                elif sed_form.cleaned_data['connectivity_order_by']=='collator':
-                    connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=sed_form.cleaned_data['connectivity_direction']=='descending')
-                elif sed_form.cleaned_data['connectivity_order_by']=='brief_description':
-                    connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['connectivity_direction']=='descending')
+            if 'connectivity_sed_order_by' in sed_form.cleaned_data:
+                if sed_form.cleaned_data['connectivity_sed_order_by']=='title':
+                    connectivitySEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['connectivity_sed_direction']=='descending')
+                elif sed_form.cleaned_data['connectivity_sed_order_by']=='collator':
+                    connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=sed_form.cleaned_data['connectivity_sed_direction']=='descending')
+                elif sed_form.cleaned_data['connectivity_sed_order_by']=='brief_description':
+                    connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['connectivity_sed_direction']=='descending')
 
-            if 'erp_order_by' in sed_form.cleaned_data:
-                if sed_form.cleaned_data['erp_order_by']=='title':
-                    erpSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['erp_direction']=='descending')
-                elif sed_form.cleaned_data['erp_order_by']=='collator':
-                    erpSEDs.sort(key=ERPSED.get_collator_str,reverse=sed_form.cleaned_data['erp_direction']=='descending')
-                elif sed_form.cleaned_data['erp_order_by']=='brief_description':
-                    erpSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['erp_direction']=='descending')
+            if 'erp_sed_order_by' in sed_form.cleaned_data:
+                if sed_form.cleaned_data['erp_sed_order_by']=='title':
+                    erpSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['erp_sed_direction']=='descending')
+                elif sed_form.cleaned_data['erp_sed_order_by']=='collator':
+                    erpSEDs.sort(key=ERPSED.get_collator_str,reverse=sed_form.cleaned_data['erp_sed_direction']=='descending')
+                elif sed_form.cleaned_data['erp_sed_order_by']=='brief_description':
+                    erpSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['erp_sed_direction']=='descending')
 
-            if 'imaging_order_by' in sed_form.cleaned_data:
-                if sed_form.cleaned_data['imaging_order_by']=='title':
-                    imagingSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['imaging_direction']=='descending')
-                elif sed_form.cleaned_data['imaging_order_by']=='collator':
-                    imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=sed_form.cleaned_data['imaging_direction']=='descending')
-                elif sed_form.cleaned_data['imaging_order_by']=='brief_description':
-                    imagingSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['imaging_direction']=='descending')
+            if 'imaging_sed_order_by' in sed_form.cleaned_data:
+                if sed_form.cleaned_data['imaging_sed_order_by']=='title':
+                    imagingSEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['imaging_sed_direction']=='descending')
+                elif sed_form.cleaned_data['imaging_sed_order_by']=='collator':
+                    imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=sed_form.cleaned_data['imaging_sed_direction']=='descending')
+                elif sed_form.cleaned_data['imaging_sed_order_by']=='brief_description':
+                    imagingSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['imaging_sed_direction']=='descending')
             sedCoords=runSEDCoordSearch(imagingSEDs, sed_form.cleaned_data, user.id)
         elif searchType=='ssrs' and ssr_form.is_valid():
-            ssr_form.cleaned_data['order_by']=order_by
-            ssr_form.cleaned_data['direction']=direction
+            ssr_form.cleaned_data['ssr_order_by']=ssr_order_by
+            ssr_form.cleaned_data['ssr_direction']=ssr_direction
             ssrs=runSSRSearch(ssr_form.cleaned_data, user.id)
         elif searchType=='literature'and literature_form.is_valid():
-            order_by=self.request.POST.get('order_by','string')
-            direction=self.request.POST.get('direction','ascending')
-            literature_form.cleaned_data['order_by']=order_by
-            literature_form.cleaned_data['direction']=direction
+            literature_form.cleaned_data['literature_order_by']=literature_order_by
+            literature_form.cleaned_data['literature_direction']=literature_direction
             literature=runLiteratureSearch(literature_form.cleaned_data, user.id)
-        elif searchType=='brain_regions' and brain_region_form.is_valid():
-            order_by=self.request.POST.get('order_by','name')
-            direction=self.request.POST.get('direction','ascending')
-            brain_region_form.cleaned_data['order_by']=order_by
-            brain_region_form.cleaned_data['direction']=direction
+        elif searchType=='brain_regions' and brain_region_form.is_valid():            
+            brain_region_form.cleaned_data['region_order_by']=region_order_by
+            brain_region_form.cleaned_data['region_direction']=region_direction
             brain_regions=runBrainRegionSearch(brain_region_form.cleaned_data)
         elif searchType=='users' and user_form.is_valid():
-            order_by=self.request.POST.get('order_by','username')
-            direction=self.request.POST.get('direction','ascending')
-            user_form.cleaned_data['order_by']=order_by
-            user_form.cleaned_data['direction']=direction
+            user_form.cleaned_data['user_order_by']=user_order_by
+            user_form.cleaned_data['user_direction']=user_direction
             users=runUserSearch(user_form.cleaned_data, user.id)
         elif searchType=='workspaces' and workspace_form.is_valid():
-            workspace_form.cleaned_data['order_by']=order_by
-            workspace_form.cleaned_data['direction']=direction
+            workspace_form.cleaned_data['workspace_order_by']=workspace_order_by
+            workspace_form.cleaned_data['workspace_direction']=workspace_direction
             workspaces=runWorkspaceSearch(workspace_form.cleaned_data, user.id)
         else:
-            form.cleaned_data['order_by']=order_by
-            form.cleaned_data['direction']=direction
-            form.cleaned_data['generic_order_by']=generic_order_by
-            form.cleaned_data['generic_direction']=generic_direction
-            form.cleaned_data['connectivity_order_by']=connectivity_order_by
-            form.cleaned_data['connectivity_direction']=connectivity_direction
-            form.cleaned_data['erp_order_by']=erp_order_by
-            form.cleaned_data['erp_direction']=erp_direction
-            form.cleaned_data['imaging_order_by']=imaging_order_by
-            form.cleaned_data['imaging_direction']=imaging_direction
+            form.cleaned_data['bop_order_by']=bop_order_by
+            form.cleaned_data['bop_direction']=bop_direction
+            form.cleaned_data['region_order_by']=region_order_by
+            form.cleaned_data['region_direction']=region_direction
+            form.cleaned_data['literature_order_by']=literature_order_by
+            form.cleaned_data['literature_direction']=literature_direction
+            form.cleaned_data['model_order_by']=model_order_by
+            form.cleaned_data['model_direction']=model_direction
+            form.cleaned_data['generic_sed_order_by']=generic_sed_order_by
+            form.cleaned_data['generic_sed_direction']=generic_sed_direction
+            form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
+            form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+            form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
+            form.cleaned_data['erp_sed_direction']=erp_sed_direction
+            form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
+            form.cleaned_data['imaging_sed_direction']=imaging_sed_direction
+            form.cleaned_data['ssr_order_by']=ssr_order_by
+            form.cleaned_data['ssr_direction']=ssr_direction
+            form.cleaned_data['user_order_by']=user_order_by
+            form.cleaned_data['user_direction']=user_direction
+            form.cleaned_data['workspace_order_by']=workspace_order_by
+            form.cleaned_data['workspace_direction']=workspace_direction
             bops=runBOPSearch(form.cleaned_data, user.id)
             models=runModelSearch(form.cleaned_data, user.id)
             seds=runSEDSearch(form.cleaned_data, user.id)
@@ -218,46 +236,43 @@ class SearchView(FormView):
             for imagingSED in bredeImagingSEDs:
                 imagingSEDs.append(imagingSED)
 
-            if 'generic_order_by' in form.cleaned_data:
-                if form.cleaned_data['generic_order_by']=='title':
-                    genericSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['generic_direction']=='descending')
-                elif form.cleaned_data['generic_order_by']=='collator':
-                    genericSEDs.sort(key=SED.get_collator_str,reverse=form.cleaned_data['generic_direction']=='descending')
-                elif form.cleaned_data['generic_order_by']=='brief_description':
-                    genericSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['generic_direction']=='descending')
+            if 'generic_sed_order_by' in form.cleaned_data:
+                if form.cleaned_data['generic_sed_order_by']=='title':
+                    genericSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['generic_sed_direction']=='descending')
+                elif form.cleaned_data['generic_sed_order_by']=='collator':
+                    genericSEDs.sort(key=SED.get_collator_str,reverse=form.cleaned_data['generic_sed_direction']=='descending')
+                elif form.cleaned_data['generic_sed_order_by']=='brief_description':
+                    genericSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['generic_sed_direction']=='descending')
                     
-            if 'connectivity_order_by' in form.cleaned_data:
-                if form.cleaned_data['connectivity_order_by']=='title':
-                    connectivitySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['connectivity_direction']=='descending')
-                elif form.cleaned_data['connectivity_order_by']=='collator':
-                    connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_direction']=='descending')
-                elif form.cleaned_data['connectivity_order_by']=='brief_description':
-                    connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_direction']=='descending')
+            if 'connectivity_sed_order_by' in form.cleaned_data:
+                if form.cleaned_data['connectivity_sed_order_by']=='title':
+                    connectivitySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+                elif form.cleaned_data['connectivity_sed_order_by']=='collator':
+                    connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+                elif form.cleaned_data['connectivity_sed_order_by']=='brief_description':
+                    connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
 
-            if 'erp_order_by' in form.cleaned_data:
-                if form.cleaned_data['erp_order_by']=='title':
-                    erpSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['erp_direction']=='descending')
-                elif form.cleaned_data['erp_order_by']=='collator':
-                    erpSEDs.sort(key=ERPSED.get_collator_str,reverse=form.cleaned_data['erp_direction']=='descending')
-                elif form.cleaned_data['erp_order_by']=='brief_description':
-                    erpSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['erp_direction']=='descending')
+            if 'erp_sed_order_by' in form.cleaned_data:
+                if form.cleaned_data['erp_sed_order_by']=='title':
+                    erpSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['erp_sed_direction']=='descending')
+                elif form.cleaned_data['erp_sed_order_by']=='collator':
+                    erpSEDs.sort(key=ERPSED.get_collator_str,reverse=form.cleaned_data['erp_sed_direction']=='descending')
+                elif form.cleaned_data['erp_sed_order_by']=='brief_description':
+                    erpSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['erp_sed_direction']=='descending')
 
-            if 'imaging_order_by' in form.cleaned_data:
-                if form.cleaned_data['imaging_order_by']=='title':
-                    imagingSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['imaging_direction']=='descending')
-                elif form.cleaned_data['imaging_order_by']=='collator':
-                    imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=form.cleaned_data['imaging_direction']=='descending')
-                elif form.cleaned_data['imaging_order_by']=='brief_description':
-                    imagingSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['imaging_direction']=='descending')
+            if 'imaging_sed_order_by' in form.cleaned_data:
+                if form.cleaned_data['imaging_sed_order_by']=='title':
+                    imagingSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
+                elif form.cleaned_data['imaging_sed_order_by']=='collator':
+                    imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
+                elif form.cleaned_data['imaging_sed_order_by']=='brief_description':
+                    imagingSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
                     
             sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
             ssrs=runSSRSearch(form.cleaned_data, user.id)
             workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
-            form.cleaned_data['order_by']=self.request.POST.get('order_by','string')
             literature=runLiteratureSearch(form.cleaned_data, user.id)
-            form.cleaned_data['order_by']=self.request.POST.get('order_by','name')
             brain_regions=runBrainRegionSearch(form.cleaned_data)
-            form.cleaned_data['order_by']=self.request.POST.get('order_by','username')
             users=runUserSearch(form.cleaned_data, user.id)
 
         context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
@@ -367,161 +382,173 @@ class SearchView(FormView):
             except EmptyPage:
                 workspaces=workspace_paginator.page(workspace_paginator.num_pages)
 
-            if searchType=='all':
-                ajax_context={
-                    'bops': bop_list,
-                    'bop_relationships': context['bop_relationships'],
-                    'bops_count': len(bop_list),
-                    'bops_start_index':1,
-                    'bops_end_index': len(bop_list),
-                    'models': model_list,
-                    'model_seds': context['model_seds'],
-                    'models_count': len(model_list),
-                    'models_start_index':1,
-                    'models_end_index': len(model_list),
-                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
-                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                  [component.as_json() for component in components])
-                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
-                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
-                    'connectivity_sed_regions': context['connectivity_sed_regions'],
-                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
-                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
-                    'ssrs': ssr_list,
-                    'ssrs_count': len(ssr_list),
-                    'ssrs_start_index':1,
-                    'ssrs_end_index': len(ssr_list),
-                    'literatures': literature_list,
-                    'literatures_count': len(literature_list),
-                    'literatures_start_index':1,
-                    'literatures_end_index': len(literature_list),
-                    'brain_regions': brain_region_list,
-                    'brain_regions_count': len(brain_region_list),
-                    'brain_regions_start_index':1,
-                    'brain_regions_end_index': len(brain_region_list),
-                    'users': user_list,
-                    'users_count': len(user_list),
-                    'users_start_index':1,
-                    'users_end_index': len(user_list),
-                    'workspaces': workspace_list,
-                    'workspaces_count': len(workspace_list),
-                    'workspaces_start_index':1,
-                    'workspaces_end_index':len(workspace_list)
-
-                }
-            else:
-                ajax_context={
-                    'bops': bops.object_list,
-                    'bop_relationships': context['bop_relationships'],
-                    'bops_count': bop_paginator.count,
-                    'bops_num_pages': bop_paginator.num_pages,
-                    'bops_page_number': bops.number,
-                    'bops_has_next': bops.has_next(),
-                    'bops_has_previous': bops.has_previous(),
-                    'bops_start_index':bops.start_index(),
-                    'bops_end_index': bops.end_index(),
-                    'models': models.object_list,
-                    'model_seds': context['model_seds'],
-                    'models_count': model_paginator.count,
-                    'models_num_pages': model_paginator.num_pages,
-                    'models_page_number': models.number,
-                    'models_has_next': models.has_next(),
-                    'models_has_previous': models.has_previous(),
-                    'models_start_index':models.start_index(),
-                    'models_end_index': models.end_index(),
-                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
-                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                  [component.as_json() for component in components])
-                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
-                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
-                    'connectivity_sed_regions': context['connectivity_sed_regions'],
-                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
-                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
-                    'ssrs': ssrs.object_list,
-                    'ssrs_count': ssr_paginator.count,
-                    'ssrs_num_pages': ssr_paginator.num_pages,
-                    'ssrs_page_number': ssrs.number,
-                    'ssrs_has_next': ssrs.has_next(),
-                    'ssrs_has_previous': ssrs.has_previous(),
-                    'ssrs_start_index':ssrs.start_index(),
-                    'ssrs_end_index': ssrs.end_index(),
-                    'literatures': literatures.object_list,
-                    'literatures_count': literature_paginator.count,
-                    'literatures_num_pages': literature_paginator.num_pages,
-                    'literatures_page_number': literatures.number,
-                    'literatures_has_next': literatures.has_next(),
-                    'literatures_has_previous': literatures.has_previous(),
-                    'literatures_start_index':literatures.start_index(),
-                    'literatures_end_index': literatures.end_index(),
-                    'brain_regions': brain_regions.object_list,
-                    'brain_regions_count': brain_region_paginator.count,
-                    'brain_regions_num_pages': brain_region_paginator.num_pages,
-                    'brain_regions_page_number': brain_regions.number,
-                    'brain_regions_has_next': brain_regions.has_next(),
-                    'brain_regions_has_previous': brain_regions.has_previous(),
-                    'brain_regions_start_index':brain_regions.start_index(),
-                    'brain_regions_end_index': brain_regions.end_index(),
-                    'users': users.object_list,
-                    'users_count': user_paginator.count,
-                    'users_num_pages': user_paginator.num_pages,
-                    'users_page_number': users.number,
-                    'users_has_next': users.has_next(),
-                    'users_has_previous': users.has_previous(),
-                    'users_start_index':users.start_index(),
-                    'users_end_index': users.end_index(),
-                    'workspaces': workspaces.object_list,
-                    'workspaces_count': workspace_paginator.count,
-                    'workspaces_num_pages': workspace_paginator.num_pages,
-                    'workspaces_page_number': workspaces.number,
-                    'workspaces_has_next': workspaces.has_next(),
-                    'workspaces_has_previous': workspaces.has_previous(),
-                    'workspaces_start_index': workspaces.start_index(),
-                    'workspaces_end_index': workspaces.end_index()
-                }
-                if bops.has_next():
-                    ajax_context['bops_next_page_number']=bops.next_page_number()
-                if bops.has_previous():
-                    ajax_context['bops_previous_page_number']=bops.previous_page_number()
-                if models.has_next():
-                    ajax_context['models_next_page_number']=models.next_page_number()
-                if models.has_previous():
-                    ajax_context['models_previous_page_number']=models.previous_page_number()
-                if ssrs.has_next():
-                    ajax_context['ssrs_next_page_number']=ssrs.next_page_number()
-                if ssrs.has_previous():
-                    ajax_context['ssrs_previous_page_number']=ssrs.previous_page_number()
-                if literatures.has_next():
-                    ajax_context['literatures_next_page_number']=literatures.next_page_number()
-                if literatures.has_previous():
-                    ajax_context['literatures_previous_page_number']=literatures.previous_page_number()
-                if brain_regions.has_next():
-                    ajax_context['brain_regions_next_page_number']=brain_regions.next_page_number()
-                if brain_regions.has_previous():
-                    ajax_context['brain_regions_previous_page_number']=brain_regions.previous_page_number()
-                if users.has_next():
-                    ajax_context['users_next_page_number']=users.next_page_number()
-                if users.has_previous():
-                    ajax_context['users_previous_page_number']=users.previous_page_number()
-                if workspaces.has_next():
-                    ajax_context['workspaces_next_page_number']=workspaces.next_page_number()
-                if workspaces.has_previous():
-                    ajax_context['workspaces_previous_page_number']=workspaces.previous_page_number()
-            ajax_context['order_by']= order_by
-            ajax_context['direction']= direction
-            ajax_context['generic_order_by']=generic_order_by
-            ajax_context['generic_direction']=generic_direction
-            ajax_context['connectivity_order_by']=connectivity_order_by
-            ajax_context['connectivity_direction']=connectivity_direction
-            ajax_context['erp_order_by']=erp_order_by
-            ajax_context['erp_direction']=erp_direction
-            ajax_context['imaging_order_by']=imaging_order_by
-            ajax_context['imaging_direction']=imaging_direction
+#            if searchType=='all':
+#                ajax_context={
+#                    'bops': bop_list,
+#                    'bop_relationships': context['bop_relationships'],
+#                    'bops_count': len(bop_list),
+#                    'bops_start_index':1,
+#                    'bops_end_index': len(bop_list),
+#                    'models': model_list,
+#                    'model_seds': context['model_seds'],
+#                    'models_count': len(model_list),
+#                    'models_start_index':1,
+#                    'models_end_index': len(model_list),
+#                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+#                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+#                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+#                                  [component.as_json() for component in components])
+#                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+#                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+#                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+#                    'connectivity_sed_regions': context['connectivity_sed_regions'],
+#                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+#                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
+#                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+#                    'ssrs': ssr_list,
+#                    'ssrs_count': len(ssr_list),
+#                    'ssrs_start_index':1,
+#                    'ssrs_end_index': len(ssr_list),
+#                    'literatures': literature_list,
+#                    'literatures_count': len(literature_list),
+#                    'literatures_start_index':1,
+#                    'literatures_end_index': len(literature_list),
+#                    'brain_regions': brain_region_list,
+#                    'brain_regions_count': len(brain_region_list),
+#                    'brain_regions_start_index':1,
+#                    'brain_regions_end_index': len(brain_region_list),
+#                    'users': user_list,
+#                    'users_count': len(user_list),
+#                    'users_start_index':1,
+#                    'users_end_index': len(user_list),
+#                    'workspaces': workspace_list,
+#                    'workspaces_count': len(workspace_list),
+#                    'workspaces_start_index':1,
+#                    'workspaces_end_index':len(workspace_list)
+#
+#                }
+#            else:
+            ajax_context={
+                'bops': bops.object_list,
+                'bop_relationships': context['bop_relationships'],
+                'bops_count': bop_paginator.count,
+                'bops_num_pages': bop_paginator.num_pages,
+                'bops_page_number': bops.number,
+                'bops_has_next': bops.has_next(),
+                'bops_has_previous': bops.has_previous(),
+                'bops_start_index':bops.start_index(),
+                'bops_end_index': bops.end_index(),
+                'models': models.object_list,
+                'model_seds': context['model_seds'],
+                'models_count': model_paginator.count,
+                'models_num_pages': model_paginator.num_pages,
+                'models_page_number': models.number,
+                'models_has_next': models.has_next(),
+                'models_has_previous': models.has_previous(),
+                'models_start_index':models.start_index(),
+                'models_end_index': models.end_index(),
+                'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                 for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
+                'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                              [component.as_json() for component in components])
+                             for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
+                'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                      for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
+                'connectivity_sed_regions': context['connectivity_sed_regions'],
+                'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
+                                  [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
+                                 for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
+                'ssrs': ssrs.object_list,
+                'ssrs_count': ssr_paginator.count,
+                'ssrs_num_pages': ssr_paginator.num_pages,
+                'ssrs_page_number': ssrs.number,
+                'ssrs_has_next': ssrs.has_next(),
+                'ssrs_has_previous': ssrs.has_previous(),
+                'ssrs_start_index':ssrs.start_index(),
+                'ssrs_end_index': ssrs.end_index(),
+                'literatures': literatures.object_list,
+                'literatures_count': literature_paginator.count,
+                'literatures_num_pages': literature_paginator.num_pages,
+                'literatures_page_number': literatures.number,
+                'literatures_has_next': literatures.has_next(),
+                'literatures_has_previous': literatures.has_previous(),
+                'literatures_start_index':literatures.start_index(),
+                'literatures_end_index': literatures.end_index(),
+                'brain_regions': brain_regions.object_list,
+                'brain_regions_count': brain_region_paginator.count,
+                'brain_regions_num_pages': brain_region_paginator.num_pages,
+                'brain_regions_page_number': brain_regions.number,
+                'brain_regions_has_next': brain_regions.has_next(),
+                'brain_regions_has_previous': brain_regions.has_previous(),
+                'brain_regions_start_index':brain_regions.start_index(),
+                'brain_regions_end_index': brain_regions.end_index(),
+                'users': users.object_list,
+                'users_count': user_paginator.count,
+                'users_num_pages': user_paginator.num_pages,
+                'users_page_number': users.number,
+                'users_has_next': users.has_next(),
+                'users_has_previous': users.has_previous(),
+                'users_start_index':users.start_index(),
+                'users_end_index': users.end_index(),
+                'workspaces': workspaces.object_list,
+                'workspaces_count': workspace_paginator.count,
+                'workspaces_num_pages': workspace_paginator.num_pages,
+                'workspaces_page_number': workspaces.number,
+                'workspaces_has_next': workspaces.has_next(),
+                'workspaces_has_previous': workspaces.has_previous(),
+                'workspaces_start_index': workspaces.start_index(),
+                'workspaces_end_index': workspaces.end_index()
+            }
+            if bops.has_next():
+                ajax_context['bops_next_page_number']=bops.next_page_number()
+            if bops.has_previous():
+                ajax_context['bops_previous_page_number']=bops.previous_page_number()
+            if models.has_next():
+                ajax_context['models_next_page_number']=models.next_page_number()
+            if models.has_previous():
+                ajax_context['models_previous_page_number']=models.previous_page_number()
+            if ssrs.has_next():
+                ajax_context['ssrs_next_page_number']=ssrs.next_page_number()
+            if ssrs.has_previous():
+                ajax_context['ssrs_previous_page_number']=ssrs.previous_page_number()
+            if literatures.has_next():
+                ajax_context['literatures_next_page_number']=literatures.next_page_number()
+            if literatures.has_previous():
+                ajax_context['literatures_previous_page_number']=literatures.previous_page_number()
+            if brain_regions.has_next():
+                ajax_context['brain_regions_next_page_number']=brain_regions.next_page_number()
+            if brain_regions.has_previous():
+                ajax_context['brain_regions_previous_page_number']=brain_regions.previous_page_number()
+            if users.has_next():
+                ajax_context['users_next_page_number']=users.next_page_number()
+            if users.has_previous():
+                ajax_context['users_previous_page_number']=users.previous_page_number()
+            if workspaces.has_next():
+                ajax_context['workspaces_next_page_number']=workspaces.next_page_number()
+            if workspaces.has_previous():
+                ajax_context['workspaces_previous_page_number']=workspaces.previous_page_number()
+            ajax_context['bop_order_by']= bop_order_by
+            ajax_context['bop_direction']= bop_direction
+            ajax_context['region_order_by']= region_order_by
+            ajax_context['region_direction']= region_direction
+            ajax_context['literature_order_by']= literature_order_by
+            ajax_context['literature_direction']= literature_direction
+            ajax_context['model_order_by']= model_order_by
+            ajax_context['model_direction']= model_direction
+            ajax_context['generic_sed_order_by']=generic_sed_order_by
+            ajax_context['generic_sed_direction']=generic_sed_direction
+            ajax_context['connectivity_sed_order_by']=connectivity_sed_order_by
+            ajax_context['connectivity_sed_direction']=connectivity_sed_direction
+            ajax_context['erp_sed_order_by']=erp_sed_order_by
+            ajax_context['erp_sed_direction']=erp_sed_direction
+            ajax_context['imaging_sed_order_by']=imaging_sed_order_by
+            ajax_context['imaging_sed_direction']=imaging_sed_direction
+            ajax_context['ssr_order_by']= ssr_order_by
+            ajax_context['ssr_direction']= ssr_direction
+            ajax_context['user_order_by']= user_order_by
+            ajax_context['user_direction']= user_direction
+            ajax_context['workspace_order_by']= workspace_order_by
+            ajax_context['workspace_direction']= workspace_direction
             ajax_context['up_image']= self.request.POST.get('up_image','')
             ajax_context['down_image']=self.request.POST.get('down_image','')
 

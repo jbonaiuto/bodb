@@ -40,12 +40,16 @@ def runModelSearch(search_data, userId, exclude=None):
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))
 
-    if 'order_by' in search_data:
-        results=results.order_by(search_data['order_by'])
+    if 'model_order_by' in search_data:
+        if search_data['model_order_by']=='collator':
+            results=list(results)
+            results.sort(key=Model.get_collator_str, reverse=search_data['model_direction']=='descending')
+        else:
+            results=results.order_by(search_data['model_order_by'])
+            if 'model_direction' in search_data and search_data['model_direction']=='descending':
+                results=results.reverse()
     else:
-        results=results.order_by('title')
-    if 'direction' in search_data and search_data['direction']=='descending':
-        results=results.reverse()
+        results=results.order_by('model_title')
 
     return results
 

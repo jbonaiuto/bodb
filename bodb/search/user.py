@@ -29,11 +29,11 @@ def runUserSearch(search_data, userId):
 
     results=results.select_related().distinct()
 
-    if 'order_by' in search_data:
-        results=results.order_by(search_data['order_by'])
+    if 'user_order_by' in search_data:
+        results=results.order_by(search_data['user_order_by'])
     else:
         results=results.order_by('username')
-    if 'direction' in search_data and search_data['direction']=='descending':
+    if 'user_direction' in search_data and search_data['user_direction']=='descending':
         results=results.reverse()
 
     return results
