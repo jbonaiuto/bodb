@@ -19,22 +19,30 @@ function processModelResults(data)
     $('[name=modelResultEndIndex]').each(function(index, element){
         $(this).html(data['models_end_index']);
     });
-    $('#model_current_page').html(data['models_page_number']);
-    $('#model_total_pages').html(data['models_num_pages']);
-    if(data['models_has_previous'])
-    {
-        $('#models_previous').attr('style','display:inline');
-        $('#models_previous').html('<a href="" onclick="modelJumpPage('+data['models_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#models_previous').attr('style','display:none');
-    if(data['models_has_next'])
-    {
-        $('#models_next').attr('style','display:inline');
-        $('#models_next').html('<a href="" onclick="modelJumpPage('+data['models_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#models_next').attr('style','display:none');
+    $('[name=model_current_page]').each(function(index, element){
+        $(this).html(data['models_page_number']);
+    });
+    $('[name=model_total_pages]').each(function(index, element){
+        $(this).html(data['models_num_pages']);
+    });
+    $('[name=models_previous]').each(function(index, element){
+        if(data['models_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="modelJumpPage('+data['models_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=models_has_next]').each(function(index, element){
+        if(data['models_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="modelJumpPage('+data['models_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
 
     models=[];
     for(var i=0; i<data['models'].length; i++)
@@ -131,22 +139,31 @@ function processBOPResults(data)
     $('[name=bopResultEndIndex]').each(function(index, element){
         $(this).html(data['bops_end_index']);
     });
-    $('#bop_current_page').html(data['bops_page_number']);
-    $('#bop_total_pages').html(data['bops_num_pages']);
-    if(data['bops_has_previous'])
-    {
-        $('#bops_previous').attr('style','display:inline');
-        $('#bops_previous').html('<a href="" onclick="bopJumpPage('+data['bops_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#bops_previous').attr('style','display:none');
-    if(data['bops_has_next'])
-    {
-        $('#bops_next').attr('style','display:inline');
-        $('#bops_next').html('<a href="" onclick="bopJumpPage('+data['bops_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#bops_next').attr('style','display:none');
+    $('[name=bop_current_page]').each(function(){
+        $(this).html(data['bops_page_number']);
+    });
+    $('[name=bop_total_pages]').each(function(){
+        $(this).html(data['bops_num_pages']);
+    });
+    $('[name=bops_previous]').each(function(){
+        if(data['bops_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="bopJumpPage('+data['bops_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=bops_next]').each(function(){
+        if(data['bops_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="bopJumpPage('+data['bops_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+
     bops=[];
     for(var i=0; i<data['bops'].length; i++)
     {
@@ -480,22 +497,30 @@ function processSSRResults(data)
     $('[name=ssrResultEndIndex]').each(function(index, element){
         $(this).html(data['ssrs_end_index']);
     });
-    $('#ssr_current_page').html(data['ssrs_page_number']);
-    $('#ssr_total_pages').html(data['ssrs_num_pages']);
-    if(data['ssrs_has_previous'])
-    {
-        $('#ssrs_previous').attr('style','display:inline');
-        $('#ssrs_previous').html('<a href="" onclick="ssrJumpPage('+data['ssrs_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#ssrs_previous').attr('style','display:none');
-    if(data['ssrs_has_next'])
-    {
-        $('#ssrs_next').attr('style','display:inline');
-        $('#ssrs_next').html('<a href="" onclick="ssrJumpPage('+data['ssrs_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#ssrs_next').attr('style','display:none');
+    $('[name=ssr_current_page]').each(function(index, element){
+        $(this).html(data['ssrs_page_number']);
+    });
+    $('[name=ssr_total_pages]').each(function(index, element){
+        $(this).html(data['ssrs_num_pages']);
+    });
+    $('[name=ssrs_previous]').each(function(index, element){
+        if(data['ssrs_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="ssrJumpPage('+data['ssrs_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=ssrs_next]').each(function(index, element){
+        if(data['ssrs_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="ssrJumpPage('+data['ssrs_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
     ssrs=[];
     for(var i=0; i<data['ssrs'].length; i++)
     {
@@ -567,22 +592,31 @@ function processLiteratureResults(data)
     $('[name=literatureResultEndIndex]').each(function(index, element){
         $(this).html(data['literatures_end_index']);
     });
-    $('#literature_current_page').html(data['literatures_page_number']);
-    $('#literature_total_pages').html(data['literatures_num_pages']);
-    if(data['literatures_has_previous'])
-    {
-        $('#literatures_previous').attr('style','display:inline');
-        $('#literatures_previous').html('<a href="" onclick="literatureJumpPage('+data['literatures_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#literatures_previous').attr('style','display:none');
-    if(data['literatures_has_next'])
-    {
-        $('#literatures_next').attr('style','display:inline');
-        $('#literatures_next').html('<a href="" onclick="literatureJumpPage('+data['literatures_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#literatures_next').attr('style','display:none');
+    $('[name=literature_current_page]').each(function(){
+        $(this).html(data['literatures_page_number']);
+    });
+    $('[name=literature_total_pages]').each(function(){
+        $(this).html(data['literatures_num_pages']);
+    })
+    $('[name=literatures_previous]').each(function(){
+        if(data['literatures_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="literatureJumpPage('+data['literatures_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=literatures_next]').each(function(){
+        if(data['literatures_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="literatureJumpPage('+data['literatures_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+
     lits=[];
     for(var i=0; i<data['literatures'].length; i++)
     {
@@ -655,22 +689,30 @@ function processBrainRegionResults(data)
     $('[name=brainRegionResultEndIndex]').each(function(index, element){
         $(this).html(data['brain_regions_end_index']);
     });
-    $('#brain_region_current_page').html(data['brain_regions_page_number']);
-    $('#brain_region_total_pages').html(data['brain_regions_num_pages']);
-    if(data['brain_regions_has_previous'])
-    {
-        $('#brain_regions_previous').attr('style','display:inline');
-        $('#brain_regions_previous').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#brain_regions_previous').attr('style','display:none');
-    if(data['brain_regions_has_next'])
-    {
-        $('#brain_regions_next').attr('style','display:inline');
-        $('#brain_regions_next').html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#brain_regions_next').attr('style','display:none');
+    $('[name=brain_region_current_page]').each(function(index, element){
+        $(this).html(data['brain_regions_page_number']);
+    });
+    $('[name=brain_region_total_pages]').each(function(index, element){
+        $(this).html(data['brain_regions_num_pages']);
+    });
+    $('[name=brain_regions_previous]').each(function(index, element){
+        if(data['brain_regions_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=brain_regions_next]').each(function(index, element){
+        if(data['brain_regions_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="brainRegionJumpPage('+data['brain_regions_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
     regions=[];
     for(var i=0; i<data['brain_regions'].length; i++)
     {
@@ -741,22 +783,30 @@ function processUserResults(data)
     $('[name=userResultEndIndex]').each(function(index, element){
         $(this).html(data['users_end_index']);
     });
-    $('#user_current_page').html(data['users_page_number']);
-    $('#user_total_pages').html(data['users_num_pages']);
-    if(data['users_has_previous'])
-    {
-        $('#users_previous').attr('style','display:inline');
-        $('#users_previous').html('<a href="" onclick="userJumpPage('+data['users_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#users_previous').attr('style','display:none');
-    if(data['users_has_next'])
-    {
-        $('#users_next').attr('style','display:inline');
-        $('#users_next').html('<a href="" onclick="userJumpPage('+data['users_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#users_next').attr('style','display:none');
+    $('[name=user_current_page]').each(function(index, element){
+        $(this).html(data['users_page_number']);
+    });
+    $('[name=user_total_pages]').each(function(index, element){
+        $(this).html(data['users_num_pages']);
+    });
+    $('[name=users_previous]').each(function(index, element){
+        if(data['users_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="userJumpPage('+data['users_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=users_next]').each(function(index, element){
+        if(data['users_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="userJumpPage('+data['users_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
     users=[];
     for(var i=0; i<data['users'].length; i++)
     {
@@ -825,22 +875,30 @@ function processWorkspaceResults(data)
     $('[name=workspaceResultEndIndex]').each(function(index, element){
         $(this).html(data['workspaces_end_index']);
     });
-    $('#workspace_current_page').html(data['workspaces_page_number']);
-    $('#workspace_total_pages').html(data['workspaces_num_pages']);
-    if(data['workspaces_has_previous'])
-    {
-        $('#workspaces_previous').attr('style','display:inline');
-        $('#workspaces_previous').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_previous_page_number']+'); return false;">previous</a>');
-    }
-    else
-        $('#workspaces_previous').attr('style','display:none');
-    if(data['workspaces_has_next'])
-    {
-        $('#workspaces_next').attr('style','display:inline');
-        $('#workspaces_next').html('<a href="" onclick="workspaceJumpPage('+data['workspaces_next_page_number']+'); return false;">next</a>');
-    }
-    else
-        $('#workspaces_next').attr('style','display:none');
+    $('[name=workspace_current_page]').each(function(index, element){
+        $(this).html(data['workspaces_page_number']);
+    });
+    $('[name=workspace_total_pages]').each(function(index, element){
+        $(this).html(data['workspaces_num_pages']);
+    });
+    $('[name=workspaces_previous]').each(function(index, element){
+        if(data['workspaces_has_previous'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="workspaceJumpPage('+data['workspaces_previous_page_number']+'); return false;">previous</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
+    $('[name=workspaces_next]').each(function(index, element){
+        if(data['workspaces_has_next'])
+        {
+            $(this).attr('style','display:inline');
+            $(this).html('<a href="" onclick="workspaceJumpPage('+data['workspaces_next_page_number']+'); return false;">next</a>');
+        }
+        else
+            $(this).attr('style','display:none');
+    });
     workspaces=[];
     for(var i=0; i<data['workspaces'].length; i++)
     {

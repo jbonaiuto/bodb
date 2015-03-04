@@ -317,6 +317,7 @@ class SearchView(FormView):
                 bops=bop_paginator.page(1)
             except EmptyPage:
                 bops=bop_paginator.page(bop_paginator.num_pages)
+            context['bop_relationships']=BOP.get_bop_relationships([x[3] for x in context['bops'][bops.start_index():bops.end_index()]], user)
 
             model_list=[(selected,is_favorite,subscribed_to_user,model.as_json())
                         for (selected,is_favorite,subscribed_to_user,model) in context['models']]
@@ -328,6 +329,7 @@ class SearchView(FormView):
                 models=model_paginator.page(1)
             except EmptyPage:
                 models=model_paginator.page(model_paginator.num_pages)
+            context['model_seds']=Model.get_sed_map([x[3] for x in context['models'][models.start_index():models.end_index()]], user)
 
             ssr_list=[(selected,is_favorite,subscribed_to_user,ssr.as_json())
                       for (selected,is_favorite,subscribed_to_user,ssr) in context['ssrs']]
@@ -382,52 +384,6 @@ class SearchView(FormView):
             except EmptyPage:
                 workspaces=workspace_paginator.page(workspace_paginator.num_pages)
 
-#            if searchType=='all':
-#                ajax_context={
-#                    'bops': bop_list,
-#                    'bop_relationships': context['bop_relationships'],
-#                    'bops_count': len(bop_list),
-#                    'bops_start_index':1,
-#                    'bops_end_index': len(bop_list),
-#                    'models': model_list,
-#                    'model_seds': context['model_seds'],
-#                    'models_count': len(model_list),
-#                    'models_start_index':1,
-#                    'models_end_index': len(model_list),
-#                    'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-#                                     for (selected,is_favorite,subscribed_to_user,sed) in context['generic_seds']],
-#                    'erp_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-#                                  [component.as_json() for component in components])
-#                                 for (selected,is_favorite,subscribed_to_user,sed,components) in context['erp_seds']],
-#                    'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
-#                                          for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
-#                    'connectivity_sed_regions': context['connectivity_sed_regions'],
-#                    'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
-#                                      [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
-#                                     for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
-#                    'ssrs': ssr_list,
-#                    'ssrs_count': len(ssr_list),
-#                    'ssrs_start_index':1,
-#                    'ssrs_end_index': len(ssr_list),
-#                    'literatures': literature_list,
-#                    'literatures_count': len(literature_list),
-#                    'literatures_start_index':1,
-#                    'literatures_end_index': len(literature_list),
-#                    'brain_regions': brain_region_list,
-#                    'brain_regions_count': len(brain_region_list),
-#                    'brain_regions_start_index':1,
-#                    'brain_regions_end_index': len(brain_region_list),
-#                    'users': user_list,
-#                    'users_count': len(user_list),
-#                    'users_start_index':1,
-#                    'users_end_index': len(user_list),
-#                    'workspaces': workspace_list,
-#                    'workspaces_count': len(workspace_list),
-#                    'workspaces_start_index':1,
-#                    'workspaces_end_index':len(workspace_list)
-#
-#                }
-#            else:
             ajax_context={
                 'bops': bops.object_list,
                 'bop_relationships': context['bop_relationships'],
@@ -578,11 +534,11 @@ class BOPSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
 
-        order_by=self.request.POST.get('order_by','title')
-        direction=self.request.POST.get('direction','ascending')
+        order_by=self.request.POST.get('bop_order_by','title')
+        direction=self.request.POST.get('bop_direction','ascending')
 
-        form.cleaned_data['order_by']=order_by
-        form.cleaned_data['direction']=direction
+        form.cleaned_data['bop_order_by']=order_by
+        form.cleaned_data['bop_direction']=direction
         bops=runBOPSearch(form.cleaned_data, user.id, exclude=context['exclude'])
 
         context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
@@ -602,8 +558,8 @@ class BOPSearchView(FormView):
 
             ajax_context={
                 'bops': bops.object_list,
-                'order_by': order_by,
-                'direction': direction,
+                'bop_order_by': order_by,
+                'bop_direction': direction,
                 'up_image': self.request.POST.get('up_image',''),
                 'down_image': self.request.POST.get('down_image',''),
                 'bop_relationships': context['bop_relationships'],
@@ -651,11 +607,11 @@ class BrainRegionSearchView(FormView):
         return context
 
     def form_valid(self, form):
-        order_by=self.request.POST.get('order_by','name')
-        direction=self.request.POST.get('direction','ascending')
+        order_by=self.request.POST.get('region_order_by','name')
+        direction=self.request.POST.get('region_direction','ascending')
 
-        form.cleaned_data['order_by']=order_by
-        form.cleaned_data['direction']=direction
+        form.cleaned_data['region_order_by']=order_by
+        form.cleaned_data['region_direction']=direction
 
         brain_regions=runBrainRegionSearch(form.cleaned_data)
 
@@ -676,8 +632,8 @@ class BrainRegionSearchView(FormView):
             except EmptyPage:
                 brain_regions=brain_region_paginator.page(brain_region_paginator.num_pages)
             ajax_context={
-                'order_by': order_by,
-                'direction': direction,
+                'region_order_by': order_by,
+                'region_direction': direction,
                 'up_image': self.request.POST.get('up_image',''),
                 'down_image': self.request.POST.get('down_image',''),
                 'brain_regions': brain_regions.object_list,
@@ -714,10 +670,10 @@ class LiteratureSearchView(FormView):
         return context
 
     def form_valid(self, form):
-        order_by=self.request.POST.get('order_by','string')
-        direction=self.request.POST.get('direction','ascending')
-        form.cleaned_data['order_by']=order_by
-        form.cleaned_data['direction']=direction
+        order_by=self.request.POST.get('literature_order_by','string')
+        direction=self.request.POST.get('literature_direction','ascending')
+        form.cleaned_data['literature_order_by']=order_by
+        form.cleaned_data['literature_direction']=direction
 
         literatures=runLiteratureSearch(form.cleaned_data, self.request.user.id)
 
@@ -737,8 +693,8 @@ class LiteratureSearchView(FormView):
             except EmptyPage:
                 literatures=literature_paginator.page(literature_paginator.num_pages)
             ajax_context={
-                'order_by': order_by,
-                'direction': direction,
+                'literature_order_by': order_by,
+                'literature_direction': direction,
                 'up_image': self.request.POST.get('up_image',''),
                 'down_image': self.request.POST.get('down_image',''),
                 'literatures': literatures.object_list,
@@ -779,11 +735,11 @@ class ModelSearchView(FormView):
         context=self.get_context_data(form=form)
         user=self.request.user
 
-        order_by=self.request.POST.get('order_by','title')
-        direction=self.request.POST.get('direction','ascending')
+        order_by=self.request.POST.get('model_order_by','title')
+        direction=self.request.POST.get('model_direction','ascending')
 
-        form.cleaned_data['order_by']=order_by
-        form.cleaned_data['direction']=direction
+        form.cleaned_data['model_order_by']=order_by
+        form.cleaned_data['model_direction']=direction
 
         models=runModelSearch(form.cleaned_data, user.id, exclude=context['exclude'])
         context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
@@ -802,8 +758,8 @@ class ModelSearchView(FormView):
             except EmptyPage:
                 models=model_paginator.page(model_paginator.num_pages)
             ajax_context={
-                'order_by': self.request.POST.get('order_by','title'),
-                'direction': self.request.POST.get('direction','ascending'),
+                'model_order_by': order_by,
+                'model_direction': direction,
                 'up_image': self.request.POST.get('up_image',''),
                 'down_image': self.request.POST.get('down_image',''),
                 'models': models.object_list,
@@ -853,23 +809,23 @@ class SEDSearchView(FormView):
         erpSEDs=[]
         imagingSEDs=[]
 
-        generic_order_by=self.request.POST.get('generic_order_by','title')
-        generic_direction=self.request.POST.get('generic_direction','ascending')
-        erp_order_by=self.request.POST.get('erp_order_by','title')
-        erp_direction=self.request.POST.get('erp_direction','ascending')
-        connectivity_order_by=self.request.POST.get('connectivity_order_by','title')
-        connectivity_direction=self.request.POST.get('connectivity_direction','ascending')
-        imaging_order_by=self.request.POST.get('imaging_order_by','title')
-        imaging_direction=self.request.POST.get('imaging_direction','ascending')
+        generic_sed_order_by=self.request.POST.get('generic_sed_order_by','title')
+        generic_sed_direction=self.request.POST.get('generic_sed_direction','ascending')
+        erp_sed_order_by=self.request.POST.get('erp_sed_order_by','title')
+        erp_sed_direction=self.request.POST.get('erp_sed_direction','ascending')
+        connectivity_sed_order_by=self.request.POST.get('connectivity_sed_order_by','title')
+        connectivity_sed_direction=self.request.POST.get('connectivity_sed_direction','ascending')
+        imaging_sed_order_by=self.request.POST.get('imaging_sed_order_by','title')
+        imaging_sed_direction=self.request.POST.get('imaging_sed_direction','ascending')
 
-        form.cleaned_data['generic_order_by']=generic_order_by
-        form.cleaned_data['generic_direction']=generic_direction
-        form.cleaned_data['connectivity_order_by']=connectivity_order_by
-        form.cleaned_data['connectivity_direction']=connectivity_direction
-        form.cleaned_data['erp_order_by']=erp_order_by
-        form.cleaned_data['erp_direction']=erp_direction
-        form.cleaned_data['imaging_order_by']=imaging_order_by
-        form.cleaned_data['imaging_direction']=imaging_direction
+        form.cleaned_data['generic_sed_order_by']=generic_sed_order_by
+        form.cleaned_data['generic_sed_direction']=generic_sed_direction
+        form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
+        form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+        form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
+        form.cleaned_data['erp_sed_direction']=erp_sed_direction
+        form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
+        form.cleaned_data['imaging_sed_direction']=imaging_sed_direction
 
         seds=runSEDSearch(form.cleaned_data, user.id)
         for idx,sedObj in enumerate(seds):
@@ -890,37 +846,37 @@ class SEDSearchView(FormView):
             for imagingSED in bredeImagingSEDs:
                 imagingSEDs.append(imagingSED)
 
-        if 'generic_order_by' in form.cleaned_data:
-            if form.cleaned_data['generic_order_by']=='title':
-                genericSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['generic_direction']=='descending')
-            elif form.cleaned_data['generic_order_by']=='collator':
-                genericSEDs.sort(key=SED.get_collator_str,reverse=form.cleaned_data['generic_direction']=='descending')
-            elif form.cleaned_data['generic_order_by']=='brief_description':
-                genericSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['generic_direction']=='descending')
+        if 'generic_sed_order_by' in form.cleaned_data:
+            if form.cleaned_data['generic_sed_order_by']=='title':
+                genericSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['generic_sed_direction']=='descending')
+            elif form.cleaned_data['generic_sed_order_by']=='collator':
+                genericSEDs.sort(key=SED.get_collator_str,reverse=form.cleaned_data['generic_sed_direction']=='descending')
+            elif form.cleaned_data['generic_sed_order_by']=='brief_description':
+                genericSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['generic_sed_direction']=='descending')
 
-        if 'connectivity_order_by' in form.cleaned_data:
-            if form.cleaned_data['connectivity_order_by']=='title':
-                connectivitySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['connectivity_direction']=='descending')
-            elif form.cleaned_data['connectivity_order_by']=='collator':
-                connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_direction']=='descending')
-            elif form.cleaned_data['connectivity_order_by']=='brief_description':
-                connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_direction']=='descending')
+        if 'connectivity_sed_order_by' in form.cleaned_data:
+            if form.cleaned_data['connectivity_sed_order_by']=='title':
+                connectivitySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+            elif form.cleaned_data['connectivity_sed_order_by']=='collator':
+                connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+            elif form.cleaned_data['connectivity_sed_order_by']=='brief_description':
+                connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
 
-        if 'erp_order_by' in form.cleaned_data:
-            if form.cleaned_data['erp_order_by']=='title':
-                erpSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['erp_direction']=='descending')
-            elif form.cleaned_data['erp_order_by']=='collator':
-                erpSEDs.sort(key=ERPSED.get_collator_str,reverse=form.cleaned_data['erp_direction']=='descending')
-            elif form.cleaned_data['erp_order_by']=='brief_description':
-                erpSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['erp_direction']=='descending')
+        if 'erp_sed_order_by' in form.cleaned_data:
+            if form.cleaned_data['erp_sed_order_by']=='title':
+                erpSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['erp_sed_direction']=='descending')
+            elif form.cleaned_data['erp_sed_order_by']=='collator':
+                erpSEDs.sort(key=ERPSED.get_collator_str,reverse=form.cleaned_data['erp_sed_direction']=='descending')
+            elif form.cleaned_data['erp_sed_order_by']=='brief_description':
+                erpSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['erp_sed_direction']=='descending')
 
-        if 'imaging_order_by' in form.cleaned_data:
-            if form.cleaned_data['imaging_order_by']=='title':
-                imagingSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['imaging_direction']=='descending')
-            elif form.cleaned_data['imaging_order_by']=='collator':
-                imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=form.cleaned_data['imaging_direction']=='descending')
-            elif form.cleaned_data['imaging_order_by']=='brief_description':
-                imagingSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['imaging_direction']=='descending')
+        if 'imaging_sed_order_by' in form.cleaned_data:
+            if form.cleaned_data['imaging_sed_order_by']=='title':
+                imagingSEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
+            elif form.cleaned_data['imaging_sed_order_by']=='collator':
+                imagingSEDs.sort(key=BrainImagingSED.get_collator_str,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
+            elif form.cleaned_data['imaging_sed_order_by']=='brief_description':
+                imagingSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
                 
         sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
 
@@ -945,8 +901,6 @@ class SEDSearchView(FormView):
                 [sedCoords[sed.id] for sed in imagingSEDs], [])
         if self.request.is_ajax():
             ajax_context={
-                'order_by': self.request.POST.get('order_by','title'),
-                'direction': self.request.POST.get('direction','ascending'),
                 'up_image': self.request.POST.get('up_image',''),
                 'down_image': self.request.POST.get('down_image',''),
                 'generic_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
@@ -961,14 +915,14 @@ class SEDSearchView(FormView):
                                   [(coord.as_json(),coord_selected) for (coord, coord_selected) in coords])
                                  for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
             }
-            ajax_context['generic_order_by']=generic_order_by
-            ajax_context['generic_direction']=generic_direction
-            ajax_context['connectivity_order_by']=connectivity_order_by
-            ajax_context['connectivity_direction']=connectivity_direction
-            ajax_context['erp_order_by']=erp_order_by
-            ajax_context['erp_direction']=erp_direction
-            ajax_context['imaging_order_by']=imaging_order_by
-            ajax_context['imaging_direction']=imaging_direction
+            ajax_context['generic_sed_order_by']=generic_sed_order_by
+            ajax_context['generic_sed_direction']=generic_sed_direction
+            ajax_context['connectivity_sed_order_by']=connectivity_sed_order_by
+            ajax_context['connectivity_sed_direction']=connectivity_sed_direction
+            ajax_context['erp_sed_order_by']=erp_sed_order_by
+            ajax_context['erp_sed_direction']=erp_sed_direction
+            ajax_context['imaging_sed_order_by']=imaging_sed_order_by
+            ajax_context['imaging_sed_direction']=imaging_sed_direction
             return HttpResponse(json.dumps(ajax_context), content_type='application/json')
         return self.render_to_response(context)
 
