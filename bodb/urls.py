@@ -4,7 +4,7 @@ from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, Cr
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPIDetailView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
-from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
+from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
@@ -13,7 +13,7 @@ from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, De
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
 from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
-from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView
+from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
 
@@ -70,8 +70,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^bop/(?P<pk>\d+)/report/$', BOPReportView.as_view(), {}, 'bop_report'),
     url(r'^bop/(?P<pk>\d+)/toggle_select/$', ToggleSelectBOPView.as_view(), {}, 'bop_toggle_select'),
     url(r'^bop/new/$', CreateBOPView.as_view(), {}, 'bop_add'),
-    url(r'^bop/similar/$', SimilarBOPView.as_view(), {}, 'bop_similar'),
     url(r'^bop/search/$', BOPSearchView.as_view(), {}, 'bop_search'),
+    url(r'^bop/similar/$', SimilarBOPView.as_view(), {}, 'bop_similar'),
     url(r'^bop/tag/(?P<name>[^/]+)/$', BOPTaggedView.as_view(), {}, 'bop_tagged'),
 
     url(r'^brain_region/(?P<pk>\d+)/$', BrainRegionView.as_view(), {}, 'brain_region_view'),
@@ -126,6 +126,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^model/search/$', ModelSearchView.as_view(), {}, 'model_search'),
     url(r'^model/tag/(?P<name>[^/]+)/$', ModelTaggedView.as_view(), {}, 'model_tagged'),
 
+
     url(r'^module/(?P<pk>\d+)/$', ModuleDetailView.as_view(), {}, 'module_view'),
     url(r'^module/(?P<pk>\d+)/delete/$', DeleteModuleView.as_view(), {}, 'module_delete'),
     url(r'^module/(?P<pk>\d+)/edit/$', UpdateModuleView.as_view(), {}, 'module_edit'),
@@ -144,27 +145,33 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/(?P<pk>\d+)/edit/$', UpdateSEDView.as_view(), {}, 'sed_edit'),
     url(r'^sed/(?P<pk>\d+)/report/$', SEDReportView.as_view(), {}, 'sed_report'),
     url(r'^sed/(?P<pk>\d+)/toggle_select/$', ToggleSelectSEDView.as_view(), {}, 'sed_toggle_select'),
+    url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
+    url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
+    url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),
+
     url(r'^sed/connectivity/(?P<pk>\d+)/delete/$', DeleteConnectivitySEDView.as_view(), {}, 'connectivity_sed_delete'),
     url(r'^sed/connectivity/(?P<pk>\d+)/edit/$', UpdateConnectivitySEDView.as_view(), {}, 'connectivity_sed_edit'),
     url(r'^sed/connectivity/new/$', CreateConnectivitySEDView.as_view(), {}, 'connectivity_sed_add'),
+
     url(r'^sed/selectedcoord/(?P<pk>\d+)/select/$', SelectSelectedSEDCoordView.as_view(), {},
         'sed_select_selected_coord'),
     url(r'^sed/selectedcoord/(?P<pk>\d+)/unselect/$', UnselectSelectedSEDCoordView.as_view(), {},
         'sed_unselect_selected_coord'),
     url(r'^sed/coord/(?P<pk>\d+)/select/$', SelectSEDCoordView.as_view(), {}, 'sed_select_coord'),
     url(r'^sed/coord/(?P<pk>\d+)/unselect/$', UnselectSEDCoordView.as_view(), {}, 'sed_unselect_coord'),
+
     url(r'^sed/generic/new/$', CreateSEDView.as_view(), {}, 'generic_sed_add'),
+
     url(r'^sed/electrode_positions/(?P<pk>\d+)/$', ElectrodePositionsView.as_view(), {}, 'sed_electrode_positions'),
+
     url(r'^sed/erp/(?P<pk>\d+)/delete/$', DeleteERPSEDView.as_view(), {}, 'erp_sed_delete'),
     url(r'^sed/erp/(?P<pk>\d+)/edit/$', UpdateERPSEDView.as_view(), {}, 'erp_sed_edit'),
     url(r'^sed/erp/new/$', CreateERPSEDView.as_view(), {}, 'erp_sed_add'),
+
     url(r'^sed/imaging/(?P<pk>\d+)/clean/$', CleanBrainImagingSEDView.as_view(), name='imaging_sed_clean'),
     url(r'^sed/imaging/(?P<pk>\d+)/delete/$', DeleteBrainImagingSEDView.as_view(), name='imaging_sed_delete'),
     url(r'^sed/imaging/(?P<pk>\d+)/edit/$', UpdateBrainImagingSEDView.as_view(), name='imaging_sed_edit'),
     url(r'^sed/imaging/new/$', CreateBrainImagingSEDView.as_view(), {}, 'imaging_sed_add'),
-    url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
-    url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
-    url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),
 
     url(r'^ssr/(?P<pk>\d+)/$', SSRDetailView.as_view(), {}, 'ssr_view'),
     url(r'^ssr/(?P<pk>\d+)/delete/$', DeleteSSRView.as_view(), {}, 'ssr_delete'),
@@ -172,6 +179,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^ssr/new/$', CreateSSRView.as_view(), {}, 'ssr_add'),
     url(r'^ssr/(?P<pk>\d+)/report/$', SSRReportView.as_view(), {}, 'ssr_report'),
     url(r'^ssr/(?P<pk>\d+)/toggle_select/$', ToggleSelectSSRView.as_view(), {}, 'ssr_toggle_select'),
+    url(r'^ssr/sort/$', SortSSRListView.as_view(), {}, 'sort_ssrs'),
     url(r'^ssr/tag/(?P<name>[^/]+)/$', SSRTaggedView.as_view(), {}, 'ssr_tagged'),
 
     url(r'^admin/$', AdminDetailView.as_view(), {}, 'admin'),

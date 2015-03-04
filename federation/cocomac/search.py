@@ -140,8 +140,9 @@ def runCoCoMacSearch2(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(CoCoMacConnectivitySED.objects.filter(q).select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
-        return list(CoCoMacConnectivitySED.objects.all().select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
+            results=list(CoCoMacConnectivitySED.objects.filter(q).select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
+        else:
+            results=list(CoCoMacConnectivitySED.objects.all().select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
 
     return results
 

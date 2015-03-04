@@ -4,29 +4,42 @@
     <script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
     <script type="text/javascript">
 
+        var bops=[];
+        {% for selected,is_favorite,subscribed,bop in bops %}
+            bops.push({
+                id: {{ bop.id }},
+                title: '{{ bop.title|escapejs }}',
+                brief_description: '{{ bop.brief_description|escapejs }}',
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ bop|escapejs }}',
+                draft: {% if bop.draft %}true{% else %}false{% endif %},
+                collator_id: {{ bop.collator.id }},
+                collator: '{{ bop.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
+        
         $(document).ready(function()
         {
-            {% for selected,is_favorite,subscribed,bop in bops %}
-                var count = $('#bops').children().length-1;
-                var tmplMarkup = $('#bop-template').html();
-                var compiledTmpl = _.template(tmplMarkup,
-                        {
-                            idx : count+1,
-                            id: {{ bop.id }},
-                            title: '{{ bop.title|escapejs }}',
-                            brief_description: '{{ bop.brief_description|escapejs }}',
-                            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                            selected: {% if selected %}true{% else %}false{% endif %},
-                            title_str: '{{ bop|escapejs }}',
-                            draft: {% if bop.draft %}true{% else %}false{% endif %},
-                            collator_id: {{ bop.collator.id }},
-                            collator: '{{ bop.get_collator_str|escapejs }}',
-                            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
-                        }
-                );
-                $('#bops').append(compiledTmpl);
-            {% endfor %}
+            addBOPs();
         });
+
+        function addBOPs()
+        {
+            $('[name=bops]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                $(this).empty();
+                $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+                var tmplMarkup = $('#bop-template').html();
+                for(var idx=0; idx<bops.length; idx++)
+                {
+                    bops[idx]['idx']=$(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, bops[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
+        }
 
         var {{ bopGraphId }}nodes=[
             {% for selected,is_favorite,subscribed,bop in bops %}
@@ -115,7 +128,7 @@
     <table class="tab_panel">
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan=6>
+                <td colspan={% if delete_mode %}7{% else %}6{% endif %}>
                     {% if can_add_entry or can_remove_entry %}
                         Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllBOPSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllBOPSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     {% endif %}
@@ -128,13 +141,13 @@
             {% if delete_mode %}
                 <td style="width:45px">&nbsp;</td>
             {% endif %}
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
+            <td width=200px><a id="id_bop_sort_title" href="" onclick="return sortBOPs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_bop_sort_title_dir" name="bop_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_bop_sort_collator" href="" onclick="return sortBOPs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_bop_sort_collator_dir" name="bop_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_bop_sort_brief_description" href="" onclick="return sortBOPs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_bop_sort_brief_description_dir" name="bop_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                 <div id="bops" name="bops">
                     <input type="hidden" id="groupName" value="{{ bopGraphId }}"/>
                 </div>
@@ -142,18 +155,18 @@
         </tr>
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <a href="" onclick="return generateBOPDiagram('{{ bopGraphId }}',{{ bopGraphId }}nodes, {{ bopGraphId }}edges);">Generate BOP Relationship Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <div id="{{ bopGraphId }}Div" style="background: #ffffff;">
                     </div>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <span id="{{ bopGraphId }}Msg"></span>
                 </td>
             </tr>
@@ -170,9 +183,9 @@
                     {% if user.is_authenticated and not user.is_anonymous %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../" onclick="opener.addBOPMultiple('', '', '', <%= id %>, ['<%= _.escape(title) %>', '<%= _.escape(brief_description) %>']);return false;">Select</a>
+                                <a href="../" onclick="opener.addBOPMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>']);return false;">Select</a>
                             {% else %}
-                                <a href="../" onclick="opener.selectSingleBOP(<%= id %>, '<%= _.escape(title) %>');self.close();">Select</a>
+                                <a href="../" onclick="opener.selectSingleBOP(<%= id %>, '<%= addslashes(title) %>');self.close();">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">

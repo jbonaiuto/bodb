@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView, ProcessFormView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
@@ -603,9 +603,9 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-        rrmods=RelatedModel.get_reverse_related_models(self.object,user)
-        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,
-            context['workspace_models'],context['fav_docs'], context['subscriptions'])
+#        rrmods=RelatedModel.get_reverse_related_models(self.object,user)
+#        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,
+#            context['workspace_models'],context['fav_docs'], context['subscriptions'])
         return context
 
 

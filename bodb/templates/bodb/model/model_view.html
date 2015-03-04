@@ -3,6 +3,7 @@
 {% block extrahead %}
     <title>BODB - View {{ model.title }} Model</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
@@ -189,7 +190,7 @@
                                 {% include "bodb/sed/test_sed_list_view.html" %}
                             {% endif %}
                             {% if predictions %}
-                                {% include "bodb/prediction/prediction_list_view.html" %}
+                                {% include "bodb/prediction/prediction_selection_list_view.html" %}
                             {% endif %}
                         </div>
                     </td>

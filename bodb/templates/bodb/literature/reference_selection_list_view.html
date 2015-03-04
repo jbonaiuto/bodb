@@ -1,27 +1,39 @@
 {% load staticfiles %}
 <script type="text/javascript">
-    $(document).ready(function(){
-        {% for selected,is_favorite,subscribed,literature in literatures %}
-            var count = $('#literatures').children().length;
+
+    var lits=[];
+    {% for selected,is_favorite,subscribed,literature in literatures %}
+        lits.push({
+            id: {{ literature.id }},
+            authors: '{{ literature.author_names|escapejs }}',
+            year: '{{ literature.year|escapejs }}',
+            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+            selected: {% if selected %}true{% else %}false{% endif %},
+            title: '{{ literature.title|escapejs }}',
+            string: '{{ literature.str|escapejs }}',
+            collator_id: {{ literature.collator.id }},
+            collator: '{{ literature.get_collator_str|escapejs }}',
+            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %},
+            url_str: '{{ literature.html_url_string|escapejs }}'
+        });
+    {% endfor %}
+
+    function addLiterature()
+    {
+        $('[name=literatures]').each(function(index, element){
+            $(this).empty();
             var tmplMarkup = $('#literature-template').html();
-            var compiledTmpl = _.template(tmplMarkup,
-                    {
-                        idx : count+1,
-                        id: {{ literature.id }},
-                        authors: '{{ literature.author_names|escapejs }}',
-                        year: '{{ literature.year|escapejs }}',
-                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                        selected: {% if selected %}true{% else %}false{% endif %},
-                        title: '{{ literature.title|escapejs }}',
-                        string: '{{ literature.str|escapejs }}',
-                        collator_id: {{ literature.collator.id }},
-                        collator: '{{ literature.get_collator_str|escapejs }}',
-                        subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %},
-                        url_str: '{{ literature.html_url_string|escapejs }}'
-                    }
-            );
-            $('#literatures').append(compiledTmpl);
-        {% endfor %}
+            for(var idx=0; idx<lits.length; idx++)
+            {
+                lits[idx]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, lits[idx]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        addLiterature();
     });
 </script>
 <div id="literature_list" name="literature_list" style="display:{% if literatures|length %}block{% else %}none{% endif %}">
@@ -48,8 +60,8 @@
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
-            <td>Reference</td>
-            <td width=100px>Collator</td>
+            <td><a id="id_literature_sort_string" href="" onclick="return sortLiterature('string',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Reference <img id="id_literature_sort_string_dir" name="literature_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=100px><a id="id_literature_sort_collator" href="" onclick="return sortLiterature('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_literature_sort_collator_dir" name="literature_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=150px>&nbsp;</td>
             <td width=100px>&nbsp;</td>
         </tr>
@@ -69,7 +81,7 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
-                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= _.escape(authors) %>', '<%= _.escape(year) %>', '<%= _.escape(title) %>']);">Select</a>
+                            <a href="#" onclick="return opener.addLiteratureMultiple(<%= id %>, ['<%= addslashes(authors) %>', '<%= addslashes(year) %>', '<%= addslashes(title) %>']);">Select</a>
                         {% else %}
                             <a id="favLinkLiterature" href="" onclick="return toggleFavoriteLiterature(<%= id %>,'favIconLiterature-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIconLiterature-<%= id %>" name="favIconLiterature-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>

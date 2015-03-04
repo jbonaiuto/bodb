@@ -7,6 +7,7 @@ from bodb.forms.brain_region import BrainRegionForm
 from bodb.models import BrainRegionRequest, BrainRegion, SED, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, ERPComponent, WorkspaceActivityItem, messageUser
 from bodb.search.sed import runSEDCoordSearch
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
+from bodb.views.model import CreateModelView
 from bodb.views.security import AdminUpdateView, AdminCreateView
 from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -238,3 +239,4 @@ class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdat
             active_workspace.save()
 
         return context
+

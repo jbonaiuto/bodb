@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('literatureAdvancedOptions', 'fade=1');
 
+    var literatureSortOrderBy='string';
+    var literatureSortDirection='ascending';
+
     function literatureJumpPage(page)
     {
         document.getElementById('id_literature_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#literature_search_form');
+        var data=frm.serialize()+'&literature_order_by='+literatureSortOrderBy+'&literature_direction='+literatureSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processLiteratureResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortLiterature(order_by, direction, up_image, down_image)
+    {
+        literatureSortOrderBy=order_by;
+        literatureSortDirection=direction;
+        submitSearchLiterature();
+        return false;
     }
 
     $( document ).ready(function() {
@@ -197,7 +209,7 @@
                 </tr>
                 <tr>
                     <td colspan="5">
-                        <div id="literatures_previous"><a href="" onclick="literatureJumpPage()">previous</a></div> Page <span id="literature_current_page">1</span> of <span id="literature_total_pages">1</span> <div id="literatures_next"><a href="" onclick="literatureJumpPage()">next</a></div>
+                        <div id="id_literatures_previous" name="literatures_previous"><a href="" onclick="literatureJumpPage()">previous</a></div> Page <span id="id_literature_current_page" name="literature_current_page">1</span> of <span id="id_literature_total_pages" name="literature_total_pages">1</span> <div id="id_literatures_next" name="literatures_next"><a href="" onclick="literatureJumpPage()">next</a></div>
                     </td>
                 </tr>
                 <tr>
