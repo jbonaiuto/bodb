@@ -1,26 +1,38 @@
 {% load staticfiles %}
 <script type="text/javascript">
-    $(document).ready(function(){
-        {% for selected,is_favorite,subscribed,ssr in ssrs %}
-            var count = $('#ssrs').children().length;
+
+    var ssrs=[];
+    {% for selected,is_favorite,subscribed,ssr in ssrs %}
+        ssrs.push({
+            id: {{ ssr.id }},
+            title: '{{ ssr.title|escapejs }}',
+            brief_description: '{{ ssr.brief_description|escapejs }}',
+            type: '{{ ssr.type }}',
+            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+            selected: {% if selected %}true{% else %}false{% endif %},
+            title_str: '{{ ssr|escapejs }}',
+            draft: {% if ssr.draft %}true{% else %}false{% endif %},
+            collator_id: {{ ssr.collator.id }},
+            collator: '{{ ssr.get_collator_str|escapejs }}',
+            subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+        });
+    {% endfor %}
+
+    function addSSRs()
+    {
+        $('[name=ssrs]').each(function(index, element){
+            $(this).empty();
             var tmplMarkup = $('#ssr-template').html();
-            var compiledTmpl = _.template(tmplMarkup,
-                    {
-                        idx : count+1,
-                        id: {{ ssr.id }},
-                        title: '{{ ssr.title|escapejs }}',
-                        brief_description: '{{ ssr.brief_description|escapejs }}',
-                        is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
-                        selected: {% if selected %}true{% else %}false{% endif %},
-                        title_str: '{{ ssr|escapejs }}',
-                        draft: {% if ssr.draft %}true{% else %}false{% endif %},
-                        collator_id: {{ ssr.collator.id }},
-                        collator: '{{ ssr.get_collator_str|escapejs }}',
-                        subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
-                    }
-            );
-            $('#ssrs').append(compiledTmpl);
-        {% endfor %}
+            for(var idx=0; idx<ssrs.length; idx++)
+            {
+                ssrs[idx]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, ssrs[idx]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+    $(document).ready(function(){
+        addSSRs();
     });
 
     function deleteSSR(id, idx)
@@ -52,7 +64,7 @@
     <table class="tab_panel">
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan=7>
+                <td colspan={% if delete_mode %}8{% else %}7{% endif %}>
                     {% if can_add_entry or can_remove_entry %}
                         Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllSSRSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllSSRSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     {% endif %}
@@ -65,14 +77,14 @@
             {% if delete_mode %}
                 <td style="width:45px">&nbsp;</td>
             {% endif %}
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
-            <td width=100px>Type</td>
+            <td width=200px><a id="id_ssr_sort_title" href="" onclick="return sortSSRs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_ssr_sort_title_dir" name="ssr_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_ssr_sort_collator" href="" onclick="return sortSSRs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_ssr_sort_collator_dir" name="ssr_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_ssr_sort_brief_description" href="" onclick="return sortSSRs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_ssr_sort_brief_description_dir" name="ssr_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=100px><a id="id_ssr_sort_type" href="" onclick="return sortSSRs('type',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Type <img id="id_ssr_sort_type_dir" name="ssr_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                 <div id="ssrs" name="ssrs">
                 </div>
             </td>
@@ -102,6 +114,7 @@
                 </td>
                 <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SSR');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
                 <td><%= _.escape(brief_description) %></td>
+                <td width=100px><%= _.escape(type) %></td>
                 <td width=100px><span id="ssr_<%= id %>_message" name="ssr_<%= id %>_message" class="messages"></span></td>
             </tr>
         </table>

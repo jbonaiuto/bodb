@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View {{ literature }} Literature</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('modelData', 'fade=1');
         animatedcollapse.addDiv('bopData', 'fade=1');

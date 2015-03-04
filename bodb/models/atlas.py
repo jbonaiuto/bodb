@@ -67,6 +67,9 @@ class Nomenclature(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.version)
 
+    def species_name(self):
+        return ', '.join([species.__unicode__() for species in self.species.all()])
+
 
 class CoordinateSpace(models.Model):
     name = models.CharField(max_length=200)
@@ -159,6 +162,14 @@ class BrainRegion(models.Model):
             region_list.append([selected,is_favorite,region])
         return region_list
 
+    def species_name(self):
+        return self.nomenclature.species_name()
+
+    def parent_region_name(self):
+        if self.parent_region is not None:
+            return self.parent_region.__unicode__()
+        return ''
+
 
 # Brain region volume
 class BrainRegionVolume(models.Model):
@@ -191,6 +202,9 @@ class RelatedBrainRegion(models.Model):
     class Meta:
         app_label='bodb'
         ordering=['brain_region__nomenclature', 'brain_region__name']
+
+    def brain_region_name(self):
+        return self.brain_region.__unicode__()
 
     @staticmethod
     def get_related_brain_region_list(rregions, workspace_regions, fav_regions):

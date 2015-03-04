@@ -1,4 +1,28 @@
+{% load static %}
 <script type="text/javascript">
+    var members=[];
+    {% for usr, isadmin, subscribed in members %}
+        members.push({
+            id: {{ usr.id }},
+            username: '{{ usr.username|escapejs }}',
+            name: '{{ usr.first_name|escapejs }} {{ usr.last_name|escapejs }}',
+            subscribed: {% if subscribed %}true{% else %}false{% endif %},
+            isadmin: {% if isadmin %}true{% else %}false{% endif %}
+        });
+    {% endfor %}
+
+    function addMembers()
+    {
+        $('#members').empty();
+        var tmplMarkup = $('#member-template').html();
+        for(var idx=0; idx<members.length; idx++)
+        {
+            members[idx]['idx']=$('#members').children().length+1;
+            var compiledTmpl = _.template(tmplMarkup, members[idx]);
+            $('#members').append(compiledTmpl);
+        }
+    }
+    
     function toggleWorkspaceUserAdmin(user_id, admin)
     {
         var data = { 'user_id': user_id, 'admin':admin, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
@@ -80,8 +104,6 @@
                 $('textarea:not(.processed)').TextAreaResizer();
             }
             document.getElementById('id_invitation_body').value='';
-            //var widget = $('#id_invited_users-wrapper').yourlabsWidget();
-            //widget.freeDeck()
             $('#id_invited_users-deck').empty();
             $('#id_invited_users').empty();
         }
@@ -120,6 +142,7 @@
             $('#invitationList').append(compiledTmpl);
             $('textarea:not(.processed)').TextAreaResizer();
         {% endfor %}
+        addMembers();
     });
 </script>
 <table class="tab_panel">
@@ -128,56 +151,16 @@
     </tr>
     <tr class="col_header">
         <td width=160px>&nbsp;</td>
-        <td width=200px>Username</td>
-        <td width=300px>Real Name</td>
-        <td width=50px>Admin</td>
+        <td width=200px><a id="id_member_sort_username" href="" onclick="return sortMembers('username',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Username <img id="id_member_sort_username_dir" name="member_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+        <td width=300px><a id="id_member_sort_name" href="" onclick="return sortMembers('name',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Real name <img id="id_member_sort_name_dir" name="member_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+        <td width=50px><a id="id_member_sort_is_admin" href="" onclick="return sortMembers('is_admin',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Admin <img id="id_member_sort_is_admin_dir" name="member_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
         <td>&nbsp;</td>
     </tr>
-    {% for usr, isadmin, subscribed in members %}
-        <tr>
-            <td colspan=5>
-                <div id="spanWorkspaceUser_{{usr.id}}" style="display: block;">
-                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                        <td width=160px>
-                            {% if not usr == workspace.created_by and not usr == user%}
-                                <a href="" onclick="return removeWorkspaceUser({{ usr.id }},
-                                        '{{ usr.username }}');">Remove</a>
-                            {% endif %}
-                        </td>
-                        <td width=200px>
-                            <a href="/bodb/workspace/{{ workspace.id }}/user/{{ usr.id }}/?_multiple=1" onclick="return showPopup('view_user_{{ u.id }}', 700, 550, '/bodb/workspace/{{ workspace.id }}/user/{{ usr.id }}/?_multiple=1');">
-                                {{ usr.username }}
-                            </a>
-                            {% if not usr == user %}
-                                {% if subscribed %}
-                                    Subscribed
-                                {% else %}
-                                    <a href="#" title="Be notified when this user creates new entries"
-                                       onclick="return showPopup('new_user_subscription',
-                                               400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ usr.id }}&type=All');">
-                                        <strong>Subscribe</strong>
-                                    </a>
-                                {% endif %}
-                            {% endif %}
-                        </td>
-                        <td width=300px>
-                            {{ usr.first_name }} {{ usr.last_name }}
-                        </td>
-                        <td width=50px>
-                            <input type=checkbox name="adminUserCheckbox"
-                                   id="adminUserCheckbox_{{ usr.id }}" value="{{ usr.id }}"
-                                   onclick="toggleWorkspaceUserAdmin(this.value,
-                                    this.checked);"
-                                   {% if isadmin %}checked{% endif %}/>
-                        </td>
-                        <td>
-                            <span id="user_{{ usr.id }}_message" name="user_{{ usr.id }}_message" class="messages"></span>
-                        </td>
-                    </tr>
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
+    <tr>
+        <td colspan=5>
+            <div id="members"></div>
+        </td>
+    </tr>
     <tr>
         <td colspan=5>&nbsp;</td>
     </tr>
@@ -242,3 +225,44 @@
         </table>
     </div>
 </script>
+
+<script type="text/html" id="member-template">
+    <div id="spanWorkspaceUser_<%= id %>" style="display: block;">
+        <table class="tab_panel">
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td width=160px>
+                    <% if(id!={{ workspace.created_by.id }} && id!={{ user.id }}){ %>
+                        <a href="" onclick="return removeWorkspaceUser(<%= id %>, '<%= _.escape(username) %>');">Remove</a>
+                    <% } %>
+                </td>
+                <td width=200px>
+                    <a href="/bodb/workspace/{{ workspace.id }}/user/<%= id %>/?_multiple=1" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/workspace/{{ workspace.id }}/user/<%= id %>/?_multiple=1');">
+                        <%= _.escape(username) %>
+                    </a>
+                    <% if(id != {{ user.id }}){ %>
+                        <% if(subscribed){ %>
+                            Subscribed
+                        <% }else{ %>
+                            <a href="#" title="Be notified when this user creates new entries"
+                               onclick="return showPopup('new_user_subscription',
+                                               400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= id %>&type=All');">
+                                <strong>Subscribe</strong>
+                            </a>
+                        <% } %>
+                    <% } %>
+                </td>
+                <td width=300px><%= _.escape(name) %></td>
+                <td width=50px>
+                    <input type=checkbox name="adminUserCheckbox"
+                           id="adminUserCheckbox_<%= id %>" value="<%= id %>"
+                           onclick="toggleWorkspaceUserAdmin(this.value,
+                                    this.checked);"
+                           <% if(isadmin){ %>checked<% } %>/>
+                </td>
+                <td>
+                    <span id="user_<%= id %>_message" name="user_<%= id %>_message" class="messages"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script> 

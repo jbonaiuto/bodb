@@ -1,3 +1,7 @@
+function addslashes( str ) {
+    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0').replaceAll('\n',' ').replaceAll('\r',' ');
+}
+
 String.prototype.replaceAll = function(search, replace)
 {
     //if replace is null, return original string otherwise it will

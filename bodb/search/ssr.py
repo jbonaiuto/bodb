@@ -34,4 +34,16 @@ def runSSRSearch(search_data, userId):
         results = SSR.objects.filter(q).select_related('collator').distinct()
     else:
         results = SSR.objects.all().select_related('collator')
-    return results.order_by('title')
+
+    if 'ssr_order_by' in search_data:
+        if search_data['ssr_order_by']=='collator':
+            results=list(results)
+            results.sort(key=SSR.get_collator_str, reverse=search_data['ssr_direction']=='descending')
+        else:
+            results=results.order_by(search_data['ssr_order_by'])
+            if 'ssr_direction' in search_data and search_data['ssr_direction']=='descending':
+                results=results.reverse()
+    else:
+        results=results.order_by('title')
+
+    return results

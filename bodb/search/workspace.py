@@ -41,7 +41,18 @@ def runWorkspaceSearch(search_data, userId):
     else:
         results = Workspace.objects.all().select_related('created_by')
 
-    return results.order_by('title')
+    if 'workspace_order_by' in search_data:
+        if search_data['workspace_order_by']=='created_by':
+            results=list(results)
+            results.sort(key=Workspace.get_created_by_str, reverse=search_data['workspace_direction']=='descending')
+        else:
+            results=results.order_by(search_data['workspace_order_by'])
+    else:
+        results=results.order_by('title')
+    if 'workspace_direction' in search_data and search_data['workspace_direction']=='descending' and not search_data['workspace_order_by']=='created_by':
+        results=results.reverse()
+
+    return results
 
 
 class WorkspaceSearch(object):

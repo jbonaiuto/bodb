@@ -58,7 +58,8 @@ class DocumentDetailView(DetailView):
         rmods=RelatedModel.get_related_models(self.object, user)
         context['related_models'] = RelatedModel.get_related_model_list(rmods, context['workspace_models'],
             context['fav_docs'], context['subscriptions'])
-        related_regions=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species')
+        related_regions=list(RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'))
+        related_regions.sort(key=RelatedBrainRegion.brain_region_name)
         context['related_brain_regions'] = RelatedBrainRegion.get_related_brain_region_list(related_regions,
             context['workspace_regions'], context['fav_regions'])
         context['canEdit']=self.object.check_perm(user,'edit')

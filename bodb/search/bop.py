@@ -41,7 +41,19 @@ def runBOPSearch(search_data, userId, exclude=None):
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))
 
-    return results.order_by('title')
+    if 'bop_order_by' in search_data:
+        if search_data['bop_order_by']=='collator':
+            results=list(results)
+            results.sort(key=BOP.get_collator_str, reverse=search_data['bop_direction']=='descending')
+        else:
+            results=results.order_by(search_data['bop_order_by'])
+            if 'bop_direction' in search_data and search_data['bop_direction']=='descending':
+                results=results.reverse()
+    else:
+        results=results.order_by('title')
+
+
+    return results
 
 
 class BOPSearch(DocumentWithLiteratureSearch):

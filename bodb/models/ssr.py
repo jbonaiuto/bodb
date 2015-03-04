@@ -20,6 +20,11 @@ class SSR(Document):
             ('public_ssr', 'Can make the SSR public'),
             )
 
+    def as_json(self):
+        json=super(SSR,self).as_json()
+        json['type']=self.type
+        return json
+
     def get_absolute_url(self):
         return reverse('ssr_view', kwargs={'pk': self.pk})
 
@@ -57,7 +62,7 @@ class SSR(Document):
 
     @staticmethod
     def get_tagged_ssrs(name, user):
-        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
+        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 class Prediction(Document):
@@ -98,7 +103,7 @@ class Prediction(Document):
 
     @staticmethod
     def get_tagged_predictions(name, user):
-        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','ssr__collator')
+        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','ssr__collator').order_by('title')
 
     def save(self, force_insert=False, force_update=False):
         notify=False

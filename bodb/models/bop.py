@@ -50,15 +50,15 @@ class BOP(MPTTModel,Document):
 
     @staticmethod
     def get_child_bops(bop, user):
-        return bop.get_children().filter(Document.get_security_q(user)).distinct().select_related('collator')
+        return bop.get_children().filter(Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_literature_bops(literature, user):
-        return BOP.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator')
+        return BOP.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_tagged_bops(name, user):
-        return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator')
+        return BOP.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_bop_list(bops, workspace_bops, fav_docs, subscriptions):
@@ -104,6 +104,9 @@ class RelatedBOP(models.Model):
         app_label='bodb'
         ordering=['bop__title']
 
+    def bop_title(self):
+        return self.bop.__unicode__()
+
     @staticmethod
     def get_related_bop_list(rbops, workspace_bops, fav_docs, subscriptions):
         related_bop_list=[]
@@ -126,8 +129,21 @@ class RelatedBOP(models.Model):
 
     @staticmethod
     def get_related_bops(document, user):
-        return RelatedBOP.objects.filter(Q(Q(document=document) &
-                                           Document.get_security_q(user, field='bop'))).distinct().select_related('bop__collator')
+        related_bop_list=[]
+        rbops=list(RelatedBOP.objects.filter(Q(Q(document=document) &
+                                           Document.get_security_q(user, field='bop'))).distinct().select_related('bop__collator'))
+        for rbop in rbops:
+            rbop.reverse=False
+            related_bop_list.append(rbop)
+
+        rrbops=RelatedBOP.get_reverse_related_bops(document, user)
+        for rrbop in rrbops:
+            rbop=RelatedBOP(id=rrbop.id, bop=BOP.objects.get(id=rrbop.document.id), document=rrbop.bop,
+                relationship=rrbop.relationship, relevance_narrative=rrbop.relevance_narrative)
+            rbop.reverse=True
+            related_bop_list.append(rbop)
+        related_bop_list.sort(key=RelatedBOP.bop_title)
+        return related_bop_list
 
     @staticmethod
     def get_reverse_related_bops(bop, user):
@@ -141,8 +157,10 @@ class RelatedBOP(models.Model):
                                                             Document.get_security_q(user, field='document'))).distinct().select_related('document')
         related_bops=[]
         for related_region in related_regions:
-            related_bops.append(RelatedBOP(bop=BOP.objects.select_related('collator').get(id=related_region.document.id),
-                    relevance_narrative=related_region.relationship))
+            rbop=RelatedBOP(id=-1, bop=BOP.objects.select_related('collator').get(id=related_region.document.id),
+                relevance_narrative=related_region.relationship)
+            rbop.reverse=True
+            related_bops.append(rbop)
         return related_bops
 
     @staticmethod
@@ -155,9 +173,10 @@ class RelatedBOP(models.Model):
             except (BOP.DoesNotExist, BOP.MultipleObjectsReturned), err:
                 bop=None
             if bop is not None:
-                related_bops.append(RelatedBOP(document=sed, bop=bop, relevance_narrative='%s - %s' %
-                                                                                          (bsed.relationship,
-                                                                                           bsed.relevance_narrative)))
+                rbop=RelatedBOP(id=-1, document=sed, bop=bop, relevance_narrative='%s - %s' % (bsed.relationship,
+                                                                                               bsed.relevance_narrative))
+                rbop.reverse=True
+                related_bops.append(rbop)
 
         return related_bops
 

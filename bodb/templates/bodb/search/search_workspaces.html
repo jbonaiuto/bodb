@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('workspaceAdvancedOptions', 'fade=1');
 
+    var workspaceSortOrderBy='title';
+    var workspaceSortDirection='ascending';
+
     function workspaceJumpPage(page)
     {
         document.getElementById('id_workspace_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#workspace_search_form');
+        var data = frm.serialize()+'&workspace_order_by='+workspaceSortOrderBy+'&workspace_direction='+workspaceSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processWorkspaceResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortWorkspaces(order_by, direction, up_image, down_image)
+    {
+        workspaceSortOrderBy=order_by;
+        workspaceSortDirection=direction;
+        submitSearchWorkspaces();
+        return false;
     }
 
     $( document ).ready(function() {
@@ -213,7 +225,7 @@
             </tr>
             <tr>
                 <td>
-                    <div id="workspaces_previous"><a href="" onclick="workspaceJumpPage()">previous</a></div> Page <span id="workspace_current_page">1</span> of <span id="workspace_total_pages">1</span> <div id="workspaces_next"><a href="" onclick="workspaceJumpPage()">next</a></div>
+                    <div id="id_workspaces_previous" name="workspaces_previous"><a href="" onclick="workspaceJumpPage()">previous</a></div> Page <span id="id_workspace_current_page" name="workspace_current_page">1</span> of <span id="id_workspace_total_pages" name="workspace_total_pages">1</span> <div id="id_workspaces_next" name="workspaces_next"><a href="" onclick="workspaceJumpPage()">next</a></div>
                 </td>
             </tr>
             <tr>
