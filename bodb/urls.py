@@ -12,13 +12,8 @@ from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
-<<<<<<< HEAD
-from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView, NeurophysiologySEDExportRequestResponseView, NeurophysiologySEDExportRequestView, NeurophysiologySEDExportView
-from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView
-=======
-from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
+from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView, NeurophysiologySEDExportView, NeurophysiologySEDExportRequestView, NeurophysiologySEDExportRequestResponseView
 from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
->>>>>>> issue-#097
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
 
@@ -177,7 +172,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/imaging/(?P<pk>\d+)/delete/$', DeleteBrainImagingSEDView.as_view(), name='imaging_sed_delete'),
     url(r'^sed/imaging/(?P<pk>\d+)/edit/$', UpdateBrainImagingSEDView.as_view(), name='imaging_sed_edit'),
     url(r'^sed/imaging/new/$', CreateBrainImagingSEDView.as_view(), {}, 'imaging_sed_add'),
-<<<<<<< HEAD
+
     url(r'^sed/neurophysiology/condition/(?P<pk>\d+)/$', NeurophysiologyConditionView.as_view(), {}, 'neurophysiology_condition'),
     url(r'^sed/neurophysiology/unit/(?P<pk>\d+)/$', NeurophysiologyUnitView.as_view(), {}, 'neurophysiology_unit'),
     url(r'^sed/neurophysiology/unit_realign/$', NeurophysiologyUnitRealignView.as_view(), {}, 'neurophysiology_unit_realign'),
@@ -187,11 +182,6 @@ urlpatterns = urlpatterns + patterns('',
         'neurophysiology_export_request'),
     url(r'^sed/neurophysiology/export_request/(?P<action>\w+)/(?P<activation_key>\w+)/$', NeurophysiologySEDExportRequestResponseView.as_view(), {},
         'neurophysiology_export_response'),
-    url(r'^sed/similar/$', SimilarSEDView.as_view(), {}, 'sed_similar'),
-    url(r'^sed/search/$', SEDSearchView.as_view(), {}, 'sed_search'),
-    url(r'^sed/tag/(?P<name>[^/]+)/$', SEDTaggedView.as_view(), {}, 'sed_tagged'),
-=======
->>>>>>> issue-#097
 
     url(r'^ssr/(?P<pk>\d+)/$', SSRDetailView.as_view(), {}, 'ssr_view'),
     url(r'^ssr/(?P<pk>\d+)/delete/$', DeleteSSRView.as_view(), {}, 'ssr_delete'),
