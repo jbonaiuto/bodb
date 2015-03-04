@@ -88,8 +88,9 @@ def runBredeSearch(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(BredeBrainImagingSED.objects.filter(q).select_related('collator').distinct())
-        return list(BredeBrainImagingSED.objects.all().select_related('collator'))
+            results=list(BredeBrainImagingSED.objects.filter(q).select_related('collator').distinct())
+        else:
+            results=list(BredeBrainImagingSED.objects.all().select_related('collator'))
 
     return results
 

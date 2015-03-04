@@ -10,6 +10,7 @@ from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainI
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import get_profile, BODBView, set_context_workspace, get_active_workspace
+from bodb.views.model import CreateModelView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from bodb.views.sed import SaveCoordinateSelectionView
 from guardian.mixins import LoginRequiredMixin
@@ -281,7 +282,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['can_change_bookmark']=user.has_perm('change_bookmark',self.object)
         context['can_delete_bookmark']=user.has_perm('delete_bookmark',self.object)
         members=[]
-        for usr in self.object.group.user_set.all():
+        for usr in self.object.group.user_set.all().order_by('username'):
             subscribed_to=False
             is_admin=False
             if user.is_authenticated() and not user.is_anonymous():
@@ -294,33 +295,35 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         if context['admin']:
             context['invitations']=WorkspaceInvitation.objects.filter(workspace=self.object).select_related('invited_user','invited_by')
         context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted').select_related('author'))
-        context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object).select_related('collator')
+        context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object).select_related('collator').order_by('title')
 
         # Visibility query filter
         visibility = Document.get_security_q(user)
 
         literature=self.object.related_literature.distinct().select_related('collator').prefetch_related('authors__author')
+        literature=list(literature)
+        literature.sort(key=Literature.author_names)
         context['literatures']=Literature.get_reference_list(literature,context['workspace_literature'],
             context['fav_lit'], context['subscriptions'])
 
-        brain_regions=self.object.related_regions.distinct().select_related('nomenclature').prefetch_related('nomenclature__species')
+        brain_regions=self.object.related_regions.distinct().select_related('nomenclature').prefetch_related('nomenclature__species').order_by('name')
         context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
             context['fav_regions'])
 
-        models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author')
+        models=self.object.related_models.filter(visibility).distinct().select_related('collator').prefetch_related('authors__author').order_by('title')
         context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
             context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, user)
 
-        bops=self.object.related_bops.filter(visibility).distinct().select_related('collator')
+        bops=self.object.related_bops.filter(visibility).distinct().select_related('collator').order_by('title')
         context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, user)
 
-        generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().select_related('collator')
+        generic_seds=self.object.related_seds.filter(Q(type='generic') & visibility).distinct().select_related('collator').order_by('title')
         context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
 
-        ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
+        ws_imaging_seds=BrainImagingSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator').order_by('title')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in ws_imaging_seds]
         context['imaging_seds']=SED.get_sed_list(ws_imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
@@ -330,22 +333,22 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         else:
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
 
-        conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature')
+        conn_seds=ConnectivitySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator','target_region__nomenclature','source_region__nomenclature').order_by('title')
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
-        ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator')
+        ws_erp_seds=ERPSED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().select_related('collator').order_by('title')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in ws_erp_seds]
         context['erp_seds']=SED.get_sed_list(ws_erp_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        ws_neurophys_seds=NeurophysiologySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct()
+        ws_neurophys_seds=NeurophysiologySED.objects.filter(sed_ptr__in=self.object.related_seds.filter(visibility)).distinct().order_by('title')
         context['neurophysiology_seds']=SED.get_sed_list(ws_neurophys_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
 
-        ssrs=self.object.related_ssrs.filter(visibility).distinct().select_related('collator')
+        ssrs=self.object.related_ssrs.filter(visibility).distinct().select_related('collator').order_by('title')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
         context['activity_stream']=WorkspaceActivityItem.objects.filter(workspace=self.object).order_by('-time').select_related('user')
@@ -542,3 +545,5 @@ class DeleteWorkspaceBookmarkView(ObjectRolePermissionRequiredMixin, JSONRespons
                 'bookmark_id': kwargs.get('pk2')
             }
         return context
+
+

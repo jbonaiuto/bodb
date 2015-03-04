@@ -12,6 +12,7 @@ from bodb.forms.sed import BuildSEDFormSet
 from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, Literature, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
+from bodb.views.model import CreateModelView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
@@ -227,9 +228,6 @@ class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
         context['selected']=self.object.id in context['workspace_bops']
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
-        rrbops=RelatedBOP.get_reverse_related_bops(self.object,user)
-        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(rrbops, context['workspace_bops'],
-            context['fav_docs'], context['subscriptions'])
         return context
 
 

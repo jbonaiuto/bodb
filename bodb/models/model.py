@@ -146,7 +146,7 @@ class Model(Module):
 
     @staticmethod
     def get_literature_models(literature, user):
-        return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author')
+        return Model.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').prefetch_related('authors__author').order_by('title')
 
     @staticmethod
     def get_model_list(models, workspace_models, fav_docs, subscriptions):
@@ -160,7 +160,7 @@ class Model(Module):
 
     @staticmethod
     def get_tagged_models(name, user):
-        return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').prefetch_related('authors__author')
+        return Model.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').prefetch_related('authors__author').order_by('title')
 
     @staticmethod
     def get_sed_map(models,user):
@@ -219,6 +219,14 @@ class RelatedModel(models.Model):
         app_label='bodb'
         ordering=['model__title']
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'document': self.document.as_json(),
+            'model': self.model.as_json(),
+            'relationship': self.relationship
+        }
+
     @staticmethod
     def get_related_model_list(rmods, workspace_models, fav_docs, subscriptions):
         related_model_list=[]
@@ -231,23 +239,33 @@ class RelatedModel(models.Model):
 
     @staticmethod
     def get_related_models(document, user):
-        return RelatedModel.objects.filter(Q(Q(document=document) &
-                                             Document.get_security_q(user, field='model'))).distinct().select_related('model__collator').prefetch_related('model__authors__author')
+        related_model_list=[]
+        related_models=list(RelatedModel.objects.filter(Q(Q(document=document) &
+                                                          Document.get_security_q(user, field='model'))).distinct().select_related('model__collator').prefetch_related('model__authors__author'))
+        for related_model in related_models:
+            related_model.reverse=False
+            related_model_list.append(related_model)
+
+        reverse_related_models=RelatedModel.objects.filter(Q(Q(model=document) & Q(document__module__model__isnull=False) &
+                                                             Document.get_security_q(user, field='document'))).distinct().select_related('document__collator')
+        for related_model in reverse_related_models:
+            rmod=RelatedModel(id=related_model.id, model=Model.objects.get(id=related_model.document.id), document=related_model.model,
+                relationship=related_model.relationship)
+            rmod.reverse=True
+            related_model_list.append(rmod)
+        related_model_list.sort(key=RelatedModel.model_title)
+        return related_model_list
 
     @staticmethod
     def get_reverse_related_model_list(rrmods, workspace_models, fav_docs, subscriptions):
         reverse_related_model_list=[]
         for rrmod in rrmods:
+            rrmod.reverse=True
             selected=rrmod.document.id in workspace_models
             is_favorite=rrmod.document.id in fav_docs
             subscribed_to_user=(rrmod.document.collator.id, 'Model') in subscriptions
             reverse_related_model_list.append([selected,is_favorite,subscribed_to_user,rrmod])
         return reverse_related_model_list
-
-    @staticmethod
-    def get_reverse_related_models(model, user):
-        return RelatedModel.objects.filter(Q(Q(model=model) & Q(document__module__model__isnull=False) &
-                                             Document.get_security_q(user, field='document'))).distinct().select_related('document__collator')
 
     @staticmethod
     def get_sed_related_models(sed, user):
@@ -259,15 +277,18 @@ class RelatedModel(models.Model):
             except (Model.DoesNotExist, Model.MultipleObjectsReturned), err:
                 model=None
             if model is not None:
-                related_models.append(RelatedModel(document=sed, model=model, relationship='%s - %s' %
-                                                                                           (bsed.relationship,
-                                                                                            bsed.relevance_narrative)))
+                rmod=RelatedModel(id=-1,document=sed, model=model, relationship='%s - %s' % (bsed.relationship,
+                                                                                             bsed.relevance_narrative))
+                rmod.reverse=True
+                related_models.append(rmod)
 
         tseds=TestSED.objects.filter(Document.get_security_q(user, field='model') & Q(sed=sed)).distinct().select_related('model')
         for tsed in tseds:
-            related_models.append(RelatedModel(document=sed, model=tsed.model, relationship='%s - %s' %
-                                                                                            (tsed.relationship,
-                                                                                             tsed.relevance_narrative)))
+            rmod=RelatedModel(id=-1, document=sed, model=tsed.model, relationship='%s - %s' % (tsed.relationship,
+                                                                                               tsed.relevance_narrative))
+            rmod.reverse=True
+            related_models.append(rmod)
+        related_models.sort(key=RelatedModel.model_title)
 
         return related_models
 
@@ -275,12 +296,23 @@ class RelatedModel(models.Model):
     def get_brain_region_related_models(brain_region, user):
         related_regions=RelatedBrainRegion.objects.filter(Q(Q(document__module__model__isnull=False) &
                                                             Q(brain_region=brain_region) &
-                                                            Document.get_security_q(user, field='document'))).distinct().select_related('document')
+                                                            Document.get_security_q(user, field='document'))).distinct().select_related('document').order_by('document__title')
         related_models=[]
         for related_region in related_regions:
-            related_models.append(RelatedModel(model=Model.objects.select_related('collator').prefetch_related('authors__author').get(id=related_region.document.id),
-                relationship=related_region.relationship))
+            rmod=RelatedModel(id=-1, model=Model.objects.select_related('collator').prefetch_related('authors__author').get(id=related_region.document.id),
+                relationship=related_region.relationship)
+            rmod.reverse=True
+            related_models.append(rmod)
         return related_models
+
+    def model_title(self):
+        return self.model.__unicode__()
+
+    def model_description(self):
+        return self.model.brief_description
+
+    def get_relationship(self):
+        return self.relationship
 
 
 def compareRelatedModels(a, b):
