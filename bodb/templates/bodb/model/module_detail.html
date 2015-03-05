@@ -18,6 +18,7 @@
             clearSpan(document, 'description_errors');
 
             errors+=validateField('title', 'Title', 'title_errors');
+            errors+=validateField('parent', 'Parent', 'parent_errors');
 
             if(isDraft>0)
             {
@@ -121,6 +122,11 @@
                     <td class="myerrors" width=10%><span id="title_errors">{{ form.title.errors }}</span></td>
                 </tr>
                 <tr valign=top>
+                    <td width=20%>{{ form.parent.label_tag }}*</td>
+                    <td>{{ form.parent }}</td>
+                    <td class="myerrors" width=10%><span id="parent_errors">{{ form.parent.errors }}</span></td>
+                </tr>
+                <tr valign=top>
                     <td valign=top>{{ form.brief_description.label_tag }}*</td>
                     <td>{{ form.brief_description }}</td>
                     <td class="myerrors"><span id="description_errors">{{ form.brief_description.errors }}</span></td>
@@ -159,7 +165,6 @@
             <span id="form_errors" class="myerrors">
                 {{ form.errors }}
             </span>
-            {{ form.parent }}
             {{ form.draft }}
             {{ form.collator }}
             <br>

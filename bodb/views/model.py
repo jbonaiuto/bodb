@@ -669,6 +669,11 @@ class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
             self.object=get_object_or_404(Module.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
         return self.object
 
+    def get_form(self, form_class):
+        form=super(UpdateModuleView,self).get_form(form_class)
+        form.fields['parent'].queryset=self.object.get_root().get_descendants(include_self=True)
+        return form
+
     def get_context_data(self, **kwargs):
         context = super(UpdateModuleView,self).get_context_data(**kwargs)
         context=set_context_workspace(context, self.request)
