@@ -42,7 +42,7 @@ class ModelForm6(Form):
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
 
 class ModuleForm(DocumentForm):
-    parent = forms.ModelChoiceField(queryset=Module.objects.all(), widget=forms.HiddenInput,required=True)
+    parent = forms.ModelChoiceField(queryset=Module.objects.all(), required=True)
 
     class Meta:
         model = Module

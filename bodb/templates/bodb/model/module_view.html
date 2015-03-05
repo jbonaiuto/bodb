@@ -48,6 +48,9 @@
             <tr valign="top">
                 <td colspan="2"><strong>Tags:</strong> {{ module.tags.all|join:', ' }}</td>
             </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Parent:</strong> {% if module.parent.is_root_node %}<a href="/bodb/model/{{ module.parent.id }}/">{% else %}<a href="/bodb/module/{{ module.parent.id }}/">{% endif %}{{ module.parent }}</a></td>
+            </tr>
             <tr class="section_subheader">
                 <td colspan=2>Brief Description</td>
             </tr>
