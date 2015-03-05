@@ -6,11 +6,11 @@
             id: {{ prediction.id }},
             title: '{{ prediction.title|escapejs }}',
             brief_description: '{{ prediction.brief_description|escapejs }}',            
-            selected: {% if selected %}true{% else %}false{% endif %},
             draft: {% if prediction.draft %}true{% else %}false{% endif %},
             ssr_id: {% if prediction.ssr %}{{ prediction.ssr.id }}{% else %}-1{% endif %},
             ssr_title: {% if prediction.ssr %}'{{ prediction.ssr|escapejs }}'{% else %}''{% endif %},
             ssr_brief_description: '{{ prediction.ssr.brief_description|escapejs }}',
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
             ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
             ssr_draft: {% if prediction.ssr.draft %}true{% else %}false{% endif %}
         });
@@ -71,13 +71,13 @@
                 <td width=300px><%= _.escape(brief_description) %></td>
                 <td align=center style="width:45px">
                     {% if user.is_authenticated and not user.is_anonymous %}
-                        <% if(ssr_id>-1){ >%
+                        <% if(ssr_id>-1){ %>
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= ssr_id %>,'favIcon-<%= ssr_id %>','{{ csrf_token }}');">
                                 <img id="favIcon-<%= ssr_id %>" name="favIcon-<%= ssr_id %>" src="<% if(ssr_is_favorite){ %>{% static 'bodb/images/star.png' %}<%} else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
-                            <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_<%= ssr_id %>" value="<%= ssr_id %>" <% if(ssr_selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                            <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_<%= ssr_id %>" value="<%= ssr_id %>" <% if(ssr_selected){ %>checked=True<% } %> <% if(ssr_selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
                             <input type=hidden name="selectedSSR" id="selectedSSR_<%= ssr_id %>" value="<%= ssr_id %>"/>
-                        <% }%>
+                        <% } %>
                     {% endif %}
                 </td>
                 <td width=175px><a href="/bodb/ssr/<%= ssr_id %>/" onclick="return openInNewTab('/bodb/ssr/<%= ssr_id %>/');"><%= _.escape(ssr_title) %></a>
