@@ -109,17 +109,17 @@ class ActiveWorkspaceDetailView(LoginRequiredMixin, View):
 class WorkspaceInvitationResponseView(LoginRequiredMixin, BODBView):
     def get_context_data(self, **kwargs):
         context=super(WorkspaceInvitationResponseView,self).get_context_data(**kwargs)
-        context['invitation']=get_object_or_404(WorkspaceInvitation.objects.select_related('workspace__group','invited_user'),activation_key=context['activation_key'])
+        context['invitation']=get_object_or_404(WorkspaceInvitation.objects.select_related('workspace__group','invited_user'),activation_key=self.kwargs['activation_key'])
         return context
 
     def get(self, request, *args, **kwargs):
         context=self.get_context_data(**kwargs)
         context['invitation'].invited_user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(self.request,context['invitation'].invited_user)
-        if context['action']=='decline':
+        if self.kwargs['action']=='decline':
             context['invitation'].status='declined'
             self.template_name='bodb/workspace/workspace_invitation_decline.html'
-        elif context['action']=='accept':
+        elif self.kwargs['action']=='accept':
             context['invitation'].status='accepted'
             user=User.objects.prefetch_related('groups').get(id=context['invitation'].invited_user.id)
             # Add workspace group to user's groups
