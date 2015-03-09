@@ -7,7 +7,7 @@ In BODB, we have introduced the idea of Collaborative Workspaces (CoWos) to fasc
     :align: center
     :figclass: align-center
 
-    Workspace page
+    Workspace navigation
     
 Selecting and Creating Workspaces
 ---------------------------------
@@ -15,12 +15,12 @@ Selecting and Creating Workspaces
 Selecting a Workspace
 ^^^^^^^^^^^^^^^^^^^^^
 
-Clicking on the radio button next to a workspace will make that workspace the active workspace. In the top right hand corner, the user information displays the active workspace.
+You can select between different workspaces from the top, left hand corner of BODB where user information is displayed. To change the active works space, select from the right drop down menu the desired workspace. Then to navigate to the workspace click on the link to the left of the dropdown. 
 
 New Workspace
 ^^^^^^^^^^^^^
 
-Clicking new will allow the user to add a workspace provided a Title and Description.
+To add a new Workspace, go to the BODB insert page and click workspace, which will take you to the following menu where you provide the workspace Title and Description. Once you save it, the workspace will now show in the Change Active Workspace dropdown mentioned above.
 
 .. figure:: images/add_workspace.png
     :align: center
