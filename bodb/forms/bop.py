@@ -20,8 +20,8 @@ class RelatedBOPInlineForm(forms.ModelForm):
         model=RelatedBOP
 
 
-RelatedBOPFormSet = inlineformset_factory(Document,RelatedBOP,form=RelatedBOPInlineForm,fk_name='document',extra=0,
-    can_delete=True)
+RelatedBOPFormSet = lambda *a, **kw: inlineformset_factory(Document,RelatedBOP,form=RelatedBOPInlineForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
 class BOPRelatedBOPInlineForm(forms.ModelForm):

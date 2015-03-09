@@ -15,7 +15,7 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm, ModelForm1, ModelForm2, ModelForm6
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription, SSR, BOP, BrainRegion
 from bodb.models.ssr import Prediction
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
@@ -308,6 +308,22 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
     def get_template_names(self):
         return [MODEL_WIZARD_TEMPLATES[self.steps.current]]
 
+    def extract_formset_initial(self, data_key, form_prefix):
+        initial = {}
+        if data_key in self.storage.data:
+            for key, val in self.storage.data[data_key].iteritems():
+                if key.startswith('%s-' % form_prefix):
+                    parts = key.split('-')
+                    try:
+                        idx = int(parts[1])
+                        if not idx in initial:
+                            initial[idx] = {}
+                        initial[idx][parts[2]] = val
+                    except:
+                        pass
+        initial = [initial[key] for key in sorted(initial)]
+        return initial
+
     def get_context_data(self, form, **kwargs):
         context=super(CreateModelWizardView,self).get_context_data(form, **kwargs)
         context=set_context_workspace(context, self.request)
@@ -322,36 +338,116 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
         context['showRelatedBOPs']=True
         context['showRelatedBrainRegions']=True
         context['ispopup']=('_popup' in self.request.GET)
+        if 'create_model_wizard_view-current_step' in self.request.POST:
+            if self.request.POST['create_model_wizard_view-current_step']=='step1':
+                self.storage.data['step1_data']=self.request.POST
+                self.storage.data['literature']=self.request.POST.getlist('literature')
+            elif self.request.POST['create_model_wizard_view-current_step']=='step2':
+                self.storage.data['step2_data']=self.request.POST
+                for key,file_list in self.request.FILES.iteritems():
+                    self.storage.data[key]=file_list.name
+            elif self.request.POST['create_model_wizard_view-current_step']=='step3':
+                self.storage.data['step3_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step4':
+                self.storage.data['step4_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step5':
+                self.storage.data['step5_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step6':
+                self.storage.data['step6_data']=self.request.POST
+
         if self.steps.current=='step1':
+            model_author_initial=self.extract_formset_initial('step1_data','model_author')
             context['model_author_formset'] = ModelAuthorFormSet(queryset=ModelAuthor.objects.none(),
-                prefix='model_author')
+                initial=model_author_initial, prefix='model_author', extra=len(model_author_initial))
+            if 'literature' in self.storage.data:
+                context['references']=Literature.objects.filter(id__in=self.storage.data['literature'])
         elif self.steps.current=='step2':
-            self.storage.data['step1_data']=self.request.POST
-            self.storage.data['literature']=self.request.POST.getlist('literature')
-            context['figure_formset']=DocumentFigureFormSet(prefix='figure')
-            context['input_formset']=VariableFormSet(prefix='input')
-            context['output_formset']=VariableFormSet(prefix='output')
-            context['state_formset']=VariableFormSet(prefix='state')
-            context['module_formset'] = ModuleFormSet(prefix='module')
+            figure_initial=self.extract_formset_initial('step2_data','figure')
+            for idx in range(len(figure_initial)):
+                figure_initial[idx]['figure']=os.path.join('figures',self.storage.data['figure-%d-figure' % idx])
+            context['figure_formset']=DocumentFigureFormSet(queryset=DocumentFigure.objects.none(),
+                initial=figure_initial,prefix='figure',extra=len(figure_initial))
+            input_initial = self.extract_formset_initial('step2_data','input')
+            context['input_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=input_initial,
+                prefix='input',extra=len(input_initial))
+            output_initial = self.extract_formset_initial('step2_data','output')
+            context['output_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=output_initial,
+                prefix='output',extra=len(output_initial))
+            state_initial=self.extract_formset_initial('step2_data','state')
+            context['state_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=state_initial,
+                prefix='state',extra=len(state_initial))
+            module_initial=self.extract_formset_initial('step2_data','module')
+            context['module_formset'] = ModuleFormSet(queryset=Module.objects.none(),initial=module_initial,
+                prefix='module',extra=len(module_initial))
         elif self.steps.current=='step3':
-            self.storage.data['step2_data']=self.request.POST
-            for key,file_list in self.request.FILES.iteritems():
-                self.storage.data[key]=file_list.name
-            context['build_sed_formset']=BuildSEDFormSet(prefix='build_sed')
+            buildsed_initial=self.extract_formset_initial('step3_data','build_sed')
+            for idx in range(len(buildsed_initial)):
+                sed=SED.objects.get(id=buildsed_initial[idx]['sed'])
+                buildsed_initial[idx]['sed_title']=sed.__unicode__()
+                buildsed_initial[idx]['sed_brief_description']=sed.brief_description
+                buildsed_initial[idx]['sed_type']=sed.type
+            context['build_sed_formset']=BuildSEDFormSet(queryset=BuildSED.objects.none(),initial=buildsed_initial,
+                prefix='build_sed',extra=len(buildsed_initial))
         elif self.steps.current=='step4':
-            self.storage.data['step3_data']=self.request.POST
-            context['test_sed_formset']=TestSEDFormSet(prefix='test_sed')
+            testsed_initial=self.extract_formset_initial('step4_data','test_sed')
+            for idx in range(len(testsed_initial)):
+                sed=SED.objects.get(id=testsed_initial[idx]['sed'])
+                testsed_initial[idx]['sed_title']=sed.__unicode__()
+                testsed_initial[idx]['sed_brief_description']=sed.brief_description
+                testsed_initial[idx]['sed_type']=sed.type
+                if SSR.objects.filter(id=testsed_initial[idx]['ssr']).count():
+                    ssr=SSR.objects.get(id=testsed_initial[idx]['ssr'])
+                    testsed_initial[idx]['ssr_title']=ssr.__unicode__()
+                    testsed_initial[idx]['ssr_brief_description']=ssr.brief_description
+                    testsed_initial[idx]['ssr_type']=ssr.type
+                else:
+                    testsed_initial[idx]['ssr_title']=''
+                    testsed_initial[idx]['ssr_brief_description']=''
+                    testsed_initial[idx]['ssr_type']=''
+            context['test_sed_formset']=TestSEDFormSet(queryset=TestSED.objects.none(),initial=testsed_initial,
+                prefix='test_sed',extra=len(testsed_initial))
         elif self.steps.current=='step5':
-            self.storage.data['step4_data']=self.request.POST
-            context['prediction_formset']=PredictionFormSet(prefix='prediction')
+            prediction_initial=self.extract_formset_initial('step5_data','prediction')
+            for idx in range(len(prediction_initial)):
+                if SSR.objects.filter(id=prediction_initial[idx]['ssr']).count():
+                    ssr=SSR.objects.get(id=prediction_initial[idx]['ssr'])
+                    prediction_initial[idx]['ssr_title']=ssr.__unicode__()
+                    prediction_initial[idx]['ssr_brief_description']=ssr.brief_description
+                    prediction_initial[idx]['ssr_type']=ssr.type
+                else:
+                    prediction_initial[idx]['ssr_title']=''
+                    prediction_initial[idx]['ssr_brief_description']=''
+                    prediction_initial[idx]['ssr_type']=''
+            context['prediction_formset']=PredictionFormSet(queryset=Prediction.objects.none(),
+                initial=prediction_initial,prefix='prediction',extra=len(prediction_initial))
         elif self.steps.current=='step6':
-            self.storage.data['step5_data']=self.request.POST
-            context['related_bop_formset']=RelatedBOPFormSet(prefix='related_bop')
-            context['related_model_formset']=RelatedModelFormSet(prefix='related_model')
-            context['related_brain_region_formset']=RelatedBrainRegionFormSet(prefix='related_brain_region')
+            related_bop_initial=self.extract_formset_initial('step6_data','related_bop')
+            for idx in range(len(related_bop_initial)):
+                bop=BOP.objects.get(id=related_bop_initial[idx]['bop'])
+                related_bop_initial[idx]['bop_title']=bop.__unicode__()
+                related_bop_initial[idx]['bop_brief_description']=bop.brief_description
+            context['related_bop_formset']=RelatedBOPFormSet(queryset=RelatedBOP.objects.none(),
+                initial=related_bop_initial,prefix='related_bop',extra=len(related_bop_initial))
+            related_model_initial=self.extract_formset_initial('step6_data','related_model')
+            for idx in range(len(related_model_initial)):
+                model=Model.objects.get(id=related_model_initial[idx]['model'])
+                related_model_initial[idx]['model_title']=model.__unicode__()
+                related_model_initial[idx]['model_brief_description']=model.brief_description
+            context['related_model_formset']=RelatedModelFormSet(queryset=RelatedModel.objects.none(),
+                initial=related_model_initial,prefix='related_model',extra=len(related_model_initial))
+            related_region_initial=self.extract_formset_initial('step6_data','related_brain_region')
+            for idx in range(len(related_region_initial)):
+                region=BrainRegion.objects.get(id=related_region_initial[idx]['brain_region'])
+                related_region_initial[idx]['brain_region_name']=region.__unicode__()
+                related_region_initial[idx]['brain_region_nomenclature']=region.nomenclature.__unicode__()
+                related_region_initial[idx]['brain_region_nomenclature_species']=region.nomenclature.species_name()
+            context['related_brain_region_formset']=RelatedBrainRegionFormSet(queryset=RelatedBrainRegion.objects.none(),
+                initial=related_region_initial,prefix='related_brain_region',extra=len(related_region_initial))
         return context
 
     def done(self, form_list, **kwargs):
+        self.storage.data['step6_data']=self.request.POST
+
         model=Model(collator=self.request.user, last_modified_by=self.request.user,
             title=form_list[0].cleaned_data['title'], brief_description=form_list[0].cleaned_data['brief_description'],
             narrative=form_list[1].cleaned_data['narrative'], execution_url=form_list[0].cleaned_data['execution_url'],
@@ -469,7 +565,7 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
             prediction.save()
 
         # save related BOPs
-        related_bop_formset=RelatedBOPFormSet(self.request.POST, prefix='related_bop')
+        related_bop_formset=RelatedBOPFormSet(self.storage.data['step6_data'], prefix='related_bop')
         related_bop_formset.instance=model
         for related_bop_form in related_bop_formset.forms:
             if not related_bop_form in related_bop_formset.deleted_forms:
@@ -478,7 +574,7 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
                 related_bop.save()
 
         # save related Models
-        related_model_formset=RelatedModelFormSet(self.request.POST, prefix='related_model')
+        related_model_formset=RelatedModelFormSet(self.storage.data['step6_data'], prefix='related_model')
         related_model_formset.instance=model
         for related_model_form in related_model_formset.forms:
             if not related_model_form in related_model_formset.deleted_forms:
@@ -487,7 +583,7 @@ class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
                 related_model.save()
 
         # save related brain regions
-        related_brain_region_formset=RelatedBrainRegionFormSet(self.request.POST, prefix='related_brain_region')
+        related_brain_region_formset=RelatedBrainRegionFormSet(self.storage.data['step6_data'], prefix='related_brain_region')
         related_brain_region_formset.instance=model
         for related_brain_region_form in related_brain_region_formset.forms:
             if not related_brain_region_form in related_brain_region_formset.deleted_forms:

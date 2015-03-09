@@ -35,8 +35,8 @@ class PredictionInlineForm(forms.ModelForm):
         exclude=('tags',)
 
 
-PredictionFormSet = inlineformset_factory(Model,Prediction,form=PredictionInlineForm, fk_name='model',can_delete=True,
-    extra=0)
+PredictionFormSet = lambda *a, **kw: inlineformset_factory(Model,Prediction,form=PredictionInlineForm, fk_name='model',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
 class SSRForm(DocumentForm):

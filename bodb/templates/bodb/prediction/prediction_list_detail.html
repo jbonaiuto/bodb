@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addPrediction(id, title, brief_description, collator, draft, pub, ssr, ssr_title, ssr_brief_description,
                            ssr_type)
@@ -56,14 +57,24 @@
     
     $(document).ready(function(){
         {% for prediction_form in prediction_formset.forms %}
-            addPrediction({{ prediction_form.instance.id }},
-                    '{{ prediction_form.instance.title|escapejs }}',
-                    '{{ prediction_form.instance.brief_description|escapejs }}', {{ prediction_form.instance.collator.id }},
-                    {{ prediction_form.instance.draft }}, {{ prediction_form.instance.public }}, 
-                    {% if prediction_form.instance.ssr %}{{ prediction_form.instance.ssr.id }},
-                    '{{ prediction_form.instance.ssr.title|escapejs }}',
-                    '{{ prediction_form.instance.ssr.brief_description|escapejs }}',
-                    '{{ prediction_form.instance.ssr.type|escapejs }}'{% else %}'','','',''{% endif %});
+            {% if prediction_form.instance.id %}
+                addPrediction({{ prediction_form.instance.id }},
+                        '{{ prediction_form.instance.title|escapejs }}',
+                        '{{ prediction_form.instance.brief_description|escapejs }}', {{ prediction_form.instance.collator.id }},
+                        {{ prediction_form.instance.draft }}, {{ prediction_form.instance.public }},
+                        {% if prediction_form.instance.ssr %}{{ prediction_form.instance.ssr.id }},
+                        '{{ prediction_form.instance.ssr.title|escapejs }}',
+                        '{{ prediction_form.instance.ssr.brief_description|escapejs }}',
+                        '{{ prediction_form.instance.ssr.type|escapejs }}'{% else %}'','','',''{% endif %});
+            {% else %}
+                addPrediction('','{{ prediction_form.initial|lookup:'title'|escapejs }}',
+                        '{{ prediction_form.initial|lookup:'brief_description'|escapejs }}',
+                        '', '', '',
+                        {{ prediction_form.initial|lookup:'ssr' }},
+                        '{{ prediction_form.initial|lookup:'ssr_title'|escapejs }}',
+                        '{{ prediction_form.initial|lookup:'ssr_brief_description'|escapejs }}',
+                        '{{ prediction_form.initial|lookup:'ssr_type'|escapejs }}');
+            {% endif %}
         {% endfor %}
     });
 </script>

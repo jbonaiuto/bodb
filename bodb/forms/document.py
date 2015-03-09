@@ -37,5 +37,5 @@ class DocumentFigureForm(forms.ModelForm):
     class Meta:
         model=DocumentFigure
 
-DocumentFigureFormSet = inlineformset_factory(Document, DocumentFigure, form=DocumentFigureForm, fk_name='document',
-    extra=0, can_delete=True, can_order=True)
+DocumentFigureFormSet = lambda *a, **kw: inlineformset_factory(Document,DocumentFigure,form=DocumentFigureForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
