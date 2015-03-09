@@ -490,9 +490,9 @@ class UpdateWorkspaceUserView(ObjectRolePermissionRequiredMixin,SingleObjectTemp
         context = self.get_context_data()
         for permission in workspace_permissions:
             if context[permission]:
-                assign_perm('%s' % permission, self.object, context['workspace'])
+                assign_perm('%s' % permission, context['user'], context['workspace'])
             else:
-                remove_perm('%s' % permission, self.object, context['workspace'])
+                remove_perm('%s' % permission, context['user'], context['workspace'])
 
         redirect_url='%s' % reverse('workspace_user_view', kwargs={'pk': self.object.id, 'id': context['workspace'].id})
         if context['ispopup']:
