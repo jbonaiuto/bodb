@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addInput(id, name, data_type, description){
         var count = $('#inputs').children().length;
@@ -169,20 +170,46 @@
 
     $(document).ready(function(){
         {% for input_form in input_formset.forms %}
-            addInput({{ input_form.instance.id }}, '{{ input_form.instance.name|escapejs }}',
-                    '{{ input_form.instance.data_type|escapejs }}', '{{ input_form.instance.description|escapejs }}');
+            {% if input_form.instance.id %}
+                addInput({{ input_form.instance.id }}, '{{ input_form.instance.name|escapejs }}',
+                        '{{ input_form.instance.data_type|escapejs }}',
+                        '{{ input_form.instance.description|escapejs }}');
+            {% else %}
+                addInput('', '{{ input_form.initial|lookup:'name'|escapejs }}',
+                        '{{ input_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ input_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
         {% endfor %}
         {% for output_form in output_formset.forms %}
-            addOutput({{ output_form.instance.id }}, '{{ output_form.instance.name|escapejs }}',
-                    '{{ output_form.instance.data_type|escapejs }}', '{{ output_form.instance.description|escapejs }}');
+            {% if output_form.instance.id %}
+                addOutput({{ output_form.instance.id }}, '{{ output_form.instance.name|escapejs }}',
+                        '{{ output_form.instance.data_type|escapejs }}',
+                        '{{ output_form.instance.description|escapejs }}');
+            {% else %}
+                addOutput('', '{{ output_form.initial|lookup:'name'|escapejs }}',
+                        '{{ output_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ output_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
         {% endfor %}
         {% for state_form in state_formset.forms %}
-            addState({{ state_form.instance.id }}, '{{ state_form.instance.name|escapejs }}',
-                    '{{ state_form.instance.data_type|escapejs }}', '{{ state_form.instance.description|escapejs }}');
+            {% if state_form.instance.id %}
+                addState({{ state_form.instance.id }}, '{{ state_form.instance.name|escapejs }}',
+                        '{{ state_form.instance.data_type|escapejs }}',
+                        '{{ state_form.instance.description|escapejs }}');
+            {% else %}
+                addState('', '{{ state_form.initial|lookup:'name'|escapejs }}',
+                        '{{ state_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ state_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
         {% endfor %}
         {% for module_form in module_formset.forms %}
-            addSubmodule({{ module_form.instance.id }}, '{{ module_form.instance.title|escapejs }}',
-                    '{{ module_form.instance.brief_description|escapejs }}');
+            {% if module_form.instance.id %}
+                addSubmodule({{ module_form.instance.id }}, '{{ module_form.instance.title|escapejs }}',
+                        '{{ module_form.instance.brief_description|escapejs }}');
+            {% else %}
+                addSubmodule('', '{{ module_form.initial|lookup:'title'|escapejs }}',
+                        '{{ module_form.initial|lookup:'brief_description'|escapejs }}');
+            {% endif %}
         {% endfor %}
     });
 </script>

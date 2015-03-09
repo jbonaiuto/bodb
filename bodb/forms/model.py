@@ -73,8 +73,8 @@ class ModelAuthorInlineForm(forms.ModelForm):
         model = ModelAuthor
 
 
-ModelAuthorFormSet=modelformset_factory(ModelAuthor, form=ModelAuthorInlineForm, can_delete=True, extra=0,
-    exclude=('author',))
+ModelAuthorFormSet = lambda *a, **kw: modelformset_factory(ModelAuthor,form=ModelAuthorInlineForm, exclude=('author',),
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 class VariableInlineForm(forms.ModelForm):
     module = forms.ModelChoiceField(queryset=Module.objects.all(),widget=forms.HiddenInput,required=False)
@@ -86,8 +86,9 @@ class VariableInlineForm(forms.ModelForm):
         model=Variable
 
 
-VariableFormSet = inlineformset_factory(Module,Variable,form=VariableInlineForm, fk_name='module',extra=0,
-    can_delete=True)
+VariableFormSet = lambda *a, **kw: inlineformset_factory(Module,Variable,form=VariableInlineForm, fk_name='module',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
+
 
 class ModuleInlineForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
@@ -98,7 +99,8 @@ class ModuleInlineForm(forms.ModelForm):
         exclude=('tags','collator','draft','public')
 
 
-ModuleFormSet=inlineformset_factory(Module, Module, form=ModuleInlineForm, fk_name='parent', can_delete=True, extra=0)
+ModuleFormSet = lambda *a, **kw: inlineformset_factory(Module,Module,form=ModuleInlineForm, fk_name='parent',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
 class RelatedModelInlineForm(forms.ModelForm):
@@ -110,8 +112,9 @@ class RelatedModelInlineForm(forms.ModelForm):
         model=RelatedModel
 
 
-RelatedModelFormSet = inlineformset_factory(Document,RelatedModel,form=RelatedModelInlineForm,fk_name='document',extra=0,
-    can_delete=True)
+RelatedModelFormSet = lambda *a, **kw: inlineformset_factory(Document,RelatedModel,form=RelatedModelInlineForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
+
 
 class ModelReportForm(Form):
     format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')

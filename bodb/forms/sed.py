@@ -141,8 +141,9 @@ class BuildSEDInlineForm(forms.ModelForm):
         model=BuildSED
 
 
-BuildSEDFormSet = inlineformset_factory(Document,BuildSED,form=BuildSEDInlineForm, fk_name='document',extra=0,
-    can_delete=True)
+BuildSEDFormSet = lambda *a, **kw: inlineformset_factory(Document,BuildSED,form=BuildSEDInlineForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
+
 
 class TestSEDInlineForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
@@ -156,8 +157,8 @@ class TestSEDInlineForm(forms.ModelForm):
         model=TestSED
 
 
-TestSEDFormSet = inlineformset_factory(Model,TestSED,form=TestSEDInlineForm, fk_name='model',extra=0,
-    can_delete=True)
+TestSEDFormSet = lambda *a, **kw: inlineformset_factory(Model,TestSED,form=TestSEDInlineForm, fk_name='model',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
 class NeurophysiologySEDExportRequestForm(forms.Form):

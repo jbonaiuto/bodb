@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addBOPMultiple(related_bop_id, relationship, relevance_narrative, bop_id, data){
         var count = $('#related_bops').children().length;
@@ -38,10 +39,18 @@
 
     $(document).ready(function(){
         {% for related_bop_form in related_bop_formset.forms %}
-            addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship|escapejs }}',
-                    '{{ related_bop_form.instance.relevance_narrative|escapejs }}',
-                    {{ related_bop_form.instance.bop.id }}, ['{{ related_bop_form.instance.bop.title|escapejs }}',
-                        '{{ related_bop_form.instance.bop.brief_description|escapejs }}'])
+            {% if related_bop_form.instance.id %}
+                addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship|escapejs }}',
+                        '{{ related_bop_form.instance.relevance_narrative|escapejs }}',
+                        {{ related_bop_form.instance.bop.id }}, ['{{ related_bop_form.instance.bop.title|escapejs }}',
+                            '{{ related_bop_form.instance.bop.brief_description|escapejs }}']);
+            {% else %}
+                addBOPMultiple('', '{{ related_bop_form.initial|lookup:'relationship'|escapejs }}',
+                        '{{ related_bop_form.initial|lookup:'relevance_narrative'|escapejs }}',
+                        {{ related_bop_form.initial|lookup:'bop' }},
+                        ['{{ related_bop_form.initial|lookup:'bop_title'|escapejs }}',
+                            '{{ related_bop_form.initial|lookup:'bop_brief_description'|escapejs }}']);
+            {% endif %}
         {% endfor %}
     })
 </script>
