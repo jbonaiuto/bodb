@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addFigureForm(id, file, title, caption){
         var count = $('#figures').children().length;
@@ -45,8 +46,14 @@
 
     $(document).ready(function(){
         {% for figure_form in figure_formset.forms %}
-            addFigureForm({{ figure_form.instance.id }},'{{ figure_form.instance.figure.name|escapejs }}',
-                    '{{ figure_form.instance.title|escapejs }}','{{ figure_form.instance.caption|escapejs }}');
+            {% if figure_form.instance.id %}
+                addFigureForm({{ figure_form.instance.id }},'{{ figure_form.instance.figure.name|escapejs }}',
+                        '{{ figure_form.instance.title|escapejs }}','{{ figure_form.instance.caption|escapejs }}');
+            {% else %}
+                addFigureForm('','{{ figure_form.initial|lookup:'figure'|escapejs }}',
+                        '{{ figure_form.initial|lookup:'title'|escapejs }}',
+                        '{{ figure_form.initial|lookup:'caption'|escapejs }}');
+            {% endif %}
         {% endfor %}
     });
 </script>

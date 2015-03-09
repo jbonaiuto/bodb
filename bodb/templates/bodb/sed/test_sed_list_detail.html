@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addNewTestingSED(sed_type)
     {
@@ -29,15 +30,29 @@
     $(document).ready(function()
     {
         {% for test_sed_form in test_sed_formset.forms %}
-            addTestSEDMultiple('{{ test_sed_form.instance.id }}', '{{ test_sed_form.instance.relationship|escapejs }}',
-                    '{{ test_sed_form.instance.relevance_narrative|escapejs }}', {{ test_sed_form.instance.sed.id }},
-                    ['{{ test_sed_form.instance.sed.title|escapejs }}',
-                        '{{ test_sed_form.instance.sed.brief_description|escapejs }}',
-                        '{{ test_sed_form.instance.sed.type|escapejs }}'],
-                    {{ test_sed_form.instance.ssr.id }},
-                    ['{{ test_sed_form.instance.ssr.title|escapejs }}',
-                        '{{ test_sed_form.instance.ssr.brief_description|escapejs }}',
-                        '{{ test_sed_form.instance.ssr.type|escapejs }}'])
+            {% if test_sed_form.instance.id %}
+                addTestSEDMultiple('{{ test_sed_form.instance.id }}',
+                        '{{ test_sed_form.instance.relationship|escapejs }}',
+                        '{{ test_sed_form.instance.relevance_narrative|escapejs }}', {{ test_sed_form.instance.sed.id }},
+                        ['{{ test_sed_form.instance.sed.title|escapejs }}',
+                            '{{ test_sed_form.instance.sed.brief_description|escapejs }}',
+                            '{{ test_sed_form.instance.sed.type|escapejs }}'],
+                        {{ test_sed_form.instance.ssr.id }},
+                        ['{{ test_sed_form.instance.ssr.title|escapejs }}',
+                            '{{ test_sed_form.instance.ssr.brief_description|escapejs }}',
+                            '{{ test_sed_form.instance.ssr.type|escapejs }}']);
+            {% else %}
+                addTestSEDMultiple('', '{{ test_sed_form.initial|lookup:'relationship'|escapejs }}',
+                        '{{ test_sed_form.initial|lookup:'relevance_narrative'|escapejs }}',
+                        {{ test_sed_form.initial|lookup:'sed' }},
+                        ['{{ test_sed_form.initial|lookup:'sed_title'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'sed_brief_description'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'sed_type'|escapejs }}'],
+                        {{ test_sed_form.initial|lookup:'ssr' }},
+                        ['{{ test_sed_form.initial|lookup:'ssr_title'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'ssr_brief_description'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'ssr_type'|escapejs }}']);
+            {% endif %}
         {% endfor %}
     });
 </script>

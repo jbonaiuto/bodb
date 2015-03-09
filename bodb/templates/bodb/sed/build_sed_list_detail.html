@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addNewBuildingSED(sed_type)
     {
@@ -11,11 +12,22 @@
     $(document).ready(function()
     {
         {% for build_sed_form in build_sed_formset.forms %}
-            addBuildSEDMultiple('{{ build_sed_form.instance.id }}', '{{ build_sed_form.instance.relationship|escapejs }}',
-                    '{{ build_sed_form.instance.relevance_narrative|escapejs }}', {{ build_sed_form.instance.sed.id }},
-                    ['{{ build_sed_form.instance.sed.title|escapejs }}',
-                        '{{ build_sed_form.instance.sed.brief_description|escapejs }}',
-                        '{{ build_sed_form.instance.sed.type|escapejs }}'])
+            {% if build_sed_form.instance.id %}
+                addBuildSEDMultiple('{{ build_sed_form.instance.id }}',
+                        '{{ build_sed_form.instance.relationship|escapejs }}',
+                        '{{ build_sed_form.instance.relevance_narrative|escapejs }}',
+                        {{ build_sed_form.instance.sed.id }},
+                        ['{{ build_sed_form.instance.sed.title|escapejs }}',
+                            '{{ build_sed_form.instance.sed.brief_description|escapejs }}',
+                            '{{ build_sed_form.instance.sed.type|escapejs }}']);
+            {% else %}
+                addBuildSEDMultiple('', '{{ build_sed_form.initial|lookup:'relationship'|escapejs }}',
+                        '{{ build_sed_form.initial|lookup:'relevance_narrative'|escapejs }}',
+                        {{ build_sed_form.initial|lookup:'sed' }},
+                        ['{{ build_sed_form.initial|lookup:'sed_title'|escapejs }}',
+                            '{{ build_sed_form.initial|lookup:'sed_brief_description'|escapejs }}',
+                            '{{ build_sed_form.initial|lookup:'sed_type'|escapejs }}'])
+            {% endif %}
         {% endfor %}
     });
 </script>

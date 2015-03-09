@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function add{{ groupName }}Author(id, author_id, first_name, middle_name, last_name)
     {
@@ -14,10 +15,16 @@
 
     $(document).ready(function(){
         {% for author_form in author_formset.forms %}
-            add{{ groupName }}Author({{ author_form.instance.id }},{{ author_form.instance.author.id }},
-                    '{{ author_form.instance.author.first_name|escapejs }}',
-                    '{{ author_form.instance.author.middle_name|escapejs }}',
-                    '{{ author_form.instance.author.last_name|escapejs }}');
+            {% if author_form.instance.id %}
+                add{{ groupName }}Author({{ author_form.instance.id }},{{ author_form.instance.author.id }},
+                        '{{ author_form.instance.author.first_name|escapejs }}',
+                        '{{ author_form.instance.author.middle_name|escapejs }}',
+                        '{{ author_form.instance.author.last_name|escapejs }}');
+            {% else %}
+                add{{ groupName }}Author('','','{{ author_form.initial|lookup:'author_first_name'|escapejs }}',
+                        '{{ author_form.initial|lookup:'author_middle_name'|escapejs }}',
+                        '{{ author_form.initial|lookup:'author_last_name'|escapejs }}');
+            {% endif %}
         {% endfor %}
     });
 </script>

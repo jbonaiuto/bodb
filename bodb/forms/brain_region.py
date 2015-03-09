@@ -24,5 +24,5 @@ class RelatedBrainRegionInlineForm(forms.ModelForm):
         model=RelatedBrainRegion
 
 
-RelatedBrainRegionFormSet = inlineformset_factory(Document,RelatedBrainRegion,form=RelatedBrainRegionInlineForm,
-    fk_name='document',extra=0, can_delete=True)
+RelatedBrainRegionFormSet = lambda *a, **kw: inlineformset_factory(Document,RelatedBrainRegion,
+    form=RelatedBrainRegionInlineForm, fk_name='document', extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)

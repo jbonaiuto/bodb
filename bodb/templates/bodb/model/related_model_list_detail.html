@@ -1,3 +1,4 @@
+{% load bodb_extras %}
 <script type="text/javascript">
     function addModelMultiple(id, relationship, model_id, data){
         var count = $('#related_models').children().length;
@@ -24,10 +25,18 @@
 
     $(document).ready(function(){
         {% for related_model_form in related_model_formset.forms %}
-            addModelMultiple({{ related_model_form.instance.id }},
-                    '{{ related_model_form.instance.relationship|escapejs }}',
-                    {{ related_model_form.instance.model.id }},
-                    ['{{ related_model_form.instance.model.title|escapejs }}', '{{ related_model_form.instance.model.brief_description|escapejs }}']);
+            {% if related_model_form.instance.id %}
+                addModelMultiple({{ related_model_form.instance.id }},
+                        '{{ related_model_form.instance.relationship|escapejs }}',
+                        {{ related_model_form.instance.model.id }},
+                        ['{{ related_model_form.instance.model.title|escapejs }}', '{{ related_model_form.instance.model.brief_description|escapejs }}']);
+            {% else %}
+                addModelMultiple('',
+                        '{{ related_model_form.initial|lookup:'relationship'|escapejs }}',
+                        {{ related_model_form.initial|lookup:'model' }},
+                        ['{{ related_model_form.initial|lookup:'model_title'|escapejs }}',
+                            '{{ related_model_form.initial|lookup:'model_brief_description'|escapejs }}']);
+            {% endif %}
         {% endfor %}
     });
 </script>
