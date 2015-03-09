@@ -100,7 +100,7 @@
                 <td><h1><img height=55 src="{% static 'bodb/images/uscbp.png' %}"/> <a href="/bodb/">BODB</a></h1></td>
                 <td align=left>
                     <div id="user_info">
-                        {% if user.is_authenticated and not user.is_anonymous  %}
+                        {% if user.is_authenticated and not user.is_anonymous and user.id > -1  %}
                             Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>, <a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
                             <br>[<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ active_workspace.title }}</span></a>] [Change Active Workspace: <select id="id_active_workspace_select" name="active_workspace_select" onchange="selectActiveWorkspace(this.value,'{{ csrf_token }}')">{% for workspace in profile.get_workspaces %}<option value="{{ workspace.id }}" {% if workspace.id == active_workspace.id %}selected{% endif %}>{{ workspace.title|truncatechars:25 }}</option>{% endfor %}</select>]
                         {% else %}
