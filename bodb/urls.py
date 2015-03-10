@@ -10,7 +10,7 @@ from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, Fav
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, CreateModelWizardView, MODEL_WIZARD_FORMS
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
-from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView
+from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView, ModuleReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
 from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, NeurophysiologyConditionView, NeurophysiologyUnitView, NeurophysiologyUnitRealignView, NeurophysiologyConditionPopulationRealignView, NeurophysiologySEDExportView, NeurophysiologySEDExportRequestView, NeurophysiologySEDExportRequestResponseView
 from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
@@ -126,10 +126,10 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^model/search/$', ModelSearchView.as_view(), {}, 'model_search'),
     url(r'^model/tag/(?P<name>[^/]+)/$', ModelTaggedView.as_view(), {}, 'model_tagged'),
 
-
     url(r'^module/(?P<pk>\d+)/$', ModuleDetailView.as_view(), {}, 'module_view'),
     url(r'^module/(?P<pk>\d+)/delete/$', DeleteModuleView.as_view(), {}, 'module_delete'),
     url(r'^module/(?P<pk>\d+)/edit/$', UpdateModuleView.as_view(), {}, 'module_edit'),
+    url(r'^module/(?P<pk>\d+)/report/$', ModuleReportView.as_view(), {}, 'module_report'),
 
     url(r'^prediction/(?P<pk>\d+)/$', PredictionDetailView.as_view(), {}, 'prediction_view'),
     url(r'^prediction/(?P<pk>\d+)/delete/$', DeletePredictionView.as_view(), {}, 'prediction_delete'),

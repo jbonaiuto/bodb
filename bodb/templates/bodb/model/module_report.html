@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Module Report</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Module Report: {{ module }}</h2>
+        <form id="moduleReportForm" method="post" action="">
+            {% csrf_token %}
+            Select what to include in the report
+            <table class="tab_panel">
+                <tr class="even_row">
+                    <td>{{ form.figure_display }}</td>
+                    <td>Figures</td>
+                </tr>
+                <tr class="odd_row">
+                    <td>{{ form.narrative_display }}</td>
+                    <td>Narrative</td>
+                </tr>
+            </table>
+            Format:&nbsp;{{ form.format }}
+            <br>
+            <input class="btn" type="submit" value="Generate Report" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        </form>
+    </div>
+{% endblock %}
