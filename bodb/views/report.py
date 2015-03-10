@@ -12,7 +12,7 @@ from django.views.generic import FormView
 from bodb.forms.bop import BOPReportForm
 from bodb.forms.ssr import SSRReportForm
 from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRelatedBops, compareBuildSEDs, compareRelatedBrainRegions, Literature, BuildSED, RelatedBOP, RelatedModel, RelatedBrainRegion, DocumentFigure, Variable, Model, Module, TestSED, Prediction, compareVariables, compareModules, SED, SSR, BrainImagingSED, SEDCoord, compareTestSEDs
-from bodb.forms.model import ModelReportForm
+from bodb.forms.model import ModelReportForm, ModuleReportForm
 from bodb.forms.sed import SEDReportForm
 from bodb.views.main import set_context_workspace
 from uscbp.image_utils import get_thumbnail
@@ -130,6 +130,7 @@ class BOPReportView(FormView):
             doc.build(elements)
         return response
 
+
 class ModelReportView(FormView):
     form_class = ModelReportForm
     template_name = 'bodb/model/model_report.html'
@@ -220,6 +221,59 @@ class ModelReportView(FormView):
                     doc=sed_report_rtf(tsed_context, display_settings, doc=doc)
                 elif format=='pdf':
                     elements=sed_report_pdf(tsed_context, display_settings, elements=elements)
+
+        if format=='rtf':
+            DR = Renderer()
+            DR.Write(doc,response)
+        elif format=='pdf':
+            doc = SimpleDocTemplate(response)
+            doc.build(elements)
+
+        return response
+
+
+class ModuleReportView(FormView):
+    form_class = ModuleReportForm
+    template_name = 'bodb/model/module_report.html'
+
+    def get_context_data(self, **kwargs):
+        context=super(ModuleReportView,self).get_context_data(**kwargs)
+        context['module']=get_object_or_404(Module, id=self.kwargs.get('pk',None))
+        # load model, submodules and variables
+        context['figures'] = DocumentFigure.objects.filter(document=context['module']).order_by('order')
+        context['input_ports'] = list(Variable.objects.filter(var_type='Input',module=context['module']))
+        context['output_ports'] = list(Variable.objects.filter(var_type='output', module=context['module']))
+        context['states'] = list(Variable.objects.filter(var_type='state', module=context['module']))
+        context['modules'] = list(Module.objects.filter(parent=context['module']))
+        context['all_submodules'] = list(context['module'].get_descendants().all())
+
+        context['input_ports'].sort(compareVariables)
+        context['output_ports'].sort(compareVariables)
+        context['states'].sort(compareVariables)
+        context['modules'].sort(compareModules)
+        context['all_submodules'].sort(compareModules)
+
+        context['ispopup']='_popup' in self.request.GET
+
+        return context
+
+    def form_valid(self, form):
+        context=self.get_context_data()
+
+        format = form.cleaned_data['format']
+
+        display_settings={
+            'figuredisp': int(form.cleaned_data['figure_display']),
+            'narrativedisp': int(form.cleaned_data['narrative_display']),
+        }
+
+        response = HttpResponse(mimetype='application/%s' % format)
+        response['Content-Disposition'] = 'attachment; filename=Module_Report.%s' % format
+
+        if format=='rtf':
+            doc=module_report_rtf(context, display_settings)
+        elif format=='pdf':
+            elements=module_report_pdf(context, display_settings)
 
         if format=='rtf':
             DR = Renderer()
@@ -858,8 +912,6 @@ def get_module_architecture_table_rtf(ss, context, display_settings):
 
 
 def model_report_rtf(context, display_settings, doc=None):
-
-
     ##############################################################################
 
     # Create the document
@@ -1143,6 +1195,116 @@ def model_report_rtf(context, display_settings, doc=None):
         reference_section_rtf(section, ss, context['references'])
 
     return doc
+
+
+
+def module_report_rtf(context, display_settings, doc=None):
+    ##############################################################################
+
+    # Create the document
+    if doc is None:
+        doc = PyRTF.Elements.Document()
+    ss = doc.StyleSheet
+    NormalText = TextStyle( TextPropertySet( ss.Fonts.Arial, 22 ) )
+    NormalText.TextPropertySet.SetSize(22).SetBold(True).SetUnderline(False).SetItalic(False)
+    ps = ParagraphStyle( 'Heading 5', NormalText.Copy(), ParagraphPropertySet( space_before = 60, space_after  = 60 ) )
+    ss.ParagraphStyles.append(ps)
+    NormalText.TextPropertySet.SetSize(24).SetBold(True).SetUnderline(True).SetItalic(False)
+    ps = ParagraphStyle( 'Heading 4', NormalText.Copy(), ParagraphPropertySet( space_before = 60, space_after  = 60 ) )
+    ss.ParagraphStyles.append(ps)
+    NormalText.TextPropertySet.SetSize(26).SetBold(True).SetItalic(False).SetUnderline(False)
+    ps = ParagraphStyle( 'Heading 3', NormalText.Copy(), ParagraphPropertySet( space_before = 240, space_after  = 60 ) )
+    ss.ParagraphStyles.append(ps)
+    NormalText.TextPropertySet.SetSize(28).SetBold(True).SetItalic(False).SetUnderline(False)
+    ps = ParagraphStyle( 'Heading 2', NormalText.Copy(), ParagraphPropertySet( space_before = 240, space_after  = 60 ) )
+    ss.ParagraphStyles.append(ps)
+    NormalText.TextPropertySet.SetSize(32).SetBold(True).SetItalic(False).SetUnderline(False)
+    ps = ParagraphStyle( 'Heading 1', NormalText.Copy(), ParagraphPropertySet( space_before = 240, space_after  = 60 ) )
+    ss.ParagraphStyles.append(ps)
+    section = Section()
+    doc.Sections.append( section )
+
+    #print module title
+    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
+    p.append('Module: %s' % unicode(context['module'].title).encode('utf8','replace'))
+    section.append(p)
+
+    table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
+    table.SetGapBetweenCells(0)
+
+    #print model description
+    c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Brief Description *'), thin_frame)
+    c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(context['module'].brief_description).encode('utf8','replace')), thin_frame)
+    c2.SetSpan(2)
+    table.AddRow(c1, c2)
+
+    # Narrative
+    if display_settings['narrativedisp'] == 1 and context['module'].narrative and len(context['module'].narrative):
+        c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Narrative *'), thin_frame)
+        c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(context['module'].narrative).encode('utf8','replace')), thin_frame)
+        c2.SetSpan(2)
+        table.AddRow(c1, c2)
+
+    # Tags
+    c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Tags'), thin_frame)
+    c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(', '.join(context['module'].tags.names())).encode('utf8','replace')), thin_frame)
+    c2.SetSpan(2)
+    table.AddRow(c1, c2)
+
+    section.append(table)
+
+    if (display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures'])) or\
+       (context['input_ports'] and len(context['input_ports'])) or\
+       (context['output_ports'] and len(context['output_ports'])) or (context['states'] and len(context['states'])) or\
+       (context['modules'] and len(context['modules'])):
+        #print architecture
+        p = PyRTF.Paragraph(ss.ParagraphStyles.Heading4)
+        p.append("Architecture")
+        section.append(p)
+
+        table = get_module_architecture_table_rtf(ss, context, display_settings)
+
+        section.append(table)
+
+    if context['all_submodules'] and len(context['all_submodules']):
+        for submodule in context['all_submodules']:
+            p=PyRTF.Paragraph(ss.ParagraphStyles.Heading4)
+            p.append(unicode('Submodule: %s' % submodule.title).encode('utf8','replace'))
+            section.append(p)
+            table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
+            table.SetGapBetweenCells(0)
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Brief Description *'), thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(submodule.brief_description).encode('utf8','replace')), thin_frame)
+            c2.SetSpan(2)
+            table.AddRow(c1, c2)
+            if display_settings['narrativedisp'] == 1 and submodule.narrative and len(submodule.narrative):
+                c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Narrative *'), thin_frame)
+                c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(submodule.narrative).encode('utf8','replace')), thin_frame)
+                c2.SetSpan(2)
+                table.AddRow(c1, c2)
+
+            # Tags
+            c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Tags'), thin_frame)
+            c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(', '.join(submodule.tags.names())).encode('utf8','replace')), thin_frame)
+            c2.SetSpan(2)
+            table.AddRow(c1, c2)
+            section.append(table)
+            module_figures = DocumentFigure.objects.filter(document=submodule).order_by('order')
+            input_ports = list(Variable.objects.filter(var_type__iexact='Input',module=submodule))
+            output_ports = list(Variable.objects.filter(var_type__iexact='output', module=submodule))
+            states = list(Variable.objects.filter(var_type__iexact='state', module=submodule))
+            modules = list(Module.objects.filter(parent=submodule))
+            input_ports.sort(compareVariables)
+            output_ports.sort(compareVariables)
+            states.sort(compareVariables)
+            modules.sort(compareModules)
+            table=get_module_architecture_table_rtf(ss, {'input_ports': input_ports, 'output_ports': output_ports,
+                                                         'states': states, 'figures': module_figures, 'modules':modules},
+                display_settings)
+            section.append(table)
+
+    return doc
+
 
 
 def get_module_architecture_table_pdf(context, display_settings):
@@ -1531,6 +1693,100 @@ def model_report_pdf(context, display_settings, elements=None):
     # References
     if display_settings['referencedisp'] and context['references'] and len(context['references']) :
         elements=reference_section_pdf(elements, context['references'])
+
+    return elements
+
+
+def module_report_pdf(context, display_settings, elements=None):
+    ##############################################################################
+    if elements is None:
+        elements = []
+
+    elements.append(Paragraph('Module: %s' % context['module'].title, styles['Heading1'], encoding='utf8'))
+
+    rows=0
+    tableStyle=[('GRID',(0,0),(-1,-1),0.5,colors.black),
+                ('VALIGN',(0,0),(-1,-1),'TOP')]
+
+    basicInfoData=[[Paragraph('Brief Description *',styles['Heading2']),
+                          Paragraph(unicode(context['module'].brief_description).encode('utf8','ignore'), styles["BodyText"]),
+                          '']]
+    tableStyle.append(('SPAN',(1,rows),(2,rows)))
+    rows += 1
+
+    # Narrative
+    if display_settings['narrativedisp'] == 1 and context['module'].narrative and len(context['module'].narrative):
+        basicInfoData.append([Paragraph('Narrative *',styles['Heading2']),
+                              Paragraph(unicode(context['module'].narrative).encode('utf8','ignore'),styles['BodyText']),
+                              ''])
+        tableStyle.append(('SPAN',(1,rows),(2,rows)))
+        rows += 1
+
+    # Tags
+    basicInfoData.append([Paragraph('Tags',styles['Heading2']),
+                          Paragraph(unicode(', '.join(context['module'].tags.names())).encode('utf8','ignore'),styles['BodyText']),
+                          ''])
+    tableStyle.append(('SPAN',(1,rows),(2,rows)))
+
+    t=reportlab.platypus.tables.Table(basicInfoData, [1.5*inch, inch, 5*inch],
+        style=tableStyle)
+    elements.append(t)
+
+    #print architecture
+    if (display_settings['figuredisp'] == 1 and context['figures'] and len(context['figures'])) or\
+       (context['input_ports'] and len(context['input_ports'])) or\
+       (context['output_ports'] and len(context['output_ports'])) or (context['states'] and len(context['states'])) or\
+       (context['modules'] and len(context['modules'])):
+        elements.append(Paragraph('Architecture', styles['Heading2']))
+        t = get_module_architecture_table_pdf(context, display_settings)
+        elements.append(t)
+
+    if context['all_submodules'] and len(context['all_submodules']):
+        for submodule in context['all_submodules']:
+            elements.append(Paragraph('Submodule: %s' % submodule.title, styles['Heading2']))
+            rows=0
+            basicInfoData = []
+            tableStyle=[('GRID',(0,0),(-1,-1),0.5,colors.black),
+                        ('VALIGN',(0,0),(-1,-1),'TOP')]
+            basicInfoData.append([Paragraph('Brief Description *',styles['Heading2']),
+                                  Paragraph(unicode(submodule.brief_description).encode('utf8','ignore'), styles["BodyText"]),
+                                  ''])
+            tableStyle.append(('SPAN',(1,rows),(2,rows)))
+            rows += 1
+
+            # Narrative
+            if display_settings['narrativedisp'] == 1 and submodule.narrative and len(submodule.narrative):
+                basicInfoData.append([Paragraph('Narrative *',styles['Heading2']),
+                                      Paragraph(unicode(submodule.narrative).encode('utf8','ignore'),styles['BodyText']),
+                                      ''])
+                tableStyle.append(('SPAN',(1,rows),(2,rows)))
+                rows += 1
+
+            # Tags
+            basicInfoData.append([Paragraph('Tags',styles['Heading2']),
+                                  Paragraph(unicode(', '.join(submodule.tags.names())).encode('utf8','ignore'),styles['BodyText']),
+                                  ''])
+            tableStyle.append(('SPAN',(1,rows),(2,rows)))
+
+            t=reportlab.platypus.tables.Table(basicInfoData, [1.5*inch, inch, 5*inch],
+                style=tableStyle)
+            elements.append(t)
+
+            elements.append(Paragraph('Architecture', styles['Heading2']))
+            module_figures = DocumentFigure.objects.filter(document=submodule).order_by('order')
+            input_ports = list(Variable.objects.filter(var_type__iexact='Input',module=submodule))
+            output_ports = list(Variable.objects.filter(var_type__iexact='output', module=submodule))
+            states = list(Variable.objects.filter(var_type__iexact='state', module=submodule))
+            modules = list(Module.objects.filter(parent=submodule))
+            input_ports.sort(compareVariables)
+            output_ports.sort(compareVariables)
+            states.sort(compareVariables)
+            modules.sort(compareModules)
+            if len(input_ports) or len(output_ports) or len(states) or len(module_figures) or len(modules):
+                t = get_module_architecture_table_pdf({'input_ports': input_ports, 'output_ports': output_ports,
+                                                       'states': states, 'figures': module_figures, 'modules':modules},
+                    display_settings)
+                elements.append(t)
 
     return elements
 

@@ -699,9 +699,6 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-#        rrmods=RelatedModel.get_reverse_related_models(self.object,user)
-#        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(rrmods,
-#            context['workspace_models'],context['fav_docs'], context['subscriptions'])
         return context
 
 
