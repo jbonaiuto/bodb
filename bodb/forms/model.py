@@ -127,3 +127,9 @@ class ModelReportForm(Form):
     related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
     reference_display=forms.BooleanField(required=False, help_text='Display references in report')
     include_seds=forms.BooleanField(required=False, help_text='Include SED reports in report')
+
+
+class ModuleReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
