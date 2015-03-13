@@ -243,7 +243,9 @@ class UserDetailView(DetailView):
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(collator=self.object),context['profile'],context['active_workspace']).order_by('title')
+        neurophys_seds=NeurophysiologySED.objects.filter(collator=self.object).order_by('title')
+        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds,context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
 
         ssrs=SSR.objects.filter(collator=self.object).select_related('collator').order_by('title')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
