@@ -2,15 +2,15 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response, render, get_object_or_404
 from django.views.generic import UpdateView, View, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
-from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature, NeurophysiologySED
+from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature, NeurophysiologySED, Document
 from bodb.views.main import set_context_workspace
-from bodb.views.model import CreateModelView
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm
@@ -209,25 +209,27 @@ class UserDetailView(DetailView):
         for permission in bodb_permissions:
             context[permission]=self.object.has_perm('bodb.%s' % permission)
 
-        models=Model.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author').order_by('title')
+        user=self.request.user
+
+        models=Model.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').prefetch_related('authors__author').order_by('title')
         context['models']=Model.get_model_list(models,context['workspace_models'], context['fav_docs'],
             context['subscriptions'])
         context['model_seds']=Model.get_sed_map(models, self.request.user)
 
-        bops=BOP.objects.filter(collator=self.object).select_related('collator').order_by('title')
+        bops=BOP.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
         context['bop_relationships']=BOP.get_bop_relationships(bops, self.request.user)
 
-        generic_seds=SED.objects.filter(type='generic',collator=self.object).select_related('collator').order_by('title')
+        generic_seds=SED.objects.filter(Q(type='generic') & Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
 
-        conn_seds=ConnectivitySED.objects.filter(collator=self.object).select_related('collator','target_region__nomenclature','source_region__nomenclature').order_by('title')
+        conn_seds=ConnectivitySED.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator','target_region__nomenclature','source_region__nomenclature').order_by('title')
         context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
-        imaging_seds=BrainImagingSED.objects.filter(collator=self.object).select_related('collator').order_by('title')
+        imaging_seds=BrainImagingSED.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
         context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
@@ -237,15 +239,17 @@ class UserDetailView(DetailView):
         else:
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
 
-        erp_seds=ERPSED.objects.filter(collator=self.object).select_related('collator').order_by('title')
+        erp_seds=ERPSED.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
         context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.objects.filter(collator=self.object),context['profile'],context['active_workspace']).order_by('title')
+        neurophys_seds=NeurophysiologySED.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).order_by('title')
+        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds,context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
 
-        ssrs=SSR.objects.filter(collator=self.object).select_related('collator').order_by('title')
+        ssrs=SSR.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
         literature=Literature.objects.filter(collator=self.object).select_related('collator').prefetch_related('authors__author')
