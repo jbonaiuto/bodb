@@ -99,7 +99,7 @@
                     <input id="id_figure-<%= idx %>-order" name="figure-<%= idx %>-order" size="3" type="text" value="<%= idx %>"/>
                 </td>
                 <td style="width:275px">
-                    <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" width="600" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
+                    <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" width="275" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
                 </td>
                 <td style="width:250px">
                     <input id="id_figure-<%= idx %>-title" maxlength="100" name="figure-<%= idx %>-title" type="text" value="<%= _.escape(title) %>"/>
