@@ -1,4 +1,5 @@
 import json
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
@@ -267,6 +268,7 @@ class ToggleSelectBOPView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the BOP: <a href="%s">%s</a> to the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 

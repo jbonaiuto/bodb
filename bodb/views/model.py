@@ -730,8 +730,9 @@ class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView)
                 active_workspace.related_models.add(model)
                 context['selected']=True
                 activity.text='%s added the model: <a href="%s">%s</a> to the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
-            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
+            activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 

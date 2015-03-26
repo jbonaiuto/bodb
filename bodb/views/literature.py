@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.views.generic.edit import BaseUpdateView
 import os
@@ -373,6 +374,7 @@ class ToggleSelectLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseUpdate
                               (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
