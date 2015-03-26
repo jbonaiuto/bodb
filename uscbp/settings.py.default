@@ -2,6 +2,18 @@ import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
+#AskBot
+import os.path
+import logging
+import sys
+import askbot
+import site
+
+#this line is added so that we can import pre-packaged askbot dependencies
+ASKBOT_ROOT = os.path.abspath(os.path.dirname(askbot.__file__))
+site.addsitedir(os.path.join(ASKBOT_ROOT, 'deps'))
+
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -288,9 +300,6 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,                 # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
 }
-
-DISQUS_API_KEY = 'jfLAucPszXO9QNLdZr0esnEbwokPbUBw6hkmr13Zj9hWTVLNwFrrtz3dwY1KcopM'
-DISQUS_WEBSITE_SHORTNAME = 'bodb-comments'
 
 #AskBot
 JINJA2_EXTENSIONS = (
