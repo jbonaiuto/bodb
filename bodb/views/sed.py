@@ -1053,6 +1053,7 @@ class ToggleSelectSEDView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the SED: <a href="%s">%s</a> to the workspace' % (self.request.user.username, sed.get_absolute_url(), sed.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
