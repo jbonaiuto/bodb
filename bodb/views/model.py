@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.forms.forms import Form
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView, ProcessFormView
@@ -729,7 +730,7 @@ class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView)
                 active_workspace.related_models.add(model)
                 context['selected']=True
                 activity.text='%s added the model: <a href="%s">%s</a> to the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
-            activity.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
             active_workspace.save()
 
         return context
