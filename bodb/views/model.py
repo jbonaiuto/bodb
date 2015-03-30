@@ -100,7 +100,7 @@ class EditModelMixin():
                     # Set module parent and collator if this is a new module
                     if module.id is None:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public
@@ -119,7 +119,7 @@ class EditModelMixin():
                     # Set prediction model and collator if this is a new prediction
                     if prediction.id is None:
                         prediction.model=self.object
-                        prediction.collator=self.object.collator
+                        prediction.collator=self.request.user
                     prediction.last_modified_by=self.request.user
                     prediction.draft=self.object.draft
                     prediction.public=self.object.public
@@ -808,7 +808,7 @@ class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
                     # Set parent and collator if this is a new module
                     if not module.id:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public
