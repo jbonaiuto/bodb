@@ -87,7 +87,7 @@ def ask_widget(request, widget_id):
                 tagnames = widget.tag.name
             else:
                 tagnames = ''
-
+            
             data_dict = {
                 'title': title,
                 'added_at': datetime.now(),

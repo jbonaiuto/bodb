@@ -1,5 +1,23 @@
 {% import "macros.html" as macros %}
-<form id="fmask" action="{% url "ask" %}" method="post" >{% csrf_token %}
+<script type="text/javascript">
+
+	function addDocTag() {
+		var doc_id;
+		var tags;
+		tags = document.getElementById('fmask').tags.value;
+		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
+		
+		document.getElementById('fmask').tags.value = 'doc-' + doc_id + ', ' + tags;
+		
+		//tags = document.getElementById('fmask').tags.value;
+
+		//console.log(tags);
+	  	//console.log(doc_id); 
+	  return true;
+	}
+</script>
+
+<form id="fmask" action="{% url "ask" %}" method="post" onsubmit="return addDocTag()">{% csrf_token %}
     <div class="form-item form-group ask-form-bar">
         <label for="id_title">{{ form.title.help_text }}</label>
         {% if form.title.errors %}
