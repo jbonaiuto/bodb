@@ -203,10 +203,10 @@ class UpdateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
             chapter=get_object_or_404(Chapter.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             chapter_authors=chapter.authors.all()
         elif literatureType=='conference':
-            conference=get_object_or_404(Conference.select_related('collator').objects.prefetch_related('authors__author'), id=id)
+            conference=get_object_or_404(Conference.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             conference_authors=conference.authors.all()
         elif literatureType=='thesis':
-            thesis=get_object_or_404(Thesis.select_related('collator').objects.prefetch_related('authors__author'), id=id)
+            thesis=get_object_or_404(Thesis.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             thesis_authors=thesis.authors.all()
         elif literatureType=='unpublished':
             unpublished=get_object_or_404(Unpublished.objects.select_related('collator').prefetch_related('authors__author'), id=id)
