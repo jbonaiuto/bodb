@@ -1,4 +1,5 @@
 from django.db.models import Max, Min
+from django.shortcuts import redirect
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.http.response import HttpResponse
@@ -76,6 +77,12 @@ class BODBView(TemplateView):
 
 class IndexView(BODBView):
     template_name = 'bodb/index.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.COOKIES.get('index_page_tour_seen')=='TRUE' and not request.GET.get('ignore_redirect',0)=='1':
+            return redirect('/bodb/workspace/active/')
+        else:
+            return TemplateView.get(self, request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super(IndexView,self).get_context_data(**kwargs)
