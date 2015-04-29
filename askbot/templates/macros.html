@@ -169,13 +169,23 @@
     {% if tags %}
         {% for tag in tags %}
         <li>
+        	{% if tag|replace('*', '&#10045;')|escape == 'doc-26078' or tag == tags[0] %}
             {{ tag_widget(
                 tag,
-                deletable=deletable,
+                deletable= False,
                 is_link=make_links,
                 search_state=search_state,
                 truncate_long_tag=False
             )}}
+            {% else %}
+            {{ tag_widget(
+                tag,
+                deletable= True,
+                is_link=make_links,
+                search_state=search_state,
+                truncate_long_tag=False
+            )}}
+            {% endif %}
         </li>
         {% endfor %}
     {% endif %}
