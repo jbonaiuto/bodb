@@ -115,8 +115,9 @@ def not_a_robot_request(request):
     return False
 
 def diff_date(date, use_on_prefix = False):
-    utc=pytz.UTC
-    now = utc.localize(datetime.datetime.now())#datetime(*time.localtime()[0:6])#???
+    #utc=pytz.UTC
+    #now = utc.localize(datetime.datetime.now())#datetime(*time.localtime()[0:6])#???
+    now=datetime.datetime.now()
     diff = now - date
     days = diff.days
     hours = int(diff.seconds/3600)
