@@ -2,12 +2,18 @@
 <script type="text/javascript">
 
 	function addDocTag() {
+		var prefix;
 		var doc_id;
 		var tags;
 		tags = document.getElementById('fmask').tags.value;
 		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
-		
-		document.getElementById('fmask').tags.value = 'doc-' + doc_id + ', ' + tags;
+		prefix = window.parent.document.location.pathname.split('/').slice(-3)[0];
+		if (prefix = "workspace"){
+			prefix = "ws-";
+		} else {
+			prefix = "doc-";
+		}
+		document.getElementById('fmask').tags.value = prefix + doc_id + ', ' + tags;
 		
 		//tags = document.getElementById('fmask').tags.value;
 

@@ -7,8 +7,9 @@
 		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
 		console.log(prefix.concat(doc_id).concat(suffix));
 		res = prefix.concat(doc_id).concat(suffix);
+		if(isNaN(doc_id)){ res = "http://localhost:8000/bodb/forum/questions/" ;};
 		location.href=res;
-		return false;
+		return res;
 	}
 </script>
 
