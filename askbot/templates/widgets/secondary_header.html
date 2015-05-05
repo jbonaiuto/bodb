@@ -1,4 +1,17 @@
 <!-- template secondary_header.html -->
+<script type="text/javascript">
+	function getAskHTML() {
+		var prefix, suffix, doc_id, res;
+		prefix = "http://localhost:8000/bodb/forum/questions/scope:all/sort:activity-desc/tags:doc-";
+		suffix = "/page:1/";
+		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
+		console.log(prefix.concat(doc_id).concat(suffix));
+		res = prefix.concat(doc_id).concat(suffix);
+		location.href=res;
+		return false;
+	}
+</script>
+
 <div id="secondaryHeader">
     <div class="content-wrapper">
         {# form is wrapping search buttons and the search bar inputs #}
@@ -29,7 +42,7 @@
             <table width="100%">
                 <tr>
                     {# width 1 means that cell will expand just enough to fit the contents #}
-                    <td width="1"><a id="homeButton" href="{% url questions %}"><i class="fa fa-home"></i></a></td>
+                    <td width="1"><a id="homeButton" href="#"  onclick="getAskHTML();return false;"><i class="fa fa-home"></i></a></td>
                     <td width="1">{% include "widgets/scope_nav.html" %}</td>
                     {# width * means that the cell takes the remaining table width #}
                     <td width="*" class="search-bar">{% include "widgets/search_bar.html" %}</td> 
