@@ -8,7 +8,8 @@
 		tags = document.getElementById('fmask').tags.value;
 		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
 		prefix = window.parent.document.location.pathname.split('/').slice(-3)[0];
-		if (prefix = "workspace"){
+		console.log(prefix);
+		if (prefix == "workspace"){
 			prefix = "ws-";
 		} else {
 			prefix = "doc-";
