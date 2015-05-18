@@ -260,7 +260,7 @@
                 {% if perms.bodb.public_model or user.is_superuser %}
                     <tr valign=top>
                         <td>{{ wizard.form.public.label_tag }}</td>
-                        <td>{{ wizard.form.public }}</td>
+                        <td><input {% if wizard.form.public.value %}checked="checked" {% endif %} id="id_step1-public" name="step1-public" type="checkbox"/></td>
                         {% if wizard.form.public.errors %}<td class="myerrors">{{ wizard.form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}
