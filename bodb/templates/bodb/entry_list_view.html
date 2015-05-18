@@ -16,7 +16,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                Models (1-{{ models|length }}) (<a href="javascript:animatedcollapse.toggle('modelData')"><span id="modelDataLabel">Show</span></a>)
+                Models (1-{{ models|length }}) (<a href="javascript:animatedcollapse.toggle('modelData')"><span id="modelDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <td>
-                <div id="modelData" style="display:none">
+                <div id="modelData" style="display:inline">
                     {% with delete_mode as delete_mode %}
                         {% include 'bodb/model/model_selection_list_view.html' %}
                     {% endwith %}
@@ -42,7 +42,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                BOPs (1-{{ bops|length }}) (<a href="javascript:animatedcollapse.toggle('bopData')"><span id="bopDataLabel">Show</span></a>)
+                BOPs (1-{{ bops|length }}) (<a href="javascript:animatedcollapse.toggle('bopData')"><span id="bopDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -52,7 +52,7 @@
         </tr>
         <tr>
             <td>
-                <div id="bopData" style="display:none">
+                <div id="bopData" style="display:inline">
                     {% with delete_mode as delete_mode %}
                         {% include 'bodb/bop/bop_selection_list_view.html' %}
                     {% endwith %}
@@ -68,7 +68,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                SEDs (<a href="javascript:animatedcollapse.toggle('sedData')"><span id="sedDataLabel">Show</span></a>)
+                SEDs (<a href="javascript:animatedcollapse.toggle('sedData')"><span id="sedDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -78,7 +78,7 @@
         </tr>
         <tr>
             <td>
-                <div id="sedData" style="display:none;">
+                <div id="sedData" style="display:inline;">
                     {% with delete_mode as delete_mode %}
                         {% include 'bodb/sed/sed_selection_list_view.html' %}
                     {% endwith %}
@@ -94,7 +94,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                SSRs (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrData')"><span id="ssrDataLabel">Show</span></a>)
+                SSRs (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrData')"><span id="ssrDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -104,7 +104,7 @@
         </tr>
         <tr>
             <td>
-                <div id="ssrData" style="display:none">
+                <div id="ssrData" style="display:inline">
                     {% with delete_mode as delete_mode %}
                         {% include 'bodb/ssr/ssr_selection_list_view.html' %}
                     {% endwith %}
@@ -120,7 +120,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                Brain Regions (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionData')"><span id="brainRegionDataLabel">Show</span></a>)
+                Brain Regions (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionData')"><span id="brainRegionDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -130,7 +130,7 @@
         </tr>
         <tr>
             <td>
-                <div id="brainRegionData" style="display:none">
+                <div id="brainRegionData" style="display:inline">
                     {% include 'bodb/brainRegion/brain_region_selection_list_view.html' %}
                 </div>
             </td>
@@ -144,7 +144,7 @@
         </tr>
         <tr class="section_header">
             <td>
-                Literature (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureData')"><span id="literatureDataLabel">Show</span></a>)
+                Literature (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureData')"><span id="literatureDataLabel">Hide</span></a>)
             </td>
         </tr>
         <tr>
@@ -154,7 +154,7 @@
         </tr>
         <tr>
             <td>
-                <div id="literatureData" style="display:none">
+                <div id="literatureData" style="display:inline">
                     {% include 'bodb/literature/reference_selection_list_view.html' %}
                 </div>
             </td>

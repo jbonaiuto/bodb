@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, NeurophysiologySED, BodbProfile, Workspace, UserSubscription
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, NeurophysiologySED, BodbProfile, Workspace, UserSubscription, RecentlyViewedEntry
 from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
@@ -220,6 +220,77 @@ class DraftListView(LoginRequiredMixin,BODBView):
 
         return context
 
+
+class RecentEntriesListView(LoginRequiredMixin, BODBView):
+    """
+    View list of recently viewed entries
+    """
+    template_name = 'bodb/recent_entries_list_view.html'
+
+    def get_context_data(self, **kwargs):
+        context=super(RecentEntriesListView,self).get_context_data(**kwargs)
+        context['helpPage']='recent_entries.html'
+        user=self.request.user
+        context['connectionGraphId']='connectionSEDDiagram'
+        context['erpGraphId']='erpSEDDiagram'
+        context['bopGraphId']='bopRelationshipDiagram'
+        context['modelGraphId']='modelRelationshipDiagram'
+        context['literatures']=[]
+        context['brain_regions']=[]
+        context['models']=[]
+        context['model_seds']=[]
+        context['bops']=[]
+        context['bop_relationships']=[]
+        context['generic_seds']=[]
+        context['connectivity_seds']=[]
+        context['imaging_seds']=[]
+        context['erp_seds']=[]
+        context['ssrs']=[]
+
+        if user.is_authenticated() and not user.is_anonymous():
+
+            recently_viewed_docs=RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse().values_list('document',flat=True)
+
+            models=Model.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator').prefetch_related('authors__author').order_by('title')
+            context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+                context['subscriptions'])
+            context['model_seds']=Model.get_sed_map(models, user)
+
+            bops=BOP.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator').order_by('title')
+            context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'],
+                context['subscriptions'])
+            context['bop_relationships']=BOP.get_bop_relationships(bops, user)
+
+            generic_seds=SED.objects.filter(type='generic',document_ptr__in=recently_viewed_docs).select_related('collator').order_by('title')
+            context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+
+            conn_seds=ConnectivitySED.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator','target_region__nomenclature','source_region__nomenclature').order_by('title')
+            context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
+
+            imaging_seds=BrainImagingSED.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator').order_by('title')
+            coords=[SEDCoord.objects.filter(sed=sed).select_related('coord__threedcoord') for sed in imaging_seds]
+            context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            if user.is_authenticated() and not user.is_anonymous():
+                context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                    context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+            else:
+                context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
+
+            erp_seds=ERPSED.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator').order_by('title')
+            components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+            context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+                context['subscriptions'])
+            context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+
+            ssrs=SSR.objects.filter(document_ptr__in=recently_viewed_docs).select_related('collator').order_by('title')
+            context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
+                context['subscriptions'])
+
+        return context
 
 class FavoriteListView(LoginRequiredMixin,BODBView):
     template_name = 'bodb/favorite_list_view.html'

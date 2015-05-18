@@ -133,6 +133,7 @@
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
                 <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
+                <li id="recent_link"><a href="/bodb/recent/">Recent</a></li>
             {% endif %}
             {% if user.is_superuser %}
                 <li><a href="/bodb/admin/">Admin</a></li>

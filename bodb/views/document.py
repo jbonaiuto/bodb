@@ -1,8 +1,9 @@
+from datetime import datetime
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry
 from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -74,6 +75,20 @@ class DocumentDetailView(DetailView):
         if user.is_authenticated() and not user.is_anonymous():
             context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
+
+        # If the user has viewed this entry recently, update the view time
+        if RecentlyViewedEntry.objects.filter(user=self.request.user, document=self.object).exists():
+            view=RecentlyViewedEntry.objects.get(user=self.request.user, document=self.object)
+            view.date_viewed=datetime.now()
+            view.save()
+        # Save recently viewed entry for the current user
+        else:
+            view=RecentlyViewedEntry(user=self.request.user, document=self.object)
+            view.save()
+        # Remove all but 10 most recently viewed entries
+        views = RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse()[:10].values_list("id", flat=True)  # only retrieve ids.
+        RecentlyViewedEntry.objects.exclude(pk__in=list(views)).delete()
+
         return context
     
 class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
