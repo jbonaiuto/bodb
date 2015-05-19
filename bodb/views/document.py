@@ -86,8 +86,9 @@ class DocumentDetailView(DetailView):
             view=RecentlyViewedEntry(user=self.request.user, document=self.object)
             view.save()
         # Remove all but 10 most recently viewed entries
-        views = RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse()[:10].values_list("id", flat=True)  # only retrieve ids.
-        RecentlyViewedEntry.objects.exclude(pk__in=list(views)).delete()
+        if RecentlyViewedEntry.objects.filter(user=self.request.user).count()>10:
+            views = RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse()[:10].values_list("id", flat=True)  # only retrieve ids.
+            RecentlyViewedEntry.objects.exclude(pk__in=list(views)).delete()
 
         return context
     
