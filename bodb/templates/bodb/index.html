@@ -27,6 +27,12 @@
             });
             return false;
         }
+
+        $(window).load(function() {
+            if( $.cookie('index_page_tour_seen') != 'TRUE'){
+                startTour();
+            }
+        });
     </script>
 {% endblock %}
 {% block content %}
