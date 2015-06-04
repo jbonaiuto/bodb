@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View {{ literature }} Literature</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('modelData', 'fade=1');
         animatedcollapse.addDiv('bopData', 'fade=1');
@@ -44,6 +45,8 @@
         {
             if(confirm('This will delete this Literature entry as well as all links to it from other entries. Do you really want to delete the current Literature entry?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 clearSpan(opener.document, 'span_reference_{{ literature.id }}');
             {% endif %}
@@ -57,6 +60,11 @@
         {
             document.location.href='/bodb/';
         }
+
+        {% if ispopup %}
+            opener.addLiteratureMultiple({{ literature.id }}, ['{{ literature.author_names|escapejs }}', '{{ literature.year|escapejs }}', '{{ literature.title|escapejs }}']);
+            self.close();
+        {% endif %}
     </script>
 {% endblock %}
 {% block content %}
@@ -234,6 +242,14 @@
                     <td><strong>URL:</strong></td>
                     <td><a href="" onclick="window.open('{{ literature.url }}');return false;">{{ literature.url }}</a></td>
                 </tr>
+            {% else %}
+                {% if url %}
+                    <tr>
+                        <td colspan="2">
+                            {{ url|safe }}
+                        </td>
+                    </tr>
+                {% endif %}
             {% endif %}
             <tr valign=top>
                 <td><strong>Language:</strong></td>

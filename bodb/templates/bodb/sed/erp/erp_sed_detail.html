@@ -20,25 +20,35 @@
         function validateForm()
         {
             var errors=0;
+            var componentErrors=0;
+            var figureErrors=0;
             clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
-            errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'experimental_condition_errors');
-            errors+=validateField('experimental_condition', 'Experimental condition', 'experimental_condition_errors');
-            var componentErrors=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','scalp_region','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Scalp region', 'Interpretation']);
+            errors+=validateField('title', 'Title', 'title_errors');
+            if(isDraft>0)
+            {
+                componentErrors=validateInlineForm('erp_component', ['component_name'], ['Name']);
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+            }
+            else{
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                errors+=validateField('experimental_condition', 'Experimental condition', 'experimental_condition_errors');
+                componentErrors=validateInlineForm('erp_component', ['component_name','latency_peak','latency_peak_type','interpretation'], ['Name', 'Latency peak', 'Latency peak type', 'Interpretation']);
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+                var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+                if(relatedBrainRegionErrors>0)
+                    animatedcollapse.show('brainRegionData');
+                errors+=relatedBrainRegionErrors;
+            }
+
             if(componentErrors>0)
                 animatedcollapse.show('erpComponentData');
             errors+=componentErrors;
-            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
             if(figureErrors>0)
                 animatedcollapse.show('figureData');
             errors+=figureErrors;
-            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
-            if(relatedBrainRegionErrors>0)
-                animatedcollapse.show('brainRegionData');
-            errors+=relatedBrainRegionErrors;
 
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -51,6 +61,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('id_draft').value=isDraft;
             document.getElementById('sedForm').submit();
         }
@@ -72,14 +84,15 @@
 
         function doneCheckSimilarSEDs(res, status)
         {
-            document.getElementById('savingMsg').style.display = 'none';
-            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")
             {
                 if(checkSimilar && data.similar_sed_ids.length>0)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
                     var dispTxt='The SED you entered is similar to the following existing SEDs:';
                     dispTxt+='<table>';
                     for(var i=0; i<data.similar_sed_ids.length; i++)
@@ -100,7 +113,7 @@
             }
         }
 
-        function updateElectrodePosition(system_elem_id, system_elem_value)
+        function updateElectrodePosition(system_elem_id, system_elem_value, new_val)
         {
             var form_id=system_elem_id.substring(17);
             form_id=form_id.substring(0,form_id.indexOf('-'));
@@ -109,7 +122,7 @@
             {
                 position_elem.remove(i);
             }
-            var data={'form_id': form_id};
+            var data={'form_id': form_id, 'new_val': new_val};
             var args={type:"GET", url:"/bodb/sed/electrode_positions/"+system_elem_value+"/", data: data, complete: doneUpdateElectrodePosition };
             $.ajax(args)
         }
@@ -125,6 +138,7 @@
                 {
                     position_elem.options[position_elem.options.length]=new Option(data.position_names[i],data.position_ids[i]);
                 }
+                position_elem.value=data.new_val;
             }
         }
 
@@ -269,7 +283,7 @@
                 {% if perms.bodb.public_sed or user.is_superuser %}
                     <tr valign=top>
                         <td>{{ form.public.label_tag }}</td>
-                        <td>{{ form.public }}</td>
+                        <td><input {% if form.public.value %}checked="checked" {% endif %} id="id_public" name="public" type="checkbox"/></td>
                         {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}

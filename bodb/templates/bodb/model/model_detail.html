@@ -27,68 +27,89 @@
         function validateForm()
         {
             var errors=0;
+            var figureErrors=0;
+            var inputErrors=0;
+            var outputErrors=0;
+            var stateErrors=0
+            var moduleErrors=0;
+            var buildSEDErrors=0;
+            var predictionErrors=0;
+            var testSEDErrors=0;
             clearSpan(document, 'form_errors');
             clearSpan(document, 'title_errors');
-            errors+=validateField('title', 'Title', 'title_errors');
             clearSpan(document, 'description_errors');
-            errors+=validateField('brief_description', 'Brief description', 'description_errors');
             clearSpan(document, 'narrative_errors');
-            errors+=validateField('narrative', 'Narrative', 'narrative_errors');
+
+            errors+=validateField('title', 'Title', 'title_errors');
             var authorErrors=validateInlineForm('model_author', ['author_first_name', 'author_last_name', 'order'], ['First name', 'Last name', 'Order']);
             if(authorErrors>0)
                 animatedcollapse.show('modelAuthors');
             errors+=authorErrors;
-            var figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+
+            if(isDraft>0)
+            {
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+                inputErrors=validateInlineForm('input', ['name'], ['Name']);
+                outputErrors=validateInlineForm('output', ['name'], ['Name']);
+                stateErrors=validateInlineForm('state', ['name'], ['Name']);
+                moduleErrors=validateInlineForm('module', ['title'], ['Title']);
+                predictionErrors=validateInlineForm('prediction', ['title'], ['Title']);
+                testSEDErrors=validateInlineForm('test_sed', ['ssr'], ['SSR']);
+            }
+            else
+            {
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                errors+=validateField('narrative', 'Narrative', 'narrative_errors');
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+                inputErrors=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                outputErrors=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                stateErrors=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
+                moduleErrors=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
+
+                buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
+                errors+=buildSEDErrors;
+                if(buildSEDErrors>0)
+                    animatedcollapse.show('buildSEDData');
+                testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative', 'ssr'], ['Relationship', 'Relevance narrative', 'SSR']);
+                predictionErrors=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
+                var urlErrors=validateURLField('execution_url', 'Execution URL', 'execution_url_errors');
+                urlErrors+=validateURLField('documentation_url', 'Documentation URL', 'documentation_url_errors');
+                urlErrors+=validateURLField('description_url', 'Description URL', 'description_url_errors');
+                urlErrors+=validateURLField('simulation_url', 'Simulation URL', 'simulation_url_errors');
+                errors+=urlErrors;
+                if(urlErrors>0)
+                    animatedcollapse.show('urlData');
+                var relatedModelErrors=validateInlineForm('related_model', ['relationship'], ['Relationship']);
+                if(relatedModelErrors>0)
+                    animatedcollapse.show('modelData');
+                errors+=relatedModelErrors;
+                var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
+                if(relatedBOPErrors>0)
+                    animatedcollapse.show('bopData');
+                errors+=relatedBOPErrors;
+                var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+                if(relatedBrainRegionErrors>0)
+                    animatedcollapse.show('brainRegionData');
+                errors+=relatedBrainRegionErrors;
+            }
+
             errors+=figureErrors;
-            var inputErrors=validateInlineForm('input', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=inputErrors;
-            var outputErrors=validateInlineForm('output', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=outputErrors;
-            var stateErrors=validateInlineForm('state', ['name', 'data_type', 'description'], ['Name', 'Data type', 'Description']);
             errors+=stateErrors;
-            var moduleErrors=validateInlineForm('module', ['title', 'brief_description'], ['Title', 'Brief description']);
             errors+=moduleErrors;
-            if(figureErrors>0 || inputErrors>0 || outputErrors>0 || stateErrors>0 || moduleErrors>0)
-                animatedcollapse.show('architectureData');
-            var buildSEDErrors=validateInlineForm('build_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            errors+=buildSEDErrors;
-            if(buildSEDErrors>0)
-                animatedcollapse.show('buildSEDData');
-            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            var test_sed_count = $('#test_seds').children().length;
-            for(var i=0; i<test_sed_count; i++)
-                testSEDErrors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
-            errors+=testSEDErrors;
-            if(testSEDErrors>0)
-                animatedcollapse.show('testSEDData');
-            var predictionErrors=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
-            var prediction_count = $('#predictions').children().length;
-            for(var i=0; i<prediction_count; i++)
-                predictionErrors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
             errors+=predictionErrors;
             if(predictionErrors>0)
                 animatedcollapse.show('predictionData');
+            errors+=testSEDErrors;
+            if(testSEDErrors>0)
+                animatedcollapse.show('testSEDData');
             if(buildSEDErrors>0 || testSEDErrors>0 || predictionErrors>0)
                 animatedcollapse.show('summaryData');
-            var urlErrors=validateURLField('execution_url', 'Execution URL', 'execution_url_errors');
-            urlErrors+=validateURLField('documentation_url', 'Documentation URL', 'documentation_url_errors');
-            urlErrors+=validateURLField('description_url', 'Description URL', 'description_url_errors');
-            urlErrors+=validateURLField('simulation_url', 'Simulation URL', 'simulation_url_errors');
-            errors+=urlErrors;
-            if(urlErrors>0)
-                animatedcollapse.show('urlData');
-            var relatedModelErrors=validateInlineForm('related_model', ['relationship'], ['Relationship']);
-            if(relatedModelErrors>0)
-                animatedcollapse.show('modelData');
-            errors+=relatedModelErrors;
-            var relatedBOPErrors=validateInlineForm('related_bop', ['title', 'brief_description', 'relevance_narrative'], ['Title', 'Brief description', 'Relevance narrative']);
-            if(relatedBOPErrors>0)
-                animatedcollapse.show('bopData');
-            errors+=relatedBOPErrors;
-            var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
-            if(relatedBrainRegionErrors>0)
-                animatedcollapse.show('brainRegionData');
-            errors+=relatedBrainRegionErrors;
+
+
+            if(figureErrors>0 || inputErrors>0 || outputErrors>0 || stateErrors>0 || moduleErrors>0)
+                animatedcollapse.show('architectureData');
 
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -101,6 +122,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('id_draft').value=isDraft;
             document.getElementById('modelForm').submit();
         }
@@ -122,14 +145,15 @@
 
         function doneCheckSimilarModels(res, status)
         {
-            document.getElementById('savingMsg').style.display = 'none';
-            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")
             {
                 if(checkSimilar && data.similar_model_ids.length>0)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
                     var dispTxt='The model you entered is similar to the following existing models:';
                     dispTxt+='<table>';
                     for(var i=0; i<data.similar_model_ids.length; i++)
@@ -344,7 +368,7 @@
                 {% if perms.bodb.public_model or user.is_superuser %}
                     <tr valign=top>
                         <td>{{ form.public.label_tag }}</td>
-                        <td>{{ form.public }}</td>
+                        <td><input {% if form.public.value %}checked="checked" {% endif %} id="id_public" name="public" type="checkbox"/></td>
                         {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}

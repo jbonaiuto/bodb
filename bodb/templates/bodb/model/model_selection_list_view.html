@@ -1,44 +1,152 @@
 {% load staticfiles %}
+{% load bodb_extras %}
 {% block extrahead %}
-    <link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
-    <script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.rwdImageMaps.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
     <script type="text/javascript">
+
+        var models=[];
+        {% for selected,is_favorite,subscribed,model in models %}
+            models.push({
+                id: {{ model.id }},
+                title: '{{ model.title|escapejs }}',
+                brief_description: '{{ model.brief_description|escapejs }}',
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ model|escapejs }}',
+                draft: {% if model.draft %}true{% else %}false{% endif %},
+                collator_id: {{ model.collator.id }},
+                collator: '{{ model.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
 
         $(document).ready(function()
         {
-            $('#{{ modelGraphId }}topPositionMap,#{{ modelGraphId }}leftPositionMap,#{{ modelGraphId }}rightPositionMap,#{{ modelGraphId }}bottomPositionMap').bind("click", {{ modelGraphId }}moveButtonClickHandler);
-            $('#{{ modelGraphId }}zoomInButton,#{{ modelGraphId }}zoomOutButton').bind("click", {{ modelGraphId }}zoomButtonClickHandler);
-
-
-            function {{ modelGraphId }}zoomButtonClickHandler(e){
-                var scaleToAdd = 0.8;
-                if(e.target.id == '{{ modelGraphId }}zoomOutButton')
-                    scaleToAdd = -scaleToAdd;
-                $('#{{ modelGraphId }}').smartZoom('zoom', scaleToAdd);
-            }
-
-            function {{ modelGraphId }}moveButtonClickHandler(e){
-                var pixelsToMoveOnX = 0;
-                var pixelsToMoveOnY = 0;
-
-                switch(e.target.id){
-                    case "{{ modelGraphId }}leftPositionMap":
-                        pixelsToMoveOnX = 50;
-                        break;
-                    case "{{ modelGraphId }}rightPositionMap":
-                        pixelsToMoveOnX = -50;
-                        break;
-                    case "{{ modelGraphId }}topPositionMap":
-                        pixelsToMoveOnY = 50;
-                        break;
-                    case "{{ modelGraphId }}bottomPositionMap":
-                        pixelsToMoveOnY = -50;
-                        break;
-                }
-                $('#{{ modelGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
-            }
+            addModels();
         });
+
+        function addModels()
+        {
+            $('[name=models]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                $(this).empty();
+                $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+                var tmplMarkup = $('#model-template').html();
+                for(var idx=0; idx<models.length; idx++)
+                {
+                    models[idx]['idx']=$(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, models[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
+        }
+
+        var {{ modelGraphId }}nodes=[
+            {% for selected,is_favorite,subscribed,model in models %}
+                {id: {{ model.id }}, label:'{{ model|escapejs }}', shape:'box', title:'{{ model.brief_description|escapejs }}'},
+            {% endfor %}
+        ];
+
+        {% for model in model_seds %}
+            {% for sed_map in model_seds|lookup:model %}
+                var found=false;
+                for(var i=0; i<{{ modelGraphId }}nodes.length; i++)
+                {
+                    if({{ modelGraphId }}nodes[i]['id']=={{ sed_map|lookup:'sed_id' }})
+                    {
+                        found=true;
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    {{ modelGraphId }}nodes.push({id: {{sed_map|lookup:'sed_id'}}, label:'{{ sed_map|lookup:'title'|escapejs }}', title:'{{ sed_map|lookup:'sed_desc'|escapejs }}'});
+                }
+            {% endfor %}
+        {% endfor %}
+
+        var {{ modelGraphId }}edges=[
+            {% for model in model_seds %}
+                {% for sed_map in model_seds|lookup:model %}
+                    {from: {{ sed_map|lookup:'sed_id'}}, to:{{ model }},
+                        label: '{{ sed_map|lookup:'relationship' }}',
+                        title: '{{ sed_map|lookup:'relevance_narrative'|escapejs }}'},
+                {% endfor %}
+            {% endfor %}
+        ];
+
+        function generateModelDiagram(graphId, nodes, edges)
+        {
+            document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+
+            var container=document.getElementById(graphId+'Div');
+
+            var data= {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                width: '100%',
+                height: '400px',
+                edges: {
+                    style: 'arrow'
+                },
+                nodes: {
+                    color: {
+                        border:'black',
+                        background: 'white'
+                    },
+                    fontSize: 20
+                },
+                physics: {
+                    barnesHut:{
+                        springLength: 20,
+                        gravitationalConstant: -2000,
+                        springConstant: 0.001
+                    }
+                }
+            };
+            var network = new vis.Network(container, data, options);
+
+            network.on('doubleClick',function(properties){
+                if(properties.nodes.length>0)
+                {
+                    if(network.nodes[properties.nodes[0]].options.shape=='box')
+                        document.location.href='/bodb/model/'+properties.nodes[0]+'/';
+                    else
+                        document.location.href='/bodb/sed/'+properties.nodes[0]+'/';
+                }
+            });
+
+            document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view Model or SED details.";
+            return false;
+        }
+
+        function deleteModel(id, idx)
+        {
+            if(confirm('This will delete this Model as well as all links to it from other entries. Do you really want to delete the current Model?'))
+            {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}', 'idx': idx};
+                var args={type:"POST", url:"/bodb/model/"+id+"/delete/", data: data, complete: doneDeleteModel };
+                $.ajax(args);
+            }
+            return false;
+        }
+
+        function doneDeleteModel(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                document.getElementById('model-'+data.idx).style.display='none';
+            }
+            document.getElementById('deletingMsg').style.display = 'none';
+            document.getElementById('deletingOver').style.display = 'none';
+        }
     </script>
 {% endblock %}
 <div id="model_list" name="model_list" style="display:{% if models|length %}block{% else %}none{% endif %}">
@@ -47,7 +155,7 @@
         <table class="tab_panel">
             {% if not ispopup %}
                 <tr class="col_header">
-                    <td colspan=6>
+                    <td colspan={% if delete_mode %}7{% else %}6{% endif %}>
                         {% if can_add_entry or can_remove_entry %}
                             Workspace Select: {% if can_add_entry %}<a href="../" onclick="return toggleAllModelSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../" onclick="return toggleAllModelSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                         {% endif %}
@@ -57,95 +165,41 @@
             <tr class="col_header">
                 <td width=25px>&nbsp;</td>
                 <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
-                <td width=200px>Title</td>
-                <td width=200px>Collator</td>
-                <td>Description</td>
+                {% if delete_mode %}
+                    <td style="width:45px">&nbsp;</td>
+                {% endif %}
+                <td width=200px><a id="id_model_sort_title" href="" onclick="return sortModels('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_model_sort_title_dir" name="model_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+                <td width=200px><a id="id_model_sort_collator" href="" onclick="return sortModels('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_model_sort_collator_dir" name="model_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+                <td><a id="id_model_sort_brief_description" href="" onclick="return sortModels('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_model_sort_brief_description_dir" name="model_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
                 <td width=100px>&nbsp;</td>
             </tr>
             <tr>
-                <td colspan="6">
+                <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                     <div id="models" name="models">
-                        {% for selected,is_favorite,subscribed,model in models %}
-                            <div id="model-{{ forloop.counter0 }}" name="model">
-                                <table class="tab_panel">
-                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                        <td width=25px>{{ forloop.counter }}</td>
-                                        <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
-                                            {% if user.is_authenticated and not user.is_anonymous  %}
-                                                {% if ispopup %}
-                                                    <a href="../" onclick="return opener.addModelMultiple({{ model.id }}, ['{{ model|escapejs }}', '{{ model.brief_description|escapejs }}']);">Select</a></td>
-                                                {% else %}
-                                                    <a id="favLink" href="" onclick="return toggleFavorite({{ model.id }},'favIcon-{{ model.id }}','{{ csrf_token }}');">
-                                                        <img id="favIcon-{{ model.id }}" name="favIcon-{{ model.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                                    </a>
-                                                    <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
-                                                    <input type=hidden name="selectedModel" id="selectedModel_{{ model.id }}" value="{{ model.id }}"/>
-                                                {% endif %}
-                                            {% else %}
-                                                <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_{{ model.id }}" value="{{ model.id }}" style="display: none;"/>
-                                            {% endif %}
-                                        </td>
-                                        <td width=200px>
-                                            <a href="/bodb/model/{{ model.id }}/" onclick="return openInNewTab('/bodb/model/{{ model.id }}/');">{{ model }}</a>
-                                            {% if model.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                        </td>
-                                        <td width=200px><a href="/bodb/user/{{ model.collator.id }}/">{{ model.get_collator_str }}</a> {% if not model.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ model.collator.id }}&type=Model');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                                        <td>{{model.brief_description }}</td>
-                                        <td width=100px><span id="model_{{ model.id }}_message" name="model_{{ model.id }}_message" class="messages"></span> </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        {% endfor %}
+                        <input type="hidden" id="groupName" value="{{ modelGraphId }}"/>
                     </div>
                 </td>
             </tr>
             {% if not ispopup %}
                 <tr class="col_header">
-                    <td colspan="6">
-                        Graph Generation Tool:&nbsp;
-                        <select id="graphtool">
-                            <option value="dot">dot</option>
-                            <option value="neato">neato</option>
-                            <option value="fdp">fdp</option>
-                            <option value="sfdp">sfdp</option>
-                            <option value="twopi">twopi</option>
-                            <option value="circo">circo</option>
-                        </select>&nbsp;
-                        <a href="" onclick="return generateModelDiagram(document.getElementById('graphtool').value,'{{ modelGraphId }}','{{ csrf_token }}');">Generate Model Relationship Graph</a>
+                    <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
+                        <a id="{{ modelGraphId }}Link" href="" onclick="return generateModelDiagram('{{ modelGraphId }}', {{ modelGraphId }}nodes, {{ modelGraphId }}edges);">Generate Model Relationship Graph</a>
                     </td>
                 </tr>
                 <tr class="col_header">
-                    <td colspan="6">
-                        <div id="{{ modelGraphId }}Div" style="display:none" class="zoomContainer">
-                            <div id="positionButtonDiv">
-                                <p>Zoom :
-                                <span>
-                                    <img id="{{ modelGraphId }}zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
-                                    <img id="{{ modelGraphId }}zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
-                                </span>
-                                </p>
-                                <p>Pan:
-                                <span class="positionButtonSpan">
-                                    <map name="{{ modelGraphId }}positionMap" class="positionMapClass">
-                                        <area id="{{ modelGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
-                                        <area id="{{ modelGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
-                                        <area id="{{ modelGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
-                                        <area id="{{ modelGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
-                                    </map>
-                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ modelGraphId }}positionMap" />
-                                </span>
-                                </p>
-                            </div>
-                            <img src="" usemap="#{{ modelGraphId }}Map" id="{{ modelGraphId }}" style="width:100%" origWidth="" origHeight=""/>
-                            <map id="{{ modelGraphId }}Map" name="{{ modelGraphId }}Map">
-                            </map>
+                    <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
+                        <div id="{{ modelGraphId }}Div" style="background: #ffffff;">
                         </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="{% if delete_mode %}7{% else %}6{% endif %}">
                         <span id="{{ modelGraphId }}Msg"></span>
                     </td>
                 </tr>
             {% endif %}
             <tr>
-                <td colspan=6>
+                <td colspan={% if delete_mode %}7{% else %}6{% endif %}>
                     <input class="btn" type="submit" value="Benchmark" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
                 </td>
             </tr>
@@ -161,24 +215,27 @@
                 <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
-                            <a href="../" onclick="return opener.addModelMultiple(<%= id %>, ['<%= title %>', '<%= brief_description %>']);">Select</a></td>
+                            <a href="../" onclick="return opener.addModelMultiple('', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>']);">Select</a>
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<%} else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleModelSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedModel" id="selectedModel_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox name="selectedModelCheckbox" class="selectedModelCheckbox" id="selectedModelCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
+                    <input type=hidden name="selectedModel" id="selectedModel_<%= id %>" value="<%= id %>"/>
                 </td>
+                {% if delete_mode %}
+                    <td width=45px><a href="" onclick="return deleteModel(<%= id %>, <%= idx %>);">Delete</a></td>
+                {% endif %}
                 <td width=200px>
-                    <a href="/bodb/model/<%= id %>/" onclick="return openInNewTab('/bodb/model/<%= id %>/');"><%= title_str %></a>
+                    <a href="/bodb/model/<%= id %>/" onclick="return openInNewTab('/bodb/model/<%= id %>/');"><%= _.escape(title_str) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}) { %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% }else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=Model');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
-                <td><%= brief_description %></td>
+                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}) { %><% if(subscribed_to_user){ %>Subscribed<% }else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=Model');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td><%= _.escape(brief_description) %></td>
                 <td width=100px><span id="model_<%= id %>_message" name="model_<%= id %>_message" class="messages"></span> </td>
             </tr>
         </table>

@@ -1,10 +1,17 @@
 <script type="text/javascript">
-    function addComponentForm()
+    function addComponentForm(id, name, latency_peak, latency_peak_type, latency_onset, amplitude_peak, amplitude_mean,
+                              electrode_position_system, electrode_position, electrode_cap, channel_number, source,
+                              interpretation)
     {
         var count = $('#erp_components').children().length;
         var tmplMarkup = $('#erp_component-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, name:name, latency_peak: latency_peak,
+            latency_peak_type: latency_peak_type, latency_onset: latency_onset, amplitude_peak: amplitude_peak,
+            amplitude_mean: amplitude_mean, electrode_position_system: electrode_position_system,
+            electrode_cap: electrode_cap, channel_number: channel_number, source: source,
+            interpretation: interpretation });
         $('#erp_components').append(compiledTmpl);
+        updateElectrodePosition('id_erp_component-'+count+'-electrode_position_system', electrode_position_system, electrode_position);
         // update form count
         $('#id_erp_component-TOTAL_FORMS').attr('value', count+1);
 
@@ -154,13 +161,31 @@
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for erp_component_form in erp_component_formset.forms %}
+            addComponentForm({{ erp_component_form.instance.id }},
+                    '{{ erp_component_form.instance.component_name|escapejs }}',
+                    '{{ erp_component_form.instance.latency_peak|escapejs }}',
+                    '{{ erp_component_form.instance.latency_peak_type|escapejs }}',
+                    '{{ erp_component_form.instance.latency_onset|escapejs }}',
+                    '{{ erp_component_form.instance.amplitude_peak|escapejs }}',
+                    '{{ erp_component_form.instance.amplitude_mean|escapejs }}',
+                    '{{ erp_component_form.instance.electrode_position.position_system.id }}',
+                    '{{ erp_component_form.instance.electrode_position.id }}',
+                    '{{ erp_component_form.instance.electrode_cap.id }}',
+                    '{{ erp_component_form.instance.channel_number|escapejs }}',
+                    '{{ erp_component_form.instance.source|escapejs }}',
+                    '{{ erp_component_form.instance.interpretation|escapejs }}');
+        {% endfor %}
+    });
 </script>
 <div id="erpComponentData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr>
             <td class="table_header">
-                <a href="#" class="add-erp_component" onclick="return addComponentForm();">Add new</a>
+                <a href="#" class="add-erp_component" onclick="return addComponentForm('','','','','','','','','','','');">Add new</a>
             </td>
         </tr>
         <tr>
@@ -170,93 +195,6 @@
                     {{ erp_component_formset.management_form.errors }}
                 </div>
                 <div id="erp_components">
-                    {% for erp_component_form in erp_component_formset.forms %}
-                        <div id="erp_component-{{ forloop.counter0 }}" name="erp_component">
-                            <input type=hidden id="id_erp_component-{{ forloop.counter0 }}-DELETE" name="erp_component-{{ forloop.counter0 }}-DELETE"/>
-                            {{ erp_component_form.id }}
-                            {{ erp_component_form.erp_sed }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:60px">
-                                        <a href="" onclick="return deleteInlineForm('erp_component', {{ forloop.counter0 }});">Delete</a>
-                                    </td>
-                                    <td style="width:120px">Name*</td>
-                                    <td colspan="6">
-                                        {{ erp_component_form.component_name }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Peak latency*</td>
-                                    <td style="width:120px">
-                                        {{ erp_component_form.latency_peak }}
-                                    </td>
-                                    <td style="width:120px;">Peak Latency type*</td>
-                                    <td style="width:120px">
-                                        {{ erp_component_form.latency_peak_type }}
-                                    </td>
-                                    <td style="width:120px;">Peak latency onset</td>
-                                    <td>
-                                        {{ erp_component_form.latency_onset }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Peak amplitude</td>
-                                    <td>
-                                        {{ erp_component_form.amplitude_peak }}
-                                    </td>
-                                    <td>Mean amplitude</td>
-                                    <td colspan="3">
-                                        {{ erp_component_form.amplitude_mean }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Electrode position system*</td>
-                                    <td>
-                                        {{ erp_component_form.electrode_position_system }}
-                                    </td>
-                                    <td>Electrode position*</td>
-                                    <td colspan="3">
-                                        {{ erp_component_form.electrode_position }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Electrode cap</td>
-                                    <td colspan="2">
-                                        {{ erp_component_form.electrode_cap }}
-                                    </td>
-                                    <td colspan="3">
-                                        Channel {{ erp_component_form.channel_number }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Source</td>
-                                    <td colspan="5">
-                                        {{ erp_component_form.source }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=60px>&nbsp;</td>
-                                    <td>Interpretation*</td>
-                                    <td colspan="5">
-                                        {{ erp_component_form.interpretation }}
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td colspan="7" class="myerrors">
-                                        <span id="erp_component_{{ forloop.counter0 }}_errors"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                {{ erp_component_form.errors }}
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -264,100 +202,100 @@
 </div>
 
 <script type="text/html" id="erp_component-template">
-    <div id="erp_component-<%= id %>" name="erp_component">
-        <input type=hidden id="id_erp_component-<%= id %>-DELETE" name="erp_component-<%= id %>-DELETE"/>
-        <input id="id_erp_component-<%= id %>-id" name="erp_component-<%= id %>-id" type="hidden" />
-        <input id="id_erp_component-<%= id %>-erp_sed" name="erp_component-<%= id %>-erp_sed" type="hidden" />
+    <div id="erp_component-<%= idx %>" name="erp_component">
+        <input type=hidden id="id_erp_component-<%= idx %>-DELETE" name="erp_component-<%= idx %>-DELETE"/>
+        <input id="id_erp_component-<%= idx %>-id" name="erp_component-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_erp_component-<%= idx %>-erp_sed" name="erp_component-<%= idx %>-erp_sed" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:60px">
-                    <a href="" onclick="return deleteInlineForm('erp_component', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('erp_component', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:120px">Name*</td>
                 <td colspan="6">
-                    <input id="id_erp_component-<%= id %>-component_name" name="erp_component-<%= id %>-component_name" size="50" type="text" />
+                    <input id="id_erp_component-<%= idx %>-component_name" name="erp_component-<%= idx %>-component_name" size="50" type="text" value="<%= _.escape(name) %>"/>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Peak latency*</td>
                 <td style="width:120px">
-                    <input id="id_erp_component-<%= id %>-latency_peak" name="erp_component-<%= id %>-latency_peak" size="10" type="text" />
+                    <input id="id_erp_component-<%= idx %>-latency_peak" name="erp_component-<%= idx %>-latency_peak" size="10" type="text" <% if(latency_peak!='None'){ %>value="<%= _.escape(latency_peak) %>"<% } %>/>
                 </td>
                 <td style="width:120px;">Peak Latency type*</td>
                 <td style="width:120px">
-                    <select id="id_erp_component-<%= id %>-latency_peak_type" name="erp_component-<%= id %>-latency_peak_type" style="font-size: 80%;font-family: verdana, sans-serif">
-                        <option value="exact">Exact</option>
-                        <option value="approx">Approximate</option>
-                        <option value="window">Time Window</option>
+                    <select id="id_erp_component-<%= idx %>-latency_peak_type" name="erp_component-<%= idx %>-latency_peak_type" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="exact" <% if(latency_peak_type=='exact'){ %>selected<% } %>>Exact</option>
+                        <option value="approx" <% if(latency_peak_type=='approx'){ %>selected<% } %>>Approximate</option>
+                        <option value="window" <% if(latency_peak_type=='window'){ %>selected<% } %>>Time Window</option>
                     </select>
                 </td>
                 <td style="width:120px;">Peak latency onset</td>
                 <td>
-                    <input id="id_erp_component-<%= id %>-latency_onset" name="erp_component-<%= id %>-latency_onset" size="10" type="text" />
+                    <input id="id_erp_component-<%= idx %>-latency_onset" name="erp_component-<%= idx %>-latency_onset" size="10" type="text" <% if(latency_onset!='None'){ %>value="<%= _.escape(latency_onset) %>"<% } %>/>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Peak amplitude</td>
                 <td>
-                    <input id="id_erp_component-<%= id %>-amplitude_peak" name="erp_component-<%= id %>-amplitude_peak" size="10" type="text" />
+                    <input id="id_erp_component-<%= idx %>-amplitude_peak" name="erp_component-<%= idx %>-amplitude_peak" size="10" type="text" <% if(amplitude_peak!='None'){ %>value="<%= _.escape(amplitude_peak) %>"<% } %>/>
                 </td>
                 <td>Mean amplitude</td>
                 <td colspan="3">
-                    <input id="id_erp_component-<%= id %>-amplitude_mean" name="erp_component-<%= id %>-amplitude_mean" size="10" type="text" />
+                    <input id="id_erp_component-<%= idx %>-amplitude_mean" name="erp_component-<%= idx %>-amplitude_mean" size="10" type="text" <% if(amplitude_mean!='None'){ %>value="<%= _.escape(amplitude_mean) %>"<% } %>/>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Electrode position system*</td>
                 <td>
-                    <select id="id_erp_component-<%= id %>-electrode_position_system" name="erp_component-<%= id %>-electrode_position_system" onchange="updateElectrodePosition(this.id, this.value)" style="font-size: 80%;font-family: verdana, sans-serif">
+                    <select id="id_erp_component-<%= idx %>-electrode_position_system" name="erp_component-<%= idx %>-electrode_position_system" onchange="updateElectrodePosition(this.id, this.value, '')" style="font-size: 80%;font-family: verdana, sans-serif">
                         <option value="" selected="selected">---------</option>
                         {% for electrode_position_system in electrode_position_systems %}
-                            <option value="{{ electrode_position_system.id }}">{{ electrode_position_system.name }}</option>
+                            <option value="{{ electrode_position_system.id }}" <% if(electrode_position_system=='{{ electrode_position_system.id }}'){ %>selected<% } %>>{{ electrode_position_system.name }}</option>
                         {% endfor %}
                     </select>
                 </td>
                 <td>Electrode position*</td>
                 <td colspan="3">
-                    <select id="id_erp_component-<%= id %>-electrode_position" name="erp_component-<%= id %>-electrode_position" style="font-size: 80%;font-family: verdana, sans-serif">
+                    <select id="id_erp_component-<%= idx %>-electrode_position" name="erp_component-<%= idx %>-electrode_position" style="font-size: 80%;font-family: verdana, sans-serif">
                         <option value="" selected="selected">---------</option>
                     </select>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Electrode cap</td>
                 <td colspan="2">
-                    <select id="id_erp_component-<%= id %>-electrode_cap" name="erp_component-<%= id %>-electrode_cap" style="font-size: 80%;font-family: verdana, sans-serif">
+                    <select id="id_erp_component-<%= idx %>-electrode_cap" name="erp_component-<%= idx %>-electrode_cap" style="font-size: 80%;font-family: verdana, sans-serif">
                         <option value="" selected="selected">---------</option>
                         {% for electrode_cap in electrode_caps %}
-                            <option value="{{ electrode_cap.id }}">{{ electrode_cap }}</option>
+                            <option value="{{ electrode_cap.id }}" <% if(electrode_cap=='{{ electrode_cap.id }}'){ %>selected<% } %>>{{ electrode_cap }}</option>
                         {% endfor %}
                     </select>
                 </td>
                 <td colspan="3">
-                    Channel <input id="id_erp_component-<%= id %>-channel_number" name="erp_component-<%= id %>-channel_number" size="5" type="text" />
+                    Channel <input id="id_erp_component-<%= idx %>-channel_number" name="erp_component-<%= idx %>-channel_number" size="5" type="text" value="<%= _.escape(channel_number) %>"/>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Source</td>
                 <td colspan="5">
-                    <input id="id_erp_component-<%= id %>-source" name="erp_component-<%= id %>-source" size="50" type="text" />
+                    <input id="id_erp_component-<%= idx %>-source" name="erp_component-<%= idx %>-source" size="50" type="text" value="<%= _.escape(source) %>"/>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=60px>&nbsp;</td>
                 <td>Interpretation*</td>
                 <td colspan="5">
-                    <textarea cols="57" id="id_erp_component-<%= id %>-interpretation" name="erp_component-<%= id %>-interpretation" rows="3"></textarea>
+                    <textarea cols="57" id="id_erp_component-<%= idx %>-interpretation" name="erp_component-<%= idx %>-interpretation" rows="3"><%= _.escape(interpretation) %></textarea>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td colspan="7" class="myerrors">
-                    <span id="erp_component_<%= id %>_errors"></span>
+                    <span id="erp_component_<%= idx %>_errors"></span>
                 </td>
             </tr>
         </table>

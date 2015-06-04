@@ -3,12 +3,24 @@ from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.db import models
 from django.db.models import Q
-from bodb.models import Message, BodbProfile
+from bodb.models import Message, BodbProfile, messageUser
 from bodb.models.discussion import Forum
 from bodb.signals import document_changed
 from taggit.managers import TaggableManager
 import os
 from uscbp import settings
+
+stop_words=['a', 'about', 'again', 'all', 'almost', 'also', 'although', 'always', 'among', 'an', 'and', 'another',
+            'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'between', 'both', 'but', 'by', 'can',
+            'could', 'did', 'do', 'does', 'done', 'due', 'during', 'each', 'either', 'enough', 'especially', 'etc',
+            'for', 'found', 'from', 'further', 'had', 'has', 'have', 'having', 'here', 'how', 'however', 'i', 'if',
+            'in', 'into', 'is', 'it', 'its', 'itself', 'just', 'kg', 'km', 'made', 'mainly', 'make', 'may', 'mg',
+            'might', 'ml', 'mm', 'most', 'mostly', 'must', 'nearly', 'neither', 'no', 'nor', 'obtained', 'of', 'often',
+            'on', 'our', 'overall', 'perhaps', 'pmid', 'quite', 'rather', 'really', 'regarding', 'seem', 'seen',
+            'several', 'should', 'show', 'showed', 'shown', 'shows', 'significantly', 'since', 'so', 'some', 'such',
+            'than', 'that', 'the', 'their', 'theirs', 'them', 'then', 'there', 'therefore', 'these', 'they', 'this',
+            'those', 'through', 'thus', 'to', 'upon', 'use', 'used', 'using', 'various', 'very', 'was', 'we', 'were',
+            'what', 'when', 'which', 'while', 'with', 'within', 'without', 'would']
 
 class Document(models.Model):
     """
@@ -69,15 +81,28 @@ class Document(models.Model):
     def get_modified_str(self):
         return self.last_modified_time.strftime('%B %d, %Y')
 
-    def canEdit(self, user):
-        if user.is_superuser:
-            return True
-        if self.collator.id==user.id:
-            return True
+    def check_perm(self, user, perm):
+        if perm=='view':
+            if user.is_authenticated() and not user.is_anonymous():
+                if user.is_superuser:
+                    return True
+                else:
+                    if self.collator.id==user.id or self.public==1:
+                        return True
+                    elif self.draft==0:
+                        for group in user.groups.all():
+                            if self.collator.groups.filter(id=group.id).exists():
+                                return True
+            else:
+                return self.public==1
+            return False
+        else:
+            return user.is_authenticated() and (self.collator==user or user.is_superuser or
+                                                user.has_perm(perm,Document.objects.get(id=self.id)))
 
-    def isFavorite(self, user):
-        if user.is_authenticated() and not user.is_anonymous():
-            return user.get_profile().favorites.filter(id=self.id).count()>0
+    def isFavorite(self, profile):
+        if profile is not None:
+            return profile.favorites.filter(id=self.id).exists()
         return False
 
     def save(self, *args, **kwargs):
@@ -85,7 +110,7 @@ class Document(models.Model):
         # test if document already has a forum assigned to it
         if (not hasattr(self, 'forum')) or (self.forum is None):
             doc_forum=Forum()
-            doc_forum.save()
+            doc_forum.save(*args, **kwargs)
             self.forum=doc_forum
 
         # Save document
@@ -161,19 +186,7 @@ class DocumentPublicRequest(models.Model):
         users=User.objects.all()
         for user in users:
             if user.is_superuser:
-                # send internal message
-                profile=BodbProfile.objects.get(user__id=user.user.id)
-                notification_type=profile.notification_preference
-                if notification_type=='message' or notification_type=='both':
-                    message=Message(recipient=user, sender=self.user, subject=subject, read=False)
-                    message.text=text
-                    message.save()
-
-                # send email message
-                if notification_type=='email' or notification_type=='both':
-                    msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [user.email])
-                    msg.content_subtype = "html"  # Main content is now text/html
-                    msg.send(fail_silently=True)
+                messageUser(user, subject, text)
 
     def save(self, *args, **kwargs):
         if self.id is None:
@@ -182,3 +195,15 @@ class DocumentPublicRequest(models.Model):
 
 def compareDocuments(a, b):
     return cmp(a.title.lower(), b.title.lower())
+
+
+class RecentlyViewedEntry(models.Model):
+    """
+    Represents user's recently viewed entries
+    """
+    user = models.ForeignKey(User)
+    document = models.ForeignKey(Document)
+    date_viewed = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        app_label='bodb'
+        ordering=('date_viewed',)

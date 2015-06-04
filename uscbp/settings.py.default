@@ -27,6 +27,13 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -130,6 +137,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/var/www/bodb/uscbp/templates',
     '/var/www/bodb/bodb/templates',
+    '/var/www/bodb/autocomplete_light/templates/'),
     )
 
 INSTALLED_APPS = (
@@ -147,7 +155,8 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_templatetags',
     'rest_framework',
-    'documentation'
+    'documentation',
+    'autocomplete_light',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -193,6 +202,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE=10000000
 
 AUTH_PROFILE_MODULE = 'bodb.BodbProfile'
 
+RECAPTCHA_PUBLIC_KEY='6LcsfdgSAAAAALpxjEXY3U7uSwkyIxzNRxPGhVBW'
 RECAPTCHA_PRIVATE_KEY='6LcsfdgSAAAAANgA3ph1RrYQeSvV-ZzGHIjMbl5b'
 
 EMAIL_HOST = 'smtp.gmail.com'

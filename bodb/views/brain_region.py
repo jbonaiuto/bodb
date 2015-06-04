@@ -1,43 +1,42 @@
 from django.contrib.sites.models import get_current_site
-from django.core.mail import EmailMessage
-from django.shortcuts import redirect
+from django.core.cache import cache
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
-from django.views.generic.edit import BaseCreateView, UpdateView, ModelFormMixin, BaseUpdateView
+from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, Message, BodbProfile, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, NeurophysiologySED
+from bodb.models import BrainRegionRequest, BrainRegion, SED, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, ERPComponent, WorkspaceActivityItem, NeurophysiologySED, messageUser
 from bodb.search.sed import runSEDCoordSearch
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
+from bodb.views.model import CreateModelView
+from bodb.views.security import AdminUpdateView, AdminCreateView
+from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
-
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView
 from bodb.serializers import BrainRegionSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
-class BrainRegionRequestListView(ListView):
+class BrainRegionRequestListView(LoginRequiredMixin,ListView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_list_view.html'
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestListView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#requesting-a-brain-region'
         return context
 
     def get_queryset(self):
-        return BrainRegionRequest.objects.filter(user=self.request.user)
+        return BrainRegionRequest.objects.filter(user=self.request.user).select_related('user')
 
 
-class CreateBrainRegionRequestView(CreateView):
+class CreateBrainRegionRequestView(LoginRequiredMixin,CreateView):
     model=BrainRegionRequest
     form_class = BrainRegionRequestForm
     template_name = 'bodb/brainRegion/brain_region_request_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(CreateBrainRegionRequestView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#requesting-a-brain-region'
         context['ispopup']=('_popup' in self.request.GET)
         return context
@@ -50,21 +49,21 @@ class CreateBrainRegionRequestView(CreateView):
         return redirect('/bodb/index.html')
 
 
-class CheckBrainRegionRequestExistsView(JSONResponseMixin,BaseCreateView):
+class CheckBrainRegionRequestExistsView(LoginRequiredMixin,JSONResponseMixin,BaseCreateView):
     model = BrainRegionRequest
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax() and 'name' in self.request.POST:
             name_str = self.request.POST['name']
-            if not BrainRegionRequest.objects.filter(name=name_str).count():
+            if not BrainRegionRequest.objects.filter(name=name_str).exists():
                 context = {'requestExists': '0'}
             else:
                 context = {'requestExists': '1'}
         return context
 
 
-class BrainRegionRequestDenyView(UpdateView):
+class BrainRegionRequestDenyView(AdminUpdateView):
     model=BrainRegionRequest
     template_name = 'bodb/brainRegion/brain_region_request_deny.html'
     pk_url_kwarg='activation_key'
@@ -72,6 +71,7 @@ class BrainRegionRequestDenyView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestDenyView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
@@ -95,33 +95,22 @@ class BrainRegionRequestDenyView(UpdateView):
         text='Your request for the addition of the region: %s has been denied.<br>' % self.object.name
         text+='Reason for denial: %s' % self.request.POST['reason']
 
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=self.object.user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=self.object.user, sender=self.request.user, subject=subject, read=False)
-            message.text = text
-            message.save()
-
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.object.user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
+        messageUser(self.request.user, subject, text)
 
         context=self.get_context_data(form=form)
         context['msg']='Brain region request denial sent'
         return self.render_to_response(context)
 
 
-class BrainRegionRequestApproveView(CreateView):
+class BrainRegionRequestApproveView(AdminCreateView):
     model=BrainRegion
     template_name = 'bodb/brainRegion/brain_region_request_approve.html'
     form_class = BrainRegionForm
 
     def get_context_data(self, **kwargs):
         context=super(BrainRegionRequestApproveView,self).get_context_data(**kwargs)
-        context['request']=BrainRegionRequest.objects.get(activation_key=self.kwargs.get('activation_key'))
+        context=set_context_workspace(context, self.request)
+        context['request']=BrainRegionRequest.objects.select_related('user').get(activation_key=self.kwargs.get('activation_key'))
         context['helpPage']='insert_data.html#approve-deny-a-brain-region-admin-only'
         return context
 
@@ -146,21 +135,8 @@ class BrainRegionRequestApproveView(CreateView):
             ['http://', get_current_site(None).domain, '/bodb/brain_region/%d/' % self.object.id])
         text='Your request for the addition of the region: <a href="%s">%s</a> has been approved.<br>' % (region_url, self.object.name)
 
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=context['request'].user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=context['request'].user, sender=self.request.user, subject=subject, read=False)
-            message.text = text
-            message.save()
+        messageUser(self.request.user, subject, text)
 
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [context['request'].user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
-
-        return redirect(self.get_success_url())
 
 class BrainRegionAPIListView(DocumentAPIListView):
     serializer_class = BrainRegionSerializer
@@ -180,13 +156,18 @@ class BrainRegionView(DetailView):
     model = BrainRegion
     template_name='bodb/brainRegion/brain_region_view.html'
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(BrainRegion.objects.select_related('nomenclature__lit').prefetch_related('nomenclature__species','nomenclature__lit__authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+
     def get_context_data(self, **kwargs):
         context = super(BrainRegionView,self).get_context_data(**kwargs)
-
+        context=set_context_workspace(context, self.request)
         user = self.request.user
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
-        context['generic_seds']=SED.get_sed_list(SED.get_brain_region_seds(self.object, user), user)
+        generic_seds=SED.get_brain_region_seds(self.object, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         imaging_seds=BrainImagingSED.get_brain_region_seds(self.object, user)
         search_data={'type':'brain imaging','coordinate_brain_region':self.object.name, 'search_options':'all'}
         sedCoords=runSEDCoordSearch(imaging_seds, search_data, user.id)
@@ -196,54 +177,52 @@ class BrainRegionView(DetailView):
                 coords.append(sedCoords[sed.id])
             else:
                 coords.append([])
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        if user.is_authenticated() and not user.is_anonymous():
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
         connectionSEDs=ConnectivitySED.get_brain_region_seds(self.object, user)
-        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, user)
+        context['connectivity_seds']=SED.get_sed_list(connectionSEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectionSEDs)
         erp_seds=ERPSED.get_brain_region_seds(self.object, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),user)
-        context['related_bops']=RelatedBOP.get_related_bop_list(RelatedBOP.get_brain_region_related_bops(self.object, user),user)
-        context['related_models']=RelatedModel.get_related_model_list(RelatedModel.get_brain_region_related_models(self.object, user),user)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),context['profile'],context['active_workspace'])
+        rbops=RelatedBOP.get_brain_region_related_bops(self.object, user)
+        context['related_bops']=RelatedBOP.get_related_bop_list(rbops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
+        rmods=RelatedModel.get_brain_region_related_models(self.object, user)
+        context['related_models']=RelatedModel.get_related_model_list(rmods, context['workspace_models'],
+            context['fav_docs'], context['subscriptions'])
         context['helpPage']='view_entry.html'
 
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
-        context['is_favorite']=False
-        context['selected']=False
-
-        if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorite_regions.filter(id=self.object.id).count()>0
-
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
-
-            active_workspace=user.get_profile().active_workspace
-            context['selected']=active_workspace.related_regions.filter(id=self.object.id).count()>0
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
+        context['is_favorite']=self.object.id in context['fav_regions']
+        context['selected']=self.object.id in context['workspace_regions']
 
         return context
 
 
-class ToggleSelectBrainRegionView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = BrainRegion
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             region=BrainRegion.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
-                'region_id': region.id,
+                'region_id':region.id,
                 'workspace': active_workspace.title
             }
+
             activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
@@ -260,5 +239,7 @@ class ToggleSelectBrainRegionView(JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the brain region: <a href="%s">%s</a> to the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
+

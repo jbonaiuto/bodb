@@ -1,8 +1,10 @@
+{% load bodb_extras %}
 <script type="text/javascript">
-    function addBrainRegionMultiple(region_id, data){
+    function addBrainRegionMultiple(id, relationship, region_id, data){
         var count = $('#related_brain_regions').children().length;
         var tmplMarkup = $('#related_brain_region-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count, region: region_id, name: data[0], nomenclature: data[1], species: data[2] });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, relationship: relationship, region: region_id,
+            name: data[0], nomenclature: data[1], species: data[2] });
         $('#related_brain_regions').append(compiledTmpl);
         // update form count
         $('#id_related_brain_region-TOTAL_FORMS').attr('value', count+1);
@@ -20,6 +22,25 @@
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for related_brain_region_form in related_brain_region_formset.forms %}
+            {% if related_brain_region_form.instance.id %}
+                addBrainRegionMultiple({{ related_brain_region_form.instance.id }},
+                        '{{ related_brain_region_form.instance.relationship|escapejs }}',
+                        {{ related_brain_region_form.instance.brain_region.id }},
+                        ['{{ related_brain_region_form.instance.brain_region|escapejs }}',
+                            '{{ related_brain_region_form.instance.brain_region.nomenclature|escapejs }}',
+                            '{{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "|escapejs }}']);
+            {% else %}
+                addBrainRegionMultiple('', '{{ related_brain_region_form.initial|lookup:'relationship'|escapejs }}',
+                        {{ related_brain_region_form.initial|lookup:'brain_region' }},
+                        ['{{ related_brain_region_form.initial|lookup:'brain_region_name'|escapejs }}',
+                            '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature'|escapejs }}',
+                            '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature_species'|escapejs }}']);
+            {% endif %}
+        {% endfor %}
+    })
 </script>
 <div id="brainRegionData" style="display:{% if showRelatedBrainRegions %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
@@ -44,44 +65,6 @@
                     {{ related_brain_region_formset.management_form.errors }}
                 </div>
                 <div id="related_brain_regions">                    
-                    {% for related_brain_region_form in related_brain_region_formset.forms %}
-                        <div id="related_brain_region-{{ forloop.counter0 }}" name="related_brain_region">
-                            <input type=hidden id="id_related_brain_region-{{ forloop.counter0 }}-DELETE" name="related_brain_region-{{ forloop.counter0 }}-DELETE"/>
-                            {{ related_brain_region_form.id }}
-                            {{ related_brain_region_form.brain_region }}
-                            {{ related_brain_region_form.document }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">
-                                        <a href="" onclick="return deleteInlineForm('related_brain_region', {{ forloop.counter0 }});">Remove</a>&nbsp;
-                                    </td>
-                                    <td style="width:150px">
-                                        {% if related_brain_region_form.instance %}
-                                            <a href="/bodb/brain_region/{{ related_brain_region_form.instance.brain_region.id }}/">{{ related_brain_region_form.instance.brain_region }}</a>
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:150px">
-                                        {% if related_brain_region_form.instance %}
-                                            {{ related_brain_region_form.instance.brain_region.nomenclature }}
-                                        {% endif %}
-                                    </td>
-                                    <td style="width:150px">
-                                        {% if related_brain_region_form.instance %}
-                                            {{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "}}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ related_brain_region_form.relationship }}
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                <span id="related_brain_region_{{ forloop.counter0 }}_errors">
-                                    {{ related_brain_region_form.errors }}
-                                </span>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -89,32 +72,32 @@
 </div>
 
 <script type="text/html" id="related_brain_region-template">
-    <div id="related_brain_region-<%= id %>" name="related_brain_region">
-        <input type=hidden id="id_related_brain_region-<%= id %>-DELETE" name="related_brain_region-<%= id %>-DELETE"/>
-        <input id="id_related_brain_region-<%= id %>-id" name="related_brain_region-<%= id %>-id" type="hidden" />
-        <input id="id_related_brain_region-<%= id %>-brain_region" name="related_brain_region-<%= id %>-brain_region" type="hidden" value="<%= region %>"/>
-        <input id="id_related_brain_region-<%= id %>-document" name="related_brain_region-<%= id %>-document" type="hidden" />
+    <div id="related_brain_region-<%= idx %>" name="related_brain_region">
+        <input type=hidden id="id_related_brain_region-<%= idx %>-DELETE" name="related_brain_region-<%= idx %>-DELETE"/>
+        <input id="id_related_brain_region-<%= idx %>-id" name="related_brain_region-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_related_brain_region-<%= idx %>-brain_region" name="related_brain_region-<%= idx %>-brain_region" type="hidden" value="<%= region %>"/>
+        <input id="id_related_brain_region-<%= idx %>-document" name="related_brain_region-<%= idx %>-document" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('related_brain_region', <%= id %>);">Remove</a>&nbsp;
+                    <a href="" onclick="return deleteInlineForm('related_brain_region', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <a href="/bodb/brain_region/<%= region %>/"><%= name %></a>
+                    <a href="/bodb/brain_region/<%= region %>/"><%= _.escape(name) %></a>
                 </td>
                 <td style="width:150px">
-                    <%= nomenclature %>
+                    <%= _.escape(nomenclature) %>
                 </td>
                 <td style="width:150px">
-                    <%= species %>
+                    <%= _.escape(species) %>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_related_brain_region-<%= id %>-relationship" name="related_brain_region-<%= id %>-relationship" rows="3"></textarea>
+                    <textarea cols="40" id="id_related_brain_region-<%= idx %>-relationship" name="related_brain_region-<%= idx %>-relationship" rows="3"><%= _.escape(relationship) %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="related_brain_region_<%= id %>_errors">
+            <span id="related_brain_region_<%= idx %>_errors">
             </span>
         </div>
     </div>

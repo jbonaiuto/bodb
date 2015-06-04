@@ -1,34 +1,31 @@
+import json
 import os
 from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.db.models import Q
 from django.forms.forms import Form
-from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView
+from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView, ProcessFormView
 from bodb.forms.bop import RelatedBOPFormSet
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm, ModelForm1, ModelForm2, ModelForm6
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, model_gxl, Literature, UserSubscription
-from bodb.models.ssr import SSR, Prediction
-from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView, generate_diagram_from_gxl
-from bodb.views.main import BODBView
-from taggit.models import Tag
-from taggit.utils import parse_tags
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription, SSR, BOP, BrainRegion
+from bodb.models.ssr import Prediction
+from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import ModelSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
 class EditModelMixin():
     model = Model
@@ -103,7 +100,7 @@ class EditModelMixin():
                     # Set module parent and collator if this is a new module
                     if module.id is None:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public
@@ -112,7 +109,7 @@ class EditModelMixin():
             # remove modules
             for module_form in module_formset.deleted_forms:
                 if module_form.instance.id:
-                    module_form.isntance.delete()
+                    module_form.instance.delete()
 
             # save predictions
             prediction_formset.instance = self.object
@@ -122,40 +119,11 @@ class EditModelMixin():
                     # Set prediction model and collator if this is a new prediction
                     if prediction.id is None:
                         prediction.model=self.object
-                        prediction.collator=self.object.collator
+                        prediction.collator=self.request.user
                     prediction.last_modified_by=self.request.user
                     prediction.draft=self.object.draft
                     prediction.public=self.object.public
                     prediction.save()
-
-                    # save prediction SSRs
-                    for predictionssr_form in prediction_form.nested.forms:
-                        if not predictionssr_form in prediction_form.nested.deleted_forms:
-                            predictionssr=predictionssr_form.save(commit=False)
-                            predictionssr.prediction=prediction
-                            ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                                brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
-                                type=predictionssr_form.cleaned_data['ssr_type'])
-                            # Update ssr if editing existing one
-                            if 'ssr' in predictionssr_form.cleaned_data and\
-                               predictionssr_form.cleaned_data['ssr'] is not None:
-                                ssr=predictionssr_form.cleaned_data['ssr']
-                                ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                                ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                            # Set collator if this is a new SSR
-                            else:
-                                ssr.collator=self.object.collator
-                            ssr.last_modified_by=self.request.user
-                            ssr.draft=self.object.draft
-                            ssr.public=self.object.public
-                            ssr.save()
-                            predictionssr.ssr=ssr
-                            predictionssr.save()
-
-                    # remove prediction SSRs
-                    for predictionssr_form in prediction_form.nested.deleted_forms:
-                        if predictionssr_form.instance.id:
-                            predictionssr_form.instance.delete()
 
             # remove predictions
             for prediction_form in prediction_formset.deleted_forms:
@@ -169,35 +137,6 @@ class EditModelMixin():
                     test_sed=test_sed_form.save(commit=False)
                     test_sed.model=self.object
                     test_sed.save()
-
-                    # save testSED SSRs
-                    for testsedssr_form in test_sed_form.nested.forms:
-                        if not testsedssr_form in test_sed_form.nested.deleted_forms:
-                            testsedssr=testsedssr_form.save(commit=False)
-                            testsedssr.test_sed=test_sed
-                            ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
-                                brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
-                                type=testsedssr_form.cleaned_data['ssr_type'])
-                            # Update ssr if editing existing one
-                            if 'ssr' in testsedssr_form.cleaned_data and\
-                               testsedssr_form.cleaned_data['ssr'] is not None:
-                                ssr=testsedssr_form.cleaned_data['ssr']
-                                ssr.title=testsedssr_form.cleaned_data['ssr_title']
-                                ssr.brief_description=testsedssr_form.cleaned_data['ssr_brief_description']
-                            # Set collator if this is a new SSR
-                            else:
-                                ssr.collator=self.object.collator
-                            ssr.last_modified_by=self.request.user
-                            ssr.draft=self.object.draft
-                            ssr.public=self.object.public
-                            ssr.save()
-                            testsedssr.ssr=ssr
-                            testsedssr.save()
-
-                    # remove testSED SSRs
-                    for testsedssr_form in test_sed_form.nested.deleted_forms:
-                        if testsedssr_form.instance.id:
-                            testsedssr_form.instance.delete()
 
             # remove test SEDs
             for test_sed_form in test_sed_formset.deleted_forms:
@@ -316,10 +255,15 @@ class EditModelMixin():
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class CreateModelView(EditModelMixin, CreateView):
+class CreateModelView(EditModelMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_model'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateModelView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
@@ -358,15 +302,32 @@ MODEL_WIZARD_TEMPLATES = {"step1": 'bodb/model/model_create_1.html',
                           "step6": 'bodb/model/model_create_6.html'
                          }
 
-class CreateModelWizardView(SessionWizardView):
-
+class CreateModelWizardView(PermissionRequiredMixin, SessionWizardView):
+    permission_required='bodb.add_model'
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'figures'))
 
     def get_template_names(self):
         return [MODEL_WIZARD_TEMPLATES[self.steps.current]]
 
+    def extract_formset_initial(self, data_key, form_prefix):
+        initial = {}
+        if data_key in self.storage.data:
+            for key, val in self.storage.data[data_key].iteritems():
+                if key.startswith('%s-' % form_prefix):
+                    parts = key.split('-')
+                    try:
+                        idx = int(parts[1])
+                        if not idx in initial:
+                            initial[idx] = {}
+                        initial[idx][parts[2]] = val
+                    except:
+                        pass
+        initial = [initial[key] for key in sorted(initial)]
+        return initial
+
     def get_context_data(self, form, **kwargs):
         context=super(CreateModelWizardView,self).get_context_data(form, **kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['showAuthors']=True
@@ -378,37 +339,116 @@ class CreateModelWizardView(SessionWizardView):
         context['showRelatedBOPs']=True
         context['showRelatedBrainRegions']=True
         context['ispopup']=('_popup' in self.request.GET)
+        if 'create_model_wizard_view-current_step' in self.request.POST:
+            if self.request.POST['create_model_wizard_view-current_step']=='step1':
+                self.storage.data['step1_data']=self.request.POST
+                self.storage.data['literature']=self.request.POST.getlist('literature')
+            elif self.request.POST['create_model_wizard_view-current_step']=='step2':
+                self.storage.data['step2_data']=self.request.POST
+                for key,file_list in self.request.FILES.iteritems():
+                    self.storage.data[key]=file_list.name
+            elif self.request.POST['create_model_wizard_view-current_step']=='step3':
+                self.storage.data['step3_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step4':
+                self.storage.data['step4_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step5':
+                self.storage.data['step5_data']=self.request.POST
+            elif self.request.POST['create_model_wizard_view-current_step']=='step6':
+                self.storage.data['step6_data']=self.request.POST
+
         if self.steps.current=='step1':
+            model_author_initial=self.extract_formset_initial('step1_data','model_author')
             context['model_author_formset'] = ModelAuthorFormSet(queryset=ModelAuthor.objects.none(),
-                prefix='model_author')
+                initial=model_author_initial, prefix='model_author', extra=len(model_author_initial))
+            if 'literature' in self.storage.data:
+                context['references']=Literature.objects.filter(id__in=self.storage.data['literature'])
         elif self.steps.current=='step2':
-            self.storage.data['step1_data']=self.request.POST
-            self.storage.data['literature']=self.request.POST.getlist('literature')
-            print(self.storage.data['literature'])
-            context['figure_formset']=DocumentFigureFormSet(prefix='figure')
-            context['input_formset']=VariableFormSet(prefix='input')
-            context['output_formset']=VariableFormSet(prefix='output')
-            context['state_formset']=VariableFormSet(prefix='state')
-            context['module_formset'] = ModuleFormSet(prefix='module')
+            figure_initial=self.extract_formset_initial('step2_data','figure')
+            for idx in range(len(figure_initial)):
+                figure_initial[idx]['figure']=os.path.join('figures',self.storage.data['figure-%d-figure' % idx])
+            context['figure_formset']=DocumentFigureFormSet(queryset=DocumentFigure.objects.none(),
+                initial=figure_initial,prefix='figure',extra=len(figure_initial))
+            input_initial = self.extract_formset_initial('step2_data','input')
+            context['input_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=input_initial,
+                prefix='input',extra=len(input_initial))
+            output_initial = self.extract_formset_initial('step2_data','output')
+            context['output_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=output_initial,
+                prefix='output',extra=len(output_initial))
+            state_initial=self.extract_formset_initial('step2_data','state')
+            context['state_formset']=VariableFormSet(queryset=Variable.objects.none(),initial=state_initial,
+                prefix='state',extra=len(state_initial))
+            module_initial=self.extract_formset_initial('step2_data','module')
+            context['module_formset'] = ModuleFormSet(queryset=Module.objects.none(),initial=module_initial,
+                prefix='module',extra=len(module_initial))
         elif self.steps.current=='step3':
-            self.storage.data['step2_data']=self.request.POST
-            for key,file_list in self.request.FILES.iteritems():
-                self.storage.data[key]=file_list.name
-            context['build_sed_formset']=BuildSEDFormSet(prefix='build_sed')
+            buildsed_initial=self.extract_formset_initial('step3_data','build_sed')
+            for idx in range(len(buildsed_initial)):
+                sed=SED.objects.get(id=buildsed_initial[idx]['sed'])
+                buildsed_initial[idx]['sed_title']=sed.__unicode__()
+                buildsed_initial[idx]['sed_brief_description']=sed.brief_description
+                buildsed_initial[idx]['sed_type']=sed.type
+            context['build_sed_formset']=BuildSEDFormSet(queryset=BuildSED.objects.none(),initial=buildsed_initial,
+                prefix='build_sed',extra=len(buildsed_initial))
         elif self.steps.current=='step4':
-            self.storage.data['step3_data']=self.request.POST
-            context['test_sed_formset']=TestSEDFormSet(prefix='test_sed')
+            testsed_initial=self.extract_formset_initial('step4_data','test_sed')
+            for idx in range(len(testsed_initial)):
+                sed=SED.objects.get(id=testsed_initial[idx]['sed'])
+                testsed_initial[idx]['sed_title']=sed.__unicode__()
+                testsed_initial[idx]['sed_brief_description']=sed.brief_description
+                testsed_initial[idx]['sed_type']=sed.type
+                if SSR.objects.filter(id=testsed_initial[idx]['ssr']).count():
+                    ssr=SSR.objects.get(id=testsed_initial[idx]['ssr'])
+                    testsed_initial[idx]['ssr_title']=ssr.__unicode__()
+                    testsed_initial[idx]['ssr_brief_description']=ssr.brief_description
+                    testsed_initial[idx]['ssr_type']=ssr.type
+                else:
+                    testsed_initial[idx]['ssr_title']=''
+                    testsed_initial[idx]['ssr_brief_description']=''
+                    testsed_initial[idx]['ssr_type']=''
+            context['test_sed_formset']=TestSEDFormSet(queryset=TestSED.objects.none(),initial=testsed_initial,
+                prefix='test_sed',extra=len(testsed_initial))
         elif self.steps.current=='step5':
-            self.storage.data['step4_data']=self.request.POST
-            context['prediction_formset']=PredictionFormSet(prefix='prediction')
+            prediction_initial=self.extract_formset_initial('step5_data','prediction')
+            for idx in range(len(prediction_initial)):
+                if SSR.objects.filter(id=prediction_initial[idx]['ssr']).count():
+                    ssr=SSR.objects.get(id=prediction_initial[idx]['ssr'])
+                    prediction_initial[idx]['ssr_title']=ssr.__unicode__()
+                    prediction_initial[idx]['ssr_brief_description']=ssr.brief_description
+                    prediction_initial[idx]['ssr_type']=ssr.type
+                else:
+                    prediction_initial[idx]['ssr_title']=''
+                    prediction_initial[idx]['ssr_brief_description']=''
+                    prediction_initial[idx]['ssr_type']=''
+            context['prediction_formset']=PredictionFormSet(queryset=Prediction.objects.none(),
+                initial=prediction_initial,prefix='prediction',extra=len(prediction_initial))
         elif self.steps.current=='step6':
-            self.storage.data['step5_data']=self.request.POST
-            context['related_bop_formset']=RelatedBOPFormSet(prefix='related_bop')
-            context['related_model_formset']=RelatedModelFormSet(prefix='related_model')
-            context['related_brain_region_formset']=RelatedBrainRegionFormSet(prefix='related_brain_region')
+            related_bop_initial=self.extract_formset_initial('step6_data','related_bop')
+            for idx in range(len(related_bop_initial)):
+                bop=BOP.objects.get(id=related_bop_initial[idx]['bop'])
+                related_bop_initial[idx]['bop_title']=bop.__unicode__()
+                related_bop_initial[idx]['bop_brief_description']=bop.brief_description
+            context['related_bop_formset']=RelatedBOPFormSet(queryset=RelatedBOP.objects.none(),
+                initial=related_bop_initial,prefix='related_bop',extra=len(related_bop_initial))
+            related_model_initial=self.extract_formset_initial('step6_data','related_model')
+            for idx in range(len(related_model_initial)):
+                model=Model.objects.get(id=related_model_initial[idx]['model'])
+                related_model_initial[idx]['model_title']=model.__unicode__()
+                related_model_initial[idx]['model_brief_description']=model.brief_description
+            context['related_model_formset']=RelatedModelFormSet(queryset=RelatedModel.objects.none(),
+                initial=related_model_initial,prefix='related_model',extra=len(related_model_initial))
+            related_region_initial=self.extract_formset_initial('step6_data','related_brain_region')
+            for idx in range(len(related_region_initial)):
+                region=BrainRegion.objects.get(id=related_region_initial[idx]['brain_region'])
+                related_region_initial[idx]['brain_region_name']=region.__unicode__()
+                related_region_initial[idx]['brain_region_nomenclature']=region.nomenclature.__unicode__()
+                related_region_initial[idx]['brain_region_nomenclature_species']=region.nomenclature.species_name()
+            context['related_brain_region_formset']=RelatedBrainRegionFormSet(queryset=RelatedBrainRegion.objects.none(),
+                initial=related_region_initial,prefix='related_brain_region',extra=len(related_region_initial))
         return context
 
     def done(self, form_list, **kwargs):
+        self.storage.data['step6_data']=self.request.POST
+
         model=Model(collator=self.request.user, last_modified_by=self.request.user,
             title=form_list[0].cleaned_data['title'], brief_description=form_list[0].cleaned_data['brief_description'],
             narrative=form_list[1].cleaned_data['narrative'], execution_url=form_list[0].cleaned_data['execution_url'],
@@ -421,7 +461,6 @@ class CreateModelWizardView(SessionWizardView):
         for tag in form_list[0].cleaned_data['tags']:
             model.tags.add(tag)
         for lit_id in self.storage.data['literature']:
-            print(lit_id)
             model.literature.add(Literature.objects.get(id=lit_id))
 
         # save authors
@@ -512,29 +551,6 @@ class CreateModelWizardView(SessionWizardView):
             test_sed.model=model
             test_sed.save()
 
-            # save testSED SSRs
-            for testsedssr_form in test_sed_form.nested.forms:
-                testsedssr=testsedssr_form.save(commit=False)
-                testsedssr.test_sed=test_sed
-                ssr=SSR(title=testsedssr_form.cleaned_data['ssr_title'],
-                    brief_description=testsedssr_form.cleaned_data['ssr_brief_description'],
-                    type=testsedssr_form.cleaned_data['ssr_type'])
-                # Update ssr if editing existing one
-                if 'ssr' in testsedssr_form.cleaned_data and\
-                   testsedssr_form.cleaned_data['ssr'] is not None:
-                    ssr=testsedssr_form.cleaned_data['ssr']
-                    ssr.title=testsedssr_form.cleaned_data['ssr_title']
-                    ssr.brief_description=testsedssr_form.cleaned_data['ssr_brief_description']
-                # Set collator if this is a new SSR
-                else:
-                    ssr.collator=model.collator
-                ssr.last_modified_by=self.request.user
-                ssr.draft=model.draft
-                ssr.public=model.public
-                ssr.save()
-                testsedssr.ssr=ssr
-                testsedssr.save()
-
         # save predictions
         prediction_formset=PredictionFormSet(self.storage.data['step5_data'], prefix='prediction')
         prediction_formset.instance = model
@@ -549,31 +565,8 @@ class CreateModelWizardView(SessionWizardView):
             prediction.public=model.public
             prediction.save()
 
-            # save prediction SSRs
-            for predictionssr_form in prediction_form.nested.forms:
-                predictionssr=predictionssr_form.save(commit=False)
-                predictionssr.prediction=prediction
-                ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                    brief_description=predictionssr_form.cleaned_data['ssr_brief_description'],
-                    type=predictionssr_form.cleaned_data['ssr_type'])
-                # Update ssr if editing existing one
-                if 'ssr' in predictionssr_form.cleaned_data and\
-                   predictionssr_form.cleaned_data['ssr'] is not None:
-                    ssr=predictionssr_form.cleaned_data['ssr']
-                    ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                    ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                # Set collator if this is a new SSR
-                else:
-                    ssr.collator=model.collator
-                ssr.last_modified_by=self.request.user
-                ssr.draft=model.draft
-                ssr.public=model.public
-                ssr.save()
-                predictionssr.ssr=ssr
-                predictionssr.save()
-
         # save related BOPs
-        related_bop_formset=RelatedBOPFormSet(self.request.POST, prefix='related_bop')
+        related_bop_formset=RelatedBOPFormSet(self.storage.data['step6_data'], prefix='related_bop')
         related_bop_formset.instance=model
         for related_bop_form in related_bop_formset.forms:
             if not related_bop_form in related_bop_formset.deleted_forms:
@@ -582,7 +575,7 @@ class CreateModelWizardView(SessionWizardView):
                 related_bop.save()
 
         # save related Models
-        related_model_formset=RelatedModelFormSet(self.request.POST, prefix='related_model')
+        related_model_formset=RelatedModelFormSet(self.storage.data['step6_data'], prefix='related_model')
         related_model_formset.instance=model
         for related_model_form in related_model_formset.forms:
             if not related_model_form in related_model_formset.deleted_forms:
@@ -591,7 +584,7 @@ class CreateModelWizardView(SessionWizardView):
                 related_model.save()
 
         # save related brain regions
-        related_brain_region_formset=RelatedBrainRegionFormSet(self.request.POST, prefix='related_brain_region')
+        related_brain_region_formset=RelatedBrainRegionFormSet(self.storage.data['step6_data'], prefix='related_brain_region')
         related_brain_region_formset.instance=model
         for related_brain_region_form in related_brain_region_formset.forms:
             if not related_brain_region_form in related_brain_region_formset.deleted_forms:
@@ -602,27 +595,35 @@ class CreateModelWizardView(SessionWizardView):
         return redirect(model.get_absolute_url())
 
 
-class UpdateModelView(EditModelMixin, UpdateView):
+class UpdateModelView(EditModelMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Model.objects.select_related('collator').prefetch_related('authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(UpdateModelView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-model'
         context['showFigure']=True
         context['model_author_formset'] = ModelAuthorFormSet(self.request.POST or None,
-            queryset=ModelAuthor.objects.filter(model=self.object), prefix='model_author')
+            queryset=ModelAuthor.objects.filter(model=self.object).select_related('author'), prefix='model_author')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
         context['related_bop_formset']=RelatedBOPFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedBOP.objects.filter(document=self.object), prefix='related_bop')
+            queryset=RelatedBOP.objects.filter(document=self.object).select_related('bop'), prefix='related_bop')
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, instance=self.object,
-            queryset=BuildSED.objects.filter(document=self.object), prefix='build_sed')
+            queryset=BuildSED.objects.filter(document=self.object).select_related('sed'), prefix='build_sed')
         context['test_sed_formset']=TestSEDFormSet(self.request.POST or None, instance=self.object,
-            queryset=TestSED.objects.filter(model=self.object), prefix='test_sed')
+            queryset=TestSED.objects.filter(model=self.object).select_related('sed','ssr'), prefix='test_sed')
         context['prediction_formset']=PredictionFormSet(self.request.POST or None, instance=self.object,
-            queryset=Prediction.objects.filter(model=self.object), prefix='prediction')
+            queryset=Prediction.objects.filter(model=self.object).select_related('ssr','collator'), prefix='prediction')
         context['related_model_formset']=RelatedModelFormSet(self.request.POST or None, instance=self.object,
-            queryset=RelatedModel.objects.filter(document=self.object), prefix='related_model')
+            queryset=RelatedModel.objects.filter(document=self.object).select_related('model'), prefix='related_model')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
-            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object),
+            instance=self.object, queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'),
             prefix='related_brain_region')
         context['input_formset']=VariableFormSet(self.request.POST or None, instance=self.object,
             queryset=Variable.objects.filter(module=self.object, var_type='Input'), prefix='input')
@@ -632,58 +633,84 @@ class UpdateModelView(EditModelMixin, UpdateView):
             queryset=Variable.objects.filter(module=self.object, var_type='State'), prefix='state')
         context['module_formset'] = ModuleFormSet(self.request.POST or None, instance=self.object,
             queryset=Module.objects.filter(parent=self.object), prefix='module')
-        context['references'] = self.object.literature.all()
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=False
         return context
 
 
-class DeleteModelView(DeleteView):
+class DeleteModelView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=Model
     success_url = '/bodb/index.html'
+    permission_required='delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
-class ModelDetailView(DocumentDetailView):
+class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     model = Model
     template_name = 'bodb/model/model_view.html'
+    permission_required='view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Model.objects.select_related('forum','collator','last_modified_by').prefetch_related('authors__author'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(ModelDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['generic_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_generic_testing_seds(self.object,user),user)
-        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_connectivity_testing_seds(self.object,user),user)
-        context['imaging_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_imaging_testing_seds(self.object, user),user)
-        context['erp_test_seds'] = TestSED.get_testing_sed_list(TestSED.get_erp_testing_seds(self.object, user),user)
-        context['predictions'] = Prediction.get_prediction_list(Prediction.get_predictions(self.object,user),user)
+        generic_test_seds=TestSED.get_generic_testing_seds(self.object,user)
+        context['generic_test_seds'] = TestSED.get_testing_sed_list(generic_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        conn_test_seds=TestSED.get_connectivity_testing_seds(self.object,user)
+        context['connectivity_test_seds'] = TestSED.get_testing_sed_list(conn_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        imaging_test_seds=TestSED.get_imaging_testing_seds(self.object, user)
+        context['imaging_test_seds'] = TestSED.get_testing_sed_list(imaging_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        erp_test_seds=TestSED.get_erp_testing_seds(self.object, user)
+        context['erp_test_seds'] = TestSED.get_testing_sed_list(erp_test_seds, context['workspace_seds'],
+            context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        predictions=Prediction.get_predictions(self.object,user)
+        context['predictions'] = Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
+            context['fav_docs'], context['subscriptions'])
         context['inputs'] = Variable.objects.filter(var_type='Input',module=self.object)
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
-        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
+        literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
+        context['references'] = Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
         context['hierarchy_html']=self.object.hierarchy_html(self.object.id)
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').count()>0
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').count()>0
-            context['selected']=user.get_profile().active_workspace.related_models.filter(id=self.object.id).count()>0
+        context['subscribed_to_collator']=(self.object.collator.id, 'Model') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Model') in context['subscriptions']
+        context['selected']=self.object.id in context['workspace_models']
         context['bop_relationship']=False
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-        context['reverse_related_models']=RelatedModel.get_reverse_related_model_list(RelatedModel.get_reverse_related_models(self.object,user),user)
         return context
 
 
-class ToggleSelectModelView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = Model
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             model=Model.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
                 'model_id': model.id,
@@ -705,6 +732,7 @@ class ToggleSelectModelView(JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the model: <a href="%s">%s</a> to the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
@@ -719,17 +747,31 @@ class ModelTaggedView(BODBView):
         context['helpPage']= 'tags.html'
         context['tag']= name
         context['modelGraphId']='modelRelationshipDiagram'
-        context['tagged_items']= Model.get_model_list(Model.get_tagged_models(name, user),user)
+        models=Model.get_tagged_models(name, user)
+        context['tagged_items']= Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
         return context
 
 
-class UpdateModuleView(UpdateView):
+class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
     model = Module
     form_class = ModuleForm
     template_name = 'bodb/model/module_detail.html'
+    permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Module.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
+    def get_form(self, form_class):
+        form=super(UpdateModuleView,self).get_form(form_class)
+        form.fields['parent'].queryset=self.object.get_root().get_descendants(include_self=True)
+        return form
 
     def get_context_data(self, **kwargs):
         context = super(UpdateModuleView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['showFigure']=True
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
@@ -766,7 +808,7 @@ class UpdateModuleView(UpdateView):
                     # Set parent and collator if this is a new module
                     if not module.id:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public
@@ -837,9 +879,10 @@ class UpdateModuleView(UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class DeleteModuleView(DeleteView):
+class DeleteModuleView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=Module
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 
 class ModelAPIListView(DocumentAPIListView):
@@ -852,16 +895,21 @@ class ModelAPIListView(DocumentAPIListView):
         return Model.objects.filter(security_q)
 
 
-class ModelAPIDetailView(DocumentAPIDetailView):
-    queryset = Model.objects.all()
+class ModelAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = ModelSerializer
-    
     model = Model
+    permission_required = 'view'
 
 
-class ModuleDetailView(DocumentDetailView):
+class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
     model = Module
     template_name = 'bodb/model/module_view.html'
+    permission_required = 'view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Module.objects.select_related('forum','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(ModuleDetailView, self).get_context_data(**kwargs)
@@ -871,16 +919,13 @@ class ModuleDetailView(DocumentDetailView):
         context['outputs'] = Variable.objects.filter(var_type='Output',module=self.object)
         context['states'] = Variable.objects.filter(var_type='State',module=self.object)
         context['modules'] = Module.objects.filter(parent=self.object)
-        context['hierarchy_html']=Model.objects.get(id=self.object.get_root().id).hierarchy_html(self.object.id)
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Model').count()>0
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Model').count()>0
+        context['hierarchy_html']=Model.objects.prefetch_related('authors__author').get(id=self.object.get_root().id).hierarchy_html(self.object.id)
+        context['subscribed_to_collator']=(self.object.collator.id, 'Model') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Model') in context['subscriptions']
         return context
 
 
-class SimilarModelView(JSONResponseMixin, BaseDetailView):
+class SimilarModelView(LoginRequiredMixin,JSONResponseMixin, BaseDetailView):
 
     def get(self, request, *args, **kwargs):
         # Load similar models
@@ -896,7 +941,7 @@ class SimilarModelView(JSONResponseMixin, BaseDetailView):
         return self.render_to_response(data)
 
 
-class BenchmarkModelView(TemplateView):
+class BenchmarkModelView(BODBView):
     template_name = 'bodb/model/model_benchmark.html'
 
     def post(self, request, *args, **kwargs):
@@ -924,7 +969,7 @@ class BenchmarkModelView(TemplateView):
         for model in context['selected_models']:
             context['scores'].append(0)
 
-        buildsed_q=Q(Q(related_build_sed_document__document__in=context['selected_models']))
+        buildsed_q=Q(Q(build_sed__document__in=context['selected_models']))
         testsed_q=Q(Q(test_sed__model__in=context['selected_models']))
         related_seds=SED.objects.filter(Q(buildsed_q | testsed_q) & Document.get_security_q(user))
 
@@ -992,7 +1037,7 @@ class BenchmarkModelView(TemplateView):
         return context
 
 
-class ReverseBenchmarkModelView(TemplateView):
+class ReverseBenchmarkModelView(BODBView):
     template_name = 'bodb/model/model_reverse_benchmark.html'
 
     def post(self, request, *args, **kwargs):
@@ -1095,19 +1140,3 @@ def compareBenchmarkSEDs(a, b):
         return cmp(SED.objects.get(id=a[0]).title.lower(),SED.objects.get(id=b[0]).title.lower())
     else:
         return -1*cmp(a[1],b[1])
-
-
-class ModelDiagramView(JSONResponseMixin,BaseCreateView):
-    model = Model
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            graphTool=self.request.POST['graphTool']
-            models=Model.objects.filter(document_ptr__in=self.request.POST.getlist('modelIds[]'))
-            dot_xml=model_gxl(models, self.request.user)
-            context['modelDiagram'], size, context['modelMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
-                self.request.user, ext=self.request.POST['graphID'])
-            context['modelDiagramW']=size[0]
-            context['modelDiagramH']=size[1]
-            context['graphId']=self.request.POST['graphID']
-        return context

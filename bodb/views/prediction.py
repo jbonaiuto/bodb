@@ -1,13 +1,14 @@
-from django.shortcuts import redirect
-from django.views.generic import UpdateView, DeleteView
-from bodb.forms.ssr import PredictionSSRFormSet, PredictionForm
-from bodb.models import Prediction, SSR, PredictionSSR, Document, UserSubscription
+from django.db.models import Q
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic import UpdateView, DeleteView, TemplateView
+from bodb.forms.ssr import PredictionForm
+from bodb.models import Prediction, SSR, Document, UserSubscription, Model
 from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
-from bodb.views.main import BODBView
+from bodb.views.main import BODBView, set_context_workspace
+from bodb.views.security import ObjectRolePermissionRequiredMixin
 
 class PredictionAPIListView(DocumentAPIListView):
-    queryset = Prediction.objects.all()
     serializer_class = PredictionSerializer
     model = Prediction
 
@@ -16,92 +17,78 @@ class PredictionAPIListView(DocumentAPIListView):
         security_q=Document.get_security_q(user)
         return Prediction.objects.filter(security_q)
 
-class PredictionAPIDetailView(DocumentAPIDetailView):
-    queryset = Prediction.objects.all()
+
+class PredictionAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = PredictionSerializer
     model = Prediction
+    permission_required = 'view'
 
-class UpdatePredictionView(UpdateView):
+
+class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
     model = Prediction
     form_class = PredictionForm
     template_name = 'bodb/prediction/prediction_detail.html'
+    permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Prediction.objects.select_related('collator','ssr__collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePredictionView,self).get_context_data(**kwargs)
-        context['predictionssr_formset']=PredictionSSRFormSet(self.request.POST or None, instance=self.object,
-            queryset=PredictionSSR.objects.filter(prediction=self.object), prefix='predictionssr')
+        context=set_context_workspace(context, self.request)
+        context['ssrs']=[self.object.ssr]
         context['ispopup']=('_popup' in self.request.GET)
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        predictionssr_formset = context['predictionssr_formset']
 
-        if predictionssr_formset.is_valid():
+        self.object = form.save(commit=False)
+        # Set the collator if this is a new BOP
+        if self.object.id is None:
+            self.object.collator=self.request.user
+        self.object.last_modified_by=self.request.user
+        self.object.save()
+        form.save_m2m()
 
-            self.object = form.save(commit=False)
-            # Set the collator if this is a new BOP
-            if self.object.id is None:
-                self.object.collator=self.request.user
-            self.object.last_modified_by=self.request.user
-            self.object.save()
-            form.save_m2m()
-
-            # save SSRs
-            for predictionssr_form in predictionssr_formset.forms:
-                if not predictionssr_form in predictionssr_formset.deleted_forms:
-                    predictionssr=predictionssr_form.save(commit=False)
-                    predictionssr.prediction=self.object
-                    ssr=SSR(title=predictionssr_form.cleaned_data['ssr_title'],
-                        brief_description=predictionssr_form.cleaned_data['ssr_brief_description'])
-                    # Update ssr if editing existing one
-                    if 'ssr' in predictionssr_form.cleaned_data and\
-                       predictionssr_form.cleaned_data['ssr'] is not None:
-                        ssr=predictionssr_form.cleaned_data['ssr']
-                        ssr.title=predictionssr_form.cleaned_data['ssr_title']
-                        ssr.brief_description=predictionssr_form.cleaned_data['ssr_brief_description']
-                    # Set collator if this is a new SSR
-                    else:
-                        ssr.collator=self.object.collator
-                    ssr.last_modified_by=self.request.user
-                    ssr.draft=self.object.draft
-                    ssr.public=self.object.public
-                    ssr.save()
-                    predictionssr.ssr=ssr
-                    predictionssr.save()
-
-            # remove prediction SSRs
-            for predictionssr_form in predictionssr_formset.deleted_forms:
-                if predictionssr_form.instance.id:
-                    predictionssr_form.instance.delete()
-
-            url=self.get_success_url()
-            if context['ispopup']:
-                url+='?_popup=1'
-            return redirect(url)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+        url=self.get_success_url()
+        if context['ispopup']:
+            url+='?_popup=1'
+        return redirect(url)
 
 
-class DeletePredictionView(DeleteView):
+class DeletePredictionView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=Prediction
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
 
 
-class PredictionDetailView(DocumentDetailView):
+class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = Prediction
     template_name = 'bodb/prediction/prediction_view.html'
+    permission_required = 'view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(Prediction.objects.select_related('forum','collator','last_modified_by','ssr__collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(PredictionDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
-        user=self.request.user
-        context['ssrs']=SSR.get_ssr_list(Prediction.get_ssrs(self.object, user), user)
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='Prediction').count()>0
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='Prediction').count()>0
+        models=Model.objects.filter(Q(prediction=self.object)).select_related('collator').prefetch_related('authors__author')
+        context['model']=None
+        if models.exists():
+            context['model']=models[0]
+        ssrs=[]
+        if self.object.ssr:
+            ssrs.append(self.object.ssr)
+        context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        context['subscribed_to_collator']=(self.object.collator.id, 'Prediction') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'Prediction') in \
+                                                  context['subscriptions']
         return context
 
 
@@ -115,5 +102,7 @@ class PredictionTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=Prediction.get_prediction_list(Prediction.get_tagged_predictions(name, user),user)
+        predictions=Prediction.get_tagged_predictions(name, user)
+        context['tagged_items']=Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
+            context['fav_docs'], context['subscriptions'])
         return context

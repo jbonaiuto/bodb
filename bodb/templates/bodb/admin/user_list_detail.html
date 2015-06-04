@@ -4,7 +4,6 @@
         var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
             admin: admin, groups: groups, name: name, email: email });
         $('#users').append(compiledTmpl);
-        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 
@@ -13,7 +12,6 @@
         var compiledTmpl = _.template(tmplMarkup, { id : user_id, username: username, active: active, staff: staff,
             admin: admin, groups: groups, name: name, email: email });
         $('#user-'+user_id).replaceWith(compiledTmpl);
-        $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
 
@@ -92,7 +90,37 @@
             $('#user_'+data.id+'_message').fadeOut(5000, function(){});
         }
     }
+
+    function filter_users(filter_string)
+    {
+        if(filter_string.length==0)
+        {
+            $('.user').each(function(){
+                this.style.display='inline';
+            });
+        }
+        else{
+            $('.user').each(function(){
+                if($(this).find(".user_name").html().indexOf(filter_string)>-1)
+                    this.style.display='inline';
+                else
+                    this.style.display='none';
+            });
+        }
+    }
+
+    $(document).ready(function()
+    {
+        {% for u in users %}
+            addUser({{ u.id }},'{{ u.username|escapejs }}',{% if u.is_active %}true{% else %}false{% endif %},
+                    {% if u.is_staff %}true{% else %}false{% endif %},
+                    {% if u.is_superuser %}true{% else %}false{% endif %},
+                    '{% for group in u.groups.all %}{{ group.name|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}',
+                    '{{ u.first_name|escapejs }} {{ u.last_name|escapejs }}','{{ u.email }}');
+        {% endfor %}
+    });
 </script>
+
 <div id="userDiv" style="display:block">
     <table class="tab_panel">
         <tr class="table_header">
@@ -101,54 +129,21 @@
             </td>
         </tr>
         <tr class="col_header">
+            <td colspan="8">Filter: <input type="text" id="id_user_filter" name="user_filter" onkeyup="filter_users(this.value);"/></td>
+        </tr>
+        <tr class="col_header">
             <td style="width:40px">&nbsp;</td>
-            <td style="width:120px">Username</td>
+            <td style="width:300px">User</td>
             <td style="width:40px">Active</td>
             <td style="width:40px">Staff</td>
             <td style="width:40px">Admin</td>
-            <td style="width:150px">Groups</td>
-            <td style="width:150px">Real Name</td>
+            <td style="width:300px">Groups</td>
             <td style="width:150px">Email</td>
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan=9>
+            <td colspan=8>
                 <div id="users">
-                    {% for u in users %}
-                        <div id="user-{{ u.id }}">
-                             <table class="tab_panel">
-                                 <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                     <td style="width:40px">
-                                         <a href="/bodb/user/{{ u.id }}/edit/" onclick="return showPopup('edit_user_{{ u.id }}', 700, 550, '/bodb/user/{{ u.id }}/edit/');">Edit</a>
-                                     </td>
-                                     <td style="width:120px">
-                                         <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
-                                     </td>
-                                     <td style="width:40px" align=center>
-                                         <input type=checkbox name="activeCheckbox" id="activeCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_active %}checked=True{% endif %} onclick="toggleActive(this.value, this.checked);"/>
-                                     </td>
-                                     <td style="width:40px" align=center>
-                                         <input type=checkbox name="staffCheckbox" id="staffCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_staff %}checked=True{% endif %} onclick="toggleStaff(this.value, this.checked);"/>
-                                     </td>
-                                     <td style="width:40px" align=center>
-                                         <input type=checkbox name="adminCheckbox" id="adminCheckbox_{{ u.id }}" value="{{ u.id }}" {% if u.is_superuser %}checked=True{% endif %} onclick="toggleAdmin(this.value, this.checked);"/>
-                                     </td>
-                                     <td style="width:150px">
-                                         {% for group in u.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                                     </td>
-                                     <td style="width:150px">
-                                         {{ u.first_name }} {{ u.last_name }}
-                                     </td>
-                                     <td style="width:150px">
-                                         {{ u.email }}
-                                     </td>
-                                     <td>
-                                         <span id="user_{{ u.id }}_message" class="messages"></span>
-                                     </td>
-                                 </tr>
-                             </table>
-                         </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -156,14 +151,14 @@
 </div>
 
 <script type="text/html" id="user-template">
-    <div id="user-<%= id %>">
+    <div id="user-<%= id %>" class="user">
         <table class="tab_panel">
             <tr class="odd_row" valign=top>
                 <td style="width:40px">
                     <a href="/bodb/user/<%= id %>/edit/" onclick="return showPopup('edit_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/edit/');">Edit</a>
                 </td>
-                <td style="width:120px">
-                    <a href="/bodb/user/<%= id %>/" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/');"><%= username %></a>
+                <td style="width:300px">
+                    <div id="user-<%= id %>-name" class="user_name"><a href="/bodb/user/<%= id %>/" onclick="return showPopup('view_user_<%= id %>', 700, 550, '/bodb/user/<%= id %>/');"><%= _.escape(username) %></a> (<%= _.escape(name) %>)</div>
                 </td>
                 <td style="width:40px" align=center>
                     <input type=checkbox name="activeCheckbox" id="activeCheckbox_<%= id %>" value="<%= id %>" <% if(active) { %>checked=True<% } %> onclick="toggleActive(this.value, this.checked);"/>
@@ -174,11 +169,8 @@
                 <td style="width:40px" align=center>
                     <input type=checkbox name="adminCheckbox" id="adminCheckbox_<%= id %>" value="<%= id %>" <% if(admin) { %>checked=True<% } %> onclick="toggleAdmin(this.value, this.checked);"/>
                 </td>
-                <td style="width:150px">
-                    <%= groups %>
-                </td>
-                <td style="width:150px">
-                    <%= name %>
+                <td style="width:300px">
+                    <%= _.escape(groups) %>
                 </td>
                 <td style="width:150px">
                     <%= email %>

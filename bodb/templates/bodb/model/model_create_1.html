@@ -32,6 +32,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('modelForm').submit();
         }
 
@@ -52,14 +54,15 @@
 
         function doneCheckSimilarModels(res, status)
         {
-            document.getElementById('savingMsg').style.display = 'none';
-            document.getElementById('savingOver').style.display = 'none';
             var txt = res.responseText;
             var data = eval('('+txt+')');
             if (status=="success")
             {
                 if(data.similar_model_ids.length>0)
                 {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
                     var dispTxt='The model you entered is similar to the following existing models:';
                     dispTxt+='<table>';
                     for(var i=0; i<data.similar_model_ids.length; i++)
@@ -257,7 +260,7 @@
                 {% if perms.bodb.public_model or user.is_superuser %}
                     <tr valign=top>
                         <td>{{ wizard.form.public.label_tag }}</td>
-                        <td>{{ wizard.form.public }}</td>
+                        <td><input {% if wizard.form.public.value %}checked="checked" {% endif %} id="id_step1-public" name="step1-public" type="checkbox"/></td>
                         {% if wizard.form.public.errors %}<td class="myerrors">{{ wizard.form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}

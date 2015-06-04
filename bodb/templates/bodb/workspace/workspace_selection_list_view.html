@@ -1,35 +1,35 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    var workspaces=[];
+    
+    function addWorkspaces()
+    {
+        $('[name=workspaces]').each(function(index, element){
+            $(this).empty();
+            var tmplMarkup = $('#workspace-template').html();
+            for(var i=0; i<workspaces.length; i++)
+            {
+                workspaces[i]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, workspaces[i]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+</script>
+
 <div id="workspace_list" name="workspace_list" style="display:{% if workspaces|length %}block{% else %}none{% endif %}">
     <table class="tab_panel">
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
-            <td width=200px>Title</td>
-            <td width=200px>Creator</td>
-            <td>Description</td>
+            <td width=200px><a id="id_workspace_sort_title" href="" onclick="return sortWorkspaces('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_workspace_sort_title_dir" name="workspace_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_workspace_sort_created_by" href="" onclick="return sortWorkspaces('created_by',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Creator <img id="id_workspace_sort_created_by_dir" name="workspace_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_workspace_sort_description" href="" onclick="return sortWorkspaces('description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_workspace_sort_description_dir" name="workspace_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
             <td colspan="6">
                 <div id="workspaces" name="workspaces">
-                    {% for subscribed,workspace in workspaces %}
-                        <div id="workspace-{{ forloop.counter0 }}" name="ssr">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td style="width:{% if ispopup %}120{% else %}45{% endif %}px" align=center>
-                                        <input type="radio" name="activeWorkspace" id="activeWorkspace{{ workspace.id }}" value="{{ workspace.id }}" {% ifequal workspace.id active_workspace.id %}checked{% endifequal %} onclick="selectActiveWorkspace({{ workspace.id }});"/>
-                                    </td>
-                                    <td width=200px>
-                                        <a href="/bodb/workspace/{{ workspace.id }}/" onclick="return openInNewTab('/bodb/workspace/{{ workspace.id }}/');">{{ workspace.title }}</a>
-                                    </td>
-                                    <td width=200px><a href="/bodb/user/{{ workspace.created_by.id }}/">{{ workspace.get_created_by_str }}</a> {% if not workspace.created_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ workspace.created_by.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                                    <td>{{workspace.description }}</td>
-                                    <td width=100px><span id="workspace_{{ workspace.id }}_message" name="workspace_{{ workspace.id }}_message" class="messages"></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -42,13 +42,13 @@
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=25px><%= idx %></td>
                 <td style="width:{% if ispopup %}120{% else %}45{% endif %}px" align=center>
-                    <input type="radio" name="activeWorkspace" id="activeWorkspace<%= id %>" value="<%= id %>" <% if(id=={{ active_workspace.id }}){ %>checked<% } %> onclick="selectActiveWorkspace(<%= id %>);"/>
+                    <input type="radio" name="activeWorkspace" id="activeWorkspace<%= id %>" value="<%= id %>" <% if(id=={{ active_workspace.id }}){ %>checked<% } %> onclick="selectActiveWorkspace(<%= id %>,'{{ csrf_token }}');"/>
                 </td>
                 <td width=200px>
-                    <a href="/bodb/workspace/<%= id %>/" onclick="return openInNewTab('/bodb/workspace/<%= id %>/');"><%= title %></a>
+                    <a href="/bodb/workspace/<%= id %>/" onclick="return openInNewTab('/bodb/workspace/<%= id %>/');"><%= _.escape(title) %></a>
                 </td>
-                <td width=200px><a href="/bodb/user/<%= created_by_id %>/"><%= created_by %></a> <% if(created_by_id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= created_by_id %>');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
-                <td><%= description %></td>
+                <td width=200px><a href="/bodb/user/<%= created_by_id %>/"><%= _.escape(created_by) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(created_by_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= created_by_id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td><%= _.escape(description) %></td>
                 <td width=100px><span id="workspace_<%= id %>_message" name="workspace_<%= id %>_message" class="messages"></span></td>
             </tr>
         </table>

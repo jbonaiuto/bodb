@@ -9,10 +9,7 @@
         {
             var errors=0;
             clearSpan(document, 'form_errors');
-            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative'], ['Relationship', 'Relevance narrative']);
-            var test_sed_count = $('#test_seds').children().length;
-            for(var i=0; i<test_sed_count; i++)
-                testSEDErrors+=validateInlineForm('test_sed-'+i+'-testsedssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
+            var testSEDErrors=validateInlineForm('test_sed', ['relationship', 'relevance_narrative', 'ssr'], ['Relationship', 'Relevance narrative', 'SSR']);
             errors+=testSEDErrors;
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -25,6 +22,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('modelForm').submit();
         }
 

@@ -1,6 +1,8 @@
 {% extends "base_generic.html" %}
+{% load static %}
 {% block extrahead %}
     <title>BODB - View {{ object.username }} User</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
         {% if action == 'add' %}
             opener.addUser({{ object.id }},'{{ object.username }}',{% if object.is_active %}true{% else %}false{% endif %},

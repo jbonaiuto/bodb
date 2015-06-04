@@ -18,11 +18,11 @@
     }
 </script>
 <style>
-    div.floating-menu {position:fixed;background:#e6e8ed;;border:1px solid #0d3f74;width:300px;height:30%;z-index:100;right:5%;overflow-y:auto;overflow-x:auto;}
+    div.floating-menu {position:fixed;background:#e6e8ed;;border:1px solid #0d3f74;width:300px;height:20px;z-index:100;right:5%;overflow-y:auto;overflow-x:auto;top: 110px;}
 </style>
 <div id="floating-menu" class="floating-menu">
-    <div style="font-weight: bold; font-size: 15px;color: #0d3f74; position:relative; left:10px; width: 250px;">Hierarchy Browser (<a href="#" onclick="return toggleFloatingMenu();"><span id="menu-show">Hide</span></a>)</div>
-    <div id="floating-menu-inner" style="display:inline;">
+    <div style="font-weight: bold; font-size: 15px;color: #0d3f74; position:relative; left:10px; width: 250px;">Hierarchy Browser (<a href="#" onclick="return toggleFloatingMenu();"><span id="menu-show">Show</span></a>)</div>
+    <div id="floating-menu-inner" style="display:none;">
         {% autoescape off %}
             {{ hierarchy_html }}
         {% endautoescape %}

@@ -26,7 +26,31 @@
                 document.getElementById('profileForm').submit();
         }
 
+        function addSubscription(id, user, model_type, keywords)
+        {
+            var count = $('#subscriptions').children().length;
+            var tmplMarkup = $('#subscription-template').html();
+            var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, user:user, model_type: model_type,
+                keywords: keywords });
+            $('#subscriptions').append(compiledTmpl);
+            if(id.length==0)
+                $('#id_subscription-TOTAL_FORMS').attr('value', count+1);
+            $('textarea:not(.processed)').TextAreaResizer();
+        }
 
+        function deleteSubscription(idx)
+        {
+            document.getElementById('id_subscription-'+ idx +'-DELETE').value='1';
+            document.getElementById('subscription-'+idx).style.display='none';
+        }
+
+        $(document).ready(function(){
+            {% for subscription_form in subscription_formset.forms %}
+                addSubscription({{ subscription_form.instance.id }}, {{ subscription_form.instance.user.id }},
+                        '{{ subscription_form.instance.model_type }}',
+                        '{{ subscription_form.instance.keywords|escapejs }}');
+            {% endfor %}
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -174,7 +198,7 @@
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr>
                                     <td colspan=4 class="table_header">
-                                        <a href="#" class="add-subscription" onclick="return addInlineForm('subscriptions','subscription','subscription');">Add new</a>
+                                        <a href="#" class="add-subscription" onclick="return addSubscription('',{{ user.id }},'','');">Add new</a>
                                     </td>
                                 </tr>
                                 <tr class="col_header">
@@ -189,31 +213,6 @@
                                             {{ subscription_formset.management_form.errors }}
                                         </div>
                                         <div id="subscriptions">
-                                            {% if form.instance.id %}
-                                                {% for subscription_form in subscription_formset.forms %}
-                                                    <div id="subscription-{{ forloop.counter0 }}" name="subscription">
-                                                        <input type=hidden id="id_subscription-{{ forloop.counter0 }}-DELETE" name="subscription-{{ forloop.counter0 }}-DELETE"/>
-                                                        {{ subscription_form.id }}
-                                                        {{ subscription_form.user }}
-                                                        <table class="tab_panel">
-                                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                                <td style="width:60px">
-                                                                    <a href="" onclick="return deleteInlineForm('subscription', {{ forloop.counter0 }});">Delete</a>
-                                                                </td>
-                                                                <td style="width:120px">
-                                                                    {{ subscription_form.model_type }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ subscription_form.keywords }}
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                        <div class="myerrors">
-                                                            {{ subscription_form.errors }}
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -229,28 +228,28 @@
         <div id="msg">{% if msg %}<span style="color: red; ">Profile saved.</span>{% endif %}</div>
     </div>
     <script type="text/html" id="subscription-template">
-        <div id="subscription-<%= id %>" name="subscription">
-            <input type=hidden id="id_subscription-<%= id %>-DELETE" name="subscription-<%= id %>-DELETE"/>
-            <input id="id_subscription-<%= id %>-id" name="subscription-<%= id %>-id" type="hidden" />
-            <input id="id_subscription-<%= id %>-user" name="subscription-<%= id %>-user" type="hidden" value="{{ user.id }}" />
+        <div id="subscription-<%= idx %>" name="subscription">
+            <input type=hidden id="id_subscription-<%= idx %>-DELETE" name="subscription-<%= idx %>-DELETE"/>
+            <input id="id_subscription-<%= idx %>-id" name="subscription-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+            <input id="id_subscription-<%= idx %>-user" name="subscription-<%= idx %>-user" type="hidden" value="<%= user %>" />
             <table class="tab_panel">
                 <tr class="even_row" valign=top>
                     <td style="width:60px">
-                        <a href="" onclick="return deleteSubscription(<%= id %>);">Delete</a>
+                        <a href="" onclick="return deleteSubscription(<%= idx %>);">Delete</a>
                     </td>
                     <td style="width:120px">
-                        <select id="id_subscription-<%= id %>-model_type" name="subscription-<%= id %>-model_type">
-                            <option value="" selected="selected">---------</option>
-                            <option value="All">All</option>
-                            <option value="Model">Model</option>
-                            <option value="BOP">BOP</option>
-                            <option value="SED">SED</option>
-                            <option value="Prediction">Prediction</option>
-                            <option value="SSR">SSR</option>
+                        <select id="id_subscription-<%= idx %>-model_type" name="subscription-<%= idx %>-model_type">
+                            <option value="" <% if(model_type==''){ %>selected<% } %>>---------</option>
+                            <option value="All" <% if(model_type=='All'){ %>selected <% } %>>All</option>
+                            <option value="Model" <% if(model_type=='Model'){ %>selected <% } %>>Model</option>
+                            <option value="BOP" <% if(model_type=='BOP'){ %>selected <% } %>>BOP</option>
+                            <option value="SED" <% if(model_type=='SED'){ %>selected <% } %>>SED</option>
+                            <option value="Prediction" <% if(model_type=='Prediction'){ %>selected <% } %>>Prediction</option>
+                            <option value="SSR" <% if(model_type=='SSR'){ %>selected <% } %>>SSR</option>
                         </select>
                     </td>
                     <td>
-                        <input id="id_subscription-<%= id %>-keywords" maxlength="500" name="subscription-<%= id %>-keywords" type="text" />
+                        <input id="id_subscription-<%= idx %>-keywords" maxlength="500" name="subscription-<%= idx %>-keywords" type="text" value="<%= _.escape(keywords) %>"/>
                     </td>
                 </tr>
             </table>

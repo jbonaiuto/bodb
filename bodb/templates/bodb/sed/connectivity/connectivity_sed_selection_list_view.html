@@ -1,65 +1,139 @@
 {% load staticfiles %}
+{% load bodb_extras %}
 {% block extrahead %}
-<link rel="stylesheet" href="{% static 'bodb/css/e-smart-zoom-style.css' %}" type="text/css" media="all" />
-<script type="text/javascript" src="{% static 'bodb/scripts/e-smart-zoom-jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'bodb/scripts/jquery.rwdImageMaps.js' %}"></script>
-<script type="text/javascript">
+    <script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
+    <script type="text/javascript">
 
-    function get{{ connectionGraphId }}ConnectivitySEDIds()
-    {
-        var ids=[];
-        var elems=document.getElementsByName('connectivity_sed_{{ connectionGraphId }}');
-        for(var idx=0; idx<elems.length; idx++)
+        var connectivity_seds=[];
+        {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
+            connectivity_seds.push({
+                id: {{ sed.id }},
+                title: '{{ sed.title|escapejs }}',
+                sed_type: 'connectivity',
+                brief_description: '{{ sed.brief_description|escapejs }}',
+                url_str: '{{ sed.html_url_string|escapejs }}',
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ sed|escapejs }}',
+                draft: {% if sed.draft %}true{% else %}false{% endif %},
+                collator_id: {{ sed.collator.id }},
+                collator: '{{ sed.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
+        
+        function addConnectivitySEDs()
         {
-            ids.push(elems[idx].value);
+            $('[name=connectivity_seds]').each(function(index, element){
+                var groupName=$(this).find('#groupName').attr('value');
+                $(this).empty();
+                $(this).html('<input type="hidden" id="groupName" value="'+groupName+'"/>');
+                var tmplMarkup = $('#connectivity_sed_'+groupName+'-template').html();
+                for(var idx=0; idx<connectivity_seds.length; idx++)
+                {
+                    connectivity_seds[idx]['idx'] = $(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, connectivity_seds[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
         }
-        return ids;
-    }
+        $(document).ready(function()
+        {
+            addConnectivitySEDs();
+        });
 
-    $(document).ready(function()
-    {
-		$('#{{ connectionGraphId }}topPositionMap,#{{ connectionGraphId }}leftPositionMap,#{{ connectionGraphId }}rightPositionMap,#{{ connectionGraphId }}bottomPositionMap').bind("click", {{ connectionGraphId }}moveButtonClickHandler);
-		$('#{{ connectionGraphId }}zoomInButton,#{{ connectionGraphId }}zoomOutButton').bind("click", {{ connectionGraphId }}zoomButtonClickHandler);
+        var {{ connectionGraphId }}nodes=[
+            {% for region_id in connectivity_sed_regions %}
+                { id: {{ region_id }}, label: '{{ connectivity_sed_regions|lookup:region_id|lookup:'str' }}',
+                    title:'Name: {{ connectivity_sed_regions|lookup:region_id|lookup:'name' }}<br>Abbreviation: {{ connectivity_sed_regions|lookup:region_id|lookup:'abbreviation' }}<br>Nomenclature: {{ connectivity_sed_regions|lookup:region_id|lookup:'nomenclature' }}' },
+            {% endfor %}
+        ];
 
-		
-        function {{ connectionGraphId }}zoomButtonClickHandler(e){
-            var scaleToAdd = 0.8;
-            if(e.target.id == '{{ connectionGraphId }}zoomOutButton')
-                scaleToAdd = -scaleToAdd;
-            $('#{{ connectionGraphId }}').smartZoom('zoom', scaleToAdd);
+        var {{ connectionGraphId }}edges=[
+            {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
+                {from: {{sed.source_region.id}}, to:{{ sed.target_region.id }}, id:{{ sed.id }}, title:'{{ sed.brief_description|escapejs }}'},
+            {% endfor %}
+        ];
+
+        function generateConnDiagram(graphId, nodes, edges)
+        {
+            document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+
+            var container=document.getElementById(graphId+'Div');
+
+            var data= {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                width: '100%',
+                height: '400px',
+                edges: {
+                    style: 'arrow'
+                },
+                nodes: {
+                    color: {
+                        border:'black',
+                        background: 'white'
+                    },
+                    fontSize: 20
+                },
+                physics: {
+                    barnesHut:{
+                        springLength: 20,
+                        gravitationalConstant: -2000,
+                        springConstant: 0.001
+                    }
+                }
+            };
+            var network = new vis.Network(container, data, options);
+
+            network.on('doubleClick',function(properties){
+                if(properties.nodes.length>0)
+                    document.location.href='/bodb/brain_region/'+properties.nodes[0]+'/';
+                else if(properties.edges.length>0)
+                    document.location.href='/bodb/sed/'+network.edges[properties.edges[0]].id+'/';
+            });
+            document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view brain region details. Double-click on an edge to view connection details";
+            return false;
         }
 
-        function {{ connectionGraphId }}moveButtonClickHandler(e){
-            var pixelsToMoveOnX = 0;
-            var pixelsToMoveOnY = 0;
-            switch(e.target.id){
-                case "{{ connectionGraphId }}leftPositionMap":
-                    pixelsToMoveOnX = 50;
-                break;
-                case "{{ connectionGraphId }}rightPositionMap":
-                    pixelsToMoveOnX = -50;
-                break;
-                case "{{ connectionGraphId }}topPositionMap":
-                    pixelsToMoveOnY = 50;
-                break;
-                case "{{ connectionGraphId }}bottomPositionMap":
-                    pixelsToMoveOnY = -50;
-                break;
+        function deleteConnectivitySED(id, idx)
+        {
+            if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
+            {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}', 'idx': idx};
+                var args={type:"POST", url:"/bodb/sed/connectivity/"+id+"/delete/", data: data, complete: doneDeleteConnectivitySED };
+                $.ajax(args);
             }
-            $('#{{ connectionGraphId }}').smartZoom('pan', pixelsToMoveOnX, pixelsToMoveOnY);
+            return false;
         }
-    });
-</script>
+
+        function doneDeleteConnectivitySED(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                document.getElementById('connectivity_sed-'+data.idx).style.display='none';
+            }
+            document.getElementById('deletingMsg').style.display = 'none';
+            document.getElementById('deletingOver').style.display = 'none';
+        }
+    </script>
 {% endblock %}
 <div id="connectivitySEDData">
     <table class="tab_panel">
         <tr class="section_subheader">
-            <td colspan=7>Connectivity SEDs (1-<span id="numConnectivitySEDResults" name="numConnectivitySEDResults">{{ connectivity_seds|length }}</span>)</td>
+            <td colspan={% if delete_mode %}8{% else %}7{% endif %}>Connectivity SEDs (1-<span id="numConnectivitySEDResults" name="numConnectivitySEDResults">{{ connectivity_seds|length }}</span>)</td>
         </tr>
         {% if not ispopup %}
             {% if can_add_entry or can_remove_entry %}
                 <tr class="col_header">
-                    <td colspan=7>
+                    <td colspan={% if delete_mode %}8{% else %}7{% endif %}>
                         Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Connectivity',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Connectivity',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                     </td>
                 </tr>
@@ -68,101 +142,35 @@
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
-            <td width=200px>Title</td>
-            <td width=200px>Collator</td>
-            <td>Description</td>
+            {% if delete_mode %}
+                <td style="width:45px">&nbsp;</td>
+            {% endif %}
+            <td width=200px><a id="id_connectivity_sed_sort_title" href="" onclick="return sortConnectivitySEDs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_connectivity_sed_sort_title_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_connectivity_sed_sort_collator" href="" onclick="return sortConnectivitySEDs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_connectivity_sed_sort_collator_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_connectivity_sed_sort_brief_description" href="" onclick="return sortConnectivitySEDs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_connectivity_sed_sort_brief_description_dir" name="connectivity_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=150px>&nbsp;</td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                 <div id="connectivity_seds" name="connectivity_seds">
                     <input type="hidden" id="groupName" value="{{ connectionGraphId }}"/>
-                    {% for selected,is_favorite,subscribed,sed in connectivity_seds %}
-                        <div id="connectivity_sed-{{ forloop.counter0 }}" name="connectivity_sed">
-                            <input type="hidden" id="connectivity_sed_{{ connectionGraphId }}_{{ sed.id }}" name="connectivity_sed_{{ connectionGraphId }}" value="{{ sed.id }}"/>
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            {% if ispopup %}
-                                                {% if multiple %}
-                                                    <a href="../../" onclick="return opener.addSEDMultiple('{{ type }}', {{ sed.id }}, ['{{ sed.title|escapejs }}', '{{ sed.brief_description|escapejs }}', '{{ sed.type }}']);">Select</a>
-                                                {% endif %}
-                                            {% else %}
-                                                <a id="favLink" href="" onclick="return toggleFavorite({{ sed.id }},'favIcon-{{ sed.id }}','{{ csrf_token }}');">
-                                                    <img id="favIcon-{{ sed.id }}" name="favIcon-{{ sed.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                                </a>
-                                                <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedConnectivitySEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                                                <input type=hidden name="selectedSED" id="selectedSED_{{ sed.id }}" value="{{ sed.id }}"/>
-                                            {% endif %}
-                                        {% else %}
-                                            <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_{{ sed.id }}" id="selectedConnectivitySEDCheckbox_{{ sed.id }}" value="{{ sed.id }}" style="display:none"/>
-                                        {% endif %}
-                                    </td>
-                                    <td width=200px>
-                                        <a href="/bodb/sed/{{ sed.id }}/" onclick="return openInNewTab('/bodb/sed/{{ sed.id }}/');">{{ sed }}</a>
-                                        {% if sed.draft %}<span style="color: red;">&lt;draft&gt;</span>{% endif %}
-                                    </td>
-                                    <td width=200px><a href="/bodb/user/{{ sed.collator.id }}/">{{ sed.get_collator_str }}</a> {% if not sed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ sed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
-                                    <td>{{sed.brief_description }}</td>
-                                    <td width=150px>
-                                        {{ sed.html_url_string|safe }}
-                                    </td>
-                                    <td width=100px><span id="sed_{{ sed.id }}_message" name="sed_{{ sed.id }}_message" class="messages"></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
         {% if not ispopup %}
             <tr class="col_header">
-                <td colspan="7">
-                    Graph Generation Tool:&nbsp;
-                    <select id="{{ connectionGraphId }}Graphtool">
-                        <option value="dot">dot</option>
-                        <option value="neato">neato</option>
-                        <option value="fdp">fdp</option>
-                        <option value="sfdp">sfdp</option>
-                        <option value="twopi">twopi</option>
-                        <option value="circo">circo</option>
-                    </select>&nbsp;
-                    <a id="{{ connectionGraphId }}Link" href="" onclick="return generateConnDiagram(get{{ connectionGraphId }}ConnectivitySEDIds(),document.getElementById('{{ connectionGraphId }}Graphtool').value,'{{ connectionGraphId }}','{{ csrf_token }}');">Generate Connectivity Graph</a>
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
+                    <a id="{{ connectionGraphId }}Link" href="" onclick="return generateConnDiagram('{{ connectionGraphId }}',{{ connectionGraphId }}nodes,{{ connectionGraphId }}edges);">Generate Connectivity Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
-                <td colspan="7">
-                    <div id="{{ connectionGraphId }}Div" style="display:none" class="zoomContainer">
-                        <div id="positionButtonDiv">
-                            <p>Zoom :
-                                <span>
-                                    <img id="{{ connectionGraphId }}zoomInButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomIn.png' %}" title="zoom in" alt="zoom in" />
-                                    <img id="{{ connectionGraphId }}zoomOutButton" class="zoomButton" src="{% static 'bodb/images/zoom_assets/zoomOut.png' %}" title="zoom out" alt="zoom out" />
-                                </span>
-                            </p>
-                            <p>Pan:
-                                <span class="positionButtonSpan">
-                                    <map name="{{ connectionGraphId }}positionMap" class="positionMapClass">
-                                        <area id="{{ connectionGraphId }}topPositionMap" shape="rect" coords="20,0,40,20" title="move up" alt="move up"/>
-                                        <area id="{{ connectionGraphId }}leftPositionMap" shape="rect" coords="0,20,20,40" title="move left" alt="move left"/>
-                                        <area id="{{ connectionGraphId }}rightPositionMap" shape="rect" coords="40,20,60,40" title="move right" alt="move right"/>
-                                        <area id="{{ connectionGraphId }}bottomPositionMap" shape="rect" coords="20,40,40,60" title="move bottom" alt="move bottom"/>
-                                    </map>
-                                    <img class="panButton" src="{% static 'bodb/images/zoom_assets/position.png' %}" usemap="#{{ connectionGraphId }}positionMap" />
-                                </span>
-                            </p>
-                        </div>
-                        <img src="" usemap="#{{ connectionGraphId }}Map" id="{{ connectionGraphId }}" style="width:100%" origWidth="" origHeight=""/>
-                        <map id="{{ connectionGraphId }}Map" name="{{ connectionGraphId }}Map">
-                        </map>
-                    </div>
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
+                    <div id="{{ connectionGraphId }}Div" style="background: #ffffff;"></div>
                 </td>
             </tr>
             <tr>
-                <td colspan="7">
+                <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
                     <span id="{{ connectionGraphId }}Msg"></span>
                 </td>
             </tr>
@@ -180,25 +188,28 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../../" onclick="return opener.addSEDMultiple('<%= type %>', <%= id %>, ['<%= title %>', '<%= brief_description %>', '<%= type %>']);">Select</a>
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>'],'', []);{% endifequal %}">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedConnectivitySEDCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox class="selectedConnectivitySEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedConnectivitySEDCheckbox_<%= id %>" value="<%= id %>" style="display:none"/>
                     {% endif %}
+                    <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
                 </td>
+                {% if delete_mode %}
+                    <td width=45px><a href="" onclick="return deleteConnectivitySED(<%= id %>, <%= idx %>);">Delete</a></td>
+                {% endif %}
                 <td width=200px>
-                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= title_str %></a>
+                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= _.escape(title_str) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}){ %> {% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
-                <td><%= brief_description %></td>
+                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td><%= _.escape(brief_description) %></td>
                 <td width=150px>
                     <%= url_str %>
                 </td>

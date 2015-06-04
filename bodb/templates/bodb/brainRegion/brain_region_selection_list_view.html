@@ -1,4 +1,37 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    var regions=[];
+    {% for selected,is_favorite,brain_region in brain_regions %}
+        regions.push({
+            id: {{ brain_region.id }},
+            name: '{{ brain_region.name|escapejs }}',
+            abbreviation: '{{ brain_region.abbreviation|escapejs }}',
+            is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+            selected: {% if selected %}true{% else %}false{% endif %},
+            type: '{{ brain_region.brain_region_type|escapejs }}',
+            parent_region: '{% if brain_region.parent_region %}{{ brain_region.parent_region.name|escapejs }}{% endif %}',
+            nomenclature: '{{ brain_region.nomenclature|escapejs }}',
+            species: '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}'
+        });
+    {% endfor %}
+    
+    function addBrainRegions()
+    {
+        $('[name=brain_regions]').each(function(index, element){
+            $(this).empty()
+            var tmplMarkup = $('#brain_region-template').html();
+            for(var idx=0; idx<regions.length; idx++)
+            {
+                regions[idx]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, regions[idx]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+    $(document).ready(function(){
+        addBrainRegions();
+    });
+</script>
 <div id="brain_region_list" name="brain_region_list" style="display:{% if brain_regions|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         {% if not ispopup %}
@@ -13,66 +46,17 @@
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
-            <td width=250px>Name</td>
-            <td width=125px>Abbreviation</td>
-            <td width=150px>Type</td>
-            <td width=200px>Parent region</td>
-            <td width=200px>Nomenclature</td>
-            <td>Species</td>
+            <td width=275px><a id="id_brain_region_sort_name" href="" onclick="return sortBrainRegions('name',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Name <img id="id_brain_region_sort_name_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=100px><a id="id_brain_region_sort_abbreviation" href="" onclick="return sortBrainRegions('abbreviation',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Abbreviation <img id="id_brain_region_sort_abbreviation_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=150px><a id="id_brain_region_sort_type" href="" onclick="return sortBrainRegions('type',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Type <img id="id_brain_region_sort_type_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=200px><a id="id_brain_region_sort_parent_region" href="" onclick="return sortBrainRegions('parent_region',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Parent region <img id="id_brain_region_sort_parent_region_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=175px><a id="id_brain_region_sort_nomenclature" href="" onclick="return sortBrainRegions('nomenclature',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Nomenclature <img id="id_brain_region_sort_nomenclature_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_brain_region_sort_species" href="" onclick="return sortBrainRegions('species',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Species <img id="id_brain_region_sort_species_dir" name="brain_region_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td width=100px>&nbsp;</td>
         </tr>
         <tr>
             <td colspan="9">
                 <div id="brain_regions" name="brain_regions">
-                    {% for selected,is_favorite,brain_region in brain_regions %}
-                        <div id="brain_region-{{ forloop.counter0 }}" name="brain_region">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
-                                        {% if user.is_authenticated and not user.is_anonymous  %}
-                                            {% if ispopup %}
-                                                {% if multiple %}
-                                                    <a href="../" onclick="return opener.addBrainRegionMultiple({{ brain_region.id }}, ['{{ brain_region|escapejs }}', '{{ brain_region.nomenclature|escapejs }}', '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}']);">Select</a></td>
-                                                {% else %}
-                                                    <a href="../" onclick="opener.addBrainRegionSingle({{ brain_region.id }}, ['{{ brain_region|escapejs }}', '{{ brain_region.nomenclature|escapejs }}', '{{ brain_region.nomenclature.species.all|join:", "|escapejs }}'], '{{ fieldName }}');self.close();">Select</a></td>
-                                                {% endif %}
-                                            {% else %}
-                                                <a id="favLinkRegion" href="" onclick="return toggleFavoriteBrainRegion({{ brain_region.id }},'favIconRegion-{{ brain_region.id }}','{{ csrf_token }}');">
-                                                    <img id="favIconRegion-{{ brain_region.id }}" name="favIconRegion-{{ brain_region.id }}" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                                                </a>
-                                                <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_{{ brain_region.id }}" value="{{ brain_region.id }}" {% if selected %}checked=True{% endif %} {% if selected and not can_remove_entry or not selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleBrainRegionSelect(this.value, '{{ csrf_token }}');"/>
-                                                <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_{{ brain_region.id }}" value="{{ brain_region.id }}"/>
-                                            {% endif %}
-                                        {% else %}
-                                                <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_{{ brain_region.id }}" value="{{ brain_region.id }}" style="display: none;"/>
-                                        {% endif %}
-                                    </td>
-                                    <td width=250px>
-                                        <a href="/bodb/brain_region/{{ brain_region.id }}/" onclick="return openInNewTab('/bodb/brain_region/{{ brain_region.id }}/');">{{ brain_region }}</a>
-                                    </td>
-                                    <td width=125px>
-                                        {{ brain_region.abbreviation }}
-                                    </td>
-                                    <td width=150px>
-                                        {{ brain_region.brain_region_type }}
-                                    </td>
-                                    <td width=200px>
-                                        {% if brain_region.parent_region %}
-                                            {{ brain_region.parent_region.name }}
-                                        {% endif %}
-                                    </td>
-                                    <td width=200px>
-                                        {{ brain_region.nomenclature }}
-                                    </td>
-                                    <td>
-                                        {{ brain_region.nomenclature.species.all|join:", " }}
-                                    </td>
-                                    <td width=100px><span id="brain_region_{{ brain_region.id }}_message" name="brain_region_{{ brain_region.id }}_message" class="messages"></span> </td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -88,38 +72,38 @@
                     {% if user.is_authenticated and not user.is_anonymous  %}
                         {% if ispopup %}
                             {% if multiple %}
-                                <a href="../" onclick="return opener.addBrainRegionMultiple(<%= id %>, ['<%= name %>', '<%= nomenclature %>', '<%= species %>']);">Select</a></td>
+                                <a href="../" onclick="return opener.addBrainRegionMultiple('', '', <%= id %>, ['<%= addslashes(name) %>', '<%= addslashes(nomenclature) %>', '<%= addslashes(species) %>']);">Select</a>
                             {% else %}
-                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= name %>', '<%= nomenclature %>', '<%= species %>'], '{{ fieldName }}');self.close();">Select</a></td>
+                                <a href="../" onclick="opener.addBrainRegionSingle(<%= id %>, ['<%= addslashes(name) %>', '<%= addslashes(nomenclature) %>', '<%= addslashes(species) %>'], '{{ fieldName }}');self.close();">Select</a>
                             {% endif %}
                         {% else %}
                             <a id="favLinkRegion" href="" onclick="return toggleFavoriteBrainRegion(<%= id %>,'favIconRegion-<%= id %>','{{ csrf_token }}');">
                                 <img id="favIconRegion-<%= id %>" name="favIconRegion-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
                             </a>
                             <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %>{% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleBrainRegionSelect(this.value, '{{ csrf_token }}');"/>
-                            <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_<%= id %>" value="<%= id %>"/>
                         {% endif %}
                     {% else %}
                         <input type=checkbox name="selectedBrainRegionCheckbox" class="selectedBrainRegionCheckbox" id="selectedBrainRegionCheckbox_<%= id %>" value="<%= id %>" style="display: none;"/>
                     {% endif %}
+                    <input type=hidden name="selectedBrainRegion" id="selectedBrainRegion_<%= id %>" value="<%= id %>"/>
                 </td>
-                <td width=250px>
-                    <a href="/bodb/brain_region/<%= id %>/" onclick="return openInNewTab('/bodb/brain_region/<%= id %>/');"><%= name %></a>
+                <td width=275px>
+                    <a href="/bodb/brain_region/<%= id %>/" onclick="return openInNewTab('/bodb/brain_region/<%= id %>/');"><%= _.escape(name) %></a>
                 </td>
-                <td width=125px>
-                    <%= abbreviation %>
+                <td width=100px>
+                    <%= _.escape(abbreviation) %>
                 </td>
                 <td width=150px>
-                    <%= type %>
+                    <%= _.escape(type) %>
                 </td>
                 <td width=200px>
-                    <%= parent_region %>
+                    <%= _.escape(parent_region) %>
                 </td>
-                <td width=200px>
-                    <%= nomenclature %>
+                <td width=175px>
+                    <%= _.escape(nomenclature) %>
                 </td>
                 <td>
-                    <%= species %>
+                    <%= _.escape(species) %>
                 </td>
                 <td width=100px><span id="brain_region_<%= id %>_message" name="brain_region_<%= id %>_message" class="messages"></span> </td>
             </tr>

@@ -15,34 +15,44 @@
         <tr>
             <td colspan="6">
                 <div id="generic_sed_list" name="generic_sed_list" style="display:{% if generic_seds|length %}block{% else %}none{% endif %}">
-                    {% include "bodb/sed/generic/generic_sed_selection_list_view.html" %}
+                    {% with delete_mode as delete_mode %}
+                        {% include "bodb/sed/generic/generic_sed_selection_list_view.html" %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
         <tr>
             <td colspan="6">
                 <div id="connectivity_sed_list" name="connectivity_sed_list" style="display:{% if connectivity_seds|length %}block{% else %}none{% endif %}">
-                    {% include "bodb/sed/connectivity/connectivity_sed_selection_list_view.html" %}
+                    {% with delete_mode as delete_mode %}
+                        {% include "bodb/sed/connectivity/connectivity_sed_selection_list_view.html" %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
         <tr>
             <td colspan="6">
                 <div id="imaging_sed_list" name="imaging_sed_list" style="display:{% if imaging_seds|length %}block{% else %}none{% endif %}">
-                    {% include "bodb/sed/brain_imaging/brain_imaging_sed_selection_list_view.html" %}
+                    {% with delete_mode as delete_mode %}
+                        {% include "bodb/sed/brain_imaging/brain_imaging_sed_selection_list_view.html" %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
         <tr>
             <td colspan="6">
                 <div id="erp_sed_list" name="erp_sed_list" style="display:{% if erp_seds|length %}block{% else %}none{% endif %}">
-                    {% include "bodb/sed/erp/erp_sed_selection_list_view.html" %}
+                    {% with delete_mode as delete_mode %}
+                        {% include "bodb/sed/erp/erp_sed_selection_list_view.html" %}
+                    {% endwith %}
                 </div>
             </td>
         </tr>
         <tr>
             <td colspan="6">
-                {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+                <div id="neurophysiology_sed_list" name="neurophysiology_sed_list" style="display:{% if neurophysiology_seds|length %}block{% else %}none{% endif %}">
+                    {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+                </div>
             </td>
         </tr>
         <tr>

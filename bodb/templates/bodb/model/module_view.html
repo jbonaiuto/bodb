@@ -10,6 +10,8 @@
         {
             if(confirm('Do you really want to delete the current Module?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup and idx %}
                 opener.removeSubmodule({{ idx }});
             {% endif %}
@@ -22,6 +24,11 @@
         function doneDelete()
         {
             document.location.href='/bodb/';
+        }
+
+        function exportModule()
+        {
+            showPopup('module_{{ module.id }}_export',400,500,'/bodb/module/{{ module.id }}/report/');
         }
 
     </script>
@@ -45,6 +52,9 @@
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Tags:</strong> {{ module.tags.all|join:', ' }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Parent:</strong> {% if module.parent.is_root_node %}<a href="/bodb/model/{{ module.parent.id }}/">{% else %}<a href="/bodb/module/{{ module.parent.id }}/">{% endif %}{{ module.parent }}</a></td>
             </tr>
             <tr class="section_subheader">
                 <td colspan=2>Brief Description</td>
@@ -124,5 +134,6 @@
                 <input class="btn" type="button" value="Delete" onclick="deleteModule()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
             {% endif %}
         {% endif %}
+        <input class="btn" type="button" value="Export" onclick="exportModule()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
     </div>
 {% endblock %}

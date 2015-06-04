@@ -1,3 +1,4 @@
+{% load static %}
 <script type="text/javascript">
     function createBookmark(formId, formPrefix)
     {
@@ -17,10 +18,7 @@
             var data = eval('('+txt+')');
             if(data.url.length>0)
             {
-                var count = $('#bookmarks').children().length;
-                var tmplMarkup = $('#bookmark-template').html();
-                var compiledTmpl = _.template(tmplMarkup, {
-                    idx: count,
+                bookmarks.push({
                     id : data.bookmark_id,
                     collator_id: data.collator_id,
                     collator_username: data.collator_username,
@@ -29,6 +27,7 @@
                     title: data.title,
                     description: data.description
                 });
+                addBookmarks();
                 document.getElementById('id_bookmark-title').value='';
                 document.getElementById('id_bookmark-url').value='';
                 document.getElementById('id_bookmark-description').value='';
@@ -59,6 +58,35 @@
         }
         return false;
     }
+
+    var bookmarks=[];
+    {% for bookmark in bookmarks %}
+        bookmarks.push({
+            id : {{ bookmark.id }},
+            collator_id: {{ bookmark.collator.id }},
+            collator_username: '{{ bookmark.collator.username|escapejs }}',
+            url: '{{ bookmark.url|escapejs }}',
+            urltrunc: '{{ bookmark.url|urlizetrunc:15|escapejs }}',
+            title: '{{ bookmark.title|escapejs }}',
+            description: '{{ bookmark.description|escapejs }}'
+        });
+    {% endfor %}
+    
+    function addBookmarks()
+    {
+        $('#bookmarks').empty();
+        var tmplMarkup = $('#bookmark-template').html();
+        for(var idx=0; idx<bookmarks.length; idx++)
+        {
+            bookmarks[idx]['idx']=$('#bookmarks').children().length+1;
+            var compiledTmpl = _.template(tmplMarkup, bookmarks[idx]);
+            $('#bookmarks').append(compiledTmpl);
+            $('textarea:not(.processed)').TextAreaResizer();
+        }
+    }
+    $(document).ready(function(){
+        addBookmarks();
+    });
 </script>
 {% if can_add_bookmark %}
     <form id="bookmarkForm" name="bookmarkForm" action="" method="post">
@@ -94,27 +122,14 @@
     <table class="tab_panel">
         <tr class="col_header">
             <td width=120px></td>
-            <td width=100px>Collator</td>
-            <td width=150px>Title</td>
-            <td width=200px>URL</td>
-            <td>Description</td>
+            <td width=100px><a id="id_bookmark_sort_collator" href="" onclick="return sortBookmarks('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_bookmark_sort_collator_dir" name="bookmark_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=150px><a id="id_bookmark_sort_title" href="" onclick="return sortBookmarks('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_bookmark_sort_title_dir" name="bookmark_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_bookmark_sort_url" href="" onclick="return sortBookmarks('url',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">URL <img id="id_bookmark_sort_url_dir" name="bookmark_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_bookmark_sort_description" href="" onclick="return sortBookmarks('description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_bookmark_sort_description_dir" name="bookmark_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
         </tr>
         <tr>
             <td colspan="5">
                 <div id="bookmarks">
-                    {% for bookmark in bookmarks %}
-                        <div id="bookmark-{{ bookmark.id }}">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=120px><a href="" onclick="return deleteBookmark({{ bookmark.id }});">Delete</a></td>
-                                    <td width=100px>{{ bookmark.collator.username }}</td>
-                                    <td width=150px>{{ bookmark.title }}</td>
-                                    <td width=200px>{{ bookmark.url|urlizetrunc:15 }}</td>
-                                    <td>{{ bookmark.description }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -125,10 +140,10 @@
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=120px><a href="" onclick="return deleteBookmark(<%= id %>);">Delete</a></td>
-                <td width=100px><%= collator_username %></td>
-                <td width=150px><%= title %></td>
+                <td width=100px><%= _.escape(collator_username) %></td>
+                <td width=150px><%= _.escape(title) %></td>
                 <td width=200px><a href="<%= url %>"><%= urltrunc %></a></td>
-                <td><%= description %></td>
+                <td><%= _.escape(description) %></td>
             </tr>
         </table>
     </div>

@@ -1,10 +1,69 @@
+{% load bodb_extras %}
+<script type="text/javascript">
+    function addNewTestingSED(sed_type)
+    {
+        if(sed_type.length>0)
+        {
+            document.getElementById('id_new_test_sed_type').value='';
+            showPopup('add_sed_{{ form.instance.id }}',700,550,'/bodb/sed/'+sed_type+'/new/?_multiple=1&type=test');
+        }
+    }
+
+    function addNewTestingSEDSSR(ssr_type, testsed_idx)
+    {
+        if(ssr_type.length>0)
+        {
+            document.getElementById('id_new_test_sed-'+testsed_idx+'_ssr_type').value='';
+            showPopup('add_ssr_{{ form.instance.id }}',700,550,'/bodb/ssr/new/?type=testsed&idx='+testsed_idx);
+        }
+    }
+
+    function setTestingSEDSSR(testsed_idx, ssr_id, ssr_title, ssr_brief_description, ssr_type)
+    {
+        document.getElementById('id_test_sed-'+testsed_idx+'-ssr').value=ssr_id;
+        $(document.getElementById('id_test_sed-'+testsed_idx+'_ssr_title')).html(ssr_title);
+        $(document.getElementById('id_test_sed-'+testsed_idx+'_ssr_brief_description')).html(ssr_brief_description);
+        $(document.getElementById('id_test_sed-'+testsed_idx+'_ssr_type')).html(ssr_type);
+        document.getElementById('id_test_sed-'+testsed_idx+'_new_ssr').style.display='none';
+    }
+
+    $(document).ready(function()
+    {
+        {% for test_sed_form in test_sed_formset.forms %}
+            {% if test_sed_form.instance.id %}
+                addTestSEDMultiple('{{ test_sed_form.instance.id }}',
+                        '{{ test_sed_form.instance.relationship|escapejs }}',
+                        '{{ test_sed_form.instance.relevance_narrative|escapejs }}', {{ test_sed_form.instance.sed.id }},
+                        ['{{ test_sed_form.instance.sed.title|escapejs }}',
+                            '{{ test_sed_form.instance.sed.brief_description|escapejs }}',
+                            '{{ test_sed_form.instance.sed.type|escapejs }}'],
+                        {{ test_sed_form.instance.ssr.id }},
+                        ['{{ test_sed_form.instance.ssr.title|escapejs }}',
+                            '{{ test_sed_form.instance.ssr.brief_description|escapejs }}',
+                            '{{ test_sed_form.instance.ssr.type|escapejs }}']);
+            {% else %}
+                addTestSEDMultiple('', '{{ test_sed_form.initial|lookup:'relationship'|escapejs }}',
+                        '{{ test_sed_form.initial|lookup:'relevance_narrative'|escapejs }}',
+                        {{ test_sed_form.initial|lookup:'sed' }},
+                        ['{{ test_sed_form.initial|lookup:'sed_title'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'sed_brief_description'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'sed_type'|escapejs }}'],
+                        {{ test_sed_form.initial|lookup:'ssr' }},
+                        ['{{ test_sed_form.initial|lookup:'ssr_title'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'ssr_brief_description'|escapejs }}',
+                            '{{ test_sed_form.initial|lookup:'ssr_type'|escapejs }}']);
+            {% endif %}
+        {% endfor %}
+    });
+</script>
 <div id="testSEDData" style="display:{% if showTestSEDs %}block{% else %}none{% endif %}">
     <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="table_header">
-            <td colspan=3>
+            <td>
                 <a href="/bodb/sed/search/?_multiple=1&type=test" onclick="return showPopup('search_sed_{{ form.instance.id }}',700,550,'/bodb/sed/search/?_multiple=1&type=test');">Search</a>
             </td>
+            <td colspan="2"><div style="font-size: 75%">Add new: <select id="id_new_test_sed_type" name="new_test_sed_type" style="font-size: 80%;font-family: verdana, sans-serif" onchange="addNewTestingSED(this.value);"><option value=""></option><option value="generic">generic</option><option value="connectivity">connectivity</option><option value="erp">ERP</option><option value="imaging">brain imaging</option> </select> SED</div></td>
         </tr>
         <tr class="col_header">
             <td style="width:120px">&nbsp;</td>
@@ -18,124 +77,6 @@
                     {{ test_sed_formset.management_form.errors }}
                 </div>
                 <div id="test_seds">
-                    {% for test_sed_form in test_sed_formset.forms %}
-                        <div id="test_sed-{{ forloop.counter0 }}" name="test_sed">
-                            <input type=hidden id="id_test_sed-{{ forloop.counter0 }}-DELETE" name="test_sed-{{ forloop.counter0 }}-DELETE"/>
-                            {{ test_sed_form.id }}
-                            {{ test_sed_form.model }}
-                            {{ test_sed_form.sed }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">
-                                        <a href="" onclick="return deleteInlineForm('test_sed', {{ forloop.counter0 }});">Remove</a>&nbsp;
-                                    </td>
-                                    <td style="width:150px">
-                                        {{ test_sed_form.relationship }}
-                                    </td>
-                                    <td>
-                                        {{ test_sed_form.relevance_narrative }}
-                                    </td>
-                                    <td class="myerrors">
-                                        <span id="test_sed_{{ forloop.counter0 }}_errors">
-                                            {{ test_sed_form.errors }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">&nbsp;</td>
-                                    <td class="table_header" colspan=3>SED</td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                    <td colspan=4>
-                                        <table class="tab_panel">
-                                            <tr>
-                                                <td style="width:120px">&nbsp;</td>
-                                                <td class="col_header" style="width:200px"><i>Title*</i></td>
-                                                <td class="col_header"><i>Description*</i></td>
-                                                <td class="col_header" style="width:100px"><i>Type*</i></td>
-                                            </tr>
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                                <td>&nbsp;</td>
-                                                <td>
-                                                    {% if test_sed_form.instance %}
-                                                        {{ test_sed_form.instance.sed.title }}
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if test_sed_form.instance %}
-                                                        {{ test_sed_form.instance.sed.brief_description }}
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if test_sed_form.instance %}
-                                                        {{ test_sed_form.instance.sed.type }}
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:120px">&nbsp;</td>
-                                    <td class="table_header" colspan=3>SSR</td>
-                                </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                    <td colspan=4>
-                                        <table class="tab_panel">
-                                            <tr>
-                                                <td style="width:120px">&nbsp;</td>
-                                                <td class="col_header" style="width:200px"><i>Title*</i></td>
-                                                <td class="col_header"><i>Description</i>*</td>
-                                                <td class="col_header" style="width:100px"><i>Type*</i></td>
-                                            </tr>
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                                <td colspan=4>
-                                                    {{ test_sed_form.nested.management_form }}
-                                                    <div class="myerrors">
-                                                        {{ test_sed_form.nested.management_form.errors }}
-                                                    </div>
-                                                    <div id="test_sed-{{ forloop.counter0 }}-ssrs">
-                                                        {% for testsedssr_form in test_sed_form.nested.forms %}
-                                                            <div id="test_sed-{{ forloop.parentloop.counter0 }}-ssr-{{ forloop.counter0 }}" name="test_sed-{{ forloop.parentloop.counter0 }}-ssr">
-                                                                {{ testsedssr_form.id }}
-                                                                {{ testsedssr_form.test_sed }}
-                                                                {{ testsedssr_form.ssr }}
-                                                                {{ testsedssr_form.ssr_collator }}
-                                                                {{ testsedssr_form.ssr_draft }}
-                                                                {{ testsedssr_form.ssr_public }}
-                                                                {{ testsedssr_form.ssr_type }}
-                                                                <table class="tab_panel">
-                                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                                        <td style="width:120px">&nbsp;</td>
-                                                                        <td style="width:200px">
-                                                                            {{ testsedssr_form.ssr_title }}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{ testsedssr_form.ssr_brief_description }}
-                                                                        </td>
-                                                                        <td style="width:100px">
-                                                                            {{ testsedssr_form.instance.ssr.type }}
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                                        <td class="myerrors" colspan="4">
-                                                                            <span id="test_sed-{{ forloop.parentloop.counter0 }}-testsedssr_set_{{ forloop.counter0 }}_errors">
-                                                                                {{ testsedssr_form.errors }}
-                                                                            </span>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -143,35 +84,36 @@
 </div>
 
 <script type="text/html" id="test_sed-template">
-    <div id="test_sed-<%= id %>" name="test_sed">
-        <input type=hidden id="id_test_sed-<%= id %>-DELETE" name="test_sed-<%= id %>-DELETE"/>
-        <input id="id_test_sed-<%= id %>-id" name="test_sed-<%= id %>-id" type="hidden" />
-        <input id="id_test_sed-<%= id %>-model" name="test_sed-<%= id %>-model" type="hidden" />
-        <input id="id_test_sed-<%= id %>-sed" name="test_sed-<%= id %>-sed" type="hidden" value="<%= sed %>"/>
+    <div id="test_sed-<%= idx %>" name="test_sed">
+        <input type=hidden id="id_test_sed-<%= idx %>-DELETE" name="test_sed-<%= idx %>-DELETE"/>
+        <input id="id_test_sed-<%= idx %>-id" name="test_sed-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_test_sed-<%= idx %>-model" name="test_sed-<%= idx %>-model" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
+        <input id="id_test_sed-<%= idx %>-sed" name="test_sed-<%= idx %>-sed" type="hidden" value="<%= sed %>"/>
+        <input id="id_test_sed-<%= idx %>-ssr" name="test_sed-<%= idx %>-ssr" type="hidden" value="<%= ssr %>"/>
         <table class="tab_panel">
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('test_sed', <%= id %>);">Remove</a>&nbsp;
+                    <a href="" onclick="return deleteInlineForm('test_sed', <%= idx %>);">Remove</a>&nbsp;
                 </td>
                 <td style="width:150px">
-                    <select id="id_test_sed-<%= id %>-relationship" name="test_sed-<%= id %>-relationship" style="font-size: 80%;font-family: verdana, sans-serif">
-                        <option value="explanation">explanation</option>
-                        <option value="contradiction">contradiction</option>
+                    <select id="id_test_sed-<%= idx %>-relationship" name="test_sed-<%= idx %>-relationship" style="font-size: 80%;font-family: verdana, sans-serif">
+                        <option value="explanation" <% if(relationship=='explanation'){ %>selected<% } %>>explanation</option>
+                        <option value="contradiction" <% if(relationship=='contradiction'){ %>selected<% } %>>contradiction</option>
                     </select>
                 </td>
                 <td>
-                    <textarea cols="37" id="id_test_sed-<%= id %>-relevance_narrative" name="test_sed-<%= id %>-relevance_narrative" rows="3"></textarea>
+                    <textarea cols="37" id="id_test_sed-<%= idx %>-relevance_narrative" name="test_sed-<%= idx %>-relevance_narrative" rows="3"><%= _.escape(relevance_narrative) %></textarea>
                 </td>
                 <td class="myerrors">
-                    <span id="test_sed_<%= id %>_errors">
+                    <span id="test_sed_<%= idx %>_errors">
                     </span>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">&nbsp;</td>
                 <td class="table_header" colspan=3>SED</td>
             </tr>
-            <tr class="<%= getTRTag(id) %>">
+            <tr class="<%= getTRTag(idx) %>">
                 <td colspan=4>
                     <table class="tab_panel">
                         <tr>
@@ -180,72 +122,50 @@
                             <td class="col_header"><i>Description*</i></td>
                             <td class="col_header" style="width:100px"><i>Type*</i></td>
                         </tr>
-                        <tr class="<%= getTRTag(id) %>">
+                        <tr class="<%= getTRTag(idx) %>">
                             <td>&nbsp;</td>
                             <td>
-                                <%= title %>
+                                <%= _.escape(sed_title) %>
                             </td>
                             <td>
-                                <%= brief_description %>
+                                <%= _.escape(sed_brief_description) %>
                             </td>
                             <td>
-                                <%= type %>
+                                <%= _.escape(sed_type) %>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            <tr class="<%= getTRTag(id) %>" valign=top>
+            <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td style="width:120px">&nbsp;</td>
                 <td class="table_header" colspan=3>SSR</td>
             </tr>
-            <tr class="<%= getTRTag(id) %>">
+            <tr class="<%= getTRTag(idx) %>">
                 <td colspan=4>
                     <table class="tab_panel">
+                        <% if(ssr=='') { %>
+                            <tr class="table_header">
+                                <td style="width:120px">&nbsp;</td>
+                                <td colspan="3"><div id="id_test_sed-<%= idx %>_new_ssr" style="font-size: 75%">Add new: <select id="id_new_test_sed-<%= idx %>_ssr_type" name="new_test_sed_ssr_type" style="font-size: 80%;font-family: verdana, sans-serif" onchange="addNewTestingSEDSSR(this.value, <%= idx %>);"><option value=""></option><option value="generic">generic</option> </select> SSR</div></td>
+                            </tr>
+                        <% } %>
                         <tr>
                             <td style="width:120px">&nbsp;</td>
                             <td class="col_header" style="width:200px"><i>Title*</i></td>
                             <td class="col_header"><i>Description</i>*</td>
                             <td class="col_header" style="width:100px"><i>Type*</i></td>
                         </tr>
-                        <tr class="<%= getTRTag(id) %>">
-                            <td colspan=4>
-                                <input id="id_test_sed-<%= id %>-testsedssr_set-TOTAL_FORMS" name="test_sed-<%= id %>-testsedssr_set-TOTAL_FORMS" type="hidden" value="1" />
-                                <input id="id_test_sed-<%= id %>-testsedssr_set-INITIAL_FORMS" name="test_sed-<%= id %>-testsedssr_set-INITIAL_FORMS" type="hidden" value="0" />
-                                <input id="id_test_sed-<%= id %>-testsedssr_set-MAX_NUM_FORMS" name="test_sed-<%= id %>-testsedssr_set-MAX_NUM_FORMS" type="hidden" value="1" />
-                                <div class="myerrors">
-                                </div>
-                                <div id="test_sed-<%= id %>-ssrs">
-                                    <div id="test_sed-<%= id %>-ssr-0" name="test_sed-<%= id %>-ssr">
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-id" name="test_sed-<%= id %>-testsedssr_set-0-id" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-test_sed" name="test_sed-<%= id %>-testsedssr_set-0-test_sed" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr" name="test_sed-<%= id %>-testsedssr_set-0-ssr" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_collator" name="test_sed-<%= id %>-testsedssr_set-0-ssr_collator" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_draft" name="test_sed-<%= id %>-testsedssr_set-0-ssr_draft" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_public" name="test_sed-<%= id %>-testsedssr_set-0-ssr_public" type="hidden" />
-                                        <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_type" name="test_sed-<%= id %>-testsedssr_set-0-ssr_type" type="hidden" value="generic"/>
-                                        <table class="tab_panel">
-                                            <tr class="<%= getTRTag(id) %>" valign=top>
-                                                <td style="width:120px">&nbsp;</td>
-                                                <td style="width:200px">
-                                                    <input id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_title" name="test_sed-<%= id %>-testsedssr_set-0-ssr_title" size="13" type="text" />
-                                                </td>
-                                                <td>
-                                                    <textarea cols="50" id="id_test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" name="test_sed-<%= id %>-testsedssr_set-0-ssr_brief_description" rows="3"></textarea>
-                                                </td>
-                                                <td style="width:100px">
-                                                    generic
-                                                </td>
-                                            <tr class="<%= getTRTag(id) %>" valign=top>
-                                                <td class="myerrors" colspan="4">
-                                                    <span id="test_sed-<%= id %>-testsedssr_set_0_errors">
-                                                        {{ testsedssr_form.errors }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
+                        <tr class="<%= getTRTag(idx) %>" valign=top>
+                            <td style="width:120px">&nbsp;</td>
+                            <td style="width:200px">
+                                <div id="id_test_sed-<%= idx %>_ssr_title"><%= _.escape(ssr_title) %></div>
+                            </td>
+                            <td>
+                                <div id="id_test_sed-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description) %></div>
+                            </td>
+                            <td style="width:100px">
+                                <div id="id_test_sed-<%= idx %>_ssr_type"><%= _.escape(ssr_type) %></div>
                             </td>
                         </tr>
                     </table>

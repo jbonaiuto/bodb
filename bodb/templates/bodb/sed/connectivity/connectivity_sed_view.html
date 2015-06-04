@@ -3,6 +3,7 @@
 {% block extrahead %}
     <title>BODB - View {{ connectivitysed.title }} SED</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
@@ -17,7 +18,11 @@
         {% if ispopup and action %}
             {% if multiple %}
                 {% if action == "add" %}
-                    opener.addSEDMultiple('{{ type }}', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type }}']);
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type|escapejs }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ connectivitysed.id }}, ['{{ connectivitysed.title|escapejs }}', '{{ connectivitysed.brief_description|escapejs }}', '{{ connectivitysed.type|escapejs }}'],'', []);
+                    {% endifequal %}
                 {% endif %}
             {% endif %}
             self.close();
@@ -27,6 +32,8 @@
         {
             if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 var elem=opener.document.getElementById('span_sed_{{ connectivitysed.id }}');
                 if(elem!=null)
@@ -68,26 +75,9 @@
                 alert(res.responseText);
         }
 
-        function exportSED(type)
+        function exportSED()
         {
-            updateSectionDisplaySettings();
-            document.getElementById('reportForm').action='/bodb/sed/{{connectivitysed.id}}/report/'+type+'/';
-            document.getElementById('reportForm').submit();
-        }
-
-        function updateSectionDisplaySettings()
-        {
-            var sectionIds=['figureData', 'narrativeData', 'relatedBopData', 'relatedModelData',
-                'relatedBrainRegionData', 'referenceData', 'sedData', 'ssrData'];
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'relatedBopDisplay', 'relatedModelDisplay',
-                'relatedBrainRegionDisplay', 'referenceDisplay', 'sedDisplay', 'ssrDisplay'];
-            for(var i=0; i<sectionIds.length; i++)
-            {
-                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
-                    document.getElementById(displayIds[i]).value=1;
-                else
-                    document.getElementById(displayIds[i]).value=0;
-            }
+            showPopup('sed_{{ connectivitysed.id }}_export',400,500,'/bodb/sed/{{ connectivitysed.id }}/report/');
         }
     </script>
 {% endblock %}
@@ -115,13 +105,7 @@
                 <td colspan="2"><strong>Last modified:</strong> {{ connectivitysed.get_modified_str }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Tags:</strong> {{ connectivitysed.tags.all|join:', ' }}</td>
-            </tr>
-            <tr class="section_subheader">
-                <td colspan=2>Brief Description</td>
-            </tr>
-            <tr>
-                <td colspan=2>{{ connectivitysed.brief_description }}</td>
+                <td colspan="2"><strong>Tags:</strong> {% for tag in connectivitysed.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/sed/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
             </tr>
             <tr>
                 <td colspan=2 valign=top>
@@ -142,6 +126,12 @@
                         {% endif %}
                     {% endif %}
                 </td>
+            </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ connectivitysed.brief_description }}</td>
             </tr>
             <tr valign="top">
                 <td width="150px"><strong>Source region:</strong></td>
@@ -345,24 +335,8 @@
                 <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{connectivitysed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             {% endif %}
         {% endif %}
+        <input class="btn" type="button" value="Export" onclick="exportSED()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         <br>
-        <input class="btn" type="button" value="Export" onclick="exportSED(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-        Format:&nbsp;
-        <select id="exportType">
-            <option value="pdf">PDF</option>
-            <option value="rtf">RTF</option>
-        </select>
     </div>
     <form id="fileForm" action=""></form>
-    <form id="reportForm" name="reportForm" action="/bodb/sed/{{connectivitysed.id}}/report/rtf/" method="post">
-        {% csrf_token %}
-        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
-        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
-        <input id="sedDisplay" type="hidden" name="sedDisplay" value=0>
-        <input id="ssrDisplay" type="hidden" name="ssrDisplay" value=0>
-        <input id="relatedBopDisplay" type="hidden" name="relatedBopDisplay" value=0>
-        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
-        <input id="relatedBrainRegionDisplay" type="hidden" name="relatedBrainRegionDisplay" value=0>
-        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
-    </form>
 {% endblock %}

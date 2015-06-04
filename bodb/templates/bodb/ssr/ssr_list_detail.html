@@ -1,44 +1,48 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        {% for ssr in ssrs %}
+            addSSR({{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
+        {% endfor %}
+    });
+</script>
 <div id="ssrData" style="display:none">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
     <table class="tab_panel" style="background:#e6e8ed;">
+        <tr class="table_header">
+            <td colspan="4"><div id="id_new_ssr" style="font-size: 75%">Add new: <select id="id_new_ssr_type" name="new_ssr_type" style="font-size: 80%;font-family: verdana, sans-serif" onchange="addNewSSR(this.value);"><option value=""></option><option value="generic">generic</option> </select> SSR</div></td>
+        </tr>
         <tr class="col_header">
-            <td style="width:200px;">Title*</td>
-            <td>Brief Description*</td>
+            <td style="width:120px">&nbsp;</td>
+            <td style="width:200px;">Title</td>
+            <td>Brief Description</td>
+            <td style="width:100px">Type</td>
         </tr>
         <tr>
-            <td colspan=3>
-                {{ predictionssr_formset.management_form }}
-                <div class="myerrors">
-                    {{ predictionssr_formset.management_form.errors }}
-                </div>
+            <td colspan=4>
                 <div id="ssrs">
-                    {% for predictionssr_form in predictionssr_formset.forms %}
-                        <div id="ssr-{{ forloop.counter0 }}" name="ssr">
-                            {{ predictionssr_form.id }}
-                            {{ predictionssr_form.prediction }}
-                            {{ predictionssr_form.ssr }}
-                            {{ predictionssr_form.ssr_collator }}
-                            {{ predictionssr_form.ssr_draft }}
-                            {{ predictionssr_form.ssr_public }}
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td style="width:200px">
-                                        {{ predictionssr_form.ssr_title }}
-                                    </td>
-                                    <td>
-                                        {{ predictionssr_form.ssr_brief_description }}
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="myerrors">
-                                <span id="predictionssr_{{ forloop.counter0 }}_errors">
-                                    {{ predictionssr_form.errors }}
-                                </span>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
     </table>
 </div>
+
+<script type="text/html" id="ssr-template">
+    <div id="ssr-<%= idx %>" name="ssr">
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td style="width:120px">
+                    <a href="" onclick="return removeSSR(<%= idx %>);">Remove</a>&nbsp;
+                </td>
+                <td style="width:200px">
+                    <%= _.escape(title) %>
+                </td>
+                <td>
+                    <%= _.escape(brief_description) %>
+                </td>
+                <td style="width:100px">
+                    <%= _.escape(type) %>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>

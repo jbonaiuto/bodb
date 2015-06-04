@@ -1,13 +1,13 @@
 import hashlib
 import random
-from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
 from bodb.models.workspace import BodbProfile
-from bodb.models.messaging import Message, UserSubscription
+from bodb.models.messaging import Message, UserSubscription, messageUser
 from bodb.models.literature import Literature
+from registration.models import User
 
 class Atlas(models.Model):
     file=models.CharField(max_length=200)
@@ -30,26 +30,23 @@ class Species(models.Model):
     # when printing instances of this class, print "genus species"
     def __unicode__(self):
         return u"%s %s" % (self.genus_name, self.species_name)
-    
-    
-class Primate(models.Model):
-    HABITAT_CHOICES = (
-        ('captive', 'Captive'),
-        ('wild', 'Wild'),
-        )
-    name = models.CharField(max_length=200)
-    species = models.ForeignKey(Species)
-    birth_date = models.DateField(blank=True)
-    geographic_location = models.CharField(max_length=200) #this should be some kind of geo model
-    habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
-    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
-    #creation_time = models.DateTimeField(blank=True)
-    class Meta:
-        app_label='bodb'
 
-    # when printing instances of this class, print "genus species"
-    def __unicode__(self):
-        return u"%s" % (self.name)
+    @staticmethod
+    def get_genus_options():
+        genus_options=[('','')]
+        for species in Species.objects.all():
+            if not (species.genus_name,species.genus_name) in genus_options:
+                genus_options.append((species.genus_name,species.genus_name))
+        return genus_options
+
+    @staticmethod
+    def get_species_options():
+        species_options=[('','')]
+        for species in Species.objects.all():
+            if not (species.__unicode__(),species.__unicode__()) in species_options:
+                species_options.append((species.__unicode__(),species.__unicode__()))
+        return species_options
+
 
 
 # Brain nomenclature
@@ -69,6 +66,9 @@ class Nomenclature(models.Model):
     # when printing instances of this class, print "name (version)"
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.version)
+
+    def species_name(self):
+        return ', '.join([species.__unicode__() for species in self.species.all()])
 
 
 class CoordinateSpace(models.Model):
@@ -154,19 +154,21 @@ class BrainRegion(models.Model):
         return reverse('brain_region_view', kwargs={'pk': self.pk})
 
     @staticmethod
-    def get_region_list(regions, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_region_list(regions, workspace_regions, fav_regions):
         region_list=[]
         for region in regions:
-            selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=region.id).count()>0
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=region.id).count()>0
+            selected=region.id in workspace_regions
+            is_favorite=region.id in fav_regions
             region_list.append([selected,is_favorite,region])
         return region_list
+
+    def species_name(self):
+        return self.nomenclature.species_name()
+
+    def parent_region_name(self):
+        if self.parent_region is not None:
+            return self.parent_region.__unicode__()
+        return ''
 
 
 # Brain region volume
@@ -201,18 +203,15 @@ class RelatedBrainRegion(models.Model):
         app_label='bodb'
         ordering=['brain_region__nomenclature', 'brain_region__name']
 
+    def brain_region_name(self):
+        return self.brain_region.__unicode__()
+
     @staticmethod
-    def get_related_brain_region_list(rregions, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_related_brain_region_list(rregions, workspace_regions, fav_regions):
         related_region_list=[]
         for rregion in rregions:
-            selected=active_workspace is not None and\
-                     active_workspace.related_regions.filter(id=rregion.brain_region.id).count()>0
-            is_favorite=profile is not None and profile.favorite_regions.filter(id=rregion.brain_region.id).count()>0
+            selected=rregion.brain_region.id in workspace_regions
+            is_favorite=rregion.brain_region.id in fav_regions
             related_region_list.append([selected,is_favorite,rregion])
         return related_region_list
 
@@ -281,19 +280,7 @@ class BrainRegionRequest(models.Model):
         users=User.objects.all()
         for user in users:
             if user.is_superuser:
-                # send internal message
-                profile=BodbProfile.objects.get(user__id=user.id)
-                notification_type=profile.notification_preference
-                if notification_type=='message' or notification_type=='both':
-                    message=Message(recipient=user, sender=self.user, subject=subject, read=False)
-                    message.text=text
-                    message.save()
-
-                # send email message
-                if notification_type=='email' or notification_type=='both':
-                    msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [user.email])
-                    msg.content_subtype = "html"  # Main content is now text/html
-                    msg.send(fail_silently=True)
+                messageUser(user, subject, text)
 
     def save(self, **kwargs):
         if self.id is None:

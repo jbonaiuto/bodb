@@ -4,6 +4,7 @@ from bodb.models import BodbProfile, BrainRegionRequest
 from registration.forms import RegistrationForm
 from registration.models import User
 from uscbp.widgets import ImageWidget
+from django.core.cache import cache
 
 class UserForm(forms.ModelForm):
     groups = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
@@ -48,6 +49,8 @@ class BodbRegistrationForm(RegistrationForm):
         profile.affiliation = self.cleaned_data['affiliation']
         profile.save()
 
+        cache.set('%d.profile' % new_user.id, profile)
+
         return new_user
 
 
@@ -79,7 +82,7 @@ class BodbProfileForm(forms.ModelForm):
 
     class Meta:
         model=BodbProfile
-        exclude=('active_workspace','loaded_coordinate_selection','favorites')
+        exclude=('active_workspace','loaded_coordinate_selection','favorites', 'favorite_literature', 'favorite_regions')
 
 
 class BrainRegionRequestForm(forms.ModelForm):

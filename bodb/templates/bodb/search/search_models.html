@@ -3,6 +3,9 @@
 <script type="text/javascript">
     animatedcollapse.addDiv('modelAdvancedOptions', 'fade=1');
 
+    var modelSortOrderBy='title';
+    var modelSortDirection='ascending';
+
     function modelJumpPage(page)
     {
         document.getElementById('id_model_page').value=page;
@@ -14,15 +17,24 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#model_search_form');
+        var data=frm.serialize()+'&model_order_by='+modelSortOrderBy+'&model_direction='+modelSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: processModelResults,
             error: function(data) {
                 alert("Something went wrong!");
             }
         });
+    }
+
+    function sortModels(order_by, direction, up_image, down_image)
+    {
+        modelSortOrderBy=order_by;
+        modelSortDirection=direction;
+        submitSearchModels();
+        return false;
     }
 
     $( document ).ready(function() {
@@ -250,7 +262,7 @@
             </tr>
             <tr>
                 <td colspan="8">
-                    <div id="models_previous"><a href="" onclick="modelJumpPage()">previous</a></div> Page <span id="model_current_page">1</span> of <span id="model_total_pages">1</span> <div id="models_next"><a href="" onclick="modelJumpPage()">next</a></div>
+                    <div id="id_models_previous" name="models_previous"><a href="" onclick="modelJumpPage()">previous</a></div> Page <span id="id_model_current_page" name="model_current_page">1</span> of <span id="id_model_total_pages" name="model_total_pages">1</span> <div id="id_models_next" name="models_next"><a href="" onclick="modelJumpPage()">next</a></div>
                 </td>
             </tr>
             <tr>

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.views.generic.edit import BaseUpdateView
 import os
@@ -6,6 +7,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, DeleteView, TemplateView
 from bodb.forms.literature import JournalForm, BookForm, ChapterForm, ConferenceForm, ThesisForm, UnpublishedForm, LiteratureAuthorFormSet
 from bodb.models import LiteratureAuthor, Author, Journal, Book, Chapter, Conference, Thesis, Unpublished, BOP, Model, BrainRegion, SED, Literature, BrainImagingSED, SEDCoord, ConnectivitySED, ERPSED, reference_export, SelectedSEDCoord, ERPComponent, WorkspaceActivityItem, UserSubscription, SSR, NeurophysiologySED
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
+from bodb.views.model import CreateModelView
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
 
@@ -51,9 +55,6 @@ class EditLiteratureMixin():
         return None
 
     def get(self, request, *args, **kwargs):
-        if not request.user.has_perm(self.required_perm):
-            return HttpResponseRedirect('/bodb/index.html')
-
         id = self.kwargs.get('pk', None)
         literatureType=request.GET.get('literatureType','journal')
 
@@ -89,8 +90,8 @@ class EditLiteratureMixin():
             'unpublished_form': unpublished_form,
             'unpublished_author_formset': unpublished_author_formset,
             'literatureType':literatureType,
-            'multiple': ('_multiple' in request.GET),
             'ispopup': ('_popup' in request.GET)}
+        context=set_context_workspace(context, self.request)
 
         return render(request, self.template_name, context)
 
@@ -144,8 +145,6 @@ class EditLiteratureMixin():
             href='/bodb/literature/%d/?literatureType=%s' % (id,literatureType)
             if '_popup' in request.GET:
                 href+='&_popup=%s' % request.GET['_popup']
-            if '_multiple' in request.GET:
-                href+='&_multiple=%s' % request.GET['_multiple']
             return HttpResponseRedirect(href)
 
         context={
@@ -164,18 +163,19 @@ class EditLiteratureMixin():
             'unpublished_author_formset': unpublished_author_formset,
             'literatureType':literatureType
         }
+        context=set_context_workspace(context, self.request)
 
         return render(request, self.template_name, context)
 
 
-class CreateLiteratureView(EditLiteratureMixin,View):
+class CreateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
     helpPage='insert_data.html#insert-literature'
-    required_perm='bodb.add_literature'
+    permission_required='bodb.add_literature'
 
 
-class UpdateLiteratureView(EditLiteratureMixin,View):
+class UpdateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
     helpPage='insert_data.html#insert-literature'
-    required_perm='bodb.change_literature'
+    permission_required='bodb.change_literature'
 
     def get_instances(self,request,id,literatureType):
         # create new literature objects
@@ -194,22 +194,22 @@ class UpdateLiteratureView(EditLiteratureMixin,View):
 
         # load Literature object
         if literatureType=='journal':
-            journal=get_object_or_404(Journal, id=id)
+            journal=get_object_or_404(Journal.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             journal_authors=journal.authors.all()
         elif literatureType=='book':
-            book=get_object_or_404(Book, id=id)
+            book=get_object_or_404(Book.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             book_authors=book.authors.all()
         elif literatureType=='chapter':
-            chapter=get_object_or_404(Chapter, id=id)
+            chapter=get_object_or_404(Chapter.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             chapter_authors=chapter.authors.all()
         elif literatureType=='conference':
-            conference=get_object_or_404(Conference, id=id)
+            conference=get_object_or_404(Conference.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             conference_authors=conference.authors.all()
         elif literatureType=='thesis':
-            thesis=get_object_or_404(Thesis, id=id)
+            thesis=get_object_or_404(Thesis.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             thesis_authors=thesis.authors.all()
         elif literatureType=='unpublished':
-            unpublished=get_object_or_404(Unpublished, id=id)
+            unpublished=get_object_or_404(Unpublished.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             unpublished_authors=unpublished.authors.all()
 
         return journal,book,chapter,conference,thesis,unpublished,journal_authors,book_authors,chapter_authors,\
@@ -227,81 +227,99 @@ class LiteratureDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context=super(LiteratureDetailView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         id = self.kwargs.get('pk', None)
 
-        if Journal.objects.filter(id=id):
+        try:
+            literature=Journal.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
             literatureType='journal'
-            literature=Journal.objects.get(id=id)
-        elif Book.objects.filter(id=id):
-            literatureType='book'
-            literature=Book.objects.get(id=id)
-        elif Chapter.objects.filter(id=id):
-            literatureType='chapter'
-            literature=Chapter.objects.get(id=id)
-        elif Conference.objects.filter(id=id):
-            literatureType='conference'
-            literature=Conference.objects.get(id=id)
-        elif Thesis.objects.filter(id=id):
-            literatureType='thesis'
-            literature=Thesis.objects.get(id=id)
-        elif Unpublished.objects.filter(id=id):
-            literatureType='unpublished'
-            literature=Unpublished.objects.get(id=id)
-        else:
+        except (Journal.DoesNotExist, Journal.MultipleObjectsReturned), err:
+            try:
+                literature=Book.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
+                literatureType='book'
+            except (Book.DoesNotExist, Book.MultipleObjectsReturned), err:
+                try:
+                    literature=Chapter.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
+                    literatureType='chapter'
+                except (Chapter.DoesNotExist, Chapter.MultipleObjectsReturned), err:
+                    try:
+                        literature=Conference.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
+                        literatureType='conference'
+                    except (Conference.DoesNotExist, Conference.MultipleObjectsReturned), err:
+                        try:
+                            literature=Thesis.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
+                            literatureType='thesis'
+                        except (Thesis.DoesNotExist, Thesis.MultipleObjectsReturned), err:
+                            try:
+                                literature=Unpublished.objects.select_related('collator').prefetch_related('authors__author').get(id=id)
+                                literatureType='unpublished'
+                            except (Unpublished.DoesNotExist, Unpublished.MultipleObjectsReturned), err:
+                                literature=None
+                                literatureType=''
+
+        if literature is None:
             raise Http404
-        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
+        brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature).select_related('nomenclature','parent_region').prefetch_related('nomenclature__species').order_by('name')
 
         user=self.request.user
         context['helpPage']='view_entry.html'
         context['literature']=literature
+        context['url']=literature.html_url_string()
         context['literatureType']=literatureType
-        context['brain_regions']=BrainRegion.get_region_list(brain_regions,user)
+        context['brain_regions']=BrainRegion.get_region_list(brain_regions,context['workspace_regions'],
+            context['fav_regions'])
         context['ispopup']=('_popup' in self.request.GET)
-        context['multiple']=('_multiple' in self.request.GET)
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         context['bopGraphId']='bopRelationshipDiagram'
         context['modelGraphId']='modelRelationshipDiagram'
-        context['models']=Model.get_model_list(Model.get_literature_models(literature, user), user)
-        context['bops']=BOP.get_bop_list(BOP.get_literature_bops(literature, user), user)
-        context['generic_seds']=SED.get_sed_list(SED.get_literature_seds(literature, user), user)
+
+        models=Model.get_literature_models(literature, user)
+        context['models']=Model.get_model_list(models, context['workspace_models'], context['fav_docs'],
+            context['subscriptions'])
+        context['model_seds']=Model.get_sed_map(models, user)
+
+        bops=BOP.get_literature_bops(literature, user)
+        context['bops']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'], context['subscriptions'])
+        context['bop_relationships']=BOP.get_bop_relationships(bops, user)
+
+        generic_seds=SED.get_literature_seds(literature, user)
+        context['generic_seds']=SED.get_sed_list(generic_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+
         imaging_seds=BrainImagingSED.get_literature_seds(literature, user)
-        coords=[SEDCoord.objects.filter(sed=sed) for sed in imaging_seds]
-        context['imaging_seds']=SED.get_sed_list(imaging_seds,user)
-        context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords)
-        context['connectivity_seds']=SED.get_sed_list(ConnectivitySED.get_literature_seds(literature,user), user)
-        erp_seds=ERPSED.get_literature_seds(literature, user)
-        components=[ERPComponent.objects.filter(erp_sed=erp_sed) for erp_sed in erp_seds]
-        context['erp_seds']=SED.get_sed_list(erp_seds, user)
-        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_literature_seds(self.object,user),user)
-
-        context['is_favorite']=False
-        context['selected']=False
-        context['can_add_entry']=False
-        context['can_remove_entry']=False
-        context['selected_coord_ids']=[]
-
+        coords=[SEDCoord.objects.filter(sed=sed).select_related('coord') for sed in imaging_seds]
+        context['imaging_seds']=SED.get_sed_list(imaging_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         if user.is_authenticated() and not user.is_anonymous():
-            context['is_favorite']=user.get_profile().favorite_literature.filter(id=literature.id).count()>0
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
+                context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
+        else:
+            context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
 
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=literature.collator,
-                user=user).count()>0
+        conn_seds=ConnectivitySED.get_literature_seds(literature,user)
+        context['connectivity_seds']=SED.get_sed_list(conn_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['connectivity_sed_regions']=ConnectivitySED.get_region_map(conn_seds)
 
-            selected_coords=SelectedSEDCoord.objects.filter(selected=True, user__id=user.id)
-            for coord in selected_coords:
-                context['selected_coord_ids'].append(coord.sed_coordinate.id)
+        erp_seds=ERPSED.get_literature_seds(literature, user)
+        components=[ERPComponent.objects.filter(erp_sed=erp_sed).select_related('electrode_cap','electrode_position__position_system') for erp_sed in erp_seds]
+        context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
+        context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
+        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_literature_seds(literature,user),context['profile'], context['active_workspace'])
 
-            active_workspace=user.get_profile().active_workspace
-            context['can_add_entry']=user.has_perm('add_entry',active_workspace)
-            context['can_remove_entry']=user.has_perm('remove_entry',active_workspace)
-            context['selected']=active_workspace.related_literature.filter(id=literature.id).count()>0
+        context['is_favorite']=literature.id in context['fav_lit']
+        context['subscribed_to_collator']=(literature.collator.id,'All') in context['subscriptions']
+        context['selected']=literature.id in context['workspace_literature']
 
         return context
 
-class DeleteLiteratureView(DeleteView):
+
+class DeleteLiteratureView(PermissionRequiredMixin,DeleteView):
     model=Literature
     success_url = '/bodb/index.html'
+    permission_required = 'bodb.delete_literature'
 
 
 class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
@@ -324,20 +342,21 @@ class ExportLiteratureView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class ToggleSelectLiteratureView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = Literature
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             lit=Literature.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
-                'literature_id': lit.id,
+                'literature_id':lit.id,
                 'workspace': active_workspace.title
             }
+
             activity=WorkspaceActivityItem(workspace=active_workspace, user=self.request.user)
             remove=False
             if 'select' in self.request.POST:
@@ -356,6 +375,7 @@ class ToggleSelectLiteratureView(JSONResponseMixin,BaseUpdateView):
                               (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
@@ -377,3 +397,4 @@ def exportPubmedResources():
     FILE=open(settings.MEDIA_ROOT+'/pubmed/resources.xml','w')
     FILE.write(str)
     FILE.close()
+

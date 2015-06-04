@@ -24,9 +24,9 @@ def runWorkspaceSearch(search_data, userId):
             filters.append(dispatch(userId))
 
     # restrict to user's own entries or those of other users that are not drafts
-    if User.objects.filter(id=userId):
+    try:
         user=User.objects.get(id=userId)
-    else:
+    except (User.DoesNotExist, User.MultipleObjectsReturned), err:
         user=User.get_anonymous()
 
     visibility_q=Q(created_by__is_active=True)
@@ -37,11 +37,22 @@ def runWorkspaceSearch(search_data, userId):
 
     # get results
     if q and len(q):
-        results = Workspace.objects.filter(q).select_related().distinct()
+        results = Workspace.objects.filter(q).select_related('created_by').distinct()
     else:
-        results = Workspace.objects.all().select_related()
+        results = Workspace.objects.all().select_related('created_by')
 
-    return results.order_by('title')
+    if 'workspace_order_by' in search_data:
+        if search_data['workspace_order_by']=='created_by':
+            results=list(results)
+            results.sort(key=Workspace.get_created_by_str, reverse=search_data['workspace_direction']=='descending')
+        else:
+            results=results.order_by(search_data['workspace_order_by'])
+    else:
+        results=results.order_by('title')
+    if 'workspace_direction' in search_data and search_data['workspace_direction']=='descending' and not search_data['workspace_order_by']=='created_by':
+        results=results.reverse()
+
+    return results
 
 
 class WorkspaceSearch(object):

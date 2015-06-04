@@ -7,6 +7,7 @@ from pyexpat import ExpatError
 from django.db.models import Q
 import operator
 from bodb.models import RelatedBrainRegion, CoCoMacBrainRegion, CoCoMacConnectivitySED, Document
+from bodb.search.document import DocumentWithLiteratureSearch
 from bodb.search.sed import SEDSearch
 from federation.cocomac.import_data import addNomenclature
 from federation.cocomac.import_data2 import addNomenclature2, perform_query
@@ -15,9 +16,10 @@ from taggit.utils import parse_tags
 
 def runCoCoMacSearch2(search_data, userId):
     results=[]
-    search_local=False
+    search_local=True
     if 'type' not in search_data or search_data['type']=='connectivity':
         if 'search_cocomac' in search_data and search_data['search_cocomac']:
+            search_local=False
             print('Trying to search CoCoMac2')
             try:
                 origin_search_string=''
@@ -138,8 +140,9 @@ def runCoCoMacSearch2(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
-        return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
+            results=list(CoCoMacConnectivitySED.objects.filter(q).select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
+        else:
+            results=list(CoCoMacConnectivitySED.objects.all().select_related('collator','target_region__nomenclature','source_region__nomenclature').distinct())
 
     return results
 
@@ -248,6 +251,7 @@ def runCoCoMacSearch(search_data, userId):
 
         # get results
         if q and len(q):
+            print(q)
             return list(CoCoMacConnectivitySED.objects.filter(q).select_related().distinct())
         return list(CoCoMacConnectivitySED.objects.all().select_related().distinct())
 
@@ -316,7 +320,7 @@ class CoCoMacSearch():
         return ""
 
 
-class LocalCoCoMacSearch(SEDSearch):
+class LocalCoCoMacSearch(DocumentWithLiteratureSearch):
     def __init__(self, search_data):
         self.__dict__.update(search_data)
 
@@ -333,9 +337,13 @@ class LocalCoCoMacSearch(SEDSearch):
     def search_source_region_nomenclature(self, userId):
         if self.source_region_nomenclature:
             words=self.source_region_nomenclature.split()
+            keyword_filters=[Q() for word in words]
             keyword_q=Q()
             for word in words:
-                keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word)
+                keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word) | \
+                            Q(source_region__nomenclature__lit__title__icontains=word) | \
+                            Q(source_region__nomenclature__lit__authors__author__first_name__icontains=word) | \
+                            Q(source_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 
@@ -354,7 +362,10 @@ class LocalCoCoMacSearch(SEDSearch):
             words=self.target_region_nomenclature.split()
             keyword_q=Q()
             for word in words:
-                keyword_q = keyword_q | Q(target_region__nomenclature__name__icontains=word)
+                keyword_q = keyword_q | Q(target_region__nomenclature__name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__title__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 
@@ -375,7 +386,13 @@ class LocalCoCoMacSearch(SEDSearch):
             keyword_q=Q()
             for word in words:
                 keyword_q = keyword_q | Q(source_region__nomenclature__name__icontains=word) |\
-                            Q(target_region__nomenclature__name__icontains=word)
+                            Q(source_region__nomenclature__lit__title__icontains=word) |\
+                            Q(source_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(source_region__nomenclature__lit__authors__author__last_name__icontains=word) |\
+                            Q(target_region__nomenclature__name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__title__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__first_name__icontains=word) |\
+                            Q(target_region__nomenclature__lit__authors__author__last_name__icontains=word)
             return keyword_q
         return Q()
 

@@ -11,6 +11,8 @@
         {
             if(confirm('This will delete this SSR as well as all links to it from other entries. Do you really want to delete the current SSR?'))
             {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
             {% if ispopup %}
                 if(opener.document.getElementById('span_ssr_{{ ssr.id }}')!=null)
                     clearSpan(opener.document, 'span_ssr_{{ ssr.id }}');
@@ -28,11 +30,9 @@
             document.location.href='/bodb/';
         }
 
-        function exportSSR(type)
+        function exportSSR()
         {
-            updateSectionDisplaySettings();
-            document.getElementById('reportForm').action='/bodb/ssr/{{ssr.id}}/report/'+type+'/';
-            document.getElementById('reportForm').submit();
+            showPopup('ssr_{{ ssr.id }}_export',400,500,'/bodb/ssr/{{ ssr.id }}/report/');
         }
 
         function doneToggleSSRSelect(res, status)
@@ -58,19 +58,16 @@
                 alert(res.responseText);
         }
 
-        function updateSectionDisplaySettings()
-        {
-            var sectionIds=['figureData', 'narrativeData', 'referenceData', 'sedData', 'ssrData', 'relatedModelData'];
-            var displayIds=['figureDisplay', 'narrativeDisplay', 'referenceDisplay', 'sedDisplay', 'ssrDisplay',
-                'relatedModelDisplay'];
-            for(var i=0; i<sectionIds.length; i++)
-            {
-                if(document.getElementById(sectionIds[i]) && document.getElementById(sectionIds[i]).style.display!='none')
-                    document.getElementById(displayIds[i]).value=1;
-                else
-                    document.getElementById(displayIds[i]).value=0;
-            }
-        }
+        {% if ispopup and action %}
+            {% if action == "add" %}
+                {% ifequal type 'testsed' %}
+                    opener.setTestingSEDSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
+                {% else %}
+                    opener.setPredictionSSR({{ idx }}, {{ ssr.id }}, '{{ ssr.title|escapejs }}', '{{ ssr.brief_description|escapejs }}', '{{ ssr.type|escapejs }}');
+                {% endifequal %}
+            {% endif %}
+            self.close();
+        {% endif %}
     </script>
 {% endblock %}
 {% block content %}
@@ -100,7 +97,7 @@
             <td colspan="2"><strong>Last modified:</strong> {{ ssr.get_modified_str }}</td>
         </tr>
         <tr valign="top">
-            <td colspan="2"><strong>Tags:</strong> {{ ssr.tags.all|join:', ' }}</td>
+            <td colspan="2"><strong>Tags:</strong> {% for tag in ssr.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/ssr/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
         </tr>
         <tr class="section_subheader">
             <td colspan=2>Brief Description</td>
@@ -214,21 +211,7 @@
     {% if ispopup %}
         <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
     {% endif %}
-    <br>
-    <input class="btn" type="button" value="Export" onclick="exportSSR(document.getElementById('exportType').value)" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-    Format:&nbsp;
-    <select id="exportType">
-        <option value="pdf">PDF</option>
-        <option value="rtf">RTF</option>
-    </select>
+    <input class="btn" type="button" value="Export" onclick="exportSSR()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        <br>
     </div>
-    <form id="reportForm" name="reportForm" action="/bodb/ssr/{{ssr.id}}/report/rtf/" method="post">
-        {% csrf_token %}
-        <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
-        <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>
-        <input id="sedDisplay" type="hidden" name="sedDisplay" value=0>
-        <input id="ssrDisplay" type="hidden" name="ssrDisplay" value=0>
-        <input id="relatedModelDisplay" type="hidden" name="relatedModelDisplay" value=0>
-        <input id="referenceDisplay" type="hidden" name="referenceDisplay" value=0>
-    </form>
 {% endblock %}

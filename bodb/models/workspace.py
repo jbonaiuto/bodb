@@ -6,13 +6,16 @@ from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
-from bodb.models.messaging import Message, UserSubscription
+from bodb.models.messaging import Message, UserSubscription, messageUser
 from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
+from django.core.cache import cache
+
 
 class Workspace(models.Model):
     created_by = models.ForeignKey(User)
@@ -96,7 +99,7 @@ class Workspace(models.Model):
             return self.created_by.username
 
     def get_users(self):
-        return User.objects.filter(groups__group=self.group)
+        return User.objects.filter(groups=self.group)
 
     def get_absolute_url(self):
         return reverse('workspace_view', kwargs={'pk': self.pk})
@@ -112,14 +115,19 @@ class Workspace(models.Model):
 
     @staticmethod
     def get_workspace_list(workspaces, user):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
         workspace_list=[]
         for w in workspaces:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).count()>0
+            subscribed_to_user=user.is_authenticated() and not user.is_anonymous() and UserSubscription.objects.filter(subscribed_to_user=w.created_by, user=user).exists()
             workspace_list.append([subscribed_to_user,w])
         return workspace_list
+
+    def check_perm(self, user, perm):
+        if perm=='admin':
+            return self.admin_users.filter(id=user.id).exists()
+        elif perm=='member':
+            return self.get_users().filter(id=user.id).exists() or user.is_superuser
+        else:
+            return user.has_perm(perm, self)
 
 
 class WorkspaceInvitation(models.Model):
@@ -155,19 +163,7 @@ class WorkspaceInvitation(models.Model):
         text += 'or<br>'
         text += '<a href="%s">Decline</a>' % decline_url
         self.sent=datetime.datetime.now()
-        # send internal message
-        profile=BodbProfile.objects.get(user__id=self.invited_user.id)
-        notification_type = profile.notification_preference
-        if notification_type == 'message' or notification_type == 'both':
-            message = Message(recipient=self.invited_user, subject=subject, read=False)
-            message.text = text
-            message.save()
-
-        # send email message
-        if notification_type == 'email' or notification_type == 'both':
-            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.invited_user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send(fail_silently=True)
+        messageUser(self.invited_user, subject, text)
 
     def save(self, **kwargs):
         if self.id is None:
@@ -220,27 +216,30 @@ class WorkspaceActivityItem(models.Model):
 
 @receiver(forum_post_added)
 def workspace_forum_post_added(sender, **kwargs):
-    if Workspace.objects.filter(forum=sender.forum):
+    try:
         workspace=Workspace.objects.get(forum=sender.forum)
+    except (Workspace.DoesNotExist, Workspace.MultipleObjectsReturned), err:
+        workspace=None
+    if workspace is not None:
         activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
         activity.text='%s added a comment to the workspace: %s' % (sender.author.username, sender.body)
         activity.save()
-    for workspace in Workspace.objects.filter(related_models__forum=sender.forum):
-        for model in workspace.related_models.filter(forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_models__forum').filter(related_models__forum=sender.forum):
+        for model in workspace.related_models.filter(forum=sender.forum).prefetch_related('authors__author'):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the model <a href="%s">%s</a>: %s' % (sender.author.username,model.get_absolute_url(), model.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_bops__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_bops__forum').filter(related_bops__forum=sender.forum):
         for bop in workspace.related_bops.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the BOP <a href="%s">%s</a>: %s' % (sender.author.username, bop.get_absolute_url(), bop.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_seds__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related_seds__forum').filter(related_seds__forum=sender.forum):
         for sed in workspace.related_seds.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the SED <a href="%s">%s</a>: %s' % (sender.author.username, sed.get_absolute_url(), sed.__unicode__(), sender.body)
             activity.save()
-    for workspace in Workspace.objects.filter(related_ssrs__forum=sender.forum):
+    for workspace in Workspace.objects.prefetch_related('related__ssrs__forum').filter(related_ssrs__forum=sender.forum):
         for ssr in workspace.related_ssrs.filter(forum=sender.forum):
             activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
             activity.text='%s added a comment to the SSR <a href="%s">%s</a>: %s' % (sender.author.username, ssr.get_absolute_url(), ssr.__unicode__(), sender.body)
@@ -342,14 +341,22 @@ class BodbProfile(models.Model):
     class Meta:
         app_label='bodb'
 
+    def get_workspaces(self):
+        workspaces=cache.get('%d.workspaces' % self.user.id)
+        if not workspaces:
+            visibility_q=Q(created_by__is_active=True)
+            if not self.user.is_superuser:
+                visibility_q=Q(visibility_q & Q(group__in=self.user.groups.all()))
+            workspaces=Workspace.objects.filter(visibility_q).order_by('title')
+            cache.set('%d.workspaces' % self.user.id, list(workspaces))
+        return workspaces
+
+
     @staticmethod
     def get_user_list(users, user):
-        profile=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
         user_list=[]
         for u in users:
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=u, user=user).count()>0
+            subscribed_to_user=user.is_authenticated() and not user.is_anonymous() and UserSubscription.objects.filter(subscribed_to_user=u, user=user).exists()
             user_list.append([subscribed_to_user,u])
         return user_list
 
@@ -373,6 +380,8 @@ def create_user_profile(user):
     # create a profile
     profile=BodbProfile(user=user, active_workspace=default_workspace)
     profile.save()
+
+    cache.set('%d.active_workspace' % user.id, default_workspace)
 
     # check if this user is already allocated to a group
     allocatedAccount=None

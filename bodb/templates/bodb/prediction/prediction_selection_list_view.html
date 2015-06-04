@@ -1,42 +1,90 @@
 {% load staticfiles %}
+<script type="text/javascript">
+    var predictions=[];
+    {% for ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction in predictions %}
+        predictions.push({
+            id: {{ prediction.id }},
+            title: '{{ prediction.title|escapejs }}',
+            brief_description: '{{ prediction.brief_description|escapejs }}',            
+            draft: {% if prediction.draft %}true{% else %}false{% endif %},
+            ssr_id: {% if prediction.ssr %}{{ prediction.ssr.id }}{% else %}-1{% endif %},
+            ssr_title: {% if prediction.ssr %}'{{ prediction.ssr|escapejs }}'{% else %}''{% endif %},
+            ssr_brief_description: '{{ prediction.ssr.brief_description|escapejs }}',
+            ssr_selected: {% if ssr_selected %}true{% else %}false{% endif %},
+            ssr_is_favorite: {% if ssr_is_favorite %}true{% else %}false{% endif %},
+            ssr_draft: {% if prediction.ssr.draft %}true{% else %}false{% endif %}
+        });
+    {% endfor %}
+
+    function addPredictions()
+    {
+        $('#predictions').empty();
+        var tmplMarkup = $('#prediction-template').html();
+        for(var idx=0; idx<predictions.length; idx++)
+        {
+            predictions[idx]['idx']=$('#predictions').children().length+1;
+            var compiledTmpl = _.template(tmplMarkup, predictions[idx]);
+            $('#predictions').append(compiledTmpl);
+        }
+    }
+
+    $(document).ready(function(){
+        addPredictions();
+    });
+</script>
 <div id="predictionData">
     <table style="background:#e6e8ed;width:100%">
+        <tr class="section_subheader">
+            <td colspan="6">Predictions</td>
+        </tr>
         {% if can_add_entry or can_remove_entry %}
             <tr class="col_header">
-                <td colspan=7>
+                <td colspan=6>
                     Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSSRSelect(true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSSRSelect(false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
                 </td>
             </tr>
         {% endif %}
         <tr class="col_header">
-            <td>&nbsp;</td>
-            <td width=175px>Title</td>
-            <td>Description</td>
+            <td width=175px><a id="id_prediction_sort_title" href="" onclick="return sortPredictions('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_prediction_sort_title_dir" name="prediction_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=300px><a id="id_prediction_sort_brief_description" href="" onclick="return sortPredictions('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Brief Description <img id="id_prediction_sort_brief_description_dir" name="prediction_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td style="width:45px">&nbsp;</td>
-            <td width=175px>SSR Title</td>
-            <td width=300px>SSR Description</td>
+            <td width=175px><a id="id_prediction_sort_ssr_title" href="" onclick="return sortPredictions('ssr_title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SSR Title <img id="id_prediction_sort_ssr_title_dir" name="prediction_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display: none;"/></a></td>
+            <td width=300px><a id="id_prediction_sort_ssr_brief_description" href="" onclick="return sortPredictions('ssr_brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">SSR Description <img id="id_prediction_sort_ssr_brief_description_dir" name="prediction_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
             <td>&nbsp;</td>
         </tr>
-        {% for ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction in predictions %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td>{{ forloop.counter }}</td>
-                <td>
-                    <a href="/bodb/prediction/{{ prediction.id }}/" onclick="return openInNewTab('/bodb/prediction/{{ prediction.id }}/');">{{ prediction.title }}</a>
-                </td>
-                <td>{{ prediction.brief_description }}</td>
-                <td align=center style="width:45px">
-                    {% if user.is_authenticated and not user.is_anonymous  %}
-                        <a id="favLink" href="" onclick="return toggleFavorite({{ prediction.get_ssr.id }},'favIcon-{{ prediction.get_ssr.id }}','{{ csrf_token }}');">
-                            <img id="favIcon-{{ prediction.get_ssr.id }}" name="favIcon-{{ prediction.get_ssr.id }}" src="{% if ssr_is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
-                        </a>
-                        <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}" {% if ssr_selected %}checked=True{% endif %} {% if ssr_selected and not can_remove_entry or not ssr_selected and not can_add_entry %}disabled="True"{% endif %} onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
-                        <input type=hidden name="selectedSSR" id="selectedSSR_{{ prediction.get_ssr.id }}" value="{{ prediction.get_ssr.id }}"/>
-                    {% endif %}
-                </td>
-                <td>{{ prediction.get_ssr.title }}</td>
-                <td>{{ prediction.get_ssr.brief_description }}</td>
-                <td><span id="ssr_{{ prediction.get_ssr.id }}_message" name="ssr_{{ prediction.get_ssr.id }}_message" class="messages"></span></td>
-            </tr>
-        {% endfor %}
+        <tr>
+            <td colspan="6">
+                <div id="predictions"></div>
+            </td>
+        </tr>
     </table>
 </div>
+
+<script type="text/html" id="prediction-template">
+    <div id="prediction-<%= id %>">
+        <table style="background:#e6e8ed;width:100%">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=175px>
+                    <a href="/bodb/prediction/<%= id %>/" onclick="return openInNewTab('/bodb/prediction/<%= id %>/');"><%= _.escape(title) %></a>
+                    <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
+                </td>
+                <td width=300px><%= _.escape(brief_description) %></td>
+                <td align=center style="width:45px">
+                    {% if user.is_authenticated and not user.is_anonymous %}
+                        <% if(ssr_id>-1){ %>
+                            <a id="favLink" href="" onclick="return toggleFavorite(<%= ssr_id %>,'favIcon-<%= ssr_id %>','{{ csrf_token }}');">
+                                <img id="favIcon-<%= ssr_id %>" name="favIcon-<%= ssr_id %>" src="<% if(ssr_is_favorite){ %>{% static 'bodb/images/star.png' %}<%} else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
+                            </a>
+                            <input type=checkbox name="selectedSSRCheckbox" id="selectedSSRCheckbox_<%= ssr_id %>" value="<%= ssr_id %>" <% if(ssr_selected){ %>checked=True<% } %> <% if(ssr_selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else { %> {% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSSRSelect(this.value, '{{ csrf_token }}');"/>
+                            <input type=hidden name="selectedSSR" id="selectedSSR_<%= ssr_id %>" value="<%= ssr_id %>"/>
+                        <% } %>
+                    {% endif %}
+                </td>
+                <td width=175px><a href="/bodb/ssr/<%= ssr_id %>/" onclick="return openInNewTab('/bodb/ssr/<%= ssr_id %>/');"><%= _.escape(ssr_title) %></a>
+                    <% if(ssr_draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %></td>
+                <td width=300px><%= _.escape(ssr_brief_description) %></td>
+                <td><span id="ssr_<%= ssr_id %>_message" name="ssr_<%= ssr_id %>_message" class="messages"></span></td>
+            </tr>
+        </table>
+    </div>
+</script>

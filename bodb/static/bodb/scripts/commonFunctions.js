@@ -1,3 +1,17 @@
+function addslashes( str ) {
+    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0').replaceAll('\n',' ').replaceAll('\r',' ');
+}
+
+String.prototype.replaceAll = function(search, replace)
+{
+    //if replace is null, return original string otherwise it will
+    //replace search string with 'undefined'.
+    if(!replace)
+        return this;
+
+    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+};
+
 function showPopup(windowName, width, height, href)
 {
     if (href.indexOf('?') == -1)
@@ -50,90 +64,115 @@ function addInlineForm(div_id, prefix, form_prefix){
     return false;
 }
 
-function addSEDMultiple(type, sed_id, data){
-    var count = $('#'+type+'_seds').children().length;
-    var tmplMarkup = $('#'+type+'_sed-template').html();
-    var compiledTmpl = _.template(tmplMarkup, { id : count, sed: sed_id, title: data[0], brief_description: data[1], type: data[2] });
-    $('#'+type+'_seds').append(compiledTmpl);
+function addSSR(id, title, brief_description, type)
+{
+    var count = $('#ssrs').children().length;
+    var tmplMarkup = $('#ssr-template').html();
+    var compiledTmpl = _.template(tmplMarkup, { id: id, idx : count, title: title,
+        brief_description: brief_description, type: type });
+    $('#ssrs').append(compiledTmpl);
+    return false;
+}
+
+function addTestSEDMultiple(id, relationship, relevance_narrative, sed_id, sed_data, ssr_id, ssr_data)
+{
+    var count = $('#test_seds').children().length;
+    var tmplMarkup = $('#test_sed-template').html();
+    var compiledTmpl = _.template(tmplMarkup, { id: id, idx : count, relationship: relationship,
+        relevance_narrative: relevance_narrative, sed: sed_id, sed_title: sed_data[0],
+        sed_brief_description: sed_data[1], sed_type: sed_data[2], ssr: ssr_id, ssr_title: ssr_data[0],
+        ssr_brief_description: ssr_data[1], ssr_type: ssr_data[2] });
+    $('#test_seds').append(compiledTmpl);
     // update form count
-    $('#id_'+type+'_sed-TOTAL_FORMS').attr('value', count+1);
+    $('#id_test_sed-TOTAL_FORMS').attr('value', count+1);
+
     $('textarea:not(.processed)').TextAreaResizer();
-    if(type=='build')
-    {
-        $('#id_build_sed-'+count+'-relationship').poshytip({
-            className: 'tip-skyblue',
-            content: 'Select "scene setting" for experimental data that sets the stage for the model or BOP, "support" for data that is used to design and build the model or BOP.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'right',
-            offsetX: 5,
-            offsetY: -85,
-            timeOnScreen: 5000
-        });
 
-        $('#id_build_sed-'+count+'-relevance_narrative').poshytip({
-            className: 'tip-skyblue',
-            content: 'Enter a description of how this experimental data was used to design and build the model or BOP.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'left',
-            offsetX: 5,
-            offsetY: -90,
-            timeOnScreen: 5000
-        });
-    }
-    else if(type=='test')
-    {
-        $('#id_test_sed-'+count+'-relationship').poshytip({
-            className: 'tip-skyblue',
-            content: 'Select "explanation" for experimental data that is explained by the model, "contradiction" for data that contradicts the model.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'right',
-            offsetX: 5,
-            offsetY: -85,
-            timeOnScreen: 5000
-        });
+    $('#id_test_sed-'+count+'-relationship').poshytip({
+        className: 'tip-skyblue',
+        content: 'Select "explanation" for experimental data that is explained by the model, "contradiction" for data that contradicts the model.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'right',
+        offsetX: 5,
+        offsetY: -85,
+        timeOnScreen: 5000
+    });
 
-        $('#id_test_sed-'+count+'-relevance_narrative').poshytip({
-            className: 'tip-skyblue',
-            content: 'Enter a description of how this experimental data was used to test the model.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'right',
-            offsetX: 5,
-            offsetY: -80,
-            timeOnScreen: 5000
-        });
+    $('#id_test_sed-'+count+'-relevance_narrative').poshytip({
+        className: 'tip-skyblue',
+        content: 'Enter a description of how this experimental data was used to test the model.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'right',
+        offsetX: 5,
+        offsetY: -80,
+        timeOnScreen: 5000
+    });
 
-        $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_title').poshytip({
-            className: 'tip-skyblue',
-            content: 'Enter a title for the model simulation results that were compared to the experimental data.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'right',
-            offsetX: 5,
-            offsetY: -75,
-            timeOnScreen: 5000
-        });
+    $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_title').poshytip({
+        className: 'tip-skyblue',
+        content: 'Enter a title for the model simulation results that were compared to the experimental data.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'right',
+        offsetX: 5,
+        offsetY: -75,
+        timeOnScreen: 5000
+    });
 
-        $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_brief_description').poshytip({
-            className: 'tip-skyblue',
-            content: 'Enter a short description of the model simulation results that were compared to the experimental data.',
-            showOn: 'focus',
-            showTimeout: 100,
-            alignTo: 'target',
-            alignX: 'right',
-            offsetX: 5,
-            offsetY: -80,
-            timeOnScreen: 5000
-        });
-    }
+    $('#id_test_sed-'+count+'-testsedssr_set-0-ssr_brief_description').poshytip({
+        className: 'tip-skyblue',
+        content: 'Enter a short description of the model simulation results that were compared to the experimental data.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'right',
+        offsetX: 5,
+        offsetY: -80,
+        timeOnScreen: 5000
+    });
+    return false;
+}
+
+function addBuildSEDMultiple(id, relationship, relevance_narrative, sed_id, data){
+    var count = $('#build_seds').children().length;
+    var tmplMarkup = $('#build_sed-template').html();
+    var compiledTmpl = _.template(tmplMarkup, { id: id, idx : count, relationship: relationship,
+        relevance_narrative: relevance_narrative, sed: sed_id, title: data[0], brief_description: data[1],
+        type: data[2] });
+    $('#build_seds').append(compiledTmpl);
+    // update form count
+    $('#id_build_sed-TOTAL_FORMS').attr('value', count+1);
+
+    $('textarea:not(.processed)').TextAreaResizer();
+
+    $('#id_build_sed-'+count+'-relationship').poshytip({
+        className: 'tip-skyblue',
+        content: 'Select "scene setting" for experimental data that sets the stage for the model or BOP, "support" for data that is used to design and build the model or BOP.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'right',
+        offsetX: 5,
+        offsetY: -85,
+        timeOnScreen: 5000
+    });
+
+    $('#id_build_sed-'+count+'-relevance_narrative').poshytip({
+        className: 'tip-skyblue',
+        content: 'Enter a description of how this experimental data was used to design and build the model or BOP.',
+        showOn: 'focus',
+        showTimeout: 100,
+        alignTo: 'target',
+        alignX: 'left',
+        offsetX: 5,
+        offsetY: -90,
+        timeOnScreen: 5000
+    });
     return false;
 }
 
@@ -401,109 +440,27 @@ function doneReferenceExport(res, status)
     return false;
 }
 
-function generateConnDiagram(connSEDIds, graphTool, graphId, csrf_token)
+function selectActiveWorkspace(id, csrf_token)
 {
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
-    $('#'+graphId).attr('src','');
-    document.getElementById(graphId+'Div').style.display='none';
-    $('#'+graphId).smartZoom('destroy');
-    var data={'graphTool': graphTool, 'connSEDIds': connSEDIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
-    var args={type:"POST", url:"/bodb/sed/connectivityDiagram/", data: data, complete: doneConnDiagram };
-    $.ajax(args);
+    var data = { 'id': id, 'csrfmiddlewaretoken': csrf_token};
+    var args = { type: "POST", url: "/bodb/workspace/"+id+"/activate/", data: data,
+        complete: doneSelectActiveWorkspace };
+    $.ajax(args)
     return false;
 }
 
-function doneConnDiagram(res, status)
+function doneSelectActiveWorkspace(res, status)
 {
     var txt = res.responseText;
     var data = eval('('+txt+')');
-    if (status=="success")
-    {
-        $('#'+data.graphId).attr('origWidth',data.connDiagramW);
-        $('#'+data.graphId).attr('origHeight',data.connDiagramH);
-        document.getElementById(data.graphId).removeAttribute('style');
-        $('#'+data.graphId).attr('style','width:100%');
-        $('#'+data.graphId).attr('src','/media/'+data.connDiagram);
-        document.getElementById(data.graphId+'Map').innerHTML=data.connMap;
-        document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view brain region details. Click on an edge to view connection details";
-        document.getElementById(data.graphId+'Div').style.display='block';
-        $('#'+data.graphId).rwdImageMaps();
-        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
-    }
+    if (status!="success")
+        alert(res.responseText);
     else
-        alert(txt);
-}
-
-function generateBOPDiagram(graphTool, graphId, csrf_token)
-{
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
-    var bopIds=[];
-    var bopCheckboxes=$('.selectedBOPCheckbox');
-    for(var i=0; i<bopCheckboxes.length; i++)
-        bopIds.push(bopCheckboxes[i].value);
-    $('#'+graphId).attr('src','');
-    document.getElementById(graphId+'Div').style.display='none';
-    $('#'+graphId).smartZoom('destroy');
-    var data={'graphTool': graphTool, 'bopIds': bopIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
-    var args={type:"POST", url:"/bodb/bopDiagram/", data: data, complete: doneBOPDiagram };
-    $.ajax(args);
-    return false;
-}
-
-function doneBOPDiagram(res, status)
-{
-    var txt = res.responseText;
-    var data = eval('('+txt+')');
-    if (status=="success")
     {
-        $('#'+data.graphId).attr('origWidth',data.bopDiagramW);
-        $('#'+data.graphId).attr('origHeight',data.bopDiagramH);
-        document.getElementById(data.graphId).removeAttribute('style');
-        $('#'+data.graphId).attr('style','width:100%');
-        $('#'+data.graphId).attr('src','/media/'+data.bopDiagram);
-        document.getElementById(data.graphId+'Map').innerHTML=data.bopMap;
-        document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view BOP details.";
-        document.getElementById(data.graphId+'Div').style.display='block';
-        $('#'+data.graphId).rwdImageMaps();
-        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
+        document.getElementById('id_active_workspace_select').value=data.id;
+        document.getElementById('active_workspace_title').innerHTML=data.title;
+        document.getElementById('workspace_'+data.id+'_message').innerHTML='Workspace active';
+        document.getElementById('workspace_'+data.id+'_message').style.display='block';
+        $('#workspace_'+data.id+'_message').fadeOut(5000, function(){});
     }
-    else
-        alert(txt);
-}
-
-function generateModelDiagram(graphTool, graphId, csrf_token)
-{
-    document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
-    var modelIds=[];
-    var modelCheckboxes=$('.selectedModelCheckbox');
-    for(var i=0; i<modelCheckboxes.length; i++)
-        modelIds.push(modelCheckboxes[i].value);
-    $('#'+graphId).attr('src','');
-    document.getElementById(graphId+'Div').style.display='none';
-    $('#'+graphId).smartZoom('destroy');
-    var data={'graphTool': graphTool, 'modelIds': modelIds, 'graphID': graphId, 'csrfmiddlewaretoken': csrf_token};
-    var args={type:"POST", url:"/bodb/modelDiagram/", data: data, complete: doneModelDiagram };
-    $.ajax(args);
-    return false;
-}
-
-function doneModelDiagram(res, status)
-{
-    var txt = res.responseText;
-    var data = eval('('+txt+')');
-    if (status=="success")
-    {
-        $('#'+data.graphId).attr('origWidth',data.modelDiagramW);
-        $('#'+data.graphId).attr('origHeight',data.modelDiagramH);
-        document.getElementById(data.graphId).removeAttribute('style');
-        $('#'+data.graphId).attr('style','width:100%');
-        $('#'+data.graphId).attr('src','/media/'+data.modelDiagram);
-        document.getElementById(data.graphId+'Map').innerHTML=data.modelMap;
-        document.getElementById(data.graphId+'Msg').innerHTML="Click on a node to view Model or SED details.";
-        document.getElementById(data.graphId+'Div').style.display='block';
-        $('#'+data.graphId).rwdImageMaps();
-        $('#'+data.graphId).smartZoom({'containerClass':'zoomableContainer','maxScale':10});
-    }
-    else
-        alert(txt);
 }

@@ -1,36 +1,35 @@
+{% load static %}
+<script type="text/javascript">
+    var users=[];
+    
+    function addUsers()
+    {
+        $('[name=users]').each(function(index, element){
+            $(this).empty();
+            var tmplMarkup = $('#user-template').html();
+            for(var i=0; i<users.length; i++)
+            {
+                users[i]['idx']=$(this).children().length+1;
+                var compiledTmpl = _.template(tmplMarkup, users[i]);
+                $(this).append(compiledTmpl);
+            }
+        });
+    }
+</script>
+
+
 <div id="user_list" name="user_list" style="display:{% if users|length %}block{% else %}none{% endif %}">
     <table class="tab_panel" style="background:#e6e8ed;">
         <tr class="col_header">
             <td width=25px>&nbsp;</td>
             <td style="width:120px">&nbsp;</td>
-            <td style="width:120px">Username</td>
-            <td>Real Name</td>
-            <td style="width:200px">Email</td>
+            <td style="width:120px"><a id="id_user_sort_username" href="" onclick="return sortUsers('username',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Username <img id="id_user_sort_username_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td><a id="id_user_sort_first_name" href="" onclick="return sortUsers('first_name',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Real name <img id="id_user_sort_first_name_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display: none;"/></a></td>
+            <td style="width:200px"><a id="id_user_sort_email" href="" onclick="return sortUsers('email',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Email <img id="id_user_sort_email_dir" name="user_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display: none;"/></a></td>
         </tr>
         <tr>
             <td colspan="5">
                 <div id="users" name="users">
-                    {% for subscribed,u in users %}
-                        <div id="user-{{ forloop.counter0 }}" name="user">
-                            <table class="tab_panel">
-                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                    <td width=25px>{{ forloop.counter }}</td>
-                                    <td style="width:120px">
-                                        {% if not u == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ u.id }}');"><strong>Subscribe</strong></a>{% endif %}{% endif %}
-                                    </td>
-                                    <td style="width:120px">
-                                        <a href="/bodb/user/{{ u.id }}/">{{ u.username }}</a>
-                                    </td>
-                                    <td>
-                                        {{ u.first_name }} {{ u.last_name }}
-                                    </td>
-                                    <td style="width:200px">
-                                        {{ u.email }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
                 </div>
             </td>
         </tr>
@@ -43,13 +42,13 @@
             <tr class="<%= getTRTag(idx) %>" valign=top>
                 <td width=25px><%= idx %></td>
                 <td style="width:120px">
-                    <% if(id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= id %>');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %>
+                    {% if user.is_authenticated and not user.is_anonymous %}<% if(id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= id %>');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}
                 </td>
                 <td style="width:120px">
-                    <a href="/bodb/user/<%= id %>/"><%= username %></a>
+                    <a href="/bodb/user/<%= id %>/"><%= _.escape(username) %></a>
                 </td>
                 <td>
-                    <%= first_name %> <%= last_name %>
+                    <%= _.escape(first_name) %> <%= _.escape(last_name) %>
                 </td>
                 <td style="width:200px">
                     <%= email %>

@@ -25,9 +25,24 @@ def runBrainRegionSearch(search_data):
 
     # get results
     if q and len(q):
-        results = BrainRegion.objects.filter(q).distinct()
+        results = BrainRegion.objects.filter(q).distinct().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
     else:
-        results = BrainRegion.objects.all()
+        results = BrainRegion.objects.all().select_related('nomenclature','parent_region').prefetch_related('nomenclature__species')
+
+    if 'region_order_by' in search_data:
+        if search_data['region_order_by']=='nomenclature':
+            results=results.order_by('nomenclature__name')
+        elif search_data['region_order_by']=='parent_region':
+            results=list(results)
+            results.sort(key=BrainRegion.parent_region_name,reverse=search_data['region_direction']=='descending')
+        elif search_data['region_order_by']=='species':
+            results=list(results)
+            results.sort(key=BrainRegion.species_name,reverse=search_data['region_direction']=='descending')
+        else:
+            results=results.order_by(search_data['region_order_by'])
+        if not search_data['region_order_by']=='parent_region' and not search_data['region_order_by']=='species' and \
+           'region_direction' in search_data and search_data['region_direction']=='descending':
+            results=results.reverse()
     return results
 
 
@@ -97,21 +112,22 @@ class BrainRegionSearch(object):
             if self.nomenclature_options=='all':
                 op=operator.and_
             words=parse_tags(self.nomenclature)
-            keyword_filters=[Q(nomenclature__name__icontains=word) for word in words]
+            keyword_filters=[Q(Q(nomenclature__name__icontains=word) | Q(nomenclature__lit__title__icontains=word) |
+                               Q(nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
             return reduce(op,keyword_filters)
+        return Q()
+
+    def search_genus(self):
+        if self.genus:
+            return Q(nomenclature__species__genus_name__iexact=self.genus)
         return Q()
 
     # search by species
     def search_species(self):
         if self.species:
-            op=operator.or_
-            if self.species_options=='all':
-                op=operator.and_
-            words=parse_tags(self.species)
-            keyword_filters=[Q(Q(nomenclature__species__genus_name__icontains=word) |
-                               Q(nomenclature__species__species_name__icontains=word) |
-                               Q(nomenclature__species__common_name__icontains=word)) for word in words]
-            return reduce(op,keyword_filters)
+            genus,species=self.species.split(' ')
+            return Q(Q(nomenclature__species__genus_name__iexact=genus) & Q(nomenclature__species__species_name__iexact=species))
         return Q()
 
     # search by region type

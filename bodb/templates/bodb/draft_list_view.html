@@ -3,10 +3,13 @@
     <title>BODB - Draft Entries</title>
     {% load staticfiles %}
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
 {% endblock %}
 {% block content %}
     <div id="list">
         <h2>Draft Entries</h2>
-        {% include 'bodb/entry_list_view.html' %}
+        {% with 1 as delete_mode %}
+            {% include 'bodb/entry_list_view.html' %}
+        {% endwith %}
     </div>
 {% endblock %}

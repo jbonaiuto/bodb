@@ -1,5 +1,8 @@
-from django.shortcuts import redirect
-from django.views.generic import CreateView, UpdateView, DeleteView
+import json
+from django.core.cache import cache
+from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.bop import BOPForm, BOPRelatedBOPFormSet
@@ -7,18 +10,15 @@ from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import RelatedModelFormSet
 from bodb.forms.sed import BuildSEDFormSet
-from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, bop_gxl, Literature, UserSubscription
-from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView, generate_diagram_from_gxl
-from bodb.views.main import BODBView
+from bodb.models import BOP, find_similar_bops, DocumentFigure, RelatedBOP, RelatedBrainRegion, RelatedModel, BuildSED, WorkspaceActivityItem, Literature, UserSubscription
+from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
+from bodb.views.model import CreateModelView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers.bop import BOPSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
 class EditBOPMixin():
     model = BOP
@@ -117,10 +117,15 @@ class EditBOPMixin():
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
-class CreateBOPView(EditBOPMixin,CreateView):
+class CreateBOPView(EditBOPMixin,PermissionRequiredMixin,CreateView):
+    permission_required='bodb.add_bop'
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(CreateBOPView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
@@ -134,31 +139,52 @@ class CreateBOPView(EditBOPMixin,CreateView):
         return context
 
 
-class UpdateBOPView(EditBOPMixin,UpdateView):
+class UpdateBOPView(EditBOPMixin,ObjectRolePermissionRequiredMixin,UpdateView):
+    permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(BOP.objects.select_related('parent','collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBOPView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
         context['helpPage']='insert_data.html#insert-bop'
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure', instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object))
         context['build_sed_formset']=BuildSEDFormSet(self.request.POST or None, prefix='build_sed',
-            instance=self.object, queryset=BuildSED.objects.filter(document=self.object))
+            instance=self.object, queryset=BuildSED.objects.filter(document=self.object).select_related('sed'))
         context['related_bop_formset']=BOPRelatedBOPFormSet(self.request.POST or None, prefix='related_bop',
-            instance=self.object, queryset=RelatedBOP.objects.filter(document=self.object))
+            instance=self.object, queryset=RelatedBOP.objects.filter(document=self.object).select_related('bop'))
         context['related_model_formset']=RelatedModelFormSet(self.request.POST or None, prefix='related_model',
-            instance=self.object, queryset=RelatedModel.objects.filter(document=self.object))
+            instance=self.object, queryset=RelatedModel.objects.filter(document=self.object).select_related('model'))
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
             prefix='related_brain_region', instance=self.object,
-            queryset=RelatedBrainRegion.objects.filter(document=self.object))
-        context['references'] = self.object.literature.all()
+            queryset=RelatedBrainRegion.objects.filter(document=self.object).select_related('brain_region__nomenclature').prefetch_related('brain_region__nomenclature__species'))
+        context['references'] = self.object.literature.all().prefetch_related('authors__author')
         context['ispopup']=('_popup' in self.request.GET)
         context['bop_relationship']=True
         return context
 
 
-class DeleteBOPView(DeleteView):
+class DeleteBOPView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=BOP
     success_url = '/bodb/index.html'
+    permission_required = 'delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
+
 
 class BOPAPIListView(DocumentAPIListView):
     serializer_class = BOPSerializer
@@ -168,47 +194,53 @@ class BOPAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=BOP.get_security_q(user)
         return BOP.objects.filter(security_q)
-    
-class BOPAPIDetailView(DocumentAPIDetailView):    
-    queryset = BOP.objects.all()
+
+
+class BOPAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
     serializer_class = BOPSerializer
     model = BOP
+    permission_required = 'view'
 
-class BOPDetailView(DocumentDetailView):
+
+class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = BOP
     template_name = 'bodb/bop/bop_view.html'
-    
+    permission_required = 'view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(BOP.objects.select_related('forum','parent','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(BOPDetailView, self).get_context_data(**kwargs)
         context['helpPage']='view_entry.html'
         user=self.request.user
-        active_workspace=None
         if user.is_authenticated() and not user.is_anonymous():
-            active_workspace=user.get_profile().active_workspace
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='BOP').count()>0
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='BOP').count()>0
-        context['child_bops']=BOP.get_bop_list(BOP.get_child_bops(self.object,user), user)
-        context['references'] = Literature.get_reference_list(self.object.literature.all(),user)
-        if active_workspace is not None:
-            context['selected']=active_workspace.related_bops.filter(id=self.object.id).count()>0
+            context['subscribed_to_collator']=(self.object.collator.id, 'BOP') in context['subscriptions']
+            context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'BOP') in \
+                                                      context['subscriptions']
+        child_bops=BOP.get_child_bops(self.object,user)
+        context['child_bops']=BOP.get_bop_list(child_bops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
+        literature=self.object.literature.all().select_related('collator').prefetch_related('authors__author')
+        context['references'] = Literature.get_reference_list(literature,context['workspace_literature'],
+            context['fav_lit'], context['subscriptions'])
+        context['selected']=self.object.id in context['workspace_bops']
         context['bop_relationship']=True
         context['bopGraphId']='bopRelationshipDiagram'
-        context['reverse_related_bops']=RelatedBOP.get_reverse_related_bop_list(RelatedBOP.get_reverse_related_bops(self.object,user),user)
         return context
 
 
-class ToggleSelectBOPView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectBOPView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView):
     model = BOP
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             bop=BOP.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
 
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
             context={
                 'bop_id': bop.id,
                 'workspace': active_workspace.title
@@ -228,11 +260,12 @@ class ToggleSelectBOPView(JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the BOP: <a href="%s">%s</a> to the workspace' % (self.request.user.username, bop.get_absolute_url(), bop.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
 
-class SimilarBOPView(JSONResponseMixin, BaseDetailView):
+class SimilarBOPView(LoginRequiredMixin,JSONResponseMixin, BaseDetailView):
 
     def get(self, request, *args, **kwargs):
         # Load similar models
@@ -257,22 +290,9 @@ class BOPTaggedView(BODBView):
         user=self.request.user
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=BOP.get_bop_list(BOP.get_tagged_bops(name,user),user)
+        bops=BOP.get_tagged_bops(name,user)
+        context['tagged_items']=BOP.get_bop_list(bops, context['workspace_bops'], context['fav_docs'],
+            context['subscriptions'])
         context['bopGraphId']='bopRelationshipDiagram'
         return context
 
-
-class BOPDiagramView(JSONResponseMixin,BaseCreateView):
-    model = BOP
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            graphTool=self.request.POST['graphTool']
-            bops=BOP.objects.filter(document_ptr__in=self.request.POST.getlist('bopIds[]'))
-            dot_xml=bop_gxl(bops, self.request.user)
-            context['bopDiagram'], size, context['bopMap'] = generate_diagram_from_gxl(graphTool, dot_xml,
-                self.request.user, ext=self.request.POST['graphID'])
-            context['bopDiagramW']=size[0]
-            context['bopDiagramH']=size[1]
-            context['graphId']=self.request.POST['graphID']
-        return context

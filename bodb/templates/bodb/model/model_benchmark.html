@@ -33,10 +33,5 @@
                 {% endfor %}
             </tr>
         </table>
-        <br>
-        <input class="btn" type="button" value="RTF report" onclick="document.getElementById('reportForm').action='/bodb/model/benchmark/report/rtf/';document.getElementById('reportForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-        <input class="btn" type="button" value="PDF report" onclick="document.getElementById('reportForm').action='/bodb/model/benchmark/report/pdf/';document.getElementById('reportForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
     </div>
-    <form id="reportForm" name="reportForm" action="/bodb/model/benchmark/report/rtf/" method="post">
-    </form>
 {% endblock %}

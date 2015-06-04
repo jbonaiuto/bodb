@@ -15,10 +15,11 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#allSearchForm');
+        var data=frm.serialize()+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: doneSearchAll,
             error: function(data) {
                 alert("Something went wrong!");
@@ -45,6 +46,55 @@
 
         processWorkspaceResults(data);
     }
+
+    $(document).ready(function(){
+        $("#allSearchForm").find(':input').each(function(){
+            $(this).bind('change', function() {
+                var elem=document.getElementById('id_literature-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_bop-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_model-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_sed-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_ssr-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_brain_region-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+                var elem=document.getElementById('id_user-'+this.name);
+                if(elem!=null)
+                {
+                    elem.value=this.value;
+                    elem.checked=this.checked;
+                }
+            });
+        });
+    });
 </script>
 <div id="allDiv" style="display:{%ifequal searchType 'all'%}block{% else %}none{% endifequal %}">
     <form id="allSearchForm" method="post" action="" onsubmit="return submitSearchAll()">
@@ -187,7 +237,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Literature Results (1-{{ literatures|length }}) (<a href="javascript:animatedcollapse.toggle('literatureResults')"><span id="literatureResultsLabel">Hide</span></a>)</td>
+                                <td>Literature (<span id="literatureResultStartIndex" name="literatureResultStartIndex">1</span>-<span id="literatureResultEndIndex" name="literatureResultEndIndex">1</span> of <span id="numLiteratureResults" name="numLiteratureResults">{{ literatures|length }}</span>, <a href="javascript:animatedcollapse.toggle('literatureResults')"><span id="literatureResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td>
@@ -199,6 +249,11 @@
                                     <div id="literatureResults" style="display:block">
                                         {% include 'bodb/literature/reference_selection_list_view.html' %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_literatures_previous" name="literatures_previous"><a href="" onclick="literatureJumpPage()">previous</a></div> Page <span id="id_literature_current_page" name="literature_current_page">1</span> of <span id="id_literature_total_pages" name="literature_total_pages">1</span> <div id="id_literatures_next" name="literatures_next"><a href="" onclick="literatureJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>
@@ -223,18 +278,23 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>BOP Results (1-{{ bops|length }}) (<a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
+                                <td>BOPs (<span id="bopResultStartIndex" name="bopResultStartIndex">1</span>-<span id="bopResultEndIndex" name="bopResultEndIndex">1</span> of <span id="numBOPResults" name="numBOPResults">{{ bops|length }}</span>, <a href="javascript:animatedcollapse.toggle('bopResults')"><span id="bopResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
-                                <td colspan=4>
+                                <td>
                                     <a href="/bodb/bop/new/{% if ispopup %}?_popup=1{% endif %}">Add new</a>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="4">
+                                <td>
                                     <div id="bopResults" style="display:block">
                                         {% include "bodb/bop/bop_selection_list_view.html" %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_bops_previous" name="bops_previous"><a href="" onclick="bopJumpPage()">previous</a></div> Page <span id="id_bop_current_page" name="bop_current_page">1</span> of <span id="id_bop_total_pages" name="bop_total_pages">1</span> <div id="id_bops_next" name="bops_next"><a href="" onclick="bopJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>
@@ -259,10 +319,10 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Model Results (1-{{ models|length }}) (<a href="javascript:animatedcollapse.toggle('modelResults')"><span id="modelResultsLabel">Hide</span></a>)</td>
+                                <td>Models (<span id="modelResultStartIndex" name="modelResultStartIndex">1</span>-<span id="modelResultEndIndex" name="modelResultEndIndex">1</span> of <span id="numModelResults" name="numModelResults">{{ models|length }}</span>, <a href="javascript:animatedcollapse.toggle('modelResults')"><span id="modelResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
-                                <td colspan=4>
+                                <td>
                                     <a href="/bodb/model/new/{% if ispopup %}?_popup=1{% endif %}">Add new</a>
                                 </td>
                             </tr>
@@ -271,6 +331,11 @@
                                     <div id="modelResults" style="display:block">
                                         {% include 'bodb/model/model_selection_list_view.html' %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_models_previous" name="models_previous"><a href="" onclick="modelJumpPage()">previous</a></div> Page <span id="id_model_current_page" name="model_current_page">1</span> of <span id="id_model_total_pages" name="model_total_pages">1</span> <div id="id_models_next" name="models_next"><a href="" onclick="modelJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>
@@ -295,7 +360,7 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Summary of Experimental Data Results (<a href="javascript:animatedcollapse.toggle('sedResults')"><span id="sedResultsLabel">Hide</span></a>)</td>
+                                <td>Summaries of Experimental Data (<a href="javascript:animatedcollapse.toggle('sedResults')"><span id="sedResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
                                 <td colspan=4>
@@ -334,10 +399,10 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Summary of Simulation Results (1-{{ ssrs|length }}) (<a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
+                                <td>Summaries of Simulation Results (<span id="ssrResultStartIndex" name="ssrResultStartIndex">1</span>-<span id="ssrResultEndIndex" name="ssrResultEndIndex">1</span> of <span id="numSSRResults" name="numSSRResults">{{ ssrs|length }}</span>, <a href="javascript:animatedcollapse.toggle('ssrResults')"><span id="ssrResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr class="table_header">
-                                <td colspan=4>
+                                <td>
                                     <a href="/bodb/ssr/new/{% if ispopup %}?_popup=1{% endif %}">Add new</a>
                                 </td>
                             </tr>
@@ -346,6 +411,11 @@
                                     <div id="ssrResults" style="display:block">
                                         {% include 'bodb/ssr/ssr_selection_list_view.html' %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_ssrs_previous" name="ssrs_previous"><a href="" onclick="ssrJumpPage()">previous</a></div> Page <span id="id_ssr_current_page" name="ssr_current_page">1</span> of <span id="id_ssr_total_pages" name="ssr_total_pages">1</span> <div id="id_ssrs_next" name="ssrs_next"><a href="" onclick="ssrJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>
@@ -370,13 +440,18 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>Brain Region Results (1-{{ brain_regions|length }}) (<a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
+                                <td>Brain Regions (<span id="brainRegionResultStartIndex" name="brainRegionResultStartIndex">1</span>-<span id="brainRegionResultEndIndex" name="brainRegionResultEndIndex">1</span> of <span id="numBrainRegionResults" name="numBrainRegionResults">{{ bops|length }}</span>, <a href="javascript:animatedcollapse.toggle('brainRegionResults')"><span id="brainRegionResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
                                     <div id="brainRegionResults" style="display:block">
                                         {% include 'bodb/brainRegion/brain_region_selection_list_view.html' %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_brain_regions_previous" name="brain_regions_previous"><a href="" onclick="brainRegionJumpPage()">previous</a></div> Page <span id="id_brain_region_current_page" name="brain_region_current_page">1</span> of <span id="id_brain_region_total_pages" name="brain_region_total_pages">1</span> <div id="id_brain_regions_next" name="brain_regions_next"><a href="" onclick="brainRegionJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>
@@ -401,13 +476,18 @@
                                 </td>
                             </tr>
                             <tr class="section_header">
-                                <td>User Results (1-{{ users|length }}) (<a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
+                                <td>Users (<span id="userResultStartIndex" name="userResultStartIndex">1</span>-<span id="userResultEndIndex" name="userResultEndIndex">1</span> of <span id="numUserResults" name="numUserResults">{{ users|length }}</span>, <a href="javascript:animatedcollapse.toggle('userResults')"><span id="userResultsLabel">Hide</span></a>)</td>
                             </tr>
                             <tr>
                                 <td style="padding:0px">
                                     <div id="userResults" style="display:block">
                                         {% include 'bodb/admin/user_list_view.html' %}
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="id_users_previous" name="users_previous"><a href="" onclick="userJumpPage()">previous</a></div> Page <span id="id_user_current_page" name="user_current_page">1</span> of <span id="id_user_total_pages" name="user_total_pages">1</span> <div id="id_users_next" name="users_next"><a href="" onclick="userJumpPage()">next</a></div>
                                 </td>
                             </tr>
                             <tr>

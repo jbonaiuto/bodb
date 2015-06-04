@@ -4,6 +4,7 @@
 {% block extrahead %}
     <title>BODB - View {{ neurophysiologysed.title }} SED</title>
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
     <script type="text/javascript">
         animatedcollapse.addDiv('figureData', 'fade=1');
         animatedcollapse.addDiv('narrativeData', 'fade=1');
@@ -76,6 +77,11 @@
             document.getElementById('reportForm').submit();
         }
 
+        function exportNeurophysiologySEDData()
+        {
+            document.getElementById('exportForm').submit();
+        }
+
         function updateSectionDisplaySettings()
         {
             var sectionIds=['figureData', 'narrativeData', 'relatedBopData', 'relatedModelData',
@@ -91,25 +97,38 @@
             }
         }
 
-        function realignUnitConditionPlot(unit_id, condition_id, csrf_token)
+
+        function realignAllUnitConditionPlots(csrf_token)
         {
-            var event=document.getElementById('unit_'+unit_id+'_condition_'+condition_id+'_realign').value;
-            var data={'unit': unit_id, 'condition': condition_id, 'event': event, 'csrfmiddlewaretoken': csrf_token};
-            var args={type:"POST", url:"/bodb/sed/neurophysiology/unit_realign/", data: data, complete: doneRealignUnitConditionPlot };
-            $.ajax(args);
+            var event=document.getElementById('realign_all').value;
+            {% for unit in units %}
+                {% for condition in conditions %}
+                    document.getElementById('unit_{{ unit.id }}_condition_{{ condition.id }}_realign').value=event;
+                    realignUnitConditionPlot({{ unit.id }},{{ condition.id }},csrf_token);
+                {% endfor %}
+            {% endfor %}
+        }
+
+        function sendExportRequest()
+        {
+            data=$('#exportRequestForm').serialize();
+            var args = { type: "POST", url: '/bodb/sed/neurophysiology/{{ neurophysiologysed.id }}/export_request/',
+                data: data, complete: doneSendExportRequest };
+            $.ajax(args)
             return false;
         }
 
-        function doneRealignUnitConditionPlot(res, status)
+        function doneSendExportRequest(res, status)
         {
             var txt = res.responseText;
             var data = eval('('+txt+')');
-            if (status=="success")
-            {
-                document.getElementById('unit_'+data.unit+'_condition_'+data.condition+'_plot').src=data.diagram_url;
-            }
+            if (status!="success")
+                alert(res.responseText);
             else
-                alert(txt);
+            {
+                document.getElementById('export_request').style.display='none';
+                document.getElementById('export_request_pending').style.display='inline';
+            }
         }
     </script>
 {% endblock %}
@@ -139,12 +158,6 @@
     <tr valign="top">
         <td colspan="2"><strong>Tags:</strong> {{ neurophysiologysed.tags.all|join:', ' }}</td>
     </tr>
-    <tr class="section_subheader">
-        <td colspan=2>Brief Description</td>
-    </tr>
-    <tr>
-        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
-    </tr>
     <tr>
         <td colspan=2 valign=top>
             <strong>Public:</strong>&nbsp;
@@ -173,6 +186,37 @@
         </tr>
     {% endif %}
     <tr class="section_subheader">
+        <td colspan=2>Brief Description</td>
+    </tr>
+    <tr>
+        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><strong>Subject species:</strong> {{ neurophysiologysed.subject_species }}</td>
+    </tr>
+    <tr class="section_subheader">
+        <td colspan="2">Trial Events</td>
+    </tr>
+    <tr class="odd_row">
+        <td>trial start</td>
+        <td>start of the trial</td>
+    </tr>
+    {% for event_name,event_description in events %}
+        <tr class="{% cycle 'even_row' 'odd_row' %}">
+            <td>{{ event_name }}</td>
+            <td>{{ event_description }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><strong>Realign All:</strong> <select id="realign_all" onchange="realignAllUnitConditionPlots('{{ csrf_token }}')">
+            <option value="start">trial start</option>
+            {% for event_name, event_description in events %}
+                <option value="{{ event_name }}">{{ event_name }}</option>
+            {% endfor %}
+        </select></td>
+        <td></td>
+    </tr>
+    <tr class="section_subheader">
         <td width=200px>Units</td>
         <td>Conditions</td>
     </tr>
@@ -184,6 +228,7 @@
                     {% for condition in conditions %}
                         <td>
                             <strong><a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a></strong>
+                            <br>Type: {{ condition.type }}
                             <br>{{ condition.description }}
                         </td>
                     {% endfor %}
@@ -195,8 +240,8 @@
                             <td rowspan="3">
                                 Realign: <select id="unit_{{ unit.id }}_condition_{{ condition.id }}_realign" onchange="realignUnitConditionPlot({{ unit.id }}, {{ condition.id }}, '{{ csrf_token }}')">
                                 <option value="start">trial start</option>
-                                {% for event in events %}
-                                    <option value="{{ event }}">{{ event }}</option>
+                                {% for event_name, event_description in events %}
+                                    <option value="{{ event_name }}">{{ event_name }}</option>
                                 {% endfor %}
                                 </select>
                                 <br><img id="unit_{{ unit.id }}_condition_{{ condition.id }}_plot" src="{{ unit_diagram_urls|lookup:unit.id|lookup:condition.id }}" width="90%"/>
@@ -384,9 +429,6 @@
     </tr>
     </table>
     <span id="sed_message" class="messages"></span>
-    {% if perms.bodb.change_sed and canEdit %}
-        <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/sed/connectivity/{{neurophysiologysed.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-    {% endif %}
     {% if ispopup %}
         <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
     {% else %}
@@ -399,7 +441,7 @@
             <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="toggleSEDSelect('{{neurophysiologysed.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% endif %}
         {% if canManage %}
-            <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{sed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{neurophysiologysed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% endif %}
     {% endif %}
     <br>
@@ -408,10 +450,34 @@
     <select id="exportType">
         <option value="pdf">PDF</option>
         <option value="rtf">RTF</option>
-    </select>
+    </select><br>
+    {% if request_status == 'accepted' %}
+        <form id="exportForm" name="exportForm" action="/bodb/sed/neurophysiology/{{neurophysiologysed.id}}/export/" method="post">
+            {% csrf_token %}
+        </form>
+        <input class="btn" type="button" value="Export Raw Data" onclick="return exportNeurophysiologySEDData();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    {% endif %}
+    <div id="export_request" style="display: {% if request_status == '' %}inline{% else %}none{% endif %};">
+        <form id="exportRequestForm" name="exportRequestForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td><strong>Request Body</strong></td>
+                    <td>{{ form.request_body }}</td>
+                </tr>
+            </table>
+        </form>
+        <input class="btn" type="button" value="Request Raw Data" onclick="return sendExportRequest()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    </div>
+    <div id="export_request_pending" style="display:{% if request_status == 'pending' %}inline{% else %}none{% endif %};">
+        <div class="messages">Raw data request pending</div>
+    </div>
+    <div id="export_request_denied" style="display:{% if request_status == 'denied' %}inline{% else %}none{% endif %}">
+        <div class="myerrors">Raw data request denied</div>
+    </div>
     </div>
     <form id="fileForm" action=""></form>
-    <form id="reportForm" name="reportForm" action="/bodb/model/{{model.id}}/report/rtf/" method="post">
+    <form id="reportForm" name="reportForm" action="/bodb/sed/{{neurophysiologysed.id}}/report/rtf/" method="post">
         {% csrf_token %}
         <input id="figureDisplay" type="hidden" name="figureDisplay" value=1>
         <input id="narrativeDisplay" type="hidden" name="narrativeDisplay" value=0>

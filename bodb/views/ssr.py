@@ -1,34 +1,26 @@
+import json
+from django.core.cache import cache
 from django.db.models import Q
-from django.shortcuts import redirect
-from django.views.generic import UpdateView, DeleteView
+from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic import UpdateView, DeleteView, CreateView, TemplateView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.ssr import SSRForm
 from bodb.models import SSR, DocumentFigure, Model, WorkspaceActivityItem, Document, UserSubscription
 from bodb.views.document import DocumentDetailView, DocumentAPIDetailView, DocumentAPIListView
-from bodb.views.main import BODBView
+from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
+from bodb.views.model import CreateModelView
+from bodb.views.security import ObjectRolePermissionRequiredMixin
+from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
 
 from bodb.serializers import SSRSerializer
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
 
-
-class UpdateSSRView(UpdateView):
+class EditSSRMixin():
     model = SSR
     form_class = SSRForm
     template_name = 'bodb/ssr/ssr_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateSSRView,self).get_context_data(**kwargs)
-        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
-            instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
-        context['ispopup']=('_popup' in self.request.GET)
-        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -59,17 +51,73 @@ class UpdateSSRView(UpdateView):
                 if figure_form.instance.id:
                     figure_form.instance.delete()
 
-            url=self.get_success_url()
+            url=self.get_success_url()+'?action='+context['action']
             if context['ispopup']:
-                url+='?_popup=1'
+                url+='&_popup=1'
+            if 'type' in context and context['type'] is not None:
+                url+='&type=%s' % context['type']
+            if 'idx' in context and context['idx']>-1:
+                url+='&idx=%s' % context['idx']
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class DeleteSSRView(DeleteView):
+class UpdateSSRView(EditSSRMixin, ObjectRolePermissionRequiredMixin, UpdateView):
+    permission_required='edit'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(SSR.objects.select_related('collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateSSRView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            instance=self.object, queryset=DocumentFigure.objects.filter(document=self.object), prefix='figure')
+        context['ispopup']=('_popup' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',-1)
+        context['action']='edit'
+        return context
+
+
+class CreateSSRView(EditSSRMixin, PermissionRequiredMixin, CreateView):
+    permission_required='bodb.add_ssr'
+
+    def get_object(self, queryset=None):
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateSSRView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='figure')
+        context['ispopup']=('_popup' in self.request.GET)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',-1)
+        context['action']='add'
+        return context
+
+
+class DeleteSSRView(ObjectRolePermissionRequiredMixin, DeleteView):
     model=SSR
     success_url = '/bodb/index.html'
+    permission_required='delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
+
 
 class SSRAPIListView(DocumentAPIListView):
     serializer_class = SSRSerializer
@@ -79,42 +127,51 @@ class SSRAPIListView(DocumentAPIListView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         return SSR.objects.filter(security_q)
-    
-class SSRAPIDetailView(DocumentAPIDetailView):
-    queryset = SSR.objects.all()
+
+
+class SSRAPIDetailView(ObjectRolePermissionRequiredMixin, DocumentAPIDetailView):
     serializer_class = SSRSerializer
     model = SSR
+    permission_required = 'view'
 
-class SSRDetailView(DocumentDetailView):
+
+class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = SSR
     template_name = 'bodb/ssr/ssr_view.html'
-    
-    queryset = SSR.objects.all()
     serializer_class = SSRSerializer
+    permission_required = 'view'
+
+    def get_object(self, queryset=None):
+        if not hasattr(self,'object'):
+            self.object=get_object_or_404(SSR.objects.select_related('forum','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super(SSRDetailView, self).get_context_data(**kwargs)
         user=self.request.user
         context['helpPage']='view_entry.html'
-        context['model']=Model.objects.filter(Q(related_test_sed_document__testsedssr__ssr=self.object) | Q(prediction__predictionssr__ssr=self.object))[0]
-        if user.is_authenticated() and not user.is_anonymous():
-            context['subscribed_to_collator']=UserSubscription.objects.filter(subscribed_to_user=self.object.collator,
-                user=user, model_type='SSR').count()>0
-            context['subscribed_to_last_modified_by']=UserSubscription.objects.filter(subscribed_to_user=self.object.last_modified_by,
-                user=user, model_type='SSR').count()>0
-            context['selected']=user.get_profile().active_workspace.related_ssrs.filter(id=self.object.id).count()>0
+        models=Model.objects.filter(Q(related_test_sed_document__ssr=self.object) | Q(prediction__ssr=self.object)).select_related('collator').prefetch_related('authors__author')
+        context['model']=None
+        if models.count():
+            context['model']=models[0]
+        context['subscribed_to_collator']=(self.object.collator.id, 'SSR') in context['subscriptions']
+        context['subscribed_to_last_modified_by']=(self.object.last_modified_by.id, 'SSR') in context['subscriptions']
+        context['selected']=self.object.id in context['workspace_ssrs']
+        context['action']=self.request.GET.get('action',None)
+        context['type']=self.request.GET.get('type',None)
+        context['idx']=self.request.GET.get('idx',None)
+        context['ispopup']=('_popup' in self.request.GET)
         return context
 
 
-class ToggleSelectSSRView(JSONResponseMixin,BaseUpdateView):
+class ToggleSelectSSRView(LoginRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = SSR
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             ssr=SSR.objects.get(id=self.kwargs.get('pk', None))
-            # Load active workspace
-            active_workspace=self.request.user.get_profile().active_workspace
+            active_workspace=get_active_workspace(get_profile(self.request),self.request)
 
             context={
                 'ssr_id': ssr.id,
@@ -136,6 +193,7 @@ class ToggleSelectSSRView(JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the SSR: <a href="%s">%s</a> to the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
@@ -150,5 +208,34 @@ class SSRTaggedView(BODBView):
 
         context['helpPage']='tags.html'
         context['tag']=name
-        context['tagged_items']=SSR.get_ssr_list(SSR.get_tagged_ssrs(name, user),user)
+        ssrs=SSR.get_tagged_ssrs(name, user)
+        context['tagged_items']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
+            context['subscriptions'])
+        return context
+
+
+class SortSSRListView(LoginRequiredMixin,JSONResponseMixin,CreateModelView):
+    model = SSR
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax() and 'ssr_list' in self.request.POST:
+            ws_context=set_context_workspace(context, self.request)
+            ssrs = self.request.POST.getlist('ssr_list')
+            order_by=self.request.POST.get('order_by',None)
+            direction=self.request.POST.get('direction','descending')
+            ssrs=SSR.objects.filter(id__in=ssrs)
+            if order_by is not None:
+                ssrs=ssrs.order_by(order_by)
+            if direction is not None and direction=='descending':
+                ssrs=ssrs.reverse()
+            ssr_list=SSR.get_ssr_list(ssrs, ws_context['workspace_ssrs'], ws_context['fav_docs'],
+                ws_context['subscriptions'])
+            context={
+                'ssrs': [(selected,is_favorite,subscribed_to_user,ssr.as_json())
+                         for (selected,is_favorite,subscribed_to_user,ssr) in ssr_list],
+                'ssrs_start_index': 1,
+                'order_by': order_by,
+                'direction': direction
+            }
         return context

@@ -42,7 +42,7 @@ class ModelForm6(Form):
     draft=forms.CharField(widget=forms.HiddenInput,required=False)
 
 class ModuleForm(DocumentForm):
-    parent = forms.ModelChoiceField(queryset=Module.objects.all(), widget=forms.HiddenInput,required=True)
+    parent = forms.ModelChoiceField(queryset=Module.objects.all(), required=True)
 
     class Meta:
         model = Module
@@ -73,46 +73,63 @@ class ModelAuthorInlineForm(forms.ModelForm):
         model = ModelAuthor
 
 
-ModelAuthorFormSet=modelformset_factory(ModelAuthor, form=ModelAuthorInlineForm, can_delete=True, extra=0,
-    exclude=('author',))
+ModelAuthorFormSet = lambda *a, **kw: modelformset_factory(ModelAuthor,form=ModelAuthorInlineForm, exclude=('author',),
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 class VariableInlineForm(forms.ModelForm):
     module = forms.ModelChoiceField(queryset=Module.objects.all(),widget=forms.HiddenInput,required=False)
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    data_type = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),required=True)
-    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'42','rows':'3'}),required=True)
+    data_type = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'42','rows':'3'}),required=False)
     var_type = forms.CharField(widget=forms.HiddenInput,required=True)
     class Meta:
         model=Variable
 
 
-VariableFormSet = inlineformset_factory(Module,Variable,form=VariableInlineForm, fk_name='module',extra=0,
-    can_delete=True)
+VariableFormSet = lambda *a, **kw: inlineformset_factory(Module,Variable,form=VariableInlineForm, fk_name='module',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
+
 
 class ModuleInlineForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'47','rows':'3'}),required=True)
-    collator=forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
-    draft=forms.BooleanField(widget=forms.HiddenInput,required=False)
-    public=forms.BooleanField(widget=forms.HiddenInput,required=False)
+    brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'47','rows':'3'}),required=False)
 
     class Meta:
         model = Module
-        exclude=('tags',)
+        exclude=('tags','collator','draft','public')
 
 
-ModuleFormSet=inlineformset_factory(Module, Module, form=ModuleInlineForm, fk_name='parent', can_delete=True, extra=0)
+ModuleFormSet = lambda *a, **kw: inlineformset_factory(Module,Module,form=ModuleInlineForm, fk_name='parent',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
 class RelatedModelInlineForm(forms.ModelForm):
     document = forms.ModelChoiceField(queryset=Document.objects.all(),widget=forms.HiddenInput,required=False)
-    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=True)
+    relationship = forms.CharField(widget=forms.Textarea(attrs={'cols':'40','rows':'3'}),required=False)
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
 
     class Meta:
         model=RelatedModel
 
 
-RelatedModelFormSet = inlineformset_factory(Document,RelatedModel,form=RelatedModelInlineForm,fk_name='document',extra=0,
-    can_delete=True)
+RelatedModelFormSet = lambda *a, **kw: inlineformset_factory(Document,RelatedModel,form=RelatedModelInlineForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
+
+class ModelReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
+    summary_display=forms.BooleanField(required=False, help_text='Display SEDs, SSRs and Predictions in report')
+    url_display=forms.BooleanField(required=False, help_text='Display URLs in report')
+    related_model_display=forms.BooleanField(required=False, help_text='Display related models in report')
+    related_bop_display=forms.BooleanField(required=False, help_text='Display related BOPs in report')
+    related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
+    reference_display=forms.BooleanField(required=False, help_text='Display references in report')
+    include_seds=forms.BooleanField(required=False, help_text='Include SED reports in report')
+
+
+class ModuleReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')

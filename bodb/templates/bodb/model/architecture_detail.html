@@ -1,8 +1,10 @@
+{% load bodb_extras %}
 <script type="text/javascript">
-    function addInput(){
+    function addInput(id, name, data_type, description){
         var count = $('#inputs').children().length;
         var tmplMarkup = $('#input-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx: count, id: id, name:name, data_type: data_type,
+            description: description });
         $('#inputs').append(compiledTmpl);
         // update form count
         $('#id_input-TOTAL_FORMS').attr('value', count+1);
@@ -43,10 +45,11 @@
         return false;
     }
 
-    function addOutput(){
+    function addOutput(id, name, data_type, description){
         var count = $('#outputs').children().length;
         var tmplMarkup = $('#output-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx: count, id: id, name: name, data_type: data_type,
+            description: description });
         $('#outputs').append(compiledTmpl);
         // update form count
         $('#id_output-TOTAL_FORMS').attr('value', count+1);
@@ -87,10 +90,11 @@
         return false;
     }
 
-    function addState(){
+    function addState(id, name, data_type, description){
         var count = $('#states').children().length;
         var tmplMarkup = $('#state-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, name: name, data_type: data_type,
+            description: description });
         $('#states').append(compiledTmpl);
         // update form count
         $('#id_state-TOTAL_FORMS').attr('value', count+1);
@@ -131,10 +135,10 @@
         return false;
     }
 
-    function addSubmodule(){
+    function addSubmodule(id, title, brief_description){
         var count = $('#modules').children().length;
         var tmplMarkup = $('#module-template').html();
-        var compiledTmpl = _.template(tmplMarkup, { id : count });
+        var compiledTmpl = _.template(tmplMarkup, { idx : count, id: id, title: title, brief_description: brief_description });
         $('#modules').append(compiledTmpl);
         // update form count
         $('#id_module-TOTAL_FORMS').attr('value', count+1);
@@ -163,6 +167,51 @@
         $('textarea:not(.processed)').TextAreaResizer();
         return false;
     }
+
+    $(document).ready(function(){
+        {% for input_form in input_formset.forms %}
+            {% if input_form.instance.id %}
+                addInput({{ input_form.instance.id }}, '{{ input_form.instance.name|escapejs }}',
+                        '{{ input_form.instance.data_type|escapejs }}',
+                        '{{ input_form.instance.description|escapejs }}');
+            {% else %}
+                addInput('', '{{ input_form.initial|lookup:'name'|escapejs }}',
+                        '{{ input_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ input_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
+        {% endfor %}
+        {% for output_form in output_formset.forms %}
+            {% if output_form.instance.id %}
+                addOutput({{ output_form.instance.id }}, '{{ output_form.instance.name|escapejs }}',
+                        '{{ output_form.instance.data_type|escapejs }}',
+                        '{{ output_form.instance.description|escapejs }}');
+            {% else %}
+                addOutput('', '{{ output_form.initial|lookup:'name'|escapejs }}',
+                        '{{ output_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ output_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
+        {% endfor %}
+        {% for state_form in state_formset.forms %}
+            {% if state_form.instance.id %}
+                addState({{ state_form.instance.id }}, '{{ state_form.instance.name|escapejs }}',
+                        '{{ state_form.instance.data_type|escapejs }}',
+                        '{{ state_form.instance.description|escapejs }}');
+            {% else %}
+                addState('', '{{ state_form.initial|lookup:'name'|escapejs }}',
+                        '{{ state_form.initial|lookup:'data_type'|escapejs }}',
+                        '{{ state_form.initial|lookup:'description'|escapejs }}');
+            {% endif %}
+        {% endfor %}
+        {% for module_form in module_formset.forms %}
+            {% if module_form.instance.id %}
+                addSubmodule({{ module_form.instance.id }}, '{{ module_form.instance.title|escapejs }}',
+                        '{{ module_form.instance.brief_description|escapejs }}');
+            {% else %}
+                addSubmodule('', '{{ module_form.initial|lookup:'title'|escapejs }}',
+                        '{{ module_form.initial|lookup:'brief_description'|escapejs }}');
+            {% endif %}
+        {% endfor %}
+    });
 </script>
 <div id="architectureData" style="display:{% if showFigure %}block{% else %}none{% endif %}">
     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
@@ -186,7 +235,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-input" onclick="return addInput();">Add new</a>
+                            <a href="#" class="add-input" onclick="return addInput('','','','');">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -202,35 +251,6 @@
                                 {{ input_formset.management_form.errors }}
                             </div>
                             <div id="inputs">
-                                {% for input_form in input_formset.forms %}
-                                    <div id="input-{{ forloop.counter0 }}" name="input">
-                                        <input type=hidden id="id_input-{{ forloop.counter0 }}-DELETE" name="input-{{ forloop.counter0 }}-DELETE"/>
-                                        {{ input_form.id }}
-                                        {{ input_form.module }}
-                                        {{ input_form.var_type }}
-                                        <table class="tab_panel">
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                <td style="width:120px">
-                                                    <a href="" onclick="return deleteInlineForm('input', {{ forloop.counter0 }});">Delete</a>
-                                                </td>
-                                                <td style="width:200px">
-                                                    {{ input_form.name }}
-                                                </td>
-                                                <td style="width:175px">
-                                                    {{ input_form.data_type }}
-                                                </td>
-                                                <td>
-                                                    {{ input_form.description }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div class="myerrors">
-                                            <span id="input_{{ forloop.counter0 }}_errors">
-                                                {{ input_form.errors }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </td>
                     </tr>
@@ -242,7 +262,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-output" onclick="return addOutput();">Add new</a>
+                            <a href="#" class="add-output" onclick="return addOutput('','','','');">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -258,35 +278,6 @@
                                 {{ output_formset.management_form.errors }}
                             </div>
                             <div id="outputs">
-                                {% for output_form in output_formset.forms %}
-                                    <div id="output-{{ forloop.counter0 }}" name="output">
-                                        <input type=hidden id="id_output-{{ forloop.counter0 }}-DELETE" name="output-{{ forloop.counter0 }}-DELETE"/>
-                                        {{ output_form.id }}
-                                        {{ output_form.module }}
-                                        {{ output_form.var_type }}
-                                        <table class="tab_panel">
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                <td style="width:120px">
-                                                    <a href="" onclick="return deleteInlineForm('output', {{ forloop.counter0 }});">Delete</a>
-                                                </td>
-                                                <td style="width:200px">
-                                                    {{ output_form.name }}
-                                                </td>
-                                                <td style="width:175px">
-                                                    {{ output_form.data_type }}
-                                                </td>
-                                                <td>
-                                                    {{ output_form.description }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div class="myerrors">
-                                            <span id="output_{{ forloop.counter0 }}_errors">
-                                                {{ output_form.errors }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </td>
                     </tr>
@@ -298,7 +289,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-state" onclick="return addState();">Add new</a>
+                            <a href="#" class="add-state" onclick="return addState('','','','');">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -314,35 +305,6 @@
                                 {{ state_formset.management_form.errors }}
                             </div>
                             <div id="states">
-                                {% for state_form in state_formset.forms %}
-                                    <div id="state-{{ forloop.counter0 }}" name="state">
-                                        <input type=hidden id="id_state-{{ forloop.counter0 }}-DELETE" name="state-{{ forloop.counter0 }}-DELETE"/>
-                                        {{ state_form.id }}
-                                        {{ state_form.module }}
-                                        {{ state_form.var_type }}
-                                        <table class="tab_panel">
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                <td style="width:120px">
-                                                    <a href="" onclick="return deleteInlineForm('state', {{ forloop.counter0 }});">Delete</a>
-                                                </td>
-                                                <td style="width:200px">
-                                                    {{ state_form.name }}
-                                                </td>
-                                                <td style="width:175px">
-                                                    {{ state_form.data_type }}
-                                                </td>
-                                                <td>
-                                                    {{ state_form.description }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div class="myerrors">
-                                            <span id="state_{{ forloop.counter0 }}_errors">
-                                                {{ state_form.errors }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </td>
                     </tr>
@@ -354,7 +316,7 @@
                     </tr>
                     <tr class="table_header">
                         <td colspan=4>
-                            <a href="#" class="add-module" onclick="return addSubmodule();">Add new</a>
+                            <a href="#" class="add-module" onclick="return addSubmodule('','','');">Add new</a>
                         </td>
                     </tr>
                     <tr class="col_header">
@@ -369,34 +331,6 @@
                                 {{ module_formset.management_form.errors }}
                             </div>
                             <div id="modules">
-                                {% for module_form in module_formset.forms %}
-                                    <div id="module-{{ forloop.counter0 }}" name="module">
-                                        <input type=hidden id="id_module-{{ forloop.counter0 }}-DELETE" name="module-{{ forloop.counter0 }}-DELETE"/>
-                                        {{ module_form.id }}
-                                        {{ module_form.document_ptr }}
-                                        {{ module_form.collator }}
-                                        {{ module_form.draft }}
-                                        {{ module_form.public }}
-                                        <table class="tab_panel">
-                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                <td style="width:120px">
-                                                    <a href="" onclick="return deleteInlineForm('module', {{ forloop.counter0 }});">Delete</a>
-                                                </td>
-                                                <td style="width:200px">
-                                                    {{ module_form.title }}
-                                                </td>
-                                                <td colspan=2>
-                                                    {{ module_form.brief_description }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div class="myerrors">
-                                            <span id="module_{{ forloop.counter0 }}_errors">
-                                                {{ module_form.errors }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </td>
                     </tr>
@@ -407,110 +341,109 @@
 </div>
 
 <script type="text/html" id="input-template">
-    <div id="input-<%= id %>" name="input">
-        <input type=hidden id="id_input-<%= id %>-DELETE" name="input-<%= id %>-DELETE"/>
-        <input id="id_input-<%= id %>-id" name="input-<%= id %>-id" type="hidden" />
-        <input id="id_input-<%= id %>-module" name="input-<%= id %>-module" type="hidden" />
-        <input id="id_input-<%= id %>-var_type" name="input-<%= id %>-var_type" type="hidden" value="Input"/>
+    <div id="input-<%= idx %>" name="input">
+        <input type=hidden id="id_input-<%= idx %>-DELETE" name="input-<%= idx %>-DELETE"/>
+        <input id="id_input-<%= idx %>-id" name="input-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_input-<%= idx %>-module" name="input-<%= idx %>-module" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
+        <input id="id_input-<%= idx %>-var_type" name="input-<%= idx %>-var_type" type="hidden" value="Input"/>
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('input', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('input', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_input-<%= id %>-name" name="input-<%= id %>-name" size="13" type="text" />
+                    <input id="id_input-<%= idx %>-name" name="input-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_input-<%= id %>-data_type" name="input-<%= id %>-data_type" size="10" type="text" />
+                    <input id="id_input-<%= idx %>-data_type" name="input-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_input-<%= id %>-description" name="input-<%= id %>-description" rows="3"></textarea>
+                    <textarea cols="42" id="id_input-<%= idx %>-description" name="input-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="input_<%= id %>_errors">
+            <span id="input_<%= idx %>_errors">
             </span>
         </div>
     </div>
 </script>
 <script type="text/html" id="output-template">
-    <div id="output-<%= id %>" name="output">
-        <input type=hidden id="id_output-<%= id %>-DELETE" name="output-<%= id %>-DELETE"/>
-        <input id="id_output-<%= id %>-id" name="output-<%= id %>-id" type="hidden" />
-        <input id="id_output-<%= id %>-module" name="output-<%= id %>-module" type="hidden" />
-        <input id="id_output-<%= id %>-var_type" name="output-<%= id %>-var_type" type="hidden" value="Output"/>
+    <div id="output-<%= idx %>" name="output">
+        <input type=hidden id="id_output-<%= idx %>-DELETE" name="output-<%= idx %>-DELETE"/>
+        <input id="id_output-<%= idx %>-id" name="output-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_output-<%= idx %>-module" name="output-<%= idx %>-module" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
+        <input id="id_output-<%= idx %>-var_type" name="output-<%= idx %>-var_type" type="hidden" value="Output"/>
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('output', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('output', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_output-<%= id %>-name" name="output-<%= id %>-name" size="13" type="text" />
+                    <input id="id_output-<%= idx %>-name" name="output-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_output-<%= id %>-data_type" name="output-<%= id %>-data_type" size="10" type="text" />
+                    <input id="id_output-<%= idx %>-data_type" name="output-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_output-<%= id %>-description" name="output-<%= id %>-description" rows="3"></textarea>
+                    <textarea cols="42" id="id_output-<%= idx %>-description" name="output-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="output_<%= id %>_errors">
+            <span id="output_<%= idx %>_errors">
             </span>
         </div>
     </div>
 </script>
 <script type="text/html" id="state-template">
-    <div id="state-<%= id %>" name="state">
-        <input type=hidden id="id_state-<%= id %>-DELETE" name="state-<%= id %>-DELETE"/>
-        <input id="id_state-<%= id %>-id" name="state-<%= id %>-id" type="hidden" />
-        <input id="id_state-<%= id %>-module" name="state-<%= id %>-module" type="hidden" />
-        <input id="id_state-<%= id %>-var_type" name="state-<%= id %>-var_type" type="hidden" value="State"/>
+    <div id="state-<%= idx %>" name="state">
+        <input type=hidden id="id_state-<%= idx %>-DELETE" name="state-<%= idx %>-DELETE"/>
+        <input id="id_state-<%= idx %>-id" name="state-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_state-<%= idx %>-module" name="state-<%= idx %>-module" type="hidden" {% if form.instance %}value="{{ form.instance.pk }}"{% endif %}/>
+        <input id="id_state-<%= idx %>-var_type" name="state-<%= idx %>-var_type" type="hidden" value="State"/>
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('state', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('state', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_state-<%= id %>-name" name="state-<%= id %>-name" size="13" type="text" />
+                    <input id="id_state-<%= idx %>-name" name="state-<%= idx %>-name" size="13" type="text" value="<%= _.escape(name) %>"/>
                 </td>
                 <td style="width:175px">
-                    <input id="id_state-<%= id %>-data_type" name="state-<%= id %>-data_type" size="10" type="text" />
+                    <input id="id_state-<%= idx %>-data_type" name="state-<%= idx %>-data_type" size="10" type="text" value="<%= _.escape(data_type) %>"/>
                 </td>
                 <td>
-                    <textarea cols="42" id="id_state-<%= id %>-description" name="state-<%= id %>-description" rows="3"></textarea>
+                    <textarea cols="42" id="id_state-<%= idx %>-description" name="state-<%= idx %>-description" rows="3"><%= _.escape(description) %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="state_<%= id %>_errors">
+            <span id="state_<%= idx %>_errors">
             </span>
         </div>
     </div>
 </script>
 <script type="text/html" id="module-template">
-    <div id="module-<%= id %>" name="module">
-        <input type=hidden id="id_module-<%= id %>-DELETE" name="module-<%= id %>-DELETE"/>
-        <input id="id_module-<%= id %>-collator" name="module-<%= id %>-collator" type="hidden" />
-        <input id="id_module-<%= id %>-draft" name="module-<%= id %>-draft" type="hidden" />
+    <div id="module-<%= idx %>" name="module">
+        <input type=hidden id="id_module-<%= idx %>-DELETE" name="module-<%= idx %>-DELETE"/>
+        <input id="id_module-<%= idx %>-id" name="module-<%= idx %>-id" type="hidden" value="<%= id %>"/>
+        <input id="id_module-<%= idx %>-document_ptr" name="module-<%= idx %>-document_ptr" type="hidden" value="<%= id %>"/>
         <table class="tab_panel">
             <tr class="even_row" valign=top>
                 <td style="width:120px">
-                    <a href="" onclick="return deleteInlineForm('module', <%= id %>);">Delete</a>
+                    <a href="" onclick="return deleteInlineForm('module', <%= idx %>);">Delete</a>
                 </td>
                 <td style="width:200px">
-                    <input id="id_module-<%= id %>-title" name="module-<%= id %>-title" size="13" type="text" />
+                    <input id="id_module-<%= idx %>-title" name="module-<%= idx %>-title" size="13" type="text" value="<%= _.escape(title) %>"/>
                 </td>
                 <td colspan=2>
-                    <textarea cols="47" id="id_module-<%= id %>-brief_description" name="module-<%= id %>-brief_description" rows="3">
-                    </textarea>
+                    <textarea cols="47" id="id_module-<%= idx %>-brief_description" name="module-<%= idx %>-brief_description" rows="3"><%= _.escape(brief_description) %></textarea>
                 </td>
             </tr>
         </table>
         <div class="myerrors">
-            <span id="module_<%= id %>_errors">
+            <span id="module_<%= idx %>_errors">
             </span>
         </div>
     </div>

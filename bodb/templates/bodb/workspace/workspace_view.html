@@ -4,7 +4,14 @@
     <title>BODB - View Workspace</title>
     <link rel="stylesheet" href="{% static 'bodb/css/joyride-2.1.css' %}">
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
     <script type="text/javascript">
+
+        function viewWorkspace(id)
+        {
+            document.location.href='/bodb/workspace/'+id+'/';
+        }
+
         function deleteWorkspace()
         {
             if(confirm('This will delete this Workspace. Do you really want to delete the current Workspace?'))
@@ -31,7 +38,7 @@
             };
 
             $(window).load(function() {
-                if( $.cookie('search_page_tour_seen') == 'TRUE'){
+                if( $.cookie('workspace_page_tour_seen') != 'TRUE'){
                     $('#joyRideTipContent').joyride({
                         autoStart : true,
                         postRideCallback: workspace_page_tour_seen,
@@ -63,7 +70,7 @@
 {% endblock %}
 {% block content %}
     <div id="list">
-        <h2>Workspace: {{ workspace.title }}</h2>
+        <h2>Workspace: <select id="id_workspace_select" name="workspace_select" onchange="viewWorkspace(this.value)">{% for other_workspace in profile.get_workspaces %}<option value="{{ other_workspace.id }}" {% if other_workspace.id == workspace.id %}selected{% endif %}>{{ other_workspace.title|truncatechars:25 }}</option>{% endfor %}</select></h2>
         <table class="tab_panel">
             <tr valign="top">
                 <td valign="top" width=10%><strong>Creator</strong></td>
@@ -74,13 +81,12 @@
                 <td>{{ workspace.description }}</td>
             </tr>
         </table>
+        <input class="btn" type="button" value="New" onclick="document.location.href='/bodb/workspace/new/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% if admin %}
-            <div id="adminButtons">
-                <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-                <input class="btn" type="button" value="Delete" onclick="deleteWorkspace()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
-            </div>
+            <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/workspace/{{ workspace.id }}/edit/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            <input class="btn" type="button" value="Delete" onclick="deleteWorkspace()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% endif %}
-
+        <br><br>
         <table class="tab_panel">
             <tr>
                 <td style="padding:0px">
@@ -185,7 +191,7 @@
                                     selectionId=document.getElementById('id_selectionId').value;
                                     var data = { 'name': selectionName, 'description': selectionDesc, 'id': selectionId,
                                         'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                                    var args = { type: "POST", url: "/bodb/workspace/coord_selection/save/", data: data,
+                                    var args = { type: "POST", url: "/bodb/workspace/{{ workspace.id }}/coord_selection/save/", data: data,
                                         complete: doneSaveCoordinateSelection };
                                     $.ajax(args)
                                 }

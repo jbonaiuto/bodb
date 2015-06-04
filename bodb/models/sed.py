@@ -1,3 +1,8 @@
+import datetime
+import hashlib
+import random
+from django.contrib.sites.models import get_current_site
+from django.core.mail import EmailMessage
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -7,7 +12,7 @@ from django.db.models import Q
 from matplotlib.figure import Figure
 from numpy.core.umath import exp
 from numpy.numarray import arange
-from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion
+from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message, stop_words
 import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
@@ -16,6 +21,8 @@ import numpy as np
 import scipy.io
 from neo import io
 import matplotlib.pyplot as plt
+import h5py
+from uscbp.image_utils import save_to_png
 
 class SED(Document):
     """
@@ -44,18 +51,23 @@ class SED(Document):
             ('public_sed', 'Can make the SED public'),
             )
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         notify=False
         # creating a new object
         if self.id is None:
             notify=True
-        elif SED.objects.filter(id=self.id).count():
-            made_public=not SED.objects.get(id=self.id).public and self.public
-            made_not_draft=SED.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_sed=SED.objects.get(id=self.id)
+            except (SED.DoesNotExist, SED.MultipleObjectsReturned), err:
+                existing_sed=None
+            if existing_sed is not None:
+                made_public=not existing_sed.public and self.public
+                made_not_draft=existing_sed.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
-        super(SED, self).save()
+        super(SED, self).save(*args, **kwargs)
 
         if notify:
             # send notifications to subscribed users
@@ -69,37 +81,41 @@ class SED(Document):
     @staticmethod
     def get_literature_seds(literature, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(literature=literature) &
-                                    Document.get_security_q(user))).distinct()
+                                    Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return SED.objects.filter(Q(Q(type='generic') & Q(related_region_document__brain_region=brain_region) &
-                                    Document.get_security_q(user))).distinct()
+                                    Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
-    def get_sed_list(seds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_sed_list(seds, workspace_seds, fav_docs, subscriptions):
         sed_list=[]
         for sed in seds:
-            if CoCoMacConnectivitySED.objects.filter(id=sed.id).count():
-                sed=CoCoMacConnectivitySED.objects.get(id=sed.id)
-            if BredeBrainImagingSED.objects.filter(id=sed.id).count():
-                sed=BredeBrainImagingSED.objects.get(id=sed.id)
-            selected=active_workspace is not None and active_workspace.related_seds.filter(id=sed.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=sed.id).count()>0
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=sed.collator,
-                user=user, model_type='SED').count()>0
+            try:
+                cocomac_sed=CoCoMacConnectivitySED.objects.select_related('collator','source_region__cocomacbrainreigon','target_region__cocomacbrainregion').get(id=sed.id)
+            except (CoCoMacConnectivitySED.DoesNotExist, CoCoMacConnectivitySED.MultipleObjectsReturned), err:
+                cocomac_sed=None
+            if cocomac_sed is not None:
+                sed=cocomac_sed
+
+            try:
+                brede_sed=BredeBrainImagingSED.objects.select_related('collator').get(id=sed.id)
+            except (BredeBrainImagingSED.DoesNotExist, BredeBrainImagingSED.MultipleObjectsReturned), err:
+                brede_sed=None
+            if brede_sed is not None:
+                sed=brede_sed
+
+            selected=sed.id in workspace_seds
+            is_favorite=sed.id in fav_docs
+            subscribed_to_user=(sed.collator.id,'SED') in subscriptions
             sed_list.append([selected,is_favorite,subscribed_to_user,sed])
         return sed_list
 
     @staticmethod
     def get_tagged_seds(name, user):
         return SED.objects.filter(Q(type='generic') & Q(tags__name__iexact=name) &
-                                  Document.get_security_q(user)).distinct()
+                                  Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 # ERP SED Model, inherits from SED
@@ -121,16 +137,16 @@ class ERPSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return ERPSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         return ERPSED.objects.filter(Q(Q(related_region_document__brain_region=brain_region) &
-                                       Document.get_security_q(user))).distinct()
+                                       Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ERPSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 class ElectrodeCap(models.Model):
@@ -158,7 +174,7 @@ class ERPComponent(models.Model):
     erp_sed=models.ForeignKey(ERPSED, related_name = 'components')
     component_name=models.CharField(max_length=100)
 
-    latency_peak=models.DecimalField(decimal_places=3, max_digits=10, null=False)
+    latency_peak=models.DecimalField(decimal_places=3, max_digits=10, null=True)
     latency_peak_type=models.CharField(max_length=100, choices=LATENCY_CHOICES, default='exact')
     latency_onset=models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
 
@@ -194,6 +210,7 @@ class ERPComponent(models.Model):
 # A summary of brain imaging data: inherits from SED
 class BrainImagingSED(SED):
     METHOD_CHOICES = (
+        ('', ''),
         ('fMRI', 'fMRI'),
         ('PET', 'PET'),
         )
@@ -213,7 +230,7 @@ class BrainImagingSED(SED):
     # description of experimental condition
     experimental_condition = models.TextField()
     # coordinate space
-    coord_space = models.ForeignKey('CoordinateSpace')
+    coord_space = models.ForeignKey('CoordinateSpace',null=True)
     # basic column headers
     core_header_1 = models.CharField(max_length=20, choices=HEADER_CHOICES, default='hemisphere')
     core_header_2 = models.CharField(max_length=20, choices=HEADER_CHOICES, default='x y z')
@@ -235,25 +252,29 @@ class BrainImagingSED(SED):
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return BrainImagingSED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        region_q=Q(coordinates__named_brain_region=brain_region) | \
+        region_q=Q(coordinates__named_brain_region=brain_region.name) | \
+                 Q(coordinates__named_brain_region=brain_region.abbreviation) | \
                  Q(coordinates__coord__brainregionvolume__brain_region__name=brain_region) | \
                  Q(coordinates__coord__brainregionvolume__brain_region__parent_region__name=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
+        return BrainImagingSED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator').order_by('title')
 
     @staticmethod
-    def augment_sed_list(sed_list, coords):
+    def augment_sed_list(sed_list, coords, selected_coords):
         for sed_list_item,coord_list in zip(sed_list,coords):
-            sed_list_item.append(coord_list)
+            sed_coord_list=[]
+            for coord in coord_list:
+                sed_coord_list.append((coord,coord.id in selected_coords))
+            sed_list_item.append(sed_coord_list)
         return sed_list
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return BrainImagingSED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 # SED coordinate
@@ -296,6 +317,9 @@ class SEDCoord(models.Model):
             'y': self.coord.y,
             'z': self.coord.z
         }
+
+    def is_selected(self, user):
+        return SelectedSEDCoord.objects.filter(selected=True, user__id=user.id, sed_coordinate__id=self.id).exists()
 
 
 class BredeBrainImagingSED(BrainImagingSED):
@@ -412,34 +436,56 @@ class ConnectivitySED(SED):
     def as_json(self):
         json=super(ConnectivitySED,self).as_json()
         json['url_str']=self.html_url_string()
+        json['source_region']=self.source_region.id
+        json['target_region']=self.target_region.id
         return json
 
     @staticmethod
     def get_literature_seds(literature, user):
-        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct()
+        return ConnectivitySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
         region_q=Q(source_region=brain_region) | Q(target_region=brain_region) | \
                  Q(related_region_document__brain_region=brain_region)
-        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
+        return ConnectivitySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
     @staticmethod
     def get_tagged_seds(name, user):
-        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return ConnectivitySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','source_region__nomenclature','target_region__nomenclature').prefetch_related('source_region__nomenclature__species','target_region__nomenclature__species').order_by('title')
 
+    @staticmethod
+    def get_region_map(conn_seds):
+        map={}
+        for sed in conn_seds:
+            if not sed.source_region.id in map:
+                map[sed.source_region.id]={'str':'%s - %s' % (sed.source_region.__unicode__(),sed.source_region.nomenclature.__unicode__()),
+                                           'name': sed.source_region.name,
+                                           'abbreviation': sed.source_region.abbreviation,
+                                           'nomenclature': sed.source_region.nomenclature.__unicode__()}
+            if not sed.target_region.id in map:
+                map[sed.target_region.id]={'str':'%s - %s' % (sed.target_region.__unicode__(),sed.target_region.nomenclature.__unicode__()),
+                                           'name': sed.target_region.name,
+                                           'abbreviation': sed.target_region.abbreviation,
+                                           'nomenclature': sed.target_region.nomenclature.__unicode__()}
+        return map
 
 class CoCoMacConnectivitySED(ConnectivitySED):
     class Meta:
         app_label='bodb'
 
     def html_url_string(self):
-        if CoCoMacBrainRegion.objects.filter(brain_region__id=self.source_region.id) and \
-           CoCoMacBrainRegion.objects.filter(brain_region__id=self.target_region.id):
+        try:
+            cocomac_source=CoCoMacBrainRegion.objects.get(brain_region__id=self.source_region.id)
+            cocomac_target=CoCoMacBrainRegion.objects.get(brain_region__id=self.target_region.id)
+        except (CoCoMacBrainRegion.DoesNotExist, CoCoMacBrainRegion.MultipleObjectsReturned), err:
+            cocomac_source=None
+            cocomac_target=None
+
+        if cocomac_source is not None and cocomac_target is not None:
             cocomac_url='http://cocomac.g-node.org/cocomac2/services/axonal_projections.php?axonOriginList='
             #cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
 
-            cocomac_source=CoCoMacBrainRegion.objects.get(brain_region__id=self.source_region.id)
             source_id=cocomac_source.cocomac_id.split('-',1)
             cocomac_url+='%s-%s' % (source_id[0],source_id[1])
 #            cocomac_url+="(\\'"+source_id[0]+"\\')[SourceMap]"
@@ -447,7 +493,6 @@ class CoCoMacConnectivitySED(ConnectivitySED):
 #            cocomac_url+="(\\'"+source_id[1]+"\\') [SourceSite]"
 #            cocomac_url+=" AND "
 
-            cocomac_target=CoCoMacBrainRegion.objects.get(brain_region__id=self.target_region.id)
             target_id=cocomac_target.cocomac_id.split('-',1)
             cocomac_url+='&axonTerminalList=%s-%s' % (target_id[0],target_id[1])
 #            cocomac_url+="(\\'"+target_id[0]+"\\')[TargetMap]"
@@ -458,45 +503,6 @@ class CoCoMacConnectivitySED(ConnectivitySED):
             return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in CoCoMac</a>' % (cocomac_url,
                                                                                                       cocomac_url)
         return ''
-
-
-def conn_sed_gxl(conn_seds):
-    glx='<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n'
-    glx+='<gxl xmlns="http://www.gupro.de/GXL/gxl-1.0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    glx+='<graph id="connectivity-sed-map" edgeids="true" edgemode="directed" hypergraph="false">\n'
-    glx+='<attr name="overlap"><string>scale</string></attr>\n'
-    nodes={}
-    for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.source_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        targetname=str(sed.target_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.target_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        if not str(sed.source_region.__unicode__()) in nodes:
-            nodes[str(sed.source_region.__unicode__())]=[]
-        nodes[str(sed.source_region.__unicode__())].append((sourcename, sed.source_region.id))
-        if not str(sed.target_region.__unicode__()) in nodes:
-            nodes[str(sed.target_region.__unicode__())]=[]
-        nodes[str(sed.target_region.__unicode__())].append((targetname, sed.target_region.id))
-    for i,(node_name, children) in enumerate(nodes.iteritems()):
-        glx+='<node id="'+node_name.replace('"','\'').replace('&','&amp;')+'">\n'
-        glx+='<graph id="cluster_%d" edgeids="true" edgemode="directed" hypergraph="false">\n' % i
-        for (name,id) in children:
-            glx+='<node id="'+name+'">\n'
-            glx+='<type xlink:href="/bodb/brain_region/'+str(id)+'/" xlink:type="simple"/>\n'
-            glx+='</node>\n'
-        glx+='</graph>\n'
-        glx+='</node>\n'
-    for sed in conn_seds:
-        sourcename=str(sed.source_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.source_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        targetname=str(sed.target_region.__unicode__().replace('"','\'').replace('&','&amp;'))+' ('+\
-                   sed.target_region.nomenclature.name.replace('"','\'').replace('&','&amp;')+')'
-        glx+='<edge id="'+str(sed.id)+'" to="'+targetname+'" from="'+sourcename+'">\n'
-        glx+='<type xlink:href="/bodb/sed/'+str(sed.id)+'/" xlink:type="simple"/>\n'
-        glx+='</edge>\n'
-    glx+='</graph>\n'
-    glx+='</gxl>\n'
-    return glx
 
 
 # An SED used to build a model or support a BOP
@@ -518,58 +524,71 @@ class BuildSED(models.Model):
         app_label='bodb'
         ordering=['sed__title']
 
+    def as_json(self):
+        return {
+            'id': self.id,
+            'document_id': self.document.id,
+            'sed': self.sed.as_json(),
+            'relationship': self.relationship,
+            'relevance_narrative': self.relevance_narrative,
+        }
+
     @staticmethod
-    def get_building_sed_list(bseds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_building_sed_list(bseds, workspace_seds, fav_docs, subscriptions):
         build_sed_list=[]
         for buildsed in bseds:
-            selected=active_workspace is not None and \
-                     active_workspace.related_seds.filter(id=buildsed.sed.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=buildsed.sed.id).count()>0
-            subscribed_to_user=profile is not None and \
-                               UserSubscription.objects.filter(subscribed_to_user=buildsed.sed.collator, user=user,
-                                   model_type='SED').count()>0
+            selected=buildsed.sed.id in workspace_seds
+            is_favorite=buildsed.sed.id in fav_docs
+            subscribed_to_user=(buildsed.sed.collator.id, 'SED') in subscriptions
             build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed])
         return build_sed_list
 
     @staticmethod
+    def get_imaging_building_sed_list(bseds, workspace_seds, fav_docs, subscriptions):
+        build_sed_list=[]
+        for (buildsed,coords) in bseds:
+            selected=buildsed.sed.id in workspace_seds
+            is_favorite=buildsed.sed.id in fav_docs
+            subscribed_to_user=(buildsed.sed.collator.id, 'SED') in subscriptions
+            build_sed_list.append([selected,is_favorite,subscribed_to_user,buildsed,coords])
+        return build_sed_list
+
+    @staticmethod
     def get_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct()
+        return BuildSED.objects.filter(Q(Q(document=document) & Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_generic_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__type='generic') &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_connectivity_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__connectivitysed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
     @staticmethod
     def get_imaging_building_seds(document, user):
-        return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+        build_seds=BuildSED.objects.filter(Q(Q(document=document) & Q(sed__brainimagingsed__isnull=False) &
+                                             Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
+        build_sed_list=[]
+        for build_sed in build_seds:
+            sed_coords=SEDCoord.objects.filter(sed=build_sed.sed).select_related('coord')
+            sed_coord_list=[]
+            for sed_coord in sed_coords:
+                sed_coord_list.append((sed_coord,sed_coord.is_selected(user)))
+            build_sed_list.append((build_sed,sed_coord_list))
+        return build_sed_list
+
 
     @staticmethod
     def get_erp_building_seds(document, user):
         return BuildSED.objects.filter(Q(Q(document=document) & Q(sed__erpsed__isnull=False) &
-                                         Document.get_security_q(user, field='sed'))).distinct()
+                                         Document.get_security_q(user, field='sed'))).distinct().select_related('sed__collator').order_by('sed__title')
 
 
 def compareBuildSEDs(a, b):
     return cmp(a.sed.title.lower(), b.sed.title.lower())
-
-class TestSEDSSR(models.Model):
-    test_sed=models.ForeignKey('TestSED')
-    ssr=models.ForeignKey('SSR', null=True)
-
-    class Meta:
-        app_label='bodb'
 
 # An SED used to test a model prediction
 class TestSED(models.Model):
@@ -581,6 +600,8 @@ class TestSED(models.Model):
     model=models.ForeignKey('Model', related_name='related_test_sed_document')
     # the SED
     sed = models.ForeignKey('SED', related_name='test_sed',null=True)
+    # the SSR
+    ssr=models.ForeignKey('SSR', null=True)
     # the relationship between the SSR and SED
     relationship = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
     # relevance narrative - how the SED relates to the SSR in detail
@@ -589,30 +610,29 @@ class TestSED(models.Model):
     class Meta:
         app_label='bodb'
 
-    def save(self, force_insert=False, force_update=False):
-        super(TestSED, self).save()
+    def save(self, *args, **kwargs):
+        super(TestSED, self).save(*args, **kwargs)
+
+    def as_json(self):
+        return {
+            'id': self.id,
+            'model_id': self.model.id,
+            'sed': self.sed.as_json(),
+            'ssr': self.ssr.as_json(),
+            'relationship': self.relationship,
+            'relevance_narrative': self.relevance_narrative,
+        }
 
     @staticmethod
-    def get_testing_sed_list(tseds, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_testing_sed_list(tseds, workspace_seds, workspace_ssrs, fav_docs, subscriptions):
         test_sed_list=[]
         for testsed in tseds:
-            sed_selected=active_workspace is not None and \
-                         active_workspace.related_seds.filter(id=testsed.sed.id).count()>0
-            sed_is_favorite=profile is not None and profile.favorites.filter(id=testsed.sed.id).count()>0
-            sed_subscribed_to_user=profile is not None and \
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.sed.collator, user=user,
-                                       model_type='SED').count()>0
-            ssr_selected=active_workspace is not None and \
-                         active_workspace.related_ssrs.filter(id=testsed.get_ssr().id).count()>0
-            ssr_is_favorite=profile is not None and profile.favorites.filter(id=testsed.get_ssr().id).count()>0
-            ssr_subscribed_to_user=profile is not None and\
-                                   UserSubscription.objects.filter(subscribed_to_user=testsed.get_ssr().collator,
-                                       user=user, model_type='SSR').count()>0
+            sed_selected=testsed.sed.id in workspace_seds
+            sed_is_favorite=testsed.sed.id in fav_docs
+            sed_subscribed_to_user=(testsed.sed.collator.id,'SED') in subscriptions
+            ssr_selected=testsed.ssr.id in workspace_ssrs
+            ssr_is_favorite=testsed.ssr.id in fav_docs
+            ssr_subscribed_to_user=(testsed.ssr.collator.id,'SSR') in subscriptions
             test_sed_list.append([sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,
                                   ssr_subscribed_to_user,testsed])
         return test_sed_list
@@ -620,36 +640,31 @@ class TestSED(models.Model):
     @staticmethod
     def get_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_generic_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__type='generic') &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_connectivity_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__connectivitysed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_imaging_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__brainimagingsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
     @staticmethod
     def get_erp_testing_seds(model, user):
         return TestSED.objects.filter(Q(Q(model=model) & Q(sed__erpsed__isnull=False) &
                                         Document.get_security_q(user, field='sed') &
-                                        Document.get_security_q(user, field='testsedssr__ssr'))).distinct()
-
-    def get_ssr(self):
-        if TestSEDSSR.objects.filter(test_sed=self).count()>0:
-            return TestSEDSSR.objects.filter(test_sed=self)[0].ssr
-        return None
+                                        Document.get_security_q(user, field='ssr'))).distinct().select_related('sed__collator','ssr__collator').order_by('sed__title')
 
 
 def compareTestSEDs(a, b):
@@ -662,20 +677,26 @@ def find_similar_seds(user, title, brief_description):
     for sed in other_seds:
         total_match=0
         for title_word in title.split(' '):
-            if sed.title.find(title_word)>=0:
+            if not title_word in stop_words and sed.title.find(title_word)>=0:
                 total_match+=1
         for desc_word in brief_description.split(' '):
-            if sed.brief_description.find(desc_word)>=0:
+            if not desc_word in stop_words and sed.brief_description.find(desc_word)>=0:
                 total_match+=1
-        similar.append((sed,total_match))
+        if total_match>0:
+            similar.append((sed,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
 
 
 # A summary of neurophysiological data: inherits from SED
 class NeurophysiologySED(SED):
+    subject_species=models.ForeignKey('Species', related_name='subject')
+
     class Meta:
         app_label='bodb'
+        permissions=(
+            ('export','Export raw data'),
+        )
 
     @staticmethod
     def get_literature_seds(literature, user):
@@ -683,7 +704,7 @@ class NeurophysiologySED(SED):
 
     @staticmethod
     def get_brain_region_seds(brain_region, user):
-        region_q=Q(neurophysiology_condition__recordingtrial__unit__area=brain_region) |\
+        region_q=Q(neurophysiologycondition__recordingtrial__unit__area=brain_region) |\
                  Q(related_region_document__brain_region=brain_region)
         return NeurophysiologySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct()
 
@@ -691,15 +712,54 @@ class NeurophysiologySED(SED):
     def get_tagged_seds(name, user):
         return NeurophysiologySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
 
+    def export(self, output_file):
+        f = h5py.File(output_file, 'w')
+        f.attrs['id']=self.id
+        f.attrs['collator']=np.string_(self.collator.__unicode__())
+        f.attrs['title']=np.string_(self.title)
+        f.attrs['brief_description']=np.string_(self.brief_description)
+        f.attrs['narrative']=np.string_(self.narrative)
+        f.attrs['subject_species']=np.string_(self.subject_species.__unicode__())
+        
+        f_conditions=f.create_group('conditions')
+        for condition in NeurophysiologyCondition.objects.filter(sed=self):
+            f_condition=f_conditions.create_group(str(condition.id))
+
+            if condition.type=='grasp_observe':
+                condition=GraspObservationCondition.objects.get(id=condition.id)
+            elif condition.type=='grasp_perform':
+                condition=GraspPerformanceCondition.objects.get(id=condition.id)
+            condition.export(f_condition)
+
+        f_units=f.create_group('units')
+        for unit in Unit.objects.filter(recordingtrial__condition__sed=self).distinct():
+            f_unit=f_units.create_group(str(unit.id))
+            unit.export(f_unit)
+
+        f_trials=f.create_group('trials')
+        for trial in RecordingTrial.objects.filter(condition__sed=self).distinct():
+            f_trial=f_trials.create_group('condition_%d.unit_%d.trial_%d' % (trial.condition.id, trial.unit.id,
+                                                                             trial.trial_number))
+            trial.export(f_trial)
+
+        f.close()
+
 
 class NeurophysiologyCondition(models.Model):
     sed=models.ForeignKey('NeurophysiologySED')
     name=models.CharField(max_length=100)
     description=models.TextField()
+    type=models.CharField(max_length=50)
 
     class Meta:
         app_label='bodb'
 
+    def export(self, group):
+        group.attrs['id']=self.id
+        group.attrs['name']=np.string_(self.name)
+        group.attrs['description']=np.string_(self.description)
+        group.attrs['type']=np.string_(self.type)
+        
     def plot_trial_spikes(self, unit, ax, event_colors, x_min, x_max, align_to=None):
         trials=RecordingTrial.objects.filter(unit=unit, condition=self)
         for trial_idx, trial in enumerate(trials):
@@ -783,12 +843,68 @@ class NeurophysiologyCondition(models.Model):
             plt.show()
 
 
+class GraspCondition(NeurophysiologyCondition):
+    object=models.CharField(max_length=50)
+    object_distance=models.DecimalField(max_digits=6, decimal_places=3)
+    grasp=models.CharField(max_length=50)
+
+    class Meta:
+        app_label='bodb'
+        
+    def export(self, group):
+        super(GraspCondition,self).export(group)
+        group.attrs['object']=np.string_(self.object)
+        group.attrs['object_distance']=float(self.object_distance)
+        group.attrs['grasp']=np.string_(self.grasp)
+
+
+class GraspPerformanceCondition(GraspCondition):
+    hand_visible = models.BooleanField()
+    object_visible = models.BooleanField()
+
+    class Meta:
+        app_label='bodb'
+
+    def export(self, group):
+        super(GraspPerformanceCondition,self).export(group)
+
+        group.attrs['hand_visible']=self.hand_visible
+        group.attrs['object_visible']=self.object_visible
+
+
+class GraspObservationCondition(GraspCondition):
+    DEMONSTRATION_CHOICES=(
+        ('live','live'),
+        ('video','video')
+    )
+    demonstrator_species=models.ForeignKey('Species', related_name='demonstrator')
+    demonstration_type=models.CharField(max_length=30, choices=DEMONSTRATION_CHOICES)
+    viewing_angle=models.DecimalField(max_digits=6, decimal_places=3)
+    whole_body_visible = models.BooleanField()
+
+    class Meta:
+        app_label='bodb'
+
+    def export(self, group):
+        super(GraspObservationCondition,self).export(group)
+
+        group.attrs['demonstrator_species']=np.string_(self.demonstrator_species.__unicode__())
+        group.attrs['demonstration_type']=np.string_(self.demonstration_type)
+        group.attrs['viewing_angle']=float(self.viewing_angle)
+        group.attrs['whole_body_visible']=self.whole_body_visible
+
+
 class Unit(models.Model):
     type=models.CharField(max_length=50)
     area=models.ForeignKey('BrainRegion')
 
     class Meta:
         app_label='bodb'
+
+    def export(self, group):
+        group.attrs['id']=self.id
+        group.attrs['type']=np.string_(self.type)
+        group.attrs['area']=np.string_(self.area.__unicode__())
 
     def plot_condition_spikes(self, condition_ids, bin_width, align_to=None, filename=None):
 
@@ -854,6 +970,19 @@ class RecordingTrial(models.Model):
         for idx,spike in enumerate(spikes):
             if len(spike) and float(spike)>=float(self.start_time)-1.0 and float(spike)<float(self.end_time)+1.0:
                 self.spike_times_array[idx]=float(spike)
+
+    def export(self, group):
+        group.attrs['trial_number']=self.trial_number
+        group.attrs['unit']=self.unit.id
+        group.attrs['condition']=self.condition.id
+        group.attrs['start_time']=float(self.start_time)
+        group.attrs['end_time']=float(self.end_time)
+        group['spike_times']=self.get_relative_spike_times()
+        f_events=group.create_group('events')
+        for event in Event.objects.filter(trial=self):
+            f_event=f_events.create_group(event.name)
+            f_event.attrs['description']=np.string_(event.description)
+            f_event.attrs['time']=float(event.time)
 
     def get_relative_spike_times(self, align_to=None):
         align_time=self.start_time
@@ -1095,3 +1224,62 @@ def save_to_eps(fig, output_file):
     fig.set_facecolor("#FFFFFF")
     canvas = FigureCanvasAgg(fig)
     canvas.print_eps(output_file, dpi=72)
+
+class NeurophysiologySEDExportRequest(models.Model):
+    STATUS_OPTIONS=(
+        ('',''),
+        ('accepted','accepted'),
+        ('declined','declined')
+    )
+    sed=models.ForeignKey('NeurophysiologySED')
+    requesting_user=models.ForeignKey(User, related_name='requesting_user')
+    request_body=models.CharField(max_length=1000, blank=False)
+    status=models.CharField(max_length=20, choices=STATUS_OPTIONS, blank=True)
+    activation_key = models.CharField('activation key', max_length=40)
+    sent=models.DateTimeField(auto_now=True, blank=True)
+
+    class Meta:
+        app_label='bodb'
+
+    def send(self):
+        # message subject
+        subject = 'Request to export neurophysiology data'
+        # message text
+        text = 'You\'ve been sent a request by %s to export data from the Neurophysiology SED: %s.<br>' % (
+            self.requesting_user, self.sed.__unicode__())
+        text += self.request_body
+        text += '<br>Click one of the following links to accept or decline the request:<br>'
+        accept_url = ''.join(
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export_request/accept/%s/' % self.activation_key])
+        decline_url = ''.join(
+            ['http://', get_current_site(None).domain, '/bodb/sed/neurophysiology/export_request/decline/%s/' % self.activation_key])
+        text += '<a href="%s">Accept</a><br>' % accept_url
+        text += 'or<br>'
+        text += '<a href="%s">Decline</a>' % decline_url
+        self.sent=datetime.datetime.now()
+        # send internal message
+        profile=BodbProfile.objects.get(user__id=self.sed.collator.id)
+        notification_type = profile.notification_preference
+        if notification_type == 'message' or notification_type == 'both':
+            message = Message(recipient=self.sed.collator, subject=subject, read=False)
+            message.text = text
+            message.save()
+
+        # send email message
+        if notification_type == 'email' or notification_type == 'both':
+            msg = EmailMessage(subject, text, 'uscbrainproject@gmail.com', [self.sed.collator.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send(fail_silently=True)
+
+    def save(self, **kwargs):
+        if self.id is None:
+            salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+            username = self.requesting_user.username
+            if isinstance(username, unicode):
+                username = username.encode('utf-8')
+            self.activation_key = hashlib.sha1(salt+username).hexdigest()
+
+            self.send()
+        super(NeurophysiologySEDExportRequest,self).save(**kwargs)
+
+

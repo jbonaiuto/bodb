@@ -25,23 +25,35 @@ def runBOPSearch(search_data, userId, exclude=None):
             filters.append(dispatch(userId))
 
     # restrict to user's own entries or those of other users that are not drafts
-    if User.objects.filter(id=userId):
+    try:
         user=User.objects.get(id=userId)
-    else:
+    except (User.DoesNotExist, User.MultipleObjectsReturned), err:
         user=User.get_anonymous()
 
     q=reduce(op,filters) & Document.get_security_q(user)
 
     # get results
     if q and len(q):
-        results = BOP.objects.filter(q).select_related().distinct()
+        results = BOP.objects.filter(q).select_related('collator').distinct()
     else:
-        results = BOP.objects.all().select_related()
+        results = BOP.objects.all().select_related('collator')
 
     if exclude is not None and not exclude=='None' and len(exclude):
         results=results.exclude(id=int(exclude))
 
-    return results.order_by('title')
+    if 'bop_order_by' in search_data:
+        if search_data['bop_order_by']=='collator':
+            results=list(results)
+            results.sort(key=BOP.get_collator_str, reverse=search_data['bop_direction']=='descending')
+        else:
+            results=results.order_by(search_data['bop_order_by'])
+            if 'bop_direction' in search_data and search_data['bop_direction']=='descending':
+                results=results.reverse()
+    else:
+        results=results.order_by('title')
+
+
+    return results
 
 
 class BOPSearch(DocumentWithLiteratureSearch):

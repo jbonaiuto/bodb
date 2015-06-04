@@ -12,10 +12,19 @@
             {
                 $.cookie('index_page_tour_seen', 'TRUE', {expires: 365});
                 {% if user.is_authenticated and not user.is_anonymous %}
-                    window.location = '/bodb/insert/?show_tour=1';
+                    if($.cookie('insert_page_tour_seen') != 'TRUE'){
+                        window.location = '/bodb/insert/?show_tour=1';
+                    }
+                    else if($.cookie('search_page_tour_seen') != 'TRUE'){
+                        window.location = '/bodb/search/?show_tour=1';
+                    }
+                    else if($.cookie('workspace_page_tour_seen') != 'TRUE'){
+                        window.location = '/bodb/workspace/active/?show_tour=1';
+                    }
                 {% else %}
-                    $.cookie('insert_page_tour_seen', 'TRUE', {expires: 365, path: '/bodb'});
-                    window.location = '/bodb/search/?show_tour=1';
+                    if($.cookie('search_page_tour_seen') != 'TRUE'){
+                        window.location = '/bodb/search/?show_tour=1';
+                    }
                 {% endif %}
             }
         };
@@ -27,6 +36,27 @@
             });
             return false;
         }
+
+        $(window).load(function() {
+            if( $.cookie('index_page_tour_seen') != 'TRUE'){
+                startTour();
+            }
+            {% if user.is_authenticated and not user.is_anonymous %}
+                else if($.cookie('insert_page_tour_seen') != 'TRUE'){
+                    window.location = '/bodb/insert/?show_tour=1';
+                }
+                else if($.cookie('search_page_tour_seen') != 'TRUE'){
+                    window.location = '/bodb/search/?show_tour=1';
+                }
+                else if($.cookie('workspace_page_tour_seen') != 'TRUE'){
+                    window.location = '/bodb/workspace/active/?show_tour=1';;
+                }
+            {% else %}
+                else if($.cookie('search_page_tour_seen') != 'TRUE'){
+                    window.location = '/bodb/search/?show_tour=1';
+                }
+            {% endif %}
+        });
     </script>
 {% endblock %}
 {% block content %}

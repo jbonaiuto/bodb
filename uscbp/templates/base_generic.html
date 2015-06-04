@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load guardian_tags %}
 {% load taggit_extras %}
+{% load cache %}
 <head>
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
     <script src="http://java.com/js/deployJava.js"></script>
@@ -14,6 +15,7 @@
     <script type="text/javascript" src="{% static 'bodb/scripts/popup.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery.textarearesizer.js' %}"></script>
+    {% include 'autocomplete_light/static.html' %}
     <script type="text/javascript">
         $(document).ready(function()
         {
@@ -30,7 +32,7 @@
                     document.getElementById("tagBarLabel").innerHTML=(state=="none")?"&gt;" : "&lt;";
                     document.getElementById('sidebar').style.width=(state=="none")?"10px" : "250px";
                     document.getElementById('content').style.marginLeft=(state=="none")?"15px" : "255px";
-                    document.getElementById('controlCell').style.background=(state=="none")?"#c5cbd4" : "#ffffff";
+                    //document.getElementById('controlCell').style.background=(state=="none")?"#c5cbd4" : "#ffffff";
                 }
                 else if(divobj.id.substr(0,9)=="expansion")
                     document.getElementById(divobj.id+"Label").innerHTML=(state=="block")?"Collapse" : "Expand";
@@ -42,7 +44,7 @@
         function createWebStartLink(jnlp, text, minimumVersion)
         {
 
-            if (deployJava.returnPage == null) {
+            if (typeof(deployJava) != 'undefined' && deployJava.returnPage == null) {
                 // if there is an install, come back and run the jnlp file
                 deployJava.returnPage = jnlp;
             }
@@ -82,6 +84,10 @@
     <div id="backgroundPopup"></div>
     <div id='savingMsg' style='display: none;'>Saving, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='savingOver' style='display: none;'></div>
+    <div id='deletingMsg' style='display: none;'>Deleting, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
+    <div id='deletingOver' style='display: none;'></div>
+    <div id='realigningMsg' style='display: none;'>Realigning, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
+    <div id='realigningOver' style='display: none;'></div>
     <div id='searchingMsg' style='display: none;'>Searching, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='searchingOver' style='display: none;'></div>
     {% if ispopup %}
@@ -91,13 +97,12 @@
     {% else %}
         <table style="width:100%" cellpadding=0 cellspacing=0>
             <tr>
-                <td><h1><img height=55 src="{% static 'bodb/images/uscbp.png' %}"/> <a href="/bodb/">BODB</a></h1></td>
+                <td><h1><img height=55 src="{% static 'bodb/images/uscbp.png' %}"/> <a href="/bodb/?ignore_redirect=1">BODB</a></h1></td>
                 <td align=left>
                     <div id="user_info">
-                        {% if user.is_authenticated and not user.is_anonymous  %}
-                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>]&nbsp;{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
-                            <br>[<a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;
-                            [<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ user.get_profile.active_workspace.title }}</span></a>]
+                        {% if user.is_authenticated and not user.is_anonymous and user.id > -1  %}
+                            Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>, <a id="myProfileLink" href="/accounts/profile">My Profile</a>, <a id="regionRequestLink" href="/bodb/brain_region/requests/">Brain Region Requests</a>]&nbsp;{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
+                            <br>[<a id="activeWorkspaceLink" href="/bodb/workspace/active/">Active Workspace: <span id="active_workspace_title">{{ active_workspace.title }}</span></a>] [Change Active Workspace: <select id="id_active_workspace_select" name="active_workspace_select" onchange="selectActiveWorkspace(this.value,'{{ csrf_token }}')">{% for workspace in profile.get_workspaces %}<option value="{{ workspace.id }}" {% if workspace.id == active_workspace.id %}selected{% endif %}>{{ workspace.title|truncatechars:25 }}</option>{% endfor %}</select>]
                         {% else %}
                             <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
                             <br>{% if helpPage %}[<a id="help_link" href="" onclick="return openHelp('{{ helpPage }}');">Help</a>]&nbsp;{% endif %}
@@ -105,11 +110,11 @@
                     </div>
                 </td>
                 <td width="110px" align=right valign="top">
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and not user.is_anonymous and user.id > -1 %}
                         <div id="user_img">
                             <a href="/bodb/messages/" style="display:inline; position: relative;bottom: 20px;left: 10px;"><img id="messagesLink" src="{% static "bodb/images/mail.png" %}"/><div style="display:inline; position: relative;left: -10px; bottom: 10px;font-weight: bold;font-size: 9px;{% if message_count %}color: red;{% endif %}">{{ message_count }}</div></a>
-                            {% if user.get_profile.avatar %}
-                                <img height=55 src="{{ user.get_profile.avatar.url }}"/>
+                            {% if profile.avatar %}
+                                <img height=55 src="{{ profile.avatar.url }}"/>
                             {% else %}
                                 <img height=55 src="{% static 'bodb/images/default_avatar.png' %}"/>
                             {% endif %}
@@ -128,6 +133,7 @@
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
                 <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
+                <li id="recent_link"><a href="/bodb/recent/">Recent</a></li>
             {% endif %}
             {% if user.is_superuser %}
                 <li><a href="/bodb/admin/">Admin</a></li>
@@ -136,11 +142,12 @@
         </div>
         <b class="c4f"></b><b class="c3f"></b><b class="c2f"></b><b class="c1f"></b>
         <br>
-        <div id="sidebar" style="width:250px">
+        {% cache 1000 sidebar user.id %}
+        <div id="sidebar" style="width:260px">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
-                        <div id="tagBar" style="display:inline;width:250px;">
+                        <div id="tagBar" style="display:inline;width:245px;">
                             <div style="background:#ffffff;border:0;">
                                 <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
                             </div>
@@ -189,14 +196,17 @@
                             </div>
                         </div>
                     </td>
-                    <td id="controlCell" style="background:#ffffff;height: 450px">
-                        <span id="controlSidebar">
-                            <a href="javascript:animatedcollapse.toggle('tagBar')"><span id='tagBarLabel'>&lt;</span></a>
-                        </span>
+                    <td id="controlCell" style="background:#c5cbd4;height: 450px; cursor: pointer; vertical-align: top;" onclick="animatedcollapse.toggle('tagBar');">
+                        <div style="background:#ffffff;border:0;height: 30px;">
+                        </div>
+                        <div id="controlSidebar" style="height: 100%;">
+                            <div id='tagBarLabel' style="position: relative;top: 50%;transform: translateY(-50%);">&lt;</div>
+                        </div>
                     </td>
                 </tr>
             </table>
         </div>
+        {% endcache %}
     {% endif %}
     <div {% if not ispopup %}id="content"{% endif %}>
         {% block content%}{%endblock%}

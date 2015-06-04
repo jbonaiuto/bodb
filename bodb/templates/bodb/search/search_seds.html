@@ -21,7 +21,32 @@
             animatedcollapse.hide(['sedNeurophysiologyTypeOptions']);
     }
 
+    function updateNeurophysSEDSearchOptions(conditionType)
+    {
+        if(conditionType=='grasp_observe')
+            animatedcollapse.show(['neurophysiologyGraspObservationOptions']);
+        else
+            animatedcollapse.hide(['neurophysiologyGraspObservationOptions']);
+        if(conditionType=='grasp_perform')
+            animatedcollapse.show(['neurophysiologyGraspPerformanceOptions']);
+        else
+            animatedcollapse.hide(['neurophysiologyGraspPerformanceOptions']);
+
+    }
+
     var searchFinished=false;
+
+    var imagingSEDSortOrderBy='title';
+    var imagingSEDSortDirection='ascending';
+    var connectivitySEDSortOrderBy='title';
+    var connectivitySEDSortDirection='ascending'
+    var erpSEDSortOrderBy='title';
+    var erpSEDSortDirection='ascending'
+    var genericSEDSortOrderBy='title';
+    var genericSEDSortDirection='ascending'
+    var neurophysiologySEDSortOrderBy='title';
+    var neurophysiologySEDSortDirection='ascending'
+
 
     function submitSearchSEDs()
     {
@@ -29,11 +54,12 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#sed_search_form');
+        var data=frm.serialize()+'&generic_sed_order_by='+genericSEDSortOrderBy+'&generic_sed_direction='+genericSEDSortDirection+'&imaging_sed_order_by='+imagingSEDSortOrderBy+'&imaging_sed_direction='+imagingSEDSortDirection+'&connectivity_sed_order_by='+connectivitySEDSortOrderBy+'&connectivity_sed_direction='+connectivitySEDSortDirection+'&erp_sed_order_by='+erpSEDSortOrderBy+'&erp_sed_direction='+erpSEDSortDirection+'&neurophysiology_sed_order_by='+neurophysiologySEDSortOrderBy+'&neurophysiology_sed_direction='+neurophysiologySEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             aysnc: false,
             type: frm.attr('method'),
             url: frm.attr('action'),
-            data: frm.serialize(),
+            data: data,
             success: sedSearchFinished,
             error: function(data) {
                 alert("Something went wrong!");
@@ -48,11 +74,53 @@
         searchFinished=true;
     }
 
+    function sortImagingSEDs(order_by, direction, up_image, down_image)
+    {
+        imagingSEDSortOrderBy=order_by;
+        imagingSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortConnectivitySEDs(order_by, direction, up_image, down_image)
+    {
+        connectivitySEDSortOrderBy=order_by;
+        connectivitySEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortERPSEDs(order_by, direction, up_image, down_image)
+    {
+        erpSEDSortOrderBy=order_by;
+        erpSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortGenericSEDs(order_by, direction, up_image, down_image)
+    {
+        genericSEDSortOrderBy=order_by;
+        genericSEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
+    function sortNeurophysiologySEDs(order_by, direction, up_image, down_image)
+    {
+        neurophysiologySEDSortOrderBy=order_by;
+        neurophysiologySEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
     animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
     animatedcollapse.addDiv('sedImagingTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedConnectivityTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedERPTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedNeurophysiologyTypeOptions', 'fade=1');
+    animatedcollapse.addDiv('neurophysiologyGraspObservationOptions', 'fade=1');
+    animatedcollapse.addDiv('neurophysiologyGraspPerformanceOptions', 'fade=1');
 
     $( document ).ready(function() {
         document.getElementById('sedData').style.display='inline';
@@ -156,15 +224,83 @@
                                     <div id="sedNeurophysiologyTypeOptions" style="display:{% if sed_search_form.type.value == 'neurophysiology' %}inline{% else %}none{% endif %}">
                                         <table class="tab_panel">
                                             <tr>
+                                                <td width=20%><strong>Subject species</strong></td>
+                                                <td>{{ sed_search_form.neurophys_subject_species }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_subject_species_options }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Unit type</strong></td>
+                                                <td>{{ sed_search_form.neurophys_unit_type }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_unit_type_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Unit brain region</strong></td>
+                                                <td>{{ sed_search_form.neurophys_unit_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_unit_region_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
                                                 <td width=20%><strong>Condition</strong></td>
                                                 <td>{{ sed_search_form.neurophys_condition }}&nbsp;
                                                     <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_options }}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td><strong>Unit type</strong></td>
-                                                <td>{{ sed_search_form.neurophys_unit_type }}&nbsp;
-                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_unit_type_options }}
+                                                <td><strong>Condition Type</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width=20%><strong>Object</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition_object }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_object_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width=20%><strong>Grasp</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition_grasp }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_grasp_options }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Object distance</strong></td>
+                                                <td>{{ sed_search_form.neurophys_condition_object_distance_min }} &#8804; distance &#8804; {{ sed_search_form.neurophys_condition_object_distance_max }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div id="neurophysiologyGraspObservationOptions" style="display:{% if sed_search_form.neurophys_condition_type == 'grasp_observe' %}block{% else %}none{% endif %}">
+                                                        <table class="tab_panel">
+                                                            <tr>
+                                                                <td width=20%><strong>Whole body visibility</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_whole_body_visible }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width=20%><strong>Demonstrator species</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_demonstrator_species }}&nbsp;
+                                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.neurophys_condition_demonstrator_species_options }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><strong>Demonstration type</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_demonstration_type }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><strong>Viewing angle</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_viewing_angle_min }} &#8804; angle &#8804; {{ sed_search_form.neurophys_condition_viewing_angle_max }}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div id="neurophysiologyGraspPerformanceOptions" style="display:{% if sed_search_form.neurophys_condition_type == 'grasp_perform' %}block{% else %}none{% endif %}">
+                                                        <table class="tab_panel">
+                                                            <tr>
+                                                                <td width=20%><strong>Hand visibility</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_hand_visible }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width=20%><strong>Object visibility</strong></td>
+                                                                <td>{{ sed_search_form.neurophys_condition_object_visible }}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </table>

@@ -10,9 +10,6 @@
             var errors=0;
             clearSpan(document, 'form_errors');
             var predictionErrors=validateInlineForm('prediction', ['title', 'brief_description'], ['Title', 'Brief description']);
-            var prediction_count = $('#predictions').children().length;
-            for(var i=0; i<prediction_count; i++)
-                predictionErrors+=validateInlineForm('prediction-'+i+'-predictionssr_set', ['ssr_title', 'ssr_brief_description'], ['Title', 'Brief description']);
             errors+=predictionErrors;
             if(errors>0)
                 document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
@@ -25,6 +22,8 @@
          */
         function save()
         {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
             document.getElementById('modelForm').submit();
         }
 

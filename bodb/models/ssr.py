@@ -20,6 +20,11 @@ class SSR(Document):
             ('public_ssr', 'Can make the SSR public'),
             )
 
+    def as_json(self):
+        json=super(SSR,self).as_json()
+        json['type']=self.type
+        return json
+
     def get_absolute_url(self):
         return reverse('ssr_view', kwargs={'pk': self.pk})
 
@@ -28,11 +33,16 @@ class SSR(Document):
         # creating a new object
         if self.id is None:
             notify=True
-        elif SSR.objects.filter(id=self.id).count():
-            made_public=not SSR.objects.get(id=self.id).public and self.public
-            made_not_draft=SSR.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_ssr=SSR.objects.get(id=self.id)
+            except (SSR.DoesNotExist, SSR.MultipleObjectsReturned), err:
+                existing_ssr=None
+            if existing_ssr is not None:
+                made_public=not existing_ssr.public and self.public
+                made_not_draft=existing_ssr.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(SSR, self).save()
 
@@ -41,29 +51,25 @@ class SSR(Document):
             sendNotifications(self, 'SSR')
 
     @staticmethod
-    def get_ssr_list(ssrs, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_ssr_list(ssrs, workspace_ssrs, fav_docs, subscriptions):
         ssr_list=[]
         for ssr in ssrs:
-            selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=ssr.id).count()>0
-            is_favorite=profile is not None and profile.favorites.filter(id=ssr.id).count()>0
-            subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=ssr.collator,
-                user=user, model_type='SSR').count()>0
+            selected=ssr.id in workspace_ssrs
+            is_favorite=ssr.id in fav_docs
+            subscribed_to_user=(ssr.collator.id,'SSR') in subscriptions
             ssr_list.append([selected,is_favorite,subscribed_to_user,ssr])
         return ssr_list
 
     @staticmethod
     def get_tagged_ssrs(name, user):
-        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return SSR.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator').order_by('title')
 
 
 class Prediction(Document):
     # The model the prediction is linked to
     model=models.ForeignKey('Model', related_name = 'prediction')
+    # the SSR
+    ssr=models.ForeignKey('SSR', null=True)
 
     class Meta:
         app_label='bodb'
@@ -75,56 +81,45 @@ class Prediction(Document):
     def get_absolute_url(self):
         return reverse('prediction_view', kwargs={'pk': self.pk})
 
-    def get_ssr(self):
-        if PredictionSSR.objects.filter(prediction=self).count()>0:
-            return PredictionSSR.objects.filter(prediction=self)[0].ssr
-        return None
-
     @staticmethod
-    def get_prediction_list(predictions, user):
-        profile=None
-        active_workspace=None
-        if user.is_authenticated() and not user.is_anonymous():
-            profile=user.get_profile()
-            active_workspace=profile.active_workspace
+    def get_prediction_list(predictions, workspace_ssrs, fav_docs, subscriptions):
         prediction_list=[]
         for prediction in predictions:
-            if prediction.get_ssr() is None:
+            if prediction.ssr is None:
                 ssr_selected=False
                 ssr_is_favorite=False
                 ssr_subscribed_to_user=False
             else:
-                ssr_selected=active_workspace is not None and active_workspace.related_ssrs.filter(id=prediction.get_ssr().id).count()>0
-                ssr_is_favorite=profile is not None and profile.favorites.filter(id=prediction.get_ssr().id).count()>0
-                ssr_subscribed_to_user=profile is not None and UserSubscription.objects.filter(subscribed_to_user=prediction.get_ssr().collator,
-                    user=user, model_type='SSR').count()>0
+                ssr_selected=prediction.ssr.id in workspace_ssrs
+                ssr_is_favorite=prediction.ssr.id in fav_docs
+                ssr_subscribed_to_user=(prediction.ssr.collator.id,'SSR') in subscriptions
             prediction_list.append([ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,prediction])
         return prediction_list
 
     @staticmethod
     def get_predictions(model, user):
         return Prediction.objects.filter(Q(Q(model=model) & Document.get_security_q(user) &
-                                           Document.get_security_q(user, field='predictionssr__ssr'))).distinct()
-
-    @staticmethod
-    def get_ssrs(prediction, user):
-        return SSR.objects.filter(Q(Q(predictionssr__prediction=prediction) &
-                                    Document.get_security_q(user, field='predictionssr__ssr'))).distinct()
+                                           Document.get_security_q(user, field='ssr'))).distinct().select_related('collator','ssr__collator')
 
     @staticmethod
     def get_tagged_predictions(name, user):
-        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct()
+        return Prediction.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','ssr__collator').order_by('title')
 
     def save(self, force_insert=False, force_update=False):
         notify=False
         # creating a new object
         if self.id is None:
             notify=True
-        elif Prediction.objects.filter(id=self.id).count():
-            made_public=not Prediction.objects.get(id=self.id).public and self.public
-            made_not_draft=Prediction.objects.get(id=self.id).draft and not int(self.draft)
-            if made_public or made_not_draft:
-                notify=True
+        else:
+            try:
+                existing_prediction=Prediction.objects.get(id=self.id)
+            except (Prediction.DoesNotExist, Prediction.MultipleObjectsReturned), err:
+                existing_prediction=None
+            if existing_prediction is not None:
+                made_public=not existing_prediction.public and self.public
+                made_not_draft=existing_prediction.draft and not int(self.draft)
+                if made_public or made_not_draft:
+                    notify=True
 
         super(Prediction, self).save()
 
@@ -132,10 +127,3 @@ class Prediction(Document):
             # send notifications to subscribed users
             sendNotifications(self, 'Prediction')
 
-
-class PredictionSSR(models.Model):
-    prediction=models.ForeignKey('Prediction')
-    ssr=models.ForeignKey('SSR', null=True)
-
-    class Meta:
-        app_label='bodb'

@@ -1,6 +1,7 @@
 import urllib
 from Bio import Entrez
 from django.db.models import Q
+from bodb.search.document import DocumentWithLiteratureSearch
 from bodb.search.sed import SEDSearch
 from taggit.utils import parse_tags
 
@@ -13,9 +14,10 @@ from bodb.models import BredeBrainImagingSED, Journal, Author, LiteratureAuthor,
 def runBredeSearch(search_data, userId):
     searcher=BredeSearch(search_data)
     results=[]
-    search_local=False
+    search_local=True
     if not hasattr(searcher,'type') or (hasattr(searcher,'type') and searcher.type=='brain imaging'):
         if hasattr(searcher,'search_brede') and searcher.search_brede:
+            search_local=False
             print('Trying to search Brede')
             woBibsDoc=None
             try:
@@ -86,8 +88,9 @@ def runBredeSearch(search_data, userId):
 
         # get results
         if q and len(q):
-            return list(BredeBrainImagingSED.objects.filter(q).select_related().distinct())
-        return list(BredeBrainImagingSED.objects.all())
+            results=list(BredeBrainImagingSED.objects.filter(q).select_related('collator').distinct())
+        else:
+            results=list(BredeBrainImagingSED.objects.all().select_related('collator'))
 
     return results
 
@@ -360,7 +363,7 @@ class BredeSearch:
         return xpath_string
 
 
-class LocalBredeSearch(SEDSearch):
+class LocalBredeSearch(DocumentWithLiteratureSearch):
 
     # search by control condition
     def search_control_condition(self, userId):

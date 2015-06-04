@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import ErrorList, formset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
-from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, TestSEDSSR
+from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR
 from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
@@ -33,7 +33,7 @@ class ERPSEDForm(SEDForm):
     sensory_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     response_modality = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}), required=False)
     control_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
+    experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
         model=ERPSED
@@ -42,9 +42,9 @@ class ERPSEDForm(SEDForm):
 class ERPComponentInlineForm(forms.ModelForm):
     erp_sed = forms.ModelChoiceField(queryset=ERPSED.objects.all(),widget=forms.HiddenInput,required=False)
     component_name=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
-    latency_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}), required=True)
+    latency_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}), required=False)
     latency_peak_type=forms.ChoiceField(choices=ERPComponent.LATENCY_CHOICES,
-        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
     latency_onset=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_peak=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
     amplitude_mean=forms.DecimalField(widget=forms.TextInput(attrs={'size':'10'}),required=False)
@@ -57,7 +57,7 @@ class ERPComponentInlineForm(forms.ModelForm):
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
     channel_number=forms.CharField(widget=forms.TextInput(attrs={'size':'5'}),required=False)
     source=forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=False)
-    interpretation=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=True)
+    interpretation=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=False)
 
     class Meta:
         model=ERPComponent
@@ -70,7 +70,10 @@ ERPComponentFormSet = inlineformset_factory(ERPSED, ERPComponent, form=ERPCompon
 class BrainImagingSEDForm(SEDForm):
     control_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
     experimental_condition = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    coord_space = forms.ModelChoiceField(CoordinateSpace.objects.all(), required=True)
+    method = forms.ChoiceField(choices=BrainImagingSED.METHOD_CHOICES,
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif', 'onchange': 'updateColumns()'}),
+        required=False)
+    coord_space = forms.ModelChoiceField(CoordinateSpace.objects.all(), required=False)
     core_header_1 = forms.ChoiceField(choices=BrainImagingSED.HEADER_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif', 'onchange': 'updateColumns()'}),
         required=True)
@@ -85,7 +88,7 @@ class BrainImagingSEDForm(SEDForm):
         required=True)
     extra_header = forms.CharField(widget=forms.TextInput(attrs={'size':'50', 'onkeyup': 'updateExtraHeader(this.value)'}),
         required=False)
-    data = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'10'}),required=True)
+    data = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'10'}),required=False)
 
     class Meta:
         model=BrainImagingSED
@@ -132,53 +135,42 @@ class BuildSEDInlineForm(forms.ModelForm):
     sed = forms.ModelChoiceField(queryset=SED.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=BuildSED.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=False)
 
     class Meta:
         model=BuildSED
 
 
-BuildSEDFormSet = inlineformset_factory(Document,BuildSED,form=BuildSEDInlineForm, fk_name='document',extra=0,
-    can_delete=True)
+BuildSEDFormSet = lambda *a, **kw: inlineformset_factory(Document,BuildSED,form=BuildSEDInlineForm, fk_name='document',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
+
 
 class TestSEDInlineForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset=Model.objects.all(),widget=forms.HiddenInput,required=False)
     sed = forms.ModelChoiceField(queryset=SED.objects.all(),widget=forms.HiddenInput,required=False)
+    ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
     relationship = forms.ChoiceField(choices=TestSED.RELATIONSHIP_CHOICES,
         widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=True)
+    relevance_narrative = forms.CharField(widget=forms.Textarea(attrs={'cols':'37','rows':'3'}),required=False)
 
     class Meta:
         model=TestSED
 
 
-class TestSEDSSRInlineForm(forms.ModelForm):
-    test_sed = forms.ModelChoiceField(queryset=TestSED.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr = forms.ModelChoiceField(queryset=SSR.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr_collator = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput,required=False)
-    ssr_title = forms.CharField(widget=forms.TextInput(attrs={'size':'13'}),required=True)
-    ssr_brief_description = forms.CharField(widget=forms.Textarea(attrs={'cols':'50','rows':'3'}),required=True)
-    ssr_draft=forms.CharField(widget=forms.HiddenInput,required=False)
-    ssr_public = forms.BooleanField(widget=forms.HiddenInput, required=False)
-    ssr_type=forms.CharField(widget=forms.HiddenInput,required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(TestSEDSSRInlineForm, self).__init__(*args, **kwargs)
-        instance=kwargs.get('instance')
-        if instance is not None and instance.ssr is not None:
-            self.initial['ssr_collator']=instance.ssr.collator
-            self.initial['ssr_title']=instance.ssr.title
-            self.initial['ssr_brief_description']=instance.ssr.brief_description
-            self.initial['ssr_draft']=instance.ssr.draft
-            self.initial['ssr_public']=instance.ssr.public
-            self.initial['ssr_type']=instance.ssr.type
-
-    class Meta:
-        model = TestSEDSSR
+TestSEDFormSet = lambda *a, **kw: inlineformset_factory(Model,TestSED,form=TestSEDInlineForm, fk_name='model',
+    extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
-TestSEDFormSet = nested_formset_factory(Model,TestSED,TestSEDSSR,form=TestSEDInlineForm,
-    nested_form=TestSEDSSRInlineForm,fk_name='model',nested_fk_name='test_sed',can_delete=True,
-    nested_can_delete=True,extra=0,nested_extra=1,nested_max_num=1)
+class NeurophysiologySEDExportRequestForm(forms.Form):
+    request_body=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
 
+
+class SEDReportForm(Form):
+    format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
+    figure_display=forms.BooleanField(required=False, help_text='Display figures in report')
+    narrative_display=forms.BooleanField(required=False, help_text='Display narrative in report')
+    related_model_display=forms.BooleanField(required=False, help_text='Display related models in report')
+    related_bop_display=forms.BooleanField(required=False, help_text='Display related BOPs in report')
+    related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
+    reference_display=forms.BooleanField(required=False, help_text='Display references in report')
 

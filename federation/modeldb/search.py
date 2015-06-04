@@ -27,7 +27,7 @@ def runModelDBSearch(search_data, userId):
         result=ModelDBResult()
         result.accession_number=link[link.index('=')+1:]
         result.title=link_node.text
-        result.exists=Model.objects.filter(modeldb_accession_number=int(result.accession_number)).count()>0
+        result.exists=Model.objects.filter(modeldb_accession_number=int(result.accession_number)).exists()
 
         model_data=urllib.urlopen('http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model=%s' % result.accession_number).read()
         model_tree=etree.parse(StringIO(model_data),parser)
