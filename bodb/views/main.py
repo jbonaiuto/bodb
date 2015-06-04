@@ -80,10 +80,6 @@ class IndexView(BODBView):
 
     def get(self, request, *args, **kwargs):
         user=request.user
-        print(request.COOKIES.get('index_page_tour_seen'))
-        print(request.COOKIES.get('insert_page_tour_seen'))
-        print(request.COOKIES.get('search_page_tour_seen'))
-        print(request.COOKIES.get('workspace_page_tour_seen'))
         if user.is_authenticated() and not user.is_anonymous() and user.id>-1 and \
            (request.COOKIES.get('index_page_tour_seen')=='TRUE' and
             request.COOKIES.get('insert_page_tour_seen')=='TRUE' and
