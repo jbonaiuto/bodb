@@ -1,7 +1,6 @@
 import matplotlib
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-
 matplotlib.use('Agg')
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
@@ -15,6 +14,7 @@ from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
 import scipy.io
+from neo import io
 import matplotlib.pyplot as plt
 
 class SED(Document):
@@ -881,6 +881,27 @@ class Event(models.Model):
     class Meta:
         app_label='bodb'
 
+
+def import_bonini_data(nex_file):
+    sed=NeurophysiologySED()
+    sed.collator=User.objects.get(username='jbonaiuto')
+    sed.type='neurophysiology'
+    sed.last_modified_by=User.objects.get(username='jbonaiuto')
+    sed.title='F5 mirror neuron - Observation/Execution of Grasps'
+    sed.brief_description=''
+    sed.save()
+
+    r=io.NeuroExplorerIO(filename=nex_file)
+    block=r.read(cascade=True, lazy=False)[0]
+    for seg in block.segments:
+        fig = plt.figure()
+        ax1 = fig.add_subplot(2, 1, 1)
+        ax2 = fig.add_subplot(2, 1, 2)
+        ax1.set_title(seg.file_origin)
+        trains = [st.rescale('s').magnitude for st in seg.spiketrains]
+        colors = plt.cm.jet(np.linspace(0, 1, len(seg.spiketrains)))
+        ax2.eventplot(trains, colors=colors)
+    plt.show()
 
 def import_kraskov_data(mat_file):
     sed=NeurophysiologySED()
