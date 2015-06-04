@@ -80,7 +80,11 @@ class IndexView(BODBView):
 
     def get(self, request, *args, **kwargs):
         user=request.user
-        if user.is_authenticated() and not user.is_anonymous() and user.id>-1 and request.COOKIES.get('index_page_tour_seen')=='TRUE' and not request.GET.get('ignore_redirect',0)=='1':
+        if user.is_authenticated() and not user.is_anonymous() and user.id>-1 and \
+           (request.COOKIES.get('index_page_tour_seen')=='TRUE' and
+            request.COOKIES.get('insert_page_tour_seen')=='TRUE' and
+            request.COOKIES.get('search_page_tour_seen')=='TRUE' and
+            request.COOKIES.get('workspace_page_tour_seen')=='TRUE') and not request.GET.get('ignore_redirect',0)=='1':
             return redirect('/bodb/workspace/active/')
         else:
             return TemplateView.get(self, request, *args, **kwargs)

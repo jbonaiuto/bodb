@@ -38,7 +38,7 @@
             };
 
             $(window).load(function() {
-                if( $.cookie('search_page_tour_seen') == 'TRUE'){
+                if( $.cookie('workspace_page_tour_seen') != 'TRUE'){
                     $('#joyRideTipContent').joyride({
                         autoStart : true,
                         postRideCallback: workspace_page_tour_seen,
