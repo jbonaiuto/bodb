@@ -154,7 +154,7 @@
                                 <div id="id_prediction-<%= idx %>_ssr_title"><%= _.escape(ssr_title) %></div>
                             </td>
                             <td>
-                                <div id="id_prediction-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description) %></div>
+                                <div id="id_prediction-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></div>
                             </td>
                             <td style="width:100px">
                                 <div id="id_prediction-<%= idx %>_ssr_type"><%= _.escape(ssr_type) %></div>

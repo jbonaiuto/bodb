@@ -128,7 +128,7 @@
                                 <%= _.escape(sed_title) %>
                             </td>
                             <td>
-                                <%= _.escape(sed_brief_description) %>
+                                <%= _.escape(sed_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                             </td>
                             <td>
                                 <%= _.escape(sed_type) %>
@@ -162,7 +162,7 @@
                                 <div id="id_test_sed-<%= idx %>_ssr_title"><%= _.escape(ssr_title) %></div>
                             </td>
                             <td>
-                                <div id="id_test_sed-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description) %></div>
+                                <div id="id_test_sed-<%= idx %>_ssr_brief_description"><%= _.escape(ssr_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></div>
                             </td>
                             <td style="width:100px">
                                 <div id="id_test_sed-<%= idx %>_ssr_type"><%= _.escape(ssr_type) %></div>

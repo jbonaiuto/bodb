@@ -218,7 +218,7 @@
         <table class="tab_panel">
             <tr class="<%= getTRTag(idx) %>">
                 <td width=200px><%= _.escape(user) %></td>
-                <td width=400px><%= _.escape(body) %></td>
+                <td width=400px><%= _.escape(body).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td width=200px><%= status %></td>
                 <td><span id="invitation_sent-<%= id %>"><%= sent %></span>&nbsp;<% if(status!='accepted'){ %><a href="" onclick="return resendInvitation(<%= id %>);">Resend</a><% } %> </td>
             </tr>

@@ -60,7 +60,7 @@
                 <td colspan=2>Brief Description</td>
             </tr>
             <tr valign=top>
-                <td colspan=2>{{ module.brief_description }}</td>
+                <td colspan=2>{{ module.brief_description|linebreaks }}</td>
             </tr>
             {% if inputs or outputs or states or figures or modules %}
                 <tr>
@@ -91,7 +91,7 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr valign=top>
-                                    <td>{{ module.narrative }}</td>
+                                    <td>{{ module.narrative|linebreaks }}</td>
                                 </tr>
                             </table>
                         </div>

@@ -26,18 +26,9 @@
     $(document).ready(function(){
         {% for related_brain_region_form in related_brain_region_formset.forms %}
             {% if related_brain_region_form.instance.id %}
-                addBrainRegionMultiple({{ related_brain_region_form.instance.id }},
-                        '{{ related_brain_region_form.instance.relationship|escapejs }}',
-                        {{ related_brain_region_form.instance.brain_region.id }},
-                        ['{{ related_brain_region_form.instance.brain_region|escapejs }}',
-                            '{{ related_brain_region_form.instance.brain_region.nomenclature|escapejs }}',
-                            '{{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "|escapejs }}']);
+                addBrainRegionMultiple({{ related_brain_region_form.instance.id }}, '{{ related_brain_region_form.instance.relationship|escapejs }}', {{ related_brain_region_form.instance.brain_region.id }}, ['{{ related_brain_region_form.instance.brain_region|escapejs }}', '{{ related_brain_region_form.instance.brain_region.nomenclature|escapejs }}', '{{ related_brain_region_form.instance.brain_region.nomenclature.species.all|join:", "|escapejs }}']);
             {% else %}
-                addBrainRegionMultiple('', '{{ related_brain_region_form.initial|lookup:'relationship'|escapejs }}',
-                        {{ related_brain_region_form.initial|lookup:'brain_region' }},
-                        ['{{ related_brain_region_form.initial|lookup:'brain_region_name'|escapejs }}',
-                            '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature'|escapejs }}',
-                            '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature_species'|escapejs }}']);
+                addBrainRegionMultiple('', '{{ related_brain_region_form.initial|lookup:'relationship'|escapejs }}', {{ related_brain_region_form.initial|lookup:'brain_region' }}, ['{{ related_brain_region_form.initial|lookup:'brain_region_name'|escapejs }}', '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature'|escapejs }}', '{{ related_brain_region_form.initial|lookup:'brain_region_nomenclature_species'|escapejs }}']);
             {% endif %}
         {% endfor %}
     })
