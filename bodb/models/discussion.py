@@ -3,6 +3,7 @@ from bodb.signals import forum_post_added
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from registration.models import User
+from django.conf import settings
 
 class Forum(models.Model):
     class Meta:
@@ -24,3 +25,7 @@ class Post(MPTTModel):
         if not self.id:
             forum_post_added.send(sender=self)
         super(Post,self).save(*args, **kwargs)
+        
+    @property
+    def site_url(self):
+        return settings.URL_BASE
