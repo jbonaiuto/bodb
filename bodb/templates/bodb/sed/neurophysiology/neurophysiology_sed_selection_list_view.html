@@ -87,11 +87,11 @@
                     {% endif %}
                 </td>
                 <td width=200px>
-                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= title_str %></a>
+                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= _.escape(title_str) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= collator %></a> <% if(collator_id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
-                <td><%= brief_description %></td>
+                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> <% if(collator_id != {{ user.id }}){ %>{% if user.is_authenticated and not user.is_anonymous %}<% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %>{% endif %}<% } %></td>
+                <td><%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td width=100px><span id="sed_<%= id %>_message" name="sed_<%= id %>_message" class="messages"></span></td>
             </tr>
         </table>

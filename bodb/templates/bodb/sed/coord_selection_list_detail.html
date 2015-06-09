@@ -370,7 +370,7 @@
                 </td>
                 <td width=200px style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-name"><%= _.escape(name) %></span></td>
                 <td width=100px style="word-wrap: break-word;"><a href="/bodb/user/<%= collator_id %>"><%= _.escape(collator) %></a></td>
-                <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= _.escape(description) %></span></td>
+                <td style="word-wrap: break-word;"><span id="coord-selection-<%= id %>-description"><%= _.escape(description).replace(new RegExp('\\n', 'g'),'<br/>') %></span></td>
             </tr>
         </table>
     </div>

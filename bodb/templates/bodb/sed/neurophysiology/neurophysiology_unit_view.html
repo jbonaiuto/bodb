@@ -57,7 +57,7 @@
                 <td colspan="2">
                     <strong>Name:</strong> <a href="/bodb/sed/neurophysiology/condition/{{ condition.id }}/">{{ condition.name }}</a>
                     <br>
-                    <strong>Description:</strong> {{ condition.name }}
+                    <strong>Description:</strong> {{ condition.description|linebreaks }}
                     <br>
                     <strong>Type:</strong> {{ condition.type }}
                 </td>

@@ -107,6 +107,12 @@
             <tr valign="top">
                 <td colspan="2"><strong>Tags:</strong> {% for tag in connectivitysed.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/sed/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
             </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ connectivitysed.brief_description|linebreaks }}</td>
+            </tr>
             <tr>
                 <td colspan=2 valign=top>
                     <strong>Public:</strong>&nbsp;
@@ -182,7 +188,7 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr valign=top>
-                                    <td>{{ connectivitysed.narrative }}</td>
+                                    <td>{{ connectivitysed.narrative|linebreaks }}</td>
                                 <tr>
                             </table>
                         </div>

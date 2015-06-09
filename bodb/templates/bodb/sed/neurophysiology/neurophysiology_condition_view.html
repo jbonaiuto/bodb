@@ -56,7 +56,7 @@
         <td colspan="2"><strong>SED:</strong> <a href="/bodb/sed/{{ object.sed.id }}/">{{ object.sed.title }}</a></td>
     </tr>
     <tr valign="top">
-        <td colspan=2><strong>Description: </strong>{{ object.description }}</td>
+        <td colspan=2><strong>Description: </strong>{{ object.description|linebreaks }}</td>
     </tr>
     <tr valign=top>
         <td colspan="2"><strong>Subject species: </strong>{{ object.sed.subject_species }}</td>

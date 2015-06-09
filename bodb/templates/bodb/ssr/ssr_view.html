@@ -103,7 +103,7 @@
             <td colspan=2>Brief Description</td>
         </tr>
         <tr>
-            <td colspan=2>{{ ssr.brief_description }}</td>
+            <td colspan=2>{{ ssr.brief_description|linebreaks }}</td>
         </tr>
         <tr>
             <td colspan=2 valign=top>
@@ -159,7 +159,7 @@
                         <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                         <table class="tab_panel" style="background:#e6e8ed;">
                             <tr valign=top>
-                                <td>{{ ssr.narrative }}</td>
+                                <td>{{ ssr.narrative|linebreaks }}</td>
                             </tr>
                         </table>
                     </div>

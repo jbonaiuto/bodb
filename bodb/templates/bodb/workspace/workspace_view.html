@@ -78,7 +78,7 @@
             </tr>
             <tr valign=top>
                 <td valign=top><strong>Description</strong></td>
-                <td>{{ workspace.description }}</td>
+                <td>{{ workspace.description|linebreaks }}</td>
             </tr>
         </table>
         <input class="btn" type="button" value="New" onclick="document.location.href='/bodb/workspace/new/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;

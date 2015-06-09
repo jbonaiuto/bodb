@@ -76,7 +76,7 @@
                     <%= _.escape(title) %>
                 </td>
                 <td style="width:300px">
-                    <%= _.escape(brief_description) %>
+                    <%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 <td style="width:100px">
                     <%= _.escape(type) %>
