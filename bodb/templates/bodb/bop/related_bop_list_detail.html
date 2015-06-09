@@ -40,16 +40,9 @@
     $(document).ready(function(){
         {% for related_bop_form in related_bop_formset.forms %}
             {% if related_bop_form.instance.id %}
-                addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship|escapejs }}',
-                        '{{ related_bop_form.instance.relevance_narrative|escapejs }}',
-                        {{ related_bop_form.instance.bop.id }}, ['{{ related_bop_form.instance.bop.title|escapejs }}',
-                            '{{ related_bop_form.instance.bop.brief_description|escapejs }}']);
+                addBOPMultiple({{ related_bop_form.instance.id }}, '{{ related_bop_form.instance.relationship|escapejs }}', '{{ related_bop_form.instance.relevance_narrative|escapejs }}', {{ related_bop_form.instance.bop.id }}, ['{{ related_bop_form.instance.bop.title|escapejs }}', '{{ related_bop_form.instance.bop.brief_description|escapejs }}']);
             {% else %}
-                addBOPMultiple('', '{{ related_bop_form.initial|lookup:'relationship'|escapejs }}',
-                        '{{ related_bop_form.initial|lookup:'relevance_narrative'|escapejs }}',
-                        {{ related_bop_form.initial|lookup:'bop' }},
-                        ['{{ related_bop_form.initial|lookup:'bop_title'|escapejs }}',
-                            '{{ related_bop_form.initial|lookup:'bop_brief_description'|escapejs }}']);
+                addBOPMultiple('', '{{ related_bop_form.initial|lookup:'relationship'|escapejs }}', '{{ related_bop_form.initial|lookup:'relevance_narrative'|escapejs }}', {{ related_bop_form.initial|lookup:'bop' }}, ['{{ related_bop_form.initial|lookup:'bop_title'|escapejs }}', '{{ related_bop_form.initial|lookup:'bop_brief_description'|escapejs }}']);
             {% endif %}
         {% endfor %}
     })
@@ -98,7 +91,7 @@
                     <%= _.escape(title) %>
                 </td>
                 <td style="width:350px">
-                    <%= _.escape(brief_description) %>
+                    <%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 {% if bop_relationship %}
                     <td style="width:150px">

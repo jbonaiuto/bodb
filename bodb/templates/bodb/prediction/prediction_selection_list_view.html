@@ -68,7 +68,7 @@
                     <a href="/bodb/prediction/<%= id %>/" onclick="return openInNewTab('/bodb/prediction/<%= id %>/');"><%= _.escape(title) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=300px><%= _.escape(brief_description) %></td>
+                <td width=300px><%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td align=center style="width:45px">
                     {% if user.is_authenticated and not user.is_anonymous %}
                         <% if(ssr_id>-1){ %>
@@ -82,7 +82,7 @@
                 </td>
                 <td width=175px><a href="/bodb/ssr/<%= ssr_id %>/" onclick="return openInNewTab('/bodb/ssr/<%= ssr_id %>/');"><%= _.escape(ssr_title) %></a>
                     <% if(ssr_draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %></td>
-                <td width=300px><%= _.escape(ssr_brief_description) %></td>
+                <td width=300px><%= _.escape(ssr_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td><span id="ssr_<%= ssr_id %>_message" name="ssr_<%= ssr_id %>_message" class="messages"></span></td>
             </tr>
         </table>

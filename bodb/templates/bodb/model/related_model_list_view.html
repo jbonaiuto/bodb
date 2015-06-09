@@ -76,10 +76,10 @@
                     <% if(reverse){ %>* <% } %><a href="/bodb/model/<%= model_id %>/"><%= _.escape(model_title) %></a>
                 </td>
                 <td width=300px>
-                    <%= _.escape(model_brief_description) %>
+                    <%= _.escape(model_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 <td>
-                    <%= _.escape(relationship) %>
+                    <%= _.escape(relationship).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 <td width=200px><span id="model_<%= model_id %>_message" name="model_<%= model_id %>_message" class="messages"></span> </td>
             </tr>

@@ -81,7 +81,7 @@
                     <%= _.escape(title) %>
                 </td>
                 <td style="width:350px">
-                    <%= _.escape(brief_description) %>
+                    <%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 <td>
                     <textarea cols="40" id="id_related_model-<%= idx %>-relationship" name="related_model-<%= idx %>-relationship" rows="3"><%= _.escape(relationship) %></textarea>

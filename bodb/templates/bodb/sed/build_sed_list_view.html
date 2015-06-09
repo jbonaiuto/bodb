@@ -237,9 +237,9 @@
                     <a href="/bodb/sed/<%= sed_id %>/" onclick="return openInNewTab('/bodb/sed/<%= sed_id %>/');"><%= _.escape(sed_title) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=300px><%= _.escape(sed_brief_description) %></td>
+                <td width=300px><%= _.escape(sed_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td width=120px><%= _.escape(relationship) %></td>
-                <td colspan="2"><%= _.escape(relevance_narrative) %></td>
+                <td colspan="2"><%= _.escape(relevance_narrative).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td width=150px><span id="sed_<%= sed_id %>_message" name="sed_<%= sed_id %>_message" class="messages"></span></td>
             </tr>
         </table>
@@ -263,9 +263,9 @@
                     <a href="/bodb/sed/<%= sed_id %>/" onclick="return openInNewTab('/bodb/sed/<%= sed_id %>/');"><%= _.escape(sed_title) %></a>
                     <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
                 </td>
-                <td width=300px><%= _.escape(sed_brief_description) %></td>
+                <td width=300px><%= _.escape(sed_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td width=120px><%= _.escape(relationship) %></td>
-                <td><%= _.escape(relevance_narrative) %></td>
+                <td><%= _.escape(relevance_narrative).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
                 <td><%= url_str %></td>
                 <td width=150px><span id="sed_<%= sed_id %>_message" name="sed_<%= sed_id %>_message" class="messages"></span></td>
             </tr>
