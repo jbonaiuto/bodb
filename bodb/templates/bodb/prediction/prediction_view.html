@@ -51,7 +51,7 @@
                 <td colspan=2>Brief Description</td>
             </tr>
             <tr valign=top>
-                <td colspan=2>{{ prediction.brief_description }}</td>
+                <td colspan=2>{{ prediction.brief_description|linebreaks }}</td>
             </tr>
             <tr>
                 <td colspan=2 valign=top>
@@ -107,7 +107,7 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr valign=top>
-                                    <td>{{ prediction.narrative }}</td>
+                                    <td>{{ prediction.narrative|linebreaks }}</td>
                                 </tr>
                             </table>
                         </div>

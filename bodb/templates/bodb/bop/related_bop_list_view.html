@@ -79,7 +79,7 @@
                     <% if(reverse){ %>* <% } %><a href="/bodb/bop/<%= bop_id %>/"><%= _.escape(bop_title) %></a>
                 </td>
                 <td width=300px>
-                    <%= _.escape(bop_brief_description) %>
+                    <%= _.escape(bop_brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 {% if bop_relationship %}
                     <td width=150px>
@@ -87,7 +87,7 @@
                     </td>
                 {% endif %}
                 <td width=300px>
-                    <%= _.escape(relevance_narrative) %>
+                    <%= _.escape(relevance_narrative).replace(new RegExp('\\n', 'g'),'<br/>') %>
                 </td>
                 <td><span id="bop_<%= id %>_message" name="bop_<%= id %>_message" class="messages"></span></td>
             </tr>

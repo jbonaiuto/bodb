@@ -112,7 +112,7 @@
                 <td colspan=3>Brief Description</td>
             </tr>
             <tr>
-                <td colspan=3>{{ erpsed.brief_description }}</td>
+                <td colspan=3>{{ erpsed.brief_description|linebreaks }}</td>
             </tr>
             <tr>
                 <td colspan=3 valign=top>
@@ -138,19 +138,19 @@
                 <td colspan=3>ERP Experiment Description</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Cognitive Paradigm:</strong> {{ erpsed.cognitive_paradigm }}</td>
+                <td colspan="3"><strong>Cognitive Paradigm:</strong> {{ erpsed.cognitive_paradigm|linebreaks }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Sensory Modality:</strong> {{ erpsed.sensory_modality }}</td>
+                <td colspan="3"><strong>Sensory Modality:</strong> {{ erpsed.sensory_modality|linebreaks }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Response Modality:</strong> {{ erpsed.response_modality }}</td>
+                <td colspan="3"><strong>Response Modality:</strong> {{ erpsed.response_modality|linebreaks }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Control Condition:</strong> {{ erpsed.control_condition }}</td>
+                <td colspan="3"><strong>Control Condition:</strong> {{ erpsed.control_condition|linebreaks }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="3"><strong>Experimental Condition:</strong> {{ erpsed.experimental_condition }}</td>
+                <td colspan="3"><strong>Experimental Condition:</strong> {{ erpsed.experimental_condition|linebreaks }}</td>
             </tr>
             <tr class="section_subheader">
                 <td colspan=3>ERP Component(s)</td>
@@ -180,7 +180,7 @@
                     <td colspan="3"><strong>Source:</strong> {{ component.source }}</td>
                 </tr>
                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                    <td colspan="3"><strong>Interpretation:</strong> {{ component.interpretation }}</td>
+                    <td colspan="3"><strong>Interpretation:</strong> {{ component.interpretation|linebreaks }}</td>
                 </tr>
             {% endfor %}
             {% if figures %}
@@ -217,7 +217,7 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr valign=top>
-                                    <td>{{ erpsed.narrative }}</td>
+                                    <td>{{ erpsed.narrative|linebreaks }}</td>
                                 <tr>
                             </table>
                         </div>
