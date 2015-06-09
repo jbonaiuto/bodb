@@ -76,19 +76,19 @@ class DocumentDetailView(DetailView):
             context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
 
-        # If the user has viewed this entry recently, update the view time
-        if RecentlyViewedEntry.objects.filter(user=self.request.user, document=self.object).exists():
-            view=RecentlyViewedEntry.objects.get(user=self.request.user, document=self.object)
-            view.date_viewed=datetime.now()
-            view.save()
-        # Save recently viewed entry for the current user
-        else:
-            view=RecentlyViewedEntry(user=self.request.user, document=self.object)
-            view.save()
-        # Remove all but 10 most recently viewed entries
-        if RecentlyViewedEntry.objects.filter(user=self.request.user).count()>10:
-            views = RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse()[:10].values_list("id", flat=True)  # only retrieve ids.
-            RecentlyViewedEntry.objects.exclude(pk__in=list(views)).delete()
+            # If the user has viewed this entry recently, update the view time
+            if RecentlyViewedEntry.objects.filter(user=self.request.user, document=self.object).exists():
+                view=RecentlyViewedEntry.objects.get(user=self.request.user, document=self.object)
+                view.date_viewed=datetime.now()
+                view.save()
+            # Save recently viewed entry for the current user
+            else:
+                view=RecentlyViewedEntry(user=self.request.user, document=self.object)
+                view.save()
+            # Remove all but 10 most recently viewed entries
+            if RecentlyViewedEntry.objects.filter(user=self.request.user).count()>10:
+                views = RecentlyViewedEntry.objects.filter(user=self.request.user).order_by('date_viewed').reverse()[:10].values_list("id", flat=True)  # only retrieve ids.
+                RecentlyViewedEntry.objects.exclude(pk__in=list(views)).delete()
 
         return context
     
