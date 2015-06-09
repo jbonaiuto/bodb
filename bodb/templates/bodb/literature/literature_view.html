@@ -258,7 +258,7 @@
             {% if literature.annotation %}
                 <tr valign=top>
                     <td><strong>Annotation:</strong></td>
-                    <td>{{ literature.annotation }}</td>
+                    <td>{{ literature.annotation|linebreaks }}</td>
                 </tr>
             {% endif %}
             {% if brain_regions %}

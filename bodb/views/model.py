@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.forms.forms import Form
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, CreateView, UpdateView, DeleteView, BaseCreateView, ProcessFormView
@@ -99,7 +100,7 @@ class EditModelMixin():
                     # Set module parent and collator if this is a new module
                     if module.id is None:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public
@@ -118,7 +119,7 @@ class EditModelMixin():
                     # Set prediction model and collator if this is a new prediction
                     if prediction.id is None:
                         prediction.model=self.object
-                        prediction.collator=self.object.collator
+                        prediction.collator=self.request.user
                     prediction.last_modified_by=self.request.user
                     prediction.draft=self.object.draft
                     prediction.public=self.object.public
@@ -731,6 +732,7 @@ class ToggleSelectModelView(LoginRequiredMixin,JSONResponseMixin,BaseUpdateView)
                 activity.text='%s added the model: <a href="%s">%s</a> to the workspace' % (self.request.user.username, model.get_absolute_url(), model.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 
@@ -806,7 +808,7 @@ class UpdateModuleView(ObjectRolePermissionRequiredMixin,UpdateView):
                     # Set parent and collator if this is a new module
                     if not module.id:
                         module.parent=self.object
-                        module.collator=self.object.collator
+                        module.collator=self.request.user
                     module.last_modified_by=self.request.user
                     module.draft=self.object.draft
                     module.public=self.object.public

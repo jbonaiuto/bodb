@@ -9,7 +9,7 @@
                     {% if figure.figure %}<a href="{{ figure.figure.url  }}"><img src="{{ figure.figure.url }}" width="600" alt="{{ figure.title }}" /></a>{% endif %}
                 </td>
                 <td valign=top>
-                    {{ figure.caption }}
+                    {{ figure.caption|linebreaks }}
                 </td>
             </tr>
         {% endfor %}

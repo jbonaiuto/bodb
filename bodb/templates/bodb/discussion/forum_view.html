@@ -108,7 +108,7 @@
                 </tr>
                 <tr>
                     <td width=300px>
-                        {{ node.body }}
+                        {{ node.body|linebreaks }}
                     </td>
                     <td>{% if can_add_post %}<input class="btn" type="button" value="Reply" onclick="document.getElementById('post-{{ node.id }}-reply').style.display='block';this.style.display='none';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>{% endif %}</td>
                 </tr>
@@ -158,7 +158,7 @@
             </tr>
             <tr>
                 <td width=300px>
-                    <%= _.escape(body) %>
+                    <%= _.escape(body).replace(new RegExp('\\n', 'g'), '<br />') %>
                 </td>
                 <td><input class="btn" type="button" value="Reply" onclick="document.getElementById('post-<%= id %>-reply').style.display='block';this.style.display='none';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/> </td>
             </tr>

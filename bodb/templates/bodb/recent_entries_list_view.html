@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Recently Viewed Entries</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <h2>Recently Viewed Entries</h2>
+        {% include 'bodb/entry_list_view.html' %}
+    </div>
+{% endblock %}

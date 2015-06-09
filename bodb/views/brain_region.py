@@ -1,4 +1,5 @@
 from django.contrib.sites.models import get_current_site
+from django.core.cache import cache
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
@@ -237,6 +238,7 @@ class ToggleSelectBrainRegionView(LoginRequiredMixin,JSONResponseMixin,BaseUpdat
                 activity.text='%s added the brain region: <a href="%s">%s</a> to the workspace' % (self.request.user.username, region.get_absolute_url(), region.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 

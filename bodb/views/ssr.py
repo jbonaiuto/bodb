@@ -1,4 +1,5 @@
 import json
+from django.core.cache import cache
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
@@ -192,6 +193,7 @@ class ToggleSelectSSRView(LoginRequiredMixin, JSONResponseMixin,BaseUpdateView):
                 activity.text='%s added the SSR: <a href="%s">%s</a> to the workspace' % (self.request.user.username, ssr.get_absolute_url(), ssr.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 

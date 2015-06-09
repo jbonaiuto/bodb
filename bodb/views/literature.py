@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.views.generic.edit import BaseUpdateView
 import os
@@ -202,10 +203,10 @@ class UpdateLiteratureView(EditLiteratureMixin,PermissionRequiredMixin,View):
             chapter=get_object_or_404(Chapter.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             chapter_authors=chapter.authors.all()
         elif literatureType=='conference':
-            conference=get_object_or_404(Conference.select_related('collator').objects.prefetch_related('authors__author'), id=id)
+            conference=get_object_or_404(Conference.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             conference_authors=conference.authors.all()
         elif literatureType=='thesis':
-            thesis=get_object_or_404(Thesis.select_related('collator').objects.prefetch_related('authors__author'), id=id)
+            thesis=get_object_or_404(Thesis.objects.select_related('collator').prefetch_related('authors__author'), id=id)
             thesis_authors=thesis.authors.all()
         elif literatureType=='unpublished':
             unpublished=get_object_or_404(Unpublished.objects.select_related('collator').prefetch_related('authors__author'), id=id)
@@ -373,6 +374,7 @@ class ToggleSelectLiteratureView(LoginRequiredMixin,JSONResponseMixin,BaseUpdate
                               (self.request.user.username, lit.get_absolute_url(), lit.__unicode__())
             activity.save()
             active_workspace.save()
+            cache.set('%d.active_workspace' % self.request.user.id, active_workspace)
 
         return context
 

@@ -6,7 +6,7 @@ from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegio
 from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
-from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView
+from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, CreateModelWizardView, MODEL_WIZARD_FORMS
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
@@ -199,6 +199,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^message/new/$', CreateUserMessageView.as_view(), {}, 'message_add'),
     url(r'^message/(?P<pk>\d+)/delete/$', DeleteUserMessageView.as_view(), {}, 'message_delete'),
     url(r'^message/(?P<pk>\d+)/$', ReadReplyUserMessageView.as_view(), {}, 'message_view'),
+
+    url(r'^recent/$', RecentEntriesListView.as_view(), {}, 'recently_viewed'),
 
     url(r'^subscription/new/', CreateSubscriptionView.as_view(), {}, 'subscription_new'),
     url(r'^subscription/user/new/', CreateUserSubscriptionView.as_view(), {}, 'user_subscription_new'),

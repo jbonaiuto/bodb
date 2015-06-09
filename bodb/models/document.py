@@ -219,3 +219,15 @@ class DocumentPublicRequest(models.Model):
 
 def compareDocuments(a, b):
     return cmp(a.title.lower(), b.title.lower())
+
+
+class RecentlyViewedEntry(models.Model):
+    """
+    Represents user's recently viewed entries
+    """
+    user = models.ForeignKey(User)
+    document = models.ForeignKey(Document)
+    date_viewed = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        app_label='bodb'
+        ordering=('date_viewed',)

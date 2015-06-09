@@ -368,7 +368,7 @@
                 {% if perms.bodb.public_model or user.is_superuser %}
                     <tr valign=top>
                         <td>{{ form.public.label_tag }}</td>
-                        <td>{{ form.public }}</td>
+                        <td><input {% if form.public.value %}checked="checked" {% endif %} id="id_public" name="public" type="checkbox"/></td>
                         {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
                     </tr>
                 {% endif %}

@@ -112,7 +112,7 @@
                 <td colspan=2>Brief Description</td>
             </tr>
             <tr>
-                <td colspan=2>{{ brainimagingsed.brief_description }}</td>
+                <td colspan=2>{{ brainimagingsed.brief_description|linebreaks }}</td>
             </tr>
             <tr>
                 <td colspan=2 valign=top>
@@ -140,11 +140,11 @@
             </tr>
             <tr valign=top>
                 <td><strong>Control condition:</strong></td>
-                <td>{{ brainimagingsed.control_condition }}</td>
+                <td>{{ brainimagingsed.control_condition|linebreaks }}</td>
             </tr>
             <tr valign=top>
                 <td><strong>Experimental condition:</strong></td>
-                <td>{{ brainimagingsed.experimental_condition }}</td>
+                <td>{{ brainimagingsed.experimental_condition|linebreaks }}</td>
             <tr>
             <tr valign=top>
                 <td><strong>Coordinate space:</strong></td>
@@ -230,7 +230,7 @@
                             <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                             <table class="tab_panel" style="background:#e6e8ed;">
                                 <tr valign=top>
-                                    <td>{{ brainimagingsed.narrative }}</td>
+                                    <td>{{ brainimagingsed.narrative|linebreaks }}</td>
                                 <tr>
                             </table>
                         </div>
