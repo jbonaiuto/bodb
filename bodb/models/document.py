@@ -21,7 +21,7 @@ stop_words=['a', 'about', 'again', 'all', 'almost', 'also', 'although', 'always'
             'than', 'that', 'the', 'their', 'theirs', 'them', 'then', 'there', 'therefore', 'these', 'they', 'this',
             'those', 'through', 'thus', 'to', 'upon', 'use', 'used', 'using', 'various', 'very', 'was', 'we', 'were',
             'what', 'when', 'which', 'while', 'with', 'within', 'without', 'would']
-
+    
 class Document(models.Model):
     """
     Document - base class for SED, SSR, Model, and BOP
@@ -149,6 +149,30 @@ class Document(models.Model):
             else:
                 q=Q(**{'%s__public' % field:1})
         return q
+    
+# class ThreadToDocument(models.Model):
+#     """the "through" many-to-many relation between
+#     threads and groups - to distinguish full and "what's published"
+#     visibility of threads to various groups
+#     """
+#     SHOW_PUBLISHED_RESPONSES = 0
+#     SHOW_ALL_RESPONSES = 1
+#     VISIBILITY_CHOICES = (
+#         (SHOW_PUBLISHED_RESPONSES, 'show only published responses'),
+#         (SHOW_ALL_RESPONSES, 'show all responses')
+#     )
+#     thread = models.ForeignKey('askbot.Thread')
+#     document = models.ForeignKey(Document)
+#     visibility = models.SmallIntegerField(
+#                         choices=VISIBILITY_CHOICES,
+#                         default=SHOW_ALL_RESPONSES
+#                     )
+# 
+#     class Meta:
+#         unique_together = ('thread', 'document')
+#         db_table = 'bodb_askbotthread_documents'
+#         app_label = 'bodb'
+    
 
 
 class DocumentFigure(models.Model):
