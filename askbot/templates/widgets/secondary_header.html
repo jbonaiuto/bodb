@@ -1,13 +1,21 @@
 <!-- template secondary_header.html -->
 <script type="text/javascript">
 	function getAskHTML() {
-		var prefix, suffix, doc_id, res;
-		prefix = window.parent.document.location.origin + "/bodb/forum/questions/scope:all/sort:activity-desc/tags:doc-";
+		var prefix, suffix, doc_id, res, origin;
+		prefix = window.parent.document.location.pathname.split('/').slice(-3)[0];
+		console.log(prefix);
+		if (prefix == "workspace"){
+			prefix = "ws-";
+		} else {
+			prefix = "doc-";
+		}
+		origin = window.parent.document.location.origin;
+		prefix = origin + "/bodb/forum/questions/scope:all/sort:activity-desc/tags:" + prefix;
 		suffix = "/page:1/";
 		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
 		console.log(prefix.concat(doc_id).concat(suffix));
 		res = prefix.concat(doc_id).concat(suffix);
-		if(isNaN(doc_id)){ res = "http://localhost:8000/bodb/forum/questions/" ;};
+		if(isNaN(doc_id)){ res = origin + "/bodb/forum/questions/" ;};
 		location.href=res;
 		return res;
 	}
