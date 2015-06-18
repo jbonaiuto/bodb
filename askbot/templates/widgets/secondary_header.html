@@ -2,7 +2,7 @@
 <script type="text/javascript">
 	function getAskHTML() {
 		var prefix, suffix, doc_id, res;
-		prefix = "http://localhost:8000/bodb/forum/questions/scope:all/sort:activity-desc/tags:doc-";
+		prefix = window.parent.document.location.origin + "/bodb/forum/questions/scope:all/sort:activity-desc/tags:doc-";
 		suffix = "/page:1/";
 		doc_id = window.parent.document.location.pathname.split('/').slice(-2)[0];
 		console.log(prefix.concat(doc_id).concat(suffix));
