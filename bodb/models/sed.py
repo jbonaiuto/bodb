@@ -4,8 +4,8 @@ import random
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 import matplotlib
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 matplotlib.use('Agg')
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
@@ -20,7 +20,6 @@ from registration.models import User
 import numpy as np
 import h5py
 from uscbp.image_utils import save_to_png
-
 
 class SED(Document):
     """
@@ -833,7 +832,7 @@ class NeurophysiologyCondition(models.Model):
             #ax.set_ylim([0, y_max])
             ax.set_title(region.name)
             ax.set_ylabel('Firing Rate (Hz)')
-        ax.set_xlabel('Time (s)')
+            ax.set_xlabel('Time (s)')
         if filename is not None:
             save_to_png(fig, filename)
             plt.close(fig)
@@ -914,9 +913,14 @@ class Unit(models.Model):
         event_colors={
             'go': 'b',
             'mo': 'r',
+            'co': 'm',
             'do': 'g',
             'ho': 'm',
             'hoff': 'y',
+            'rew': 'y',
+            'fix': 'c',
+            'lon': 'b',
+            'loff': 'b'
             }
 
         rate_max=0
@@ -924,6 +928,7 @@ class Unit(models.Model):
         time_max=-1000
         for idx,id in enumerate(condition_ids):
             condition=NeurophysiologyCondition.objects.get(id=id)
+            print('getting mean firing rate for condition %s' % condition.name)
             bins,rate=condition.get_trial_mean_firing_rate(self, bin_width, align_to=align_to)
             if np.max(rate)>rate_max:
                 rate_max=np.max(rate)
@@ -936,9 +941,11 @@ class Unit(models.Model):
             condition=NeurophysiologyCondition.objects.get(id=id)
 
             ax=fig.add_subplot(len(condition_ids)*2,1,idx*2+1)
+            print('plotting spikes for condition %s' % condition.name)
             condition.plot_trial_spikes(self, ax, event_colors, time_min, time_max, align_to=align_to)
 
             ax=fig.add_subplot(len(condition_ids)*2,1,idx*2+2)
+            print('plotting firing rate for condition %s' % condition.name)
             condition.plot_trial_mean_firing_rate(self, bin_width, ax, time_min, time_max, rate_max, align_to=align_to)
 
         ax.set_xlabel('Time (s)')
@@ -952,7 +959,7 @@ class Unit(models.Model):
 
 class RecordingTrial(models.Model):
     unit=models.ForeignKey('Unit')
-    condition=models.ForeignKey('NeurophysiologyCondition')
+    condition=models.ForeignKey('NeurophysiologyCondition',null=True)
     trial_number=models.IntegerField()
     start_time=models.DecimalField(max_digits=10, decimal_places=5)
     end_time=models.DecimalField(max_digits=10, decimal_places=5)
@@ -1007,6 +1014,18 @@ class Event(models.Model):
 
     class Meta:
         app_label='bodb'
+
+
+def save_to_png(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(output_file, dpi=72)
+
+
+def save_to_eps(fig, output_file):
+    fig.set_facecolor("#FFFFFF")
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_eps(output_file, dpi=72)
 
 
 class NeurophysiologySEDExportRequest(models.Model):

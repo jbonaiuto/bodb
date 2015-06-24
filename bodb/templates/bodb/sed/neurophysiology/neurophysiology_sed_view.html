@@ -189,7 +189,7 @@
         <td colspan=2>Brief Description</td>
     </tr>
     <tr>
-        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
+        <td colspan=2>{{ neurophysiologysed.brief_description|linebreaks }}</td>
     </tr>
     <tr>
         <td colspan="2"><strong>Subject species:</strong> {{ neurophysiologysed.subject_species }}</td>
@@ -294,7 +294,7 @@
                     <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
                     <table class="tab_panel" style="background:#e6e8ed;">
                         <tr valign=top>
-                            <td>{{ neurophysiologysed.narrative }}</td>
+                            <td>{{ neurophysiologysed.narrative|linebreaks }}</td>
                         <tr>
                     </table>
                 </div>

@@ -1,3 +1,4 @@
+from django.contrib.sites.models import get_current_site
 import h5py
 import os
 from string import atof
@@ -11,7 +12,7 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, NeurophysiologySEDExportRequestForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, BuildSED, TestSED, NeurophysiologyCondition, Unit, NeurophysiologySED, NeurophysiologySEDExportRequest, Event, GraspObservationCondition, GraspPerformanceCondition, Message
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, BuildSED, TestSED, NeurophysiologyCondition, Unit, NeurophysiologySED, NeurophysiologySEDExportRequest, Event, GraspObservationCondition, GraspPerformanceCondition, Message, RecordingTrial
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
@@ -268,15 +269,25 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                 if not unit.id in context['unit_diagram_urls']:
                     context['unit_diagram_urls'][unit.id]={}
                 for condition in context['conditions']:
-                    filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,condition.id)
-                    path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-                    if not os.path.exists(path):
-                        unit.plot_condition_spikes([condition.id], 0.05, filename=path)
-                    context['unit_diagram_urls'][unit.id][condition.id]='/media/export/%s' % filename
+                    if RecordingTrial.objects.filter(unit=unit,condition=condition).exists():
+                        filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,condition.id)
+                        path=os.path.join(settings.MEDIA_ROOT,'export',filename)
+                        if not os.path.exists(path):
+                            unit.plot_condition_spikes([condition.id], 0.05, filename=path)
+                        context['unit_diagram_urls'][unit.id][condition.id]='/media/export/%s' % filename
                 for event in Event.objects.filter(trial__unit=unit).distinct():
                     if not event.name in event_names:
                         event_names.append(event.name)
                         event_descriptions.append(event.description)
+            context['events']=zip(event_names,event_descriptions)
+            for event_name, event_description in context['events']:
+                for unit in context['units']:
+                    for condition in context['conditions']:
+                        if event_name in event_names and RecordingTrial.objects.filter(unit=unit,condition=condition).exists() and \
+                           not Event.objects.filter(trial__unit=unit, trial__condition=condition, name=event_name).exists():
+                            event_names.remove(event_name)
+                            event_descriptions.remove(event_description)
+
             context['events']=zip(event_names,event_descriptions)
             context['form']=NeurophysiologySEDExportRequestForm()
             context['request_status']=''
@@ -288,7 +299,6 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
                     context['request_status']=request.status
                 else:
                     context['request_status']='pending'
-            print(context['request_status'])
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -1380,6 +1390,10 @@ class NeurophysiologyConditionView(DetailView):
 
     def get_context_data(self, **kwargs):
         context=super(NeurophysiologyConditionView,self).get_context_data(**kwargs)
+        context['site_url']='http://%s' % get_current_site(self.request)
+        context['video_url_mp4']=''
+        if os.path.exists(os.path.join(settings.MEDIA_ROOT,'video','neurophys_condition_%d.mp4' % self.object.id)):
+            context['video_url_mp4']=''.join(['http://', get_current_site(None).domain, os.path.join('/media/video/','neurophys_condition_%d.mp4' % self.object.id)])
         filename='condition_%d.start_aligned.png' % self.object.id
         path=os.path.join(settings.MEDIA_ROOT,'export',filename)
         if not os.path.exists(path):
@@ -1400,6 +1414,7 @@ class NeurophysiologyConditionView(DetailView):
                 event_names.append(event.name)
                 event_descriptions.append(event.description)
         context['events']=zip(event_names,event_descriptions)
+
         return context
 
 
@@ -1423,6 +1438,12 @@ class NeurophysiologyUnitView(DetailView):
             if not event.name in event_names:
                 event_names.append(event.name)
                 event_descriptions.append(event.description)
+        context['events']=zip(event_names,event_descriptions)
+        for event_name, event_description in context['events']:
+            for condition in conditions:
+                if event_name in event_names and not Event.objects.filter(trial__condition=condition, name=event_name).exists():
+                    event_names.remove(event_name)
+                    event_descriptions.remove(event_description)
         context['events']=zip(event_names,event_descriptions)
         return context
 
