@@ -2,9 +2,14 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>BODB - View Neurophysiology Condition: {{ object.title }}</title>
+    <link href="{% static 'bodb/scripts/video-js/video-js.css' %}" rel="stylesheet">
     <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/neurophysSED.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/video-js/video.dev.js' %}"></script>
     <script type="text/javascript">
+        videojs.options.flash.swf = "{{ site_url }}/static/bodb/scripts/video-js/video-js.swf";
+        document.createElement('video');document.createElement('audio');document.createElement('track');
+
         function realignPopulationMeanPlot(csrf_token)
         {
             document.getElementById('realigningMsg').style.display='block';
@@ -101,7 +106,22 @@
         <td colspan="2"><strong>Object visible: </strong>{{ object.object_visible }}</td>
         </tr>
     {% endifequal %}
-    </tr>
+    {% if video_url_mp4 %}
+        <tr>
+            <td colspan="2">
+                <div class='video_panel'>
+                    <div id='video_frame'>
+                        <video id="condition_video" class="video-js vjs-default-skin  vjs-big-play-centered" controls preload="preload"
+                               width="600" height="400" data-setup='{}' autoplay="true">
+                            <source id="condition_video_source" src="{{ video_url_mp4 }}" type="video/mp4">
+                            <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                        </video>
+                    </div>
+                    <div id="context_data"></div>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
     <tr class="section_subheader">
         <td colspan="2">Trial Events</td>
     </tr>
