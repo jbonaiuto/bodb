@@ -27,7 +27,7 @@ def get_active_workspace(user_profile, request):
     active_workspace = None
     if request.user.is_authenticated() and not request.user.is_anonymous():
         active_workspace = cache.get('%d.active_workspace' % request.user.id)
-        if active_workspace is None:
+        if active_workspace is None or Workspace.objects.filter(id=active_workspace.id).count()==0:
             active_workspace = Workspace.objects.select_related('created_by', 'group', 'forum').get(id=user_profile.active_workspace.id)
             cache.set('%d.active_workspace' % request.user.id, active_workspace)
     return active_workspace
