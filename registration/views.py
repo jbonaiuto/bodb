@@ -81,7 +81,7 @@ class gRecaptchaVerify(View):
             'response': captcha_rs,
             'remoteip': get_client_ip(request)
         }
-        verify_rs = requests.get(url, params=params, verify=True)
+        verify_rs = requests.get(url, params=params, verify=False)
         verify_rs = verify_rs.json()
         return HttpResponse(json.dumps(verify_rs), content_type='application/json')
 
