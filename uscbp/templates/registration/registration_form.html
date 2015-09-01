@@ -30,6 +30,7 @@
             var args = { type: "POST", url: "/accounts/username_available/", data: data, complete : doneUsername };
             $.ajax(args)
         }
+        var recaptcha_response='';
     </script>
 {% endblock %}
 {% block content %}
@@ -79,22 +80,36 @@
                 </tr>
             </table>
             <p>Prove you're not a robot:</p>
-            <script type="text/javascript"
-                    src="http://www.google.com/recaptcha/api/challenge?k={{ recaptcha_key }}">
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+            <script type="text/javascript">
+                function recaptcha_callback(response)
+                {
+                    var data = { 'g-recaptcha-response': response};
+                    var args = { type: "POST", dataType: 'json', url: "/accounts/verify/", data: data,
+                        complete : doneRecaptchaVerify };
+                    $.ajax(args);
+                }
+
+                function doneRecaptchaVerify(res, status)
+                {
+                    var txt = res.responseText;
+                    var data = eval('('+txt+')');
+                    if(status=="success")
+                    {
+                        if(data.success)
+                        {
+                            $('.btn').attr('disabled',false);
+                            $('.btn').attr('class','btn');
+                        }
+                    }
+                }
             </script>
-            <noscript>
-                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{ recaptcha_key }}{{ captcha_error }}"
-                        height="300" width="500" frameborder="0"></iframe><br>
-                <textarea name="recaptcha_challenge_field" rows="3" cols="40">
-                </textarea>
-                <input type="hidden" name="recaptcha_response_field"
-                       value="manual_challenge">
-            </noscript>
+            <div class="g-recaptcha" data-sitekey="{{ recaptcha_key }}" data-callback="recaptcha_callback"></div>
             <div class="myerrors">
                 {{ form.non_field_errors }}
             </div>
             <br>
-            <input class="btn" type="button" value="Register" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'" onclick="if(checkPasswords() && document.getElementById('username_errors').innerHTML==''){ document.getElementById('userForm').submit(); }"/>
+            <input class="btn btndisabled" type="button" value="Register" disabled="True" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'" onclick="if(checkPasswords() && document.getElementById('username_errors').innerHTML==''){ document.getElementById('userForm').submit(); }"/>
         </form>
     </div>
 {% endblock %}
