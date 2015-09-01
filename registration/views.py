@@ -2,10 +2,13 @@
 Views which allow users to create and activate accounts.
 
 """
+import json
+from django.http import HttpResponse
 
 from django.shortcuts import redirect
-from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic.base import TemplateView, View
+from django.views.generic.edit import FormView, BaseCreateView
+import requests
 
 from registration import signals
 from registration.forms import RegistrationForm
@@ -56,6 +59,31 @@ class _RequestPassingFormView(FormView):
 
     def form_invalid(self, form, request=None):
         return super(_RequestPassingFormView, self).form_invalid(form)
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+class gRecaptchaVerify(View):
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        data = request.POST
+        captcha_rs = data.get('g-recaptcha-response')
+        url = "https://www.google.com/recaptcha/api/siteverify"
+        params = {
+            'secret': settings.RECAPTCHA_PRIVATE_KEY,
+            'response': captcha_rs,
+            'remoteip': get_client_ip(request)
+        }
+        verify_rs = requests.get(url, params=params, verify=True)
+        verify_rs = verify_rs.json()
+        return HttpResponse(json.dumps(verify_rs), content_type='application/json')
 
 
 class RegistrationView(_RequestPassingFormView):
