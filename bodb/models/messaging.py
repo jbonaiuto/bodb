@@ -5,6 +5,7 @@ from django.db import models
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
 from django.core.cache import cache
+from bodb.models import BodbProfile
 
 class Message(models.Model):
     """
@@ -139,15 +140,16 @@ def sendNewEntryNotification(subscription, document):
 
 def messageUser(user, subject, message_txt):
     # send internal message
-    profile=user.get_profile()
-    notification_type=profile.notification_preference
-    if notification_type=='message' or notification_type=='both':
-        message=Message(recipient=user, subject=subject, read=False)
-        message.text=message_txt
-        message.save()
+    if BodbProfile.objects.filter(user=user).count():
+        profile=user.get_profile()
+        notification_type=profile.notification_preference
+        if notification_type=='message' or notification_type=='both':
+            message=Message(recipient=user, subject=subject, read=False)
+            message.text=message_txt
+            message.save()
 
-    # send email message
-    if notification_type=='email' or notification_type=='both':
-        msg = EmailMessage(subject, message_txt, 'uscbrainproject@gmail.com', [user.email])
-        msg.content_subtype = "html"  # Main content is now text/html
-        msg.send(fail_silently=True)
+        # send email message
+        if notification_type=='email' or notification_type=='both':
+            msg = EmailMessage(subject, message_txt, 'uscbrainproject@gmail.com', [user.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send(fail_silently=True)
