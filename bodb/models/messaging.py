@@ -5,7 +5,7 @@ from django.db import models
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
 from django.core.cache import cache
-from bodb.models import BodbProfile
+from bodb.models.workspace import BodbProfile
 
 class Message(models.Model):
     """
