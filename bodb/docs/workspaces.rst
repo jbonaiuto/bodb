@@ -91,13 +91,7 @@ The Bookmarks tab allows users to store urls that are relevant to the Workspace 
 Discussion
 ^^^^^^^^^^
 
-The Discussion tab allows users assigned to a workspace to maintain a thread of relevant discussion. To post a new thread, simply enter text in the textfield and the click Post. To reply to a given thread, press the Reply buttonand then post the reply.
-
-.. figure:: images/workspace_discussion_tab.png
-    :align: center
-    :figclass: align-center
-
-    Workspace Discussion tab
+See general chapter on Discussion
     
 Admin
 ^^^^^
