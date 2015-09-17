@@ -26,6 +26,7 @@ Contents:
    user_profile
    tags
    messages
+   discussion
    benchmarks
    web_api
 
