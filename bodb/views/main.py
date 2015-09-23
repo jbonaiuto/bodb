@@ -49,7 +49,7 @@ def set_context_workspace(context, request):
     context['workspace_bops']=[]
     context['workspace_seds']=[]
     context['workspace_ssrs']=[]
-    context['selected_sed_coords']=[]
+    context['selected_sed_coords']=SelectedSEDCoord.objects.none()
     if request.user.is_authenticated() and not request.user.is_anonymous():
         context['can_add_entry'] = request.user.has_perm('add_entry', context['active_workspace'])
         context['can_remove_entry'] = request.user.has_perm('remove_entry', context['active_workspace'])
