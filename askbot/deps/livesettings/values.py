@@ -292,6 +292,8 @@ class Value(object):
         if self.localized:
             langs_dict = SortedDict(django_settings.LANGUAGES)
             default_code = django_settings.LANGUAGE_CODE
+            if '-' in default_code:
+                default_code = default_code.split('-')[0]
             default_name = langs_dict[default_code]
             langs_dict.insert(0, default_code, default_name)
             langs = langs_dict.keys()
