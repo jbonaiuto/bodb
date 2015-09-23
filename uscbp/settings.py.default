@@ -14,6 +14,8 @@ ASKBOT_ROOT = os.path.abspath(os.path.dirname(askbot.__file__))
 site.addsitedir(os.path.join(ASKBOT_ROOT, 'deps'))
 
 
+LANGUAGE_CODE = 'en-us'
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
