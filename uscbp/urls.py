@@ -25,3 +25,9 @@ urlpatterns += patterns('',
     (r'^accounts/profile/$', UpdateUserProfileView.as_view(), {}, 'create_user_profile'),
     url(r'^comments/', include('django.contrib.comments.urls')),
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
