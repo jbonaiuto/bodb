@@ -59,7 +59,6 @@ urlpatterns = format_suffix_patterns(urlpatterns)
 
 urlpatterns = urlpatterns + patterns('',
     (r'^feeds/latestModels/$', LatestModels()),
-    url(r'^docs/', include('documentation.urls')),
     url(r'^about/$', AboutView.as_view(), {}, 'about'),
     url(r'^insert/$', InsertView.as_view(), {}, 'insert'),
     url(r'^brainSurfer/$', BrainSurferView.as_view(), {}, name='brain_surfer'),
