@@ -267,7 +267,7 @@ function switchTab(divid, offids)
 
 function openHelp(helpPage)
 {
-    window.open('/bodb/docs/'+helpPage, 'BODB Help', 'width=800,height=400,resizable=1,scrollbars=1');
+    window.open('/docs/'+helpPage, 'BODB Help', 'width=800,height=400,resizable=1,scrollbars=1');
     return false;
 }
 
