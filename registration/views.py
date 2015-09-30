@@ -149,7 +149,7 @@ class ActivationView(TemplateView):
     
     """
     http_method_names = ['get']
-    template_name = 'registration/activate.html'
+    template_name = 'registration/activation_complete.html'
 
     def get(self, request, *args, **kwargs):
         activated_user = self.activate(request, *args, **kwargs)
