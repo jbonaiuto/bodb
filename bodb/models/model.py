@@ -28,7 +28,7 @@ class Module(MPTTModel,Document):
             if selected_id==self.id:
                 html+='<strong>%s</strong>' % self.title
             else:
-                html+='<a href="/bodb/module/%d/">%s</a>' % (self.id, self.title)
+                html+='<a href="/bodb/module/%d/">%s</a>' % (self.id, self.title.encode("utf8"))
         else:
             html+=self.title
         children=self.get_children().all()
@@ -126,7 +126,7 @@ class Model(Module):
             if selected_id==self.id:
                 html+='<strong>%s</strong>' % str(self)
             else:
-                html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self))
+                html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self).encode("utf8"))
         else:
             html+=str(self)
         children=self.get_children().all()
