@@ -337,7 +337,9 @@ class SSRReportView(FormView):
         context=super(SSRReportView,self).get_context_data(**kwargs)
         context['ssr']=get_object_or_404(SSR, id=self.kwargs.get('pk', None))
         # load related entries
-        context['model']=Model.objects.filter(Q(related_test_sed_document__ssr=context['ssr']) | Q(prediction__ssr=context['ssr']))[0]
+        context['model']=None
+        if Model.objects.filter(Q(related_test_sed_document__ssr=context['ssr']) | Q(prediction__ssr=context['ssr'])).count():
+            context['model']=Model.objects.filter(Q(related_test_sed_document__ssr=context['ssr']) | Q(prediction__ssr=context['ssr']))[0]
         context['figures']=list(DocumentFigure.objects.filter(document=context['ssr']).order_by('order'))
         context['ispopup']='_popup' in self.request.GET
         return context
