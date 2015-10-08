@@ -90,6 +90,15 @@
     <div id='realigningOver' style='display: none;'></div>
     <div id='searchingMsg' style='display: none;'>Searching, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='searchingOver' style='display: none;'></div>
+    
+    {% if messages %}
+    {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+          <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+{% endif %}
+
     {% if ispopup %}
         <div id="user_info">
             [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;

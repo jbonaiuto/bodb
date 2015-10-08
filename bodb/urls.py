@@ -31,6 +31,8 @@ feeds = {
     }
 
 urlpatterns = patterns('',
+                       
+    url(r'^todo/', include('todo.urls')),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^api/document/$', DocumentAPIListView.as_view()),
     url(r'^api/document/(?P<pk>[0-9]+)/$', DocumentAPIDetailView.as_view()),
