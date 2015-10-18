@@ -351,33 +351,6 @@ function sortGenericSEDs(order_by, direction, up_image, down_image)
     return false;
 }
 
-function sortNeurophysiologySEDs(order_by, direction, up_image, down_image)
-{
-    neurophysiology_seds.sort(objectSort(order_by,direction));
-    addNeurophysiologySEDs();
-    $('[name=neurophysiology_sed_sort_dir]').each(function(index, element){
-        if(this.id=='id_neurophysiology_sed_sort_'+order_by+'_dir')
-            this.style.display='inline';
-        else
-            this.style.display='none';
-    });
-    $('[name=neurophysiology_sed_list]').each(function(index, element){
-        var direction=$(this).find('#id_neurophysiology_sed_sort_'+order_by).attr('value');
-        if(direction=='ascending')
-        {
-            $(this).find('#id_neurophysiology_sed_sort_'+order_by+'_dir').attr('src',up_image);
-            $(this).find('#id_neurophysiology_sed_sort_'+order_by).attr('value','descending');
-        }
-        else
-        {
-            $(this).find('#id_neurophysiology_sed_sort_'+order_by+'_dir').attr('src',down_image);
-            $(this).find('#id_neurophysiology_sed_sort_'+order_by).attr('value','ascending');
-        }
-        $(this).find('#id_neurophysiology_sed_sort_'+order_by+'_dir').attr('style','display: inline');;
-    });
-    return false;
-}
-
 function setBuildingSEDSortControls(sed_type, order_by, direction, up_image, down_image)
 {
     $('[name='+sed_type+'_build_sed_sort_dir]').each(function(index, element){

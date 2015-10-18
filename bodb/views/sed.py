@@ -11,8 +11,8 @@ from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, NeurophysiologySEDExportRequestForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, BuildSED, TestSED, NeurophysiologyCondition, Unit, NeurophysiologySED, NeurophysiologySEDExportRequest, Event, GraspObservationCondition, GraspPerformanceCondition, Message, RecordingTrial
+from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
@@ -241,9 +241,6 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).exists():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
-        elif type=='neurophysiology':
-            self.model=NeurophysiologySED
-            self.template_name = 'bodb/sed/neurophysiology/neurophysiology_sed_view.html'
         user = self.request.user
         security_q=Document.get_security_q(user)
         self.queryset = self.model.objects.all()
@@ -258,47 +255,6 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
-        elif self.object.type=='neurophysiology':
-            context['neurophysiologysed']=self.object
-            context['conditions']=NeurophysiologyCondition.objects.filter(sed=self.object).distinct()
-            context['units']=Unit.objects.filter(recordingtrial__condition__sed=self.object).distinct()
-            context['unit_diagram_urls']={}
-            event_names=[]
-            event_descriptions=[]
-            for unit in context['units']:
-                if not unit.id in context['unit_diagram_urls']:
-                    context['unit_diagram_urls'][unit.id]={}
-                for condition in context['conditions']:
-                    if RecordingTrial.objects.filter(unit=unit,condition=condition).exists():
-                        filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,condition.id)
-                        path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-                        if not os.path.exists(path):
-                            unit.plot_condition_spikes([condition.id], 0.05, filename=path)
-                        context['unit_diagram_urls'][unit.id][condition.id]='/media/export/%s' % filename
-                for event in Event.objects.filter(trial__unit=unit).distinct():
-                    if not event.name in event_names:
-                        event_names.append(event.name)
-                        event_descriptions.append(event.description)
-            context['events']=zip(event_names,event_descriptions)
-            for event_name, event_description in context['events']:
-                for unit in context['units']:
-                    for condition in context['conditions']:
-                        if event_name in event_names and RecordingTrial.objects.filter(unit=unit,condition=condition).exists() and \
-                           not Event.objects.filter(trial__unit=unit, trial__condition=condition, name=event_name).exists():
-                            event_names.remove(event_name)
-                            event_descriptions.remove(event_description)
-
-            context['events']=zip(event_names,event_descriptions)
-            context['form']=NeurophysiologySEDExportRequestForm()
-            context['request_status']=''
-            if self.request.user==self.object.collator:
-                context['request_status']='accepted'
-            elif NeurophysiologySEDExportRequest.objects.filter(sed=self.object,requesting_user=self.request.user).count():
-                request=NeurophysiologySEDExportRequest.objects.get(sed=self.object,requesting_user=self.request.user)
-                if len(request.status):
-                    context['request_status']=request.status
-                else:
-                    context['request_status']='pending'
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
@@ -1116,9 +1072,6 @@ class SEDTaggedView(BODBView):
                 context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
         else:
             context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords, [])
-        neurophys_seds=NeurophysiologySED.get_tagged_seds(name, user)
-        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds, context['workspace_seds'], context['fav_docs'],
-            context['subscriptions'])
         context['connectionGraphId']='connectivitySEDDiagram'
         context['erpGraphId']='erpSEDDiagram'
         return context
@@ -1376,189 +1329,3 @@ class ElectrodePositionsView(JSONResponseMixin, BaseUpdateView):
         return context
 
 
-class NeurophysiologyConditionView(DetailView):
-    model = NeurophysiologyCondition
-    template_name = 'bodb/sed/neurophysiology/neurophysiology_condition_view.html'
-
-    def get_object(self, queryset=None):
-        object=super(NeurophysiologyConditionView,self).get_object()
-        if object.type=='grasp_observe':
-            object=GraspObservationCondition.objects.get(id=object.id)
-        elif object.type=='grasp_perform':
-            object=GraspPerformanceCondition.objects.get(id=object.id)
-        return object
-
-    def get_context_data(self, **kwargs):
-        context=super(NeurophysiologyConditionView,self).get_context_data(**kwargs)
-        context['site_url']='http://%s' % get_current_site(self.request)
-        context['video_url_mp4']=''
-        if os.path.exists(os.path.join(settings.MEDIA_ROOT,'video','neurophys_condition_%d.mp4' % self.object.id)):
-            context['video_url_mp4']=''.join(['http://', get_current_site(None).domain, os.path.join('/media/video/','neurophys_condition_%d.mp4' % self.object.id)])
-        filename='condition_%d.start_aligned.png' % self.object.id
-        path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-        if not os.path.exists(path):
-            self.object.plot_population_mean_firing_rate(0.05, filename=path)
-        context['mean_pop_rate_url']='/media/export/%s' % filename
-        units=Unit.objects.filter(recordingtrial__condition=self.object).distinct()
-        for unit in units:
-            filename='unit_%d.condition_%d.start_aligned.png' % (unit.id,self.object.id)
-            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-            if not os.path.exists(path):
-                unit.plot_condition_spikes([self.object.id], 0.05, filename=path)
-            unit.diagram_url='/media/export/%s' % filename
-        context['units']=units
-        event_names=[]
-        event_descriptions=[]
-        for event in Event.objects.filter(trial__condition=self.object).distinct():
-            if not event.name in event_names:
-                event_names.append(event.name)
-                event_descriptions.append(event.description)
-        context['events']=zip(event_names,event_descriptions)
-
-        return context
-
-
-class NeurophysiologyUnitView(DetailView):
-    model = Unit
-    template_name = 'bodb/sed/neurophysiology/neurophysiology_unit_view.html'
-
-    def get_context_data(self, **kwargs):
-        context=super(NeurophysiologyUnitView,self).get_context_data(**kwargs)
-        conditions=NeurophysiologyCondition.objects.filter(recordingtrial__unit=self.object).distinct()
-        for condition in conditions:
-            filename='unit_%d.condition_%d.start_aligned.png' % (self.object.id,condition.id)
-            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-            if not os.path.exists(path):
-                self.object.plot_condition_spikes([condition.id], 0.05, filename=path)
-            condition.diagram_url='/media/export/%s' % filename
-        context['conditions']=conditions
-        event_names=[]
-        event_descriptions=[]
-        for event in Event.objects.filter(trial__unit=self.object).distinct():
-            if not event.name in event_names:
-                event_names.append(event.name)
-                event_descriptions.append(event.description)
-        context['events']=zip(event_names,event_descriptions)
-        for event_name, event_description in context['events']:
-            for condition in conditions:
-                if event_name in event_names and not Event.objects.filter(trial__condition=condition, name=event_name).exists():
-                    event_names.remove(event_name)
-                    event_descriptions.remove(event_description)
-        context['events']=zip(event_names,event_descriptions)
-        return context
-
-
-class NeurophysiologyUnitRealignView(JSONResponseMixin, BaseUpdateView):
-    model=Unit
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            unit_id=int(self.request.POST['unit'])
-            condition_id=int(self.request.POST['condition'])
-            unit=Unit.objects.get(id=unit_id)
-            event=self.request.POST['event']
-            align_to=None
-            if not event=='start':
-                align_to=event
-            filename='unit_%d.condition_%d.%s_aligned.png' % (unit_id,condition_id,event)
-            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-            if not os.path.exists(path):
-                unit.plot_condition_spikes([condition_id], 0.05, align_to=align_to, filename=path)
-            context={
-                'unit': unit_id,
-                'condition': condition_id,
-                'diagram_url': '/media/export/%s' % filename,
-            }
-        return context
-
-
-class NeurophysiologyConditionPopulationRealignView(JSONResponseMixin, BaseUpdateView):
-    model=Unit
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            condition_id=int(self.request.POST['condition'])
-            condition=NeurophysiologyCondition.objects.get(id=condition_id)
-            event=self.request.POST['event']
-            align_to=None
-            if not event=='start':
-                align_to=event
-            filename='condition_%d.%s_aligned.png' % (condition_id,event)
-            path=os.path.join(settings.MEDIA_ROOT,'export',filename)
-            if not os.path.exists(path):
-                condition.plot_population_mean_firing_rate(0.05, align_to=align_to, filename=path)
-            context={
-                'diagram_url': '/media/export/%s' % filename,
-                }
-        return context
-
-
-class NeurophysiologySEDExportRequestView(LoginRequiredMixin, JSONResponseMixin, BaseUpdateView):
-    model=NeurophysiologySEDExportRequest
-
-    def get_context_data(self, **kwargs):
-        context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            sed=NeurophysiologySED.objects.get(id=kwargs.get('pk',None))
-            form=NeurophysiologySEDExportRequestForm(self.request.POST)
-            context={}
-            if form.is_valid():
-                request=NeurophysiologySEDExportRequest(sed=sed, requesting_user=self.request.user,
-                    request_body=form.cleaned_data['request_body'])
-                request.save()
-            else:
-                print(form.errors)
-        return context
-
-class NeurophysiologySEDExportRequestResponseView(LoginRequiredMixin, TemplateView):
-    def get_context_data(self, **kwargs):
-        context=super(NeurophysiologySEDExportRequestResponseView,self).get_context_data(**kwargs)
-        context['request']=get_object_or_404(NeurophysiologySEDExportRequest,activation_key=context['activation_key'])
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context=self.get_context_data(**kwargs)
-        context['request'].sed.collator.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(self.request,context['request'].sed.collator)
-        msg=Message(recipient=context['request'].requesting_user, sender=context['request'].sed.collator)
-        if context['action']=='decline':
-            context['request'].status='declined'
-            msg.subject='Neurophysiology SED export request declined'
-            msg.text='Sorry, but your request to export the neurophysiology SED: %s<br>' % context['request'].sed.title
-            msg.text+='has been declined.'
-            self.template_name='bodb/sed/neurophysiology/export_request_decline.html'
-        elif context['action']=='accept':
-            context['request'].status='accepted'
-            user=User.objects.get(id=context['request'].requesting_user.id)
-            # Add workspace group to user's groups
-            assign_perm('export',user,context['request'].sed)
-            msg.subject='Neurophysiology SED export request accepted'
-            msg.text='Your request to export the neurophysiology SED: %s<br>' % context['request'].sed.title
-            msg.text+='has been accepted. Click the following link to view the entry and download the raw data:<br>'
-            msg.text+='<a href="%s/bodb/sed/%d/">%s</a>' % (settings.URL_BASE, context['request'].sed.id,
-                                                              context['request'].sed.title)
-            self.template_name='bodb/sed/neurophysiology/export_request_accept.html'
-        msg.save()
-        context['request'].save()
-        return self.render_to_response(context)
-
-
-class NeurophysiologySEDExportView(View):
-    def post(self, request, *args, **kwargs):
-        id = self.kwargs.get('pk', None)
-
-        sed=get_object_or_404(NeurophysiologySED, id=id)
-
-        allowed=False
-        if request.user==sed.collator:
-            allowed=True
-        else:
-            if NeurophysiologySEDExportRequest.objects.filter(requesting_user=request.user,sed=sed):
-                request=NeurophysiologySEDExportRequest.objects.get(requesting_user=request.user,sed=sed)
-                if request.status=='accepted':
-                    allowed=True
-        if allowed:
-            file_name='neurophysiology_sed.%d.h5' % sed.id
-            sed.export(os.path.join(MEDIA_ROOT,'export',file_name))
-            return redirect('/media/export/%s' % file_name)
-        return HttpResponseForbidden()
