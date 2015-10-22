@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import BaseCreateView
-from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, NeurophysiologySED, BodbProfile, Workspace, UserSubscription, RecentlyViewedEntry
+from bodb.models import Model, BOP, SED, SSR, ConnectivitySED, BrainImagingSED, ERPSED, SEDCoord, SelectedSEDCoord, SavedSEDCoordSelection, Document, Prediction, ERPComponent, Literature, BrainRegion, BodbProfile, Workspace, UserSubscription, RecentlyViewedEntry
 from guardian.mixins import LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
@@ -218,10 +218,6 @@ class DraftListView(LoginRequiredMixin,BODBView):
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
 
-        neurophys_seds=NeurophysiologySED.objects.filter(collator=user,draft=1).order_by('title')
-        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds,context['workspace_seds'], context['fav_docs'],
-            context['subscriptions'])
-
         ssrs=SSR.objects.filter(collator=user,draft=1).select_related('collator').order_by('title')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
 
@@ -325,7 +321,6 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
         context['connectivity_seds']=[]
         context['imaging_seds']=[]
         context['erp_seds']=[]
-        context['neurophysiology_seds']=[]
         context['ssrs']=[]
 
         if user.is_authenticated() and not user.is_anonymous():
@@ -404,10 +399,6 @@ class FavoriteListView(LoginRequiredMixin,BODBView):
             context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
                 context['subscriptions'])
             context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-
-            neurophys_seds=NeurophysiologySED.objects.filter(document_ptr__in=context['fav_docs']).order_by('title')
-            context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds, context['workspace_seds'],
-                context['fav_docs'], context['subscriptions'])
 
             ssrs=SSR.objects.filter(document_ptr__in=context['fav_docs']).select_related('collator').order_by('title')
             context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'],
@@ -539,9 +530,6 @@ class TagView(BODBView):
             context['subscriptions'])
         context['imaging_seds']=BrainImagingSED.augment_sed_list(context['imaging_seds'],coords,
             context['selected_sed_coords'].values_list('sed_coordinate__id',flat=True))
-        neurophy_seds=NeurophysiologySED.get_tagged_seds(name, user)
-        context['neurophysiology_seds']=SED.get_sed_list(neurophy_seds, context['workspace_seds'], context['fav_docs'],
-            context['subscriptions'])
         predictions=Prediction.get_tagged_predictions(name, user)
         context['tagged_predictions']=Prediction.get_prediction_list(predictions, context['workspace_ssrs'],
             context['fav_docs'], context['subscriptions'])

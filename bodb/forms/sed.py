@@ -161,10 +161,6 @@ TestSEDFormSet = lambda *a, **kw: inlineformset_factory(Model,TestSED,form=TestS
     extra=kw.pop('extra', 0), can_delete=True)(*a, **kw)
 
 
-class NeurophysiologySEDExportRequestForm(forms.Form):
-    request_body=forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=True)
-
-
 class SEDReportForm(Form):
     format=forms.ChoiceField(choices=[('rtf','RTF'),('pdf','PDF')],required=True, help_text='File format to export')
     figure_display=forms.BooleanField(required=False, help_text='Display figures in report')

@@ -9,7 +9,7 @@ from django.views.generic import UpdateView, View, DetailView
 from django.views.generic.edit import BaseUpdateView
 from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
-from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature, NeurophysiologySED, Document
+from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature, Document
 from bodb.views.main import set_context_workspace
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
@@ -244,10 +244,6 @@ class UserDetailView(DetailView):
         context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-
-        neurophys_seds=NeurophysiologySED.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).order_by('title')
-        context['neurophysiology_seds']=SED.get_sed_list(neurophys_seds,context['workspace_seds'], context['fav_docs'],
-            context['subscriptions'])
 
         ssrs=SSR.objects.filter(Q(collator=self.object) & Document.get_security_q(user)).select_related('collator').order_by('title')
         context['ssrs']=SSR.get_ssr_list(ssrs, context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
