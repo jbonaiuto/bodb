@@ -44,22 +44,25 @@
                         postRideCallback: workspace_page_tour_seen,
                         preStepCallback : function (index, tip) {
                             if (index==1) {
-                                switchTab('activity',['entry','coord','bookmark','discussion','admin']);
+                                switchTab('activity',['entry','coord','bookmark','discussion','tasks','admin']);
                             }
                             else if (index==2) {
-                                switchTab('entry',['activity','coord','bookmark','discussion','admin']);
+                                switchTab('entry',['activity','coord','bookmark','discussion','tasks','admin']);
                             }
                             else if (index == 3) {
-                                switchTab('coord',['activity','entry','bookmark','discussion','admin']);
+                                switchTab('coord',['activity','entry','bookmark','discussion','tasks','admin']);
                             }
                             else if (index == 4) {
-                                switchTab('bookmark',['activity','entry','coord','discussion','admin']);
+                                switchTab('bookmark',['activity','entry','coord','discussion','tasks','admin']);
                             }
                             else if (index == 5) {
-                                switchTab('discussion',['activity','entry','coord','bookmark','admin']);
+                                switchTab('discussion',['activity','entry','coord','bookmark','tasks','admin']);
                             }
                             else if (index == 6) {
-                                switchTab('admin',['activity','entry','coord','bookmark','discussion']);
+                                switchTab('tasks',['activity','entry','coord','bookmark','discussion','admin']);
+                            }
+                            else if (index == 7) {
+                                switchTab('admin',['activity','entry','coord','bookmark','discussion','tasks']);
                             }
                         }
                     });
@@ -125,6 +128,13 @@
                     </span>
                 </td>
                 <td style="padding:0px">
+                    <span id="tasksHeader">
+                        {% ifequal selected 'tasks' %}
+                            <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
+                        {% endifequal %}
+                    </span>
+                </td>
+                <td style="padding:0px">
                     <span id="adminHeader">
                         {% ifequal selected 'admin' %}
                             <b class="c1f"></b><b class="c2f"></b><b class="c3f"></b><b class="c4f"></b></span>
@@ -137,32 +147,37 @@
             <tr class="tab_header">
                 <td id="activityTab" width=150 class="{% ifequal selected 'activity' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('activity',['entry','coord','bookmark','discussion','admin']);">
+                    onclick="switchTab('activity',['entry','coord','bookmark','discussion','tasks','admin']);">
                     <a>Activity</a>
                 </td>
                 <td id="entryTab" width=150 class="{% ifequal selected 'entries' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('entry',['activity','coord','bookmark','discussion','admin']);">
+                    onclick="switchTab('entry',['activity','coord','bookmark','discussion','tasks','admin']);">
                     <a>Entries</a>
                 </td>
                 <td id="coordTab" width=190 class="{% ifequal selected 'coord' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('coord',['activity','entry','bookmark','discussion','admin']);">
+                    onclick="switchTab('coord',['activity','entry','bookmark','discussion','tasks','admin']);">
                     <a>Coordinates</a>
                 </td>
                 <td id="bookmarkTab" width=190 class="{% ifequal selected 'bookmark' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('bookmark',['activity','entry','coord','discussion','admin']);">
+                    onclick="switchTab('bookmark',['activity','entry','coord','discussion','tasks','admin']);">
                     <a>Bookmarks</a>
                 </td>
                 <td id="discussionTab" width=150 class="{% ifequal selected 'discussion' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('discussion',['activity','entry','coord','bookmark','admin']);">
+                    onclick="switchTab('discussion',['activity','entry','coord','bookmark','tasks','admin']);">
                     <a>Discussion</a>
+                </td>
+                <td id="tasksTab" width=150 class="{% ifequal selected 'tasks' %}selectedTab{% else %}unselectedTab{% endifequal %}"
+                    onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
+                    onclick="switchTab('tasks',['activity','entry','coord','bookmark','discussion','admin']);">
+                    <a>Tasks</a>
                 </td>
                 <td id="adminTab" width=150 class="{% ifequal selected 'admin' %}selectedTab{% else %}unselectedTab{% endifequal %}"
                     onmouseover="this.style.cursor='pointer';this.style.cursor='hand'"
-                    onclick="switchTab('admin',['activity','entry','coord','discussion','bookmark']);">
+                    onclick="switchTab('admin',['activity','entry','coord','discussion','bookmark','tasks',]);">
                     {% if admin %}
                         <a>Admin</a>
                     {% else %}
@@ -210,6 +225,11 @@
                             {% include "bodb/discussion/forum_view.html" %}
                         {% endwith %}
                     </div>
+                    <div id="todoDiv" style="display:{% ifequal selected 'tasks' %}block{% else %}none{% endifequal %}">
+                        {% with workspace.tasks as list %}
+                        	{% include "todo/view_list.html" %}
+                        {% endwith %}
+                    </div>
                     <div id="adminDiv" style="display:{% ifequal selected 'admin' %}block{% else %}none{% endifequal %}">
                         {% if admin %}
                             {% include "bodb/workspace/workspace_admin.html" %}
@@ -249,6 +269,10 @@
         <li data-id="discussionTab" data-button="Next" data-options="tipLocation:top">
             <h2>Discussion</h2>
             <p>View and post comments for discussion with other members of the workspace.</p>
+        </li>
+        <li data-id="tasksTab" data-button="Next" data-options="tipLocation:top">
+            <h2>Tasks</h2>
+            <p>View and post tasks for and with other members of the workspace.</p>
         </li>
         <li data-id="adminTab" data-button="Close" data-options="tipLocation:top">
             <h2>{% if admin %}Administration{% else %}Members{% endif %}</h2>

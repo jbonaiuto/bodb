@@ -24,6 +24,7 @@ class Workspace(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     forum=models.ForeignKey('Forum')
+    tasks=models.ForeignKey('todo.List')
     related_models = models.ManyToManyField('Model')
     related_bops = models.ManyToManyField('BOP')
     related_seds = models.ManyToManyField('SED')
