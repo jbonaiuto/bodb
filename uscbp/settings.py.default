@@ -211,6 +211,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
             },
+        'django.security': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+            },
         }
 }
 
