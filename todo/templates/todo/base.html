@@ -1,6 +1,6 @@
-{% extends "base_generic.html" %}
-{% block page_heading %}GTD (Getting Things Done){% endblock %}
-{% block extrahead %}
+
+
+<head>
 <!-- CSS and JavaScript for django-todo -->
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}todo/css/styles.css" />
 
@@ -17,4 +17,6 @@
 
 </script>
 
-{% endblock extrahead %}
+</head>
+
+ <body> {% block content%}{%endblock%}</body>
