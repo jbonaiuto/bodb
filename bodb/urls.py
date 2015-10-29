@@ -4,7 +4,7 @@ from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, Cr
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPIDetailView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
-from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView
+from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
@@ -92,6 +92,7 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^coord_selection/close/$', CloseCoordinateSelectionView.as_view(), {}, 'coord_selection_add'),
     url(r'^coord_selection/save/$', SaveCoordinateSelectionView.as_view(), {}, 'coord_selection_save'),
 
+    url(r'^document/(?P<pk>\d+)/$', DocumentDetailView.as_view(), {}, 'document_view'),
     url(r'^document/(?P<pk>\d+)/permissions/$', ManageDocumentPermissionsView.as_view(), {}, 'manage_permissions'),
     url(r'^document/public_request/$', DocumentPublicRequestView.as_view(), {}, 'public_request'),
 
