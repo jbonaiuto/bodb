@@ -25,7 +25,7 @@ class WorkspaceForm(forms.ModelForm):
     class Meta:
         model=Workspace
         exclude=('created_by', 'admin_users','group','related_models','related_bops','related_seds', 'related_ssrs',
-                 'related_regions', 'related_literature', 'forum', 'saved_coordinate_selections')
+                 'related_regions', 'related_literature', 'forum', 'tasks', 'saved_coordinate_selections')
 
 
 class WorkspaceBookmarkForm(forms.ModelForm):

@@ -11,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from bodb.models.discussion import Forum
 from bodb.models.messaging import Message, UserSubscription, messageUser
+from todo.models import List
 from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
@@ -84,6 +85,16 @@ class Workspace(models.Model):
             workspace_forum.save()
 
             self.forum=workspace_forum
+        
+        # test if workspace already has a task list assigned to it 
+        if True:#(not hasattr(self, 'tasks')) or (self.tasks is None):
+            workspace_tasks=List()
+            workspace_tasks.group = self.group
+            workspace_tasks.name = self.title+'-tasks'
+            #workspace_tasks.slug = self.title+'-tasks'
+            workspace_tasks.save()
+
+            self.tasks=workspace_tasks
 
         # Save workspace
         super(Workspace, self).save(*args, **kwargs)

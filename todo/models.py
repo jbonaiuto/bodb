@@ -8,8 +8,8 @@ from django.template.defaultfilters import slugify
 
 
 class List(models.Model):
-    name = models.CharField(max_length=60)
-    slug = models.SlugField(max_length=60,editable=False)
+    name = models.CharField(max_length=220)
+    slug = models.SlugField(max_length=220,editable=False)
     # slug = models.SlugField(max_length=60)    
     group = models.ForeignKey(Group)
     

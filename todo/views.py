@@ -17,6 +17,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from uscbp import settings
 
 import datetime
 
@@ -29,7 +30,7 @@ def check_user_allowed(user):
     """
     test for user_passes_test decorator
     """
-    if settings.STAFF_ONLY:
+    if settings.TODO_STAFF_ONLY:
         return user.is_authenticated() and user.is_staff
     else:
         return user.is_authenticated()
