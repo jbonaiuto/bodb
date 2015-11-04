@@ -56,24 +56,24 @@
 	});
     
 </script>
-{% load mptt_tags %}
 {% if can_add_post %}
 <div id="myForum">
-{% for doc in forum.document_set.all %}
-{% load disqus_tags %}
-{% set_disqus_title "doc-"|add:doc.id|slugify %}
-{% set_disqus_url "http://bodb.usc.edu" doc.get_absolute_url %}
-{% set_disqus_identifier "doc-" doc.id|slugify %}
-{% disqus_show_comments %}
-{% endfor %}
+    {% load disqus_tags %}
+    {% disqus_sso %}
 
-{% for workspace in forum.workspace_set.all %}
-{% load disqus_tags %}
-{% set_disqus_title "ws-"|add:workspace.id|slugify %}
-{% set_disqus_url "http://bodb.usc.edu" workspace.get_absolute_url %}
-{% set_disqus_identifier "ws-" workspace.id|slugify %}
-{% disqus_show_comments %}
-{% endfor %}
+    {% for doc in forum.document_set.all %}
+        {% set_disqus_title "doc-"|add:doc.id|slugify %}
+        {% set_disqus_url "http://bodb.usc.edu" doc.get_absolute_url %}
+        {% set_disqus_identifier "doc-" doc.id|slugify %}
+        {% disqus_show_comments %}
+    {% endfor %}
+
+    {% for workspace in forum.workspace_set.all %}
+        {% set_disqus_title "ws-"|add:workspace.id|slugify %}
+        {% set_disqus_url "http://bodb.usc.edu" workspace.get_absolute_url %}
+        {% set_disqus_identifier "ws-" workspace.id|slugify %}
+        {% disqus_show_comments %}
+    {% endfor %}
 
 {% comment %}
 {% for doc in forum.document_set.all %}
