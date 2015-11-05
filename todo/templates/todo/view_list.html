@@ -39,10 +39,12 @@ $(document).ready(function() {
     {% ifequal list_slug "mine" %}
         <h1>Tasks assigned to {{ request.user }}</h1>    
     {% else %}
+    {% comment %}
     {% ifequal auth_ok 1 %}
        <h1>Tasks filed under "{{ list.name }}"</h1>
        <p>This list belongs to group {{ list.group }}</p>
     {% endifequal %}
+    {% endcomment %}
     {% endifequal %}
 
  
@@ -59,9 +61,12 @@ $(document).ready(function() {
    <form action="" method="POST">
 	{% csrf_token %}	
    
+   
    {# Only show task adder if viewing a proper list #}
    {% ifnotequal list_slug "mine" %}
+   {% comment %}
    <h2 style="margin-bottom:0px;" id="slideToggle" >&rarr; Click to add task &larr;</h2>
+   {% endcomment %}
    
    <div id="AddTask">	    
 	    <table class="nocolor" border="0" cellspacing="5" cellpadding="5">
@@ -138,7 +143,9 @@ $(document).ready(function() {
             </tr>
 	    {% endfor %}
 	</table>   
+	
     <p><input type="submit" name="mark_tasks_done" value="Continue..."  class="todo-button"></p>
+   
     
     <p><a  class="todo" href="{% url 'todo-completed_tasks' list_id list_slug %}">View completed tasks</a></p>
     {% endifequal %}    
@@ -180,11 +187,13 @@ $(document).ready(function() {
     <p><a  class="todo" href="{% url 'todo-incomplete_tasks' list_id list_slug %}">View incomplete tasks</a></p>
     {% endifequal %}    
 	
+	{% comment %}
 	{% ifequal can_del 1 %}
 	{% ifnotequal list_slug "mine" %}    
 	   <p><a class="todo" href="{% url 'todo-del_list' list_id list_slug %}">Delete this list</a></p>
 	{% endifnotequal %}
 	{% endifequal %}
+	{% endcomment %}
 	
     {% endifequal %}
 {% endblock %}
