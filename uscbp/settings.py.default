@@ -206,7 +206,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'documentation',
     'autocomplete_light',
-    
+    'disqus',
+
     #all of these are needed for the askbot
     #'django.contrib.admin',
     'django.contrib.humanize',
@@ -417,3 +418,9 @@ VERIFIER_EXPIRE_DAYS = 3
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Disqus stuff
+DISQUS_API_KEY = 'aUnaxzeCgFrX9b1AGPUlSkAM8gxi6BcDRLjkCmhftv8jShKoGzMFRuVORf7yHYCo'
+DISQUS_SECRET_KEY = '< secret key here>'
+DISQUS_PUBLIC_KEY = 'aUnaxzeCgFrX9b1AGPUlSkAM8gxi6BcDRLjkCmhftv8jShKoGzMFRuVORf7yHYCo'
+DISQUS_WEBSITE_SHORTNAME = 'bodb-comments'
