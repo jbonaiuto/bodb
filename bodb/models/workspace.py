@@ -87,7 +87,7 @@ class Workspace(models.Model):
             self.forum=workspace_forum
         
         # test if workspace already has a task list assigned to it 
-        if True:#(not hasattr(self, 'tasks')) or (self.tasks is None):
+        if (not hasattr(self, 'tasks')) or (self.tasks is None):
             workspace_tasks=List()
             workspace_tasks.group = self.group
             workspace_tasks.name = self.title+'-tasks'
