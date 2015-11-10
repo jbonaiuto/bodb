@@ -6,7 +6,7 @@ import time
 
 from django import template
 from django.conf import settings
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site, get_current_site
 
 from bodb.models import BodbProfile
 from django.core.cache import cache
@@ -116,12 +116,16 @@ def disqus_sso(context):
         return ""
 
     # create a JSON packet of our data attributes
-    data = json.dumps({
+    data_dict={
         'id': user.id,
         'username': user.username,
         'email': user.email,
-        'avatar': os.path.join(settings.MEDIA_ROOT, get_profile(user).avatar.url)
-    })
+        'avatar':  ''
+    }
+    avatar=get_profile(user).avatar
+    if avatar:
+        data_dict['avatar']='http://%s%s/' % (get_current_site(None).name,  avatar.url)
+    data = json.dumps(data_dict)
 
     # encode the data to base64
     message = base64.b64encode(data.encode('utf-8'))
