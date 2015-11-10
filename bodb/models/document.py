@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from bodb.models import Message, BodbProfile, messageUser
@@ -128,6 +129,9 @@ class Document(models.Model):
             'draft': self.draft,
             'brief_description': self.brief_description
         }
+
+    def get_absolute_url(self):
+        return reverse('document_view', kwargs={'pk': self.pk})
 
     @staticmethod
     def get_security_q(user, field=None):

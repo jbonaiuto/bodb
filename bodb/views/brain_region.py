@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, DetailView
 from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
 from bodb.forms.admin import BrainRegionRequestForm, BrainRegionRequestDenyForm
 from bodb.forms.brain_region import BrainRegionForm
-from bodb.models import BrainRegionRequest, BrainRegion, SED, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, ERPComponent, WorkspaceActivityItem, NeurophysiologySED, messageUser
+from bodb.models import BrainRegionRequest, BrainRegion, SED, RelatedBOP, ConnectivitySED, RelatedModel, BrainImagingSED, ERPSED, ERPComponent, WorkspaceActivityItem, messageUser
 from bodb.search.sed import runSEDCoordSearch
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile
 from bodb.views.model import CreateModelView
@@ -193,7 +193,6 @@ class BrainRegionView(DetailView):
         context['erp_seds']=SED.get_sed_list(erp_seds, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['erp_seds']=ERPSED.augment_sed_list(context['erp_seds'],components)
-        context['neurophysiology_seds']=SED.get_sed_list(NeurophysiologySED.get_brain_region_seds(self.object,user),context['profile'],context['active_workspace'])
         rbops=RelatedBOP.get_brain_region_related_bops(self.object, user)
         context['related_bops']=RelatedBOP.get_related_bop_list(rbops, context['workspace_bops'], context['fav_docs'],
             context['subscriptions'])
