@@ -64,9 +64,9 @@ $(document).ready(function() {
    
    {# Only show task adder if viewing a proper list #}
    {% ifnotequal list_slug "mine" %}
-   {% comment %}
+   
    <h2 style="margin-bottom:0px;" id="slideToggle" >&rarr; Click to add task &larr;</h2>
-   {% endcomment %}
+
    
    <div id="AddTask">	    
 	    <table class="nocolor" border="0" cellspacing="5" cellpadding="5">
