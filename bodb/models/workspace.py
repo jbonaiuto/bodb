@@ -91,7 +91,7 @@ class Workspace(models.Model):
             workspace_tasks=List()
             workspace_tasks.group = self.group
             workspace_tasks.name = self.title+'-tasks'
-            #workspace_tasks.slug = self.title+'-tasks'
+            workspace_tasks.slug = 'tasks-'+str(self.id)
             workspace_tasks.save()
 
             self.tasks=workspace_tasks

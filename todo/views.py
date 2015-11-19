@@ -38,12 +38,17 @@ def check_user_allowed(user):
 
 
 @user_passes_test(check_user_allowed)
-def list_lists(request):
+def list_lists(request, list_slug=None):
 
     """
     Homepage view - list of lists a user can view, and ability to add a list.
     """
     
+    if list_slug == "mine"  :
+        base = 'base_generic.html'
+    else: 
+        base = "todo/base.html"
+        
     # Make sure user belongs to at least one group.
     group_count = request.user.groups.all().count()
     if group_count == 0:
@@ -75,6 +80,11 @@ def del_list(request,list_id,list_slug):
     """
     Delete an entire list. Danger Will Robinson! Only staff members should be allowed to access this view.
     """
+    
+    if list_slug == "mine"  :
+        base = 'base_generic.html'
+    else: 
+        base = "todo/base.html"
     
     if request.user.is_staff:
         can_del = 1
@@ -114,6 +124,11 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     # Make sure the accessing user has permission to view this list.
     # Always authorize the "mine" view. Admins can view/edit all lists.
 
+    if list_slug == "mine":
+        base = 'base_generic.html'
+    else:             
+        base = "todo/base.html"
+        
     if list_slug == "mine"  or list_slug == "recent-add" or list_slug == "recent-complete" :
         auth_ok =1
     else: 
@@ -124,7 +139,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
         if list.group in request.user.groups.all() or request.user.is_staff or list_slug == "mine" :
             auth_ok = 1   # User is authorized for this view
         else: # User does not belong to the group this list is attached to
-            messages.error(request, "You do not have permission to view/edit this list.")                                    
+            messages.error(request, "You do not have permission to view/edit this list.")  
 
         
     # First check for items in the mark_done POST array. If present, change
@@ -235,7 +250,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
 
 
 @user_passes_test(check_user_allowed)
-def view_task(request,task_id):
+def view_task(request,task_id,list_slug=None):
 
     """
     View task details. Allow task details to be edited.
@@ -243,6 +258,11 @@ def view_task(request,task_id):
 
     task = get_object_or_404(Item, pk=task_id)
     comment_list = Comment.objects.filter(task=task_id)
+    
+    if list_slug == "mine":
+        base = 'base_generic.html'
+    else:             
+        base = "todo/base.html"
         
     # Before doing anything, make sure the accessing user has permission to view this item.
     # Determine the group this task belongs to, and check whether current user is a member of that group.
