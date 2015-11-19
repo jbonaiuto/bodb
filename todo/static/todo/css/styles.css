@@ -83,16 +83,16 @@ table#tasktable td, table#tasktable th {
 table#tasktable th {
     text-align: left;
 /*  background-color: #9BCAE4; */
-    background-color: #046380;
+    background-color: #0d3f74;
     color: #fff;
 }
 
 table#tasktable tr.row1 {
-    background-color: #AEF0BB;
+    background-color: #c5cbd4;
 }
 
 table#tasktable tr.row2 {
-    background-color: #B6F3D5;
+    background-color: #e6e8ed;
 }
 
 .minor {
