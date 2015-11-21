@@ -5,6 +5,11 @@
 {% load taggit_extras %}
 {% load cache %}
 <head>
+	<script type="text/css" src="{% static 'todo/css/styles.css' %}"></script>
+	<script type="text/css" src="{% static 'todo/css/ui.datepicker.css' %}"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}todo/css/styles.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}todo/css/ui.datepicker.css" />
+	
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
     <script src="http://java.com/js/deployJava.js"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery-1.10.1.js' %}"></script>
@@ -15,6 +20,8 @@
     <script type="text/javascript" src="{% static 'bodb/scripts/popup.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery.textarearesizer.js' %}"></script>
+    
+    <script type="text/javascript" src="{% static 'todo/js/jquery.tablednd_0_5.js' %}"></script>
     {% include 'autocomplete_light/static.html' %}
     <script type="text/javascript">
         $(document).ready(function()
@@ -142,6 +149,7 @@
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
                 <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
+                <li id="task_link"><a href="/bodb/todo/mine/">Tasks</a></li>
                 <li id="recent_link"><a href="/bodb/recent/">Recent</a></li>
             {% endif %}
             {% if user.is_superuser %}
