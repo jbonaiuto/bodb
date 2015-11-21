@@ -178,6 +178,8 @@ INSTALLED_APPS = (
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
+from uscbp.logging_filters import skip_suspicious_operations
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -189,7 +191,12 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
-        }
+        },
+        # Define filter
+        'skip_suspicious_operations': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_suspicious_operations,
+        },
     },
     'handlers': {
         'mail_admins': {
@@ -200,6 +207,11 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+            },
+        'django.security': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
