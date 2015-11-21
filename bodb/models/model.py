@@ -126,7 +126,10 @@ class Model(Module):
             if selected_id==self.id:
                 html+='<strong>%s</strong>' % str(self)
             else:
-                html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self).encode("utf8"))
+                try:
+                    html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self).decode("utf8"))
+                except:
+                    html+='<a href="/bodb/model/%d/">%s</a>' % (self.id, str(self).encode("utf8"))
         else:
             html+=str(self)
         children=self.get_children().all()
