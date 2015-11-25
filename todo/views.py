@@ -187,9 +187,12 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
 
 
     # Get list of items with this list ID, or filter on items assigned to me, or recently added/completed
-    if list_slug == "mine":
+    if list_slug == "mine" and list_id == 0:
         task_list = Item.objects.filter(assigned_to=request.user, completed=0)
         completed_list = Item.objects.filter(assigned_to=request.user, completed=1)
+    elif list_slug == "mine" and list_id != 0:
+        task_list = Item.objects.filter(list=list_id, assigned_to=request.user, completed=0)
+        completed_list = Item.objects.filter(list=list_id, assigned_to=request.user, completed=1)
         
     elif list_slug == "recent-add":
         # We'll assume this only includes uncompleted items to avoid confusion.
@@ -310,7 +313,10 @@ def view_task(request,task_id,list_slug=None):
                  
                  messages.success(request, "The task has been edited.")
                  
-                 return HttpResponseRedirect(reverse('todo-incomplete_tasks', args=[task.list.id, task.list.slug]))
+                 if list_slug == None:
+                     return HttpResponseRedirect(reverse('todo-incomplete_tasks', args=[task.list.id, task.list.slug]))
+                 else:
+                    return HttpResponseRedirect(reverse('my-todo-incomplete_tasks', args=[task.list.id, task.list.slug]))
                  
         else:
             form = EditItemForm(instance=task)
