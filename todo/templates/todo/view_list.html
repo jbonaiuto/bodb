@@ -142,9 +142,9 @@ $(document).ready(function() {
                    
 	            </td>	            
 	            {% ifequal list_slug "mine" %}
-                <td><a href="{% url 'my-todo-incomplete_tasks' task.list.id task.list.slug %}">{{ task.list }}</a></td>   
+                <td><a href="{% url 'my-todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>   
                 {% endifequal %}
-                       
+
 	            <td><input type="checkbox" name="del_task" value="{{ task.id }}" id="del_task_{{ task.id }}">   </td> 	            
             </tr>
 	    {% endfor %}
