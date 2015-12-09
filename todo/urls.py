@@ -3,14 +3,23 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = patterns('',
     url(r'^mine/$', 'todo.views.view_list',{'list_slug':'mine'},name="todo-mine"),
-    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/delete$', 'todo.views.del_list',name="todo-del_list"),
+    
+    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/delete$', 'todo.views.del_list', {'list_slug':'super'}, name="todo-del_list"),
+    url(r'^workspace/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/delete$', 'todo.views.del_list', name="workspace-todo-del_list"),
     url(r'^mine/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/delete$', 'todo.views.del_list', {'list_slug':'mine'}, name="my-todo-del_list"),
-    url(r'^task/(?P<task_id>\d{1,6})$', 'todo.views.view_task', name='todo-task_detail'),
+   
+    url(r'^task/(?P<task_id>\d{1,6})$', 'todo.views.view_task', {'list_slug':'super'}, name='todo-task_detail'),
+    url(r'^workspace/task/(?P<task_id>\d{1,6})$', 'todo.views.view_task', name='workspace-todo-task_detail'),
     url(r'^mine/task/(?P<task_id>\d{1,6})$', 'todo.views.view_task',{'list_slug':'mine'},name='my-todo-task_detail'),
-    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)$', 'todo.views.view_list', name='todo-incomplete_tasks'),
+    
+    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)$', 'todo.views.view_list', {'list_slug':'super'}, name='todo-incomplete_tasks'),
+    url(r'^workspace/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)$', 'todo.views.view_list', name='workspace-todo-incomplete_tasks'),
     url(r'^mine/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)$', 'todo.views.view_list', {'list_slug':'mine'}, name='my-todo-incomplete_tasks'),
-    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/completed$', 'todo.views.view_list', {'view_completed':1},name='todo-completed_tasks'),    
+    
+    url(r'^(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/completed$', 'todo.views.view_list', {'view_completed':1, 'list_slug':'super'}, name='todo-completed_tasks'),    
+    url(r'^workspace/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/completed$', 'todo.views.view_list', {'view_completed':1},name='workspace-todo-completed_tasks'),    
     url(r'^mine/(?P<list_id>\d{1,4})/(?P<list_slug>[\w-]+)/completed$', 'todo.views.view_list', {'view_completed':1, 'list_slug':'mine'},name='my-todo-completed_tasks'),    
+    
     url(r'^add_list/$', 'todo.views.add_list',name="todo-add_list"),
     url(r'^search/$', 'todo.views.search',name="todo-search"),    
     url(r'^$', 'todo.views.list_lists',name="todo-lists"),

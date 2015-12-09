@@ -18,8 +18,11 @@ from django.db.models import Q
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from uscbp import settings
+from bodb.views.main import set_context_workspace
 
 import datetime
+
+from django.conf import settings
 
 # Need for links in email templates
 current_site = Site.objects.get_current() 
@@ -43,9 +46,11 @@ def list_lists(request, list_slug=None):
     """
     Homepage view - list of lists a user can view, and ability to add a list.
     """
+    context=RequestContext(request)
     
-    if list_slug == "mine"  :
+    if list_slug == "mine" or list_slug=="super":
         base = 'base_generic.html'
+        context=set_context_workspace(context, request)
     else: 
         base = "todo/base.html"
         
@@ -71,7 +76,7 @@ def list_lists(request, list_slug=None):
     else:
         item_count = Item.objects.filter(completed=0).filter(list__group__in=request.user.groups.all()).count()
 
-    return render_to_response('todo/list_lists.html', locals(), context_instance=RequestContext(request))  
+    return render_to_response('todo/list_lists.html', locals(), context_instance=context)  
     
 
 @user_passes_test(check_user_allowed)
@@ -81,8 +86,11 @@ def del_list(request,list_id,list_slug):
     Delete an entire list. Danger Will Robinson! Only staff members should be allowed to access this view.
     """
     
+    context=RequestContext(request)
+    
     if list_slug == "mine"  :
         base = 'base_generic.html'
+        context=set_context_workspace(context, request)
     else: 
         base = "todo/base.html"
     
@@ -111,7 +119,7 @@ def del_list(request,list_id,list_slug):
         item_count_undone = Item.objects.filter(list=list.id,completed=0).count()
         item_count_total = Item.objects.filter(list=list.id).count()    
     
-    return render_to_response('todo/del_list.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('todo/del_list.html', locals(), context_instance=context)
 
 
 @user_passes_test(check_user_allowed)
@@ -123,20 +131,24 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     
     # Make sure the accessing user has permission to view this list.
     # Always authorize the "mine" view. Admins can view/edit all lists.
-
-    if list_slug == "mine":
+    
+    context=RequestContext(request)
+    
+    if list_slug == "mine" or list_slug=="super":
         base = 'base_generic.html'
+        context=set_context_workspace(context, request)
+        
     else:             
         base = "todo/base.html"
         
-    if list_slug == "mine"  or list_slug == "recent-add" or list_slug == "recent-complete" :
+    if list_slug == "mine"  or list_slug == "recent-add" or list_slug == "recent-complete" or (list_slug == "super" and request.user.is_superuser):
         auth_ok =1
     else: 
         list = get_object_or_404(List, slug=list_slug)
         listid = list.id    
         
         # Check whether current user is a member of the group this list belongs to.
-        if list.group in request.user.groups.all() or request.user.is_staff or list_slug == "mine" :
+        if list.group in request.user.groups.all() or request.user.is_staff or list_slug == "mine" or request.user.is_staff:
             auth_ok = 1   # User is authorized for this view
         else: # User does not belong to the group this list is attached to
             messages.error(request, "You do not have permission to view/edit this list.")  
@@ -185,7 +197,6 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     thedate = datetime.datetime.now()
     created_date = "%s-%s-%s" % (thedate.year, thedate.month, thedate.day)
 
-
     # Get list of items with this list ID, or filter on items assigned to me, or recently added/completed
     if list_slug == "mine" and list_id == 0:
         task_list = Item.objects.filter(assigned_to=request.user, completed=0)
@@ -193,6 +204,13 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     elif list_slug == "mine" and list_id != 0:
         task_list = Item.objects.filter(list=list_id, assigned_to=request.user, completed=0)
         completed_list = Item.objects.filter(list=list_id, assigned_to=request.user, completed=1)
+    
+    elif list_slug == "super" and list_id == 0:
+        task_list = Item.objects.filter(completed=0)
+        completed_list = Item.objects.filter(completed=1)
+    elif list_slug == "super" and list_id != 0:
+        task_list = Item.objects.filter(list=list_id, completed=0)
+        completed_list = Item.objects.filter(list=list_id, completed=1)
         
     elif list_slug == "recent-add":
         # We'll assume this only includes uncompleted items to avoid confusion.
@@ -204,8 +222,6 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
         # Only show items in lists that are in groups that the current user is also in.
         task_list = Item.objects.filter(list__group__in=request.user.groups.all(),completed=1).order_by('-completed_date')[:50]
         # completed_list = Item.objects.filter(assigned_to=request.user, completed=1)             
-
-
     else:
         task_list = Item.objects.filter(list=list.id, completed=0)
         completed_list = Item.objects.filter(list=list.id, completed=1)
@@ -224,13 +240,13 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
             # Send email alert only if the Notify checkbox is checked AND the assignee is not the same as the submittor
             # Email subect and body format are handled by templates
             if "notify" in request.POST :
-                if new_task.assigned_to != request.user :
-                                        
+                #if new_task.assigned_to != request.user :
+                if True:                     
                     # Send email
                     email_subject = render_to_string("todo/email/assigned_subject.txt", { 'task': new_task })                    
                     email_body = render_to_string("todo/email/assigned_body.txt", { 'task': new_task, 'site': current_site, })
                     try:
-                        send_mail(email_subject, email_body, new_task.created_by.email, [new_task.assigned_to.email], fail_silently=False)
+                        send_mail(email_subject, email_body, settings.DEFAULT_FROM_EMAIL, [new_task.assigned_to.email])
                     except:
                         messages.error(request, "Task saved but mail not sent. Contact your administrator.")
                         
@@ -240,7 +256,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
             return HttpResponseRedirect(request.path)
 
     else:
-        if list_slug != "mine" and list_slug != "recent-add" and list_slug != "recent-complete" : # We don't allow adding a task on the "mine" view
+        if list_slug != "mine" and  list_slug != "super" and list_slug != "recent-add" and list_slug != "recent-complete" : # We don't allow adding a task on the "mine" view
             form = AddItemForm(list, initial={
                 'assigned_to':request.user.id,
                 'priority':999,
@@ -249,7 +265,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     if request.user.is_staff:
         can_del = 1
 
-    return render_to_response('todo/view_list.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('todo/view_list.html', locals(), context_instance=context)
 
 
 @user_passes_test(check_user_allowed)
@@ -262,8 +278,11 @@ def view_task(request,task_id,list_slug=None):
     task = get_object_or_404(Item, pk=task_id)
     comment_list = Comment.objects.filter(task=task_id)
     
-    if list_slug == "mine":
+    context=RequestContext(request)
+    
+    if list_slug == "mine" or list_slug=="super":
         base = 'base_generic.html'
+        context=set_context_workspace(context, request)
     else:             
         base = "todo/base.html"
         
@@ -330,7 +349,7 @@ def view_task(request,task_id,list_slug=None):
         messages.info(request, "You do not have permission to view/edit this task.")
         
 
-    return render_to_response('todo/view_task.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('todo/view_task.html', locals(), context_instance=context)
 
 
 @csrf_exempt

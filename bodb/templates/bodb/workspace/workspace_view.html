@@ -227,7 +227,7 @@
                     </div>
                     <div id="tasksDiv" style="display:{% ifequal selected 'tasks' %}block{% else %}none{% endifequal %}">
                     	{% with workspace.tasks as tasks %}
-                        	<IFRAME SRC="/bodb/todo/{{ tasks.id }}/{{ tasks.slug }}" scrolling="yes" width="100%" height="600px" id="iframe1" marginheight="0" frameborder="0"></iframe>
+                        	<IFRAME SRC="/bodb/todo/workspace/{{ tasks.id }}/{{ tasks.slug }}" scrolling="yes" width="100%" height="600px" id="iframe1" marginheight="0" frameborder="0"></iframe>
 
                         {% endwith %}
                         
