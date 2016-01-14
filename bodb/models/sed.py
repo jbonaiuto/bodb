@@ -3,23 +3,17 @@ import hashlib
 import random
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
-import matplotlib
-matplotlib.use('Agg')
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from matplotlib.figure import Figure
 from numpy.core.umath import exp
 from numpy.numarray import arange
 from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message, stop_words
-import matplotlib.pyplot as plt
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
 import h5py
-from uscbp.image_utils import save_to_png
 
 class SED(Document):
     """
@@ -682,17 +676,4 @@ def find_similar_seds(user, title, brief_description):
             similar.append((sed,total_match))
     similar.sort(key=lambda tup: tup[1],reverse=True)
     return similar
-
-
-def save_to_png(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_png(output_file, dpi=72)
-
-
-def save_to_eps(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_eps(output_file, dpi=72)
-
 
