@@ -96,11 +96,15 @@ $(document).ready(function() {
     </tr>
     <tr valign="top">
         <td valign="top" width=10%><strong>Tasklist</strong></td>
-        {% ifequal list_slug "mine" %}
-        	<td><a href="{% url 'my-todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+        {% if list_slug == "mine" or list_slug == "super" %}
+        	{% if list_slug == "mine" %}
+        		<td><a href="{% url 'my-todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+    		{% else %}
+    			<td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+    		{% endif %}
     	{% else %}
-			<td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
-    	{% endifequal %}
+			<td><a href="{% url 'workspace-todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+    	{% endif %}
     </tr>
     <tr valign=top>
         <td valign=top><strong>Completed</strong></td>
