@@ -13,7 +13,6 @@ from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
-import h5py
 
 class SED(Document):
     """
