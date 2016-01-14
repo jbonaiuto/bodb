@@ -123,14 +123,6 @@ class CreateBOPView(EditBOPMixin,PermissionRequiredMixin,CreateView):
     def get_object(self, queryset=None):
         return None
 
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        return super(BaseCreateView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        return super(BaseCreateView, self).post(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super(CreateBOPView,self).get_context_data(**kwargs)
         context=set_context_workspace(context, self.request)

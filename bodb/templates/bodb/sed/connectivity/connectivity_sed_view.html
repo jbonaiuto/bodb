@@ -133,6 +133,12 @@
                     {% endif %}
                 </td>
             </tr>
+            <tr class="section_subheader">
+                <td colspan=2>Brief Description</td>
+            </tr>
+            <tr>
+                <td colspan=2>{{ connectivitysed.brief_description }}</td>
+            </tr>
             <tr valign="top">
                 <td width="150px"><strong>Source region:</strong></td>
                 <td><a href="/bodb/brain_region/{{ connectivitysed.source_region.id }}/">{{ connectivitysed.source_region }} - {{ connectivitysed.source_region.nomenclature }}</a></td>

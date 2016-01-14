@@ -2,15 +2,14 @@ from django.contrib.auth import login
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import View, TemplateView, UpdateView, DetailView
+from django.views.generic import View, UpdateView, DetailView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import BaseUpdateView, FormView, CreateView, BaseCreateView, DeleteView, ProcessFormView
 from bodb.forms.workspace import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm, WorkspaceBookmarkForm
-from bodb.models import Workspace, UserSubscription, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion
+from bodb.models import Workspace, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion
 from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import get_profile, BODBView, set_context_workspace, get_active_workspace
-from bodb.views.model import CreateModelView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from bodb.views.sed import SaveCoordinateSelectionView
 from guardian.mixins import LoginRequiredMixin

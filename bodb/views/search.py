@@ -174,6 +174,7 @@ class SearchView(FormView):
                 elif sed_form.cleaned_data['imaging_sed_order_by']=='brief_description':
                     imagingSEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['imaging_sed_direction']=='descending')
             sedCoords=runSEDCoordSearch(imagingSEDs, sed_form.cleaned_data, user.id)
+
         elif searchType=='ssrs' and ssr_form.is_valid():
             ssr_form.cleaned_data['ssr_order_by']=ssr_order_by
             ssr_form.cleaned_data['ssr_direction']=ssr_direction
@@ -269,6 +270,7 @@ class SearchView(FormView):
                     imagingSEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['imaging_sed_direction']=='descending')
                     
             sedCoords=runSEDCoordSearch(imagingSEDs, form.cleaned_data, user.id)
+
             ssrs=runSSRSearch(form.cleaned_data, user.id)
             workspaces=runWorkspaceSearch(form.cleaned_data, user.id)
             literature=runLiteratureSearch(form.cleaned_data, user.id)

@@ -5,6 +5,11 @@
 {% load taggit_extras %}
 {% load cache %}
 <head>
+	<script type="text/css" src="{% static 'todo/css/styles.css' %}"></script>
+	<script type="text/css" src="{% static 'todo/css/ui.datepicker.css' %}"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}todo/css/styles.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}todo/css/ui.datepicker.css" />
+	
     <link rel="stylesheet" href="{% static 'bodb/css/style.css' %}" type="text/css" media="all" />
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'bodb/images/favicon.ico' %}" />
     <script src="http://java.com/js/deployJava.js"></script>
@@ -16,6 +21,8 @@
     <script type="text/javascript" src="{% static 'bodb/scripts/popup.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'bodb/scripts/jquery.textarearesizer.js' %}"></script>
+    
+    <script type="text/javascript" src="{% static 'todo/js/jquery.tablednd_0_5.js' %}"></script>
     {% include 'autocomplete_light/static.html' %}
     <script type="text/javascript">
         $(document).ready(function()
@@ -91,6 +98,15 @@
     <div id='realigningOver' style='display: none;'></div>
     <div id='searchingMsg' style='display: none;'>Searching, please wait...<img src="{% static 'bodb/images/loading.gif' %}"/></div>
     <div id='searchingOver' style='display: none;'></div>
+    
+    {% if messages %}
+    {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+          <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+{% endif %}
+
     {% if ispopup %}
         <div id="user_info">
             [<a href="" onclick="return openHelp('{% if helpPage %}{{ helpPage }}{% else %}BODB{% endif %}');">Help</a>]&nbsp;
@@ -134,6 +150,7 @@
             {% if user.is_authenticated and not user.is_anonymous  %}
                 <li id="draft_link"><a href="/bodb/drafts/">Drafts</a></li>
                 <li id="fav_link"><a href="/bodb/favorites/">Favorites</a></li>
+                <li id="task_link"><a href="/bodb/todo/mine/">Tasks</a></li>
                 <li id="recent_link"><a href="/bodb/recent/">Recent</a></li>
             {% endif %}
             {% if user.is_superuser %}

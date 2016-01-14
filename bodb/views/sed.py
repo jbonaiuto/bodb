@@ -1,24 +1,32 @@
-import json
+from django.contrib.sites.models import get_current_site
+import h5py
+import os
 from string import atof
+from django.contrib.auth import login
+import json
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, UserSubscription, BuildSED, TestSED
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
 from bodb.views.model import CreateModelView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.core.cache import cache
+from guardian.shortcuts import assign_perm
+from registration.models import User
+from uscbp import settings
+from uscbp.settings import MEDIA_ROOT
 from uscbp.views import JSONResponseMixin
-
 from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
+from django.http import HttpResponseForbidden
+from django.core.cache import cache
 
 class EditSEDMixin():
     model = SED
@@ -320,6 +328,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         context['ispopup']=('_popup' in self.request.GET)
         context['multiple']=('_multiple' in self.request.GET)
         return context
+
 
 class EditBrainImagingSEDMixin():
     model=BrainImagingSED

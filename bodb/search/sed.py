@@ -345,7 +345,7 @@ class SEDSearch(DocumentWithLiteratureSearch):
         return Q()
 
 
-
+    
 def runSEDCoordSearch(seds, search_data, userId):
     sedCoords={}
     for sed in seds:

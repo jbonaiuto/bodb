@@ -11,7 +11,6 @@ from bodb.forms.admin import BodbProfileForm, UserForm, GroupForm
 from bodb.forms.subscription import SubscriptionFormSet, UserSubscriptionFormSet
 from bodb.models import BodbProfile, Nomenclature, Model, BOP, SED, ConnectivitySED, BrainImagingSED, SEDCoord, ERPSED, ERPComponent, SSR, Literature, Document
 from bodb.views.main import set_context_workspace
-from bodb.views.model import CreateModelView
 from bodb.views.security import AdminCreateView, AdminUpdateView
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm

@@ -1,0 +1,142 @@
+{% extends base %}
+{% load url from future %}
+
+{% block title %}Task: {{ task.title }}{% endblock %}
+
+{% block content %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+    // Initially hide the TaskEdit form
+    $('#TaskEdit').hide();
+    
+    // toggle slide to show the Add Task form when link clicked
+    $('#slideToggleBtn').click(function(){
+        $(this).siblings('#TaskEdit').slideToggle();
+    });
+});
+</script>
+
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+{% ifequal auth_ok 1 %}
+
+<h2>{{ task }}</h2>
+
+<form action="" method="POST">
+{% csrf_token %}	
+<br>
+<input class="btn" id="slideToggleBtn" style="margin-bottom:0px;" type="button" value="Edit" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+
+<div id="TaskEdit">
+<h3>Edit Task</h3>
+
+<table>
+    {{ form.management_form }}
+    {{ form.id }}
+<tr>    
+    <td>Title:</td>
+    <td>{{ form.title }}  </td>
+</tr>
+
+<tr>    
+    <td>List:</td>
+    <td>{{ form.list }}  </td>
+</tr>
+
+
+<tr>    
+    <td>Due:</td>
+    <td>{{ form.due_date }}  </td>
+</tr>
+
+
+
+
+<tr>    
+    <td>Assigned to:</td>
+    <td>{{ form.assigned_to }}  </td>
+</tr>
+
+<tr>    
+    <td valign="top">Note:</td>
+    <td>{{ form.note }}  </td>
+</tr>
+
+<tr>    
+    <td>Priority:</td>
+    <td>{{ form.priority }}  </td>
+</tr>
+    
+</table>   
+<p><input type="submit" class="btn" name="edit_task" value="Save"></p>
+</div>
+
+<table class="tab_panel">
+    <tr valign="top">
+        <td valign="top" width=20%><strong>Assigned to</strong></td>
+        <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}</td>
+    </tr>
+    <tr valign=top>
+        <td valign=top><strong>Created by</strong></td>
+        <td>{{ task.created_by.first_name }} {{ task.created_by.last_name }}</td>
+    </tr>
+    <tr valign=top>
+        <td valign=top><strong>Due date</strong></td>
+        <td>{{ task.due_date }}</td>
+    </tr>
+    <tr valign="top">
+        <td valign="top" width=10%><strong>Tasklist</strong></td>
+        {% ifequal list_slug "mine" %}
+        	<td><a href="{% url 'my-todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+    	{% else %}
+			<td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a></td>
+    	{% endifequal %}
+    </tr>
+    <tr valign=top>
+        <td valign=top><strong>Completed</strong></td>
+        <td>{{ form.completed }}</td>
+    </tr>
+    {% if task.note %}
+    <tr valign=top>
+        <td valign=top><strong>Note</strong></td>
+    </tr>
+    <tr valign=top>
+        <td valign=top>{{ task.note|safe|urlize|linebreaks }}</td>
+    </tr>
+    {% endif %}
+</table>
+
+<hr />
+
+
+<h3>Add comment</h3>
+
+    <textarea name="comment-body" rows="8" cols="40"></textarea>
+    <p><input class="btn "type="submit" value="Submit"></p>
+
+</form>
+
+<h3>Comments on this task</h3>    
+
+<div class="task_comments">
+{% for comment in comment_list %}
+    <p><strong>{{ comment.author.first_name }} {{ comment.author.last_name }}, {{ comment.date|date:"F d Y P" }}</strong> </p>
+    {{ comment.body|safe|urlize|linebreaks }}
+{% empty %}
+<p>No Comments</p>
+{% endfor %}
+</div>
+
+{% endifequal %}
+	
+{% endblock %}

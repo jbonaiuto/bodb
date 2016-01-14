@@ -169,3 +169,4 @@ class SEDReportForm(Form):
     related_bop_display=forms.BooleanField(required=False, help_text='Display related BOPs in report')
     related_brainregion_display=forms.BooleanField(required=False, help_text='Display related brain regions in report')
     reference_display=forms.BooleanField(required=False, help_text='Display references in report')
+
