@@ -1,5 +1,4 @@
 from django.contrib.sites.models import get_current_site
-import h5py
 import os
 from string import atof
 from django.contrib.auth import login
