@@ -86,7 +86,8 @@ class Workspace(models.Model):
 
             self.forum=workspace_forum
         
-        # test if workspace already has a task list assigned to it 
+        # test if workspace already has a task list assigned to it
+        created_tasks=False
         if (not hasattr(self, 'tasks')) or (self.tasks is None):
             workspace_tasks=List()
             workspace_tasks.group = self.group
@@ -95,9 +96,14 @@ class Workspace(models.Model):
             workspace_tasks.save()
 
             self.tasks=workspace_tasks
+            created_tasks=True
 
         # Save workspace
         super(Workspace, self).save(*args, **kwargs)
+
+        if created_tasks:
+            self.tasks.slug='tasks-%d' % self.id
+            self.tasks.save()
 
         if init_permissions:
             self.admin_users.add(self.created_by)
