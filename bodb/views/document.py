@@ -30,6 +30,8 @@ class DocumentAPIListView(generics.ListCreateAPIView):
 
 class DocumentDetailView(DetailView):
 
+    model=Document
+
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
         context=set_context_workspace(context, self.request)
