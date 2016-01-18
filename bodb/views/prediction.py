@@ -70,6 +70,11 @@ class PredictionDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView
     template_name = 'bodb/prediction/prediction_view.html'
     permission_required = 'view'
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
     def get_object(self, queryset=None):
         if not hasattr(self,'object'):
             self.object=get_object_or_404(Prediction.objects.select_related('forum','collator','last_modified_by','ssr__collator'),id=self.kwargs.get(self.pk_url_kwarg, None))
