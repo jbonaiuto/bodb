@@ -141,6 +141,11 @@ class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     serializer_class = SSRSerializer
     permission_required = 'view'
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
     def get_object(self, queryset=None):
         if not hasattr(self,'object'):
             self.object=get_object_or_404(SSR.objects.select_related('forum','collator','last_modified_by'),id=self.kwargs.get(self.pk_url_kwarg, None))

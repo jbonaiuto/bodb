@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction
 from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -31,6 +31,21 @@ class DocumentAPIListView(generics.ListCreateAPIView):
 class DocumentDetailView(DetailView):
 
     model=Document
+
+    def get(self, request, *args, **kwargs):
+        id=self.kwargs.get('pk', None)
+        if BOP.objects.exists(id=id):
+            return redirect('/bodb/bop/%d/' % id)
+        elif Model.objects.exists(id=id):
+            return redirect('/bodb/model/%d/' % id)
+        elif Module.objects.exists(id=id):
+            return redirect('/bodb/module/%d/' % id)
+        elif Prediction.objects.exists(id=id):
+            return redirect('/bodb/prediction/%d/' % id)
+        elif SED.objects.exists(id=id):
+            return redirect('/bodb/sed/%d/' % id)
+        elif SSR.objects.exists(id=id):
+            return redirect('/bodb/ssr/%d/' % id)
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
