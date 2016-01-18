@@ -34,17 +34,17 @@ class DocumentDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
         id=self.kwargs.get('pk', None)
-        if BOP.objects.exists(id=id):
+        if BOP.objects.filter(id=id).exists():
             return redirect('/bodb/bop/%d/' % id)
-        elif Model.objects.exists(id=id):
+        elif Model.objects.filter(id=id).exists():
             return redirect('/bodb/model/%d/' % id)
-        elif Module.objects.exists(id=id):
+        elif Module.objects.filter(id=id).exists():
             return redirect('/bodb/module/%d/' % id)
-        elif Prediction.objects.exists(id=id):
+        elif Prediction.objects.filter(id=id).exists():
             return redirect('/bodb/prediction/%d/' % id)
-        elif SED.objects.exists(id=id):
+        elif SED.objects.filter(id=id).exists():
             return redirect('/bodb/sed/%d/' % id)
-        elif SSR.objects.exists(id=id):
+        elif SSR.objects.filter(id=id).exists():
             return redirect('/bodb/ssr/%d/' % id)
 
     def get_context_data(self, **kwargs):
