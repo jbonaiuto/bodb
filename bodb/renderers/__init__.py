@@ -1,1 +1,0 @@
-from bodb.renderers.browsableapirenderer import *
