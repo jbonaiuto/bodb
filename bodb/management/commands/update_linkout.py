@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         exportPubmedResources()
-        session = ftplib.FTP('ftp-private.ncbi.nlm.nih.gov','bodb','MzuEdNxB')
+        session = ftplib.FTP('ftp-private.ncbi.nlm.nih.gov','bodb',settings.LINKOUT_PASSWORD)
         file = open(settings.MEDIA_ROOT+'/pubmed/resources.xml','rb')                  # file to send
         session.storbinary('STOR holdings/resources.xml', file)     # send the file
         file.close()                                    # close file and FTP
