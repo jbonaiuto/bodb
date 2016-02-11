@@ -15,4 +15,4 @@ class Command(BaseCommand):
         session.quit()
 
         message='The resources file for the BODB database have been updated'
-        send_mail("New resources file", message, settings.EMAIL_HOST_USER, 'linkout@ncbi.nlm.nih.gov')
+        send_mail("New resources file", message, settings.EMAIL_HOST_USER, ['linkout@ncbi.nlm.nih.gov'])
