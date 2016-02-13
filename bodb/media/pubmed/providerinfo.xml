@@ -5,6 +5,7 @@
     <ProviderId>7969</ProviderId>
     <Name>Brain Operation Database</Name>
     <NameAbbr>bodb</NameAbbr>
+    <SubjectType>supplemental materials</SubjectType>
     <Url>http://bodb.usc.edu</Url>
     <Brief>BODB offers an environment in which an overview of how a model for cognitive or systems neuroscience is linked to relevant Brain Operating Principles, the brain regions modeled, summaries of the experimental data used to design the model, and comparisons between summaries of simulation results against and summaries of the experimental data used to test the model.</Brief>
 </Provider>
