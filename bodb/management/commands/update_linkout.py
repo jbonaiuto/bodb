@@ -13,6 +13,3 @@ class Command(BaseCommand):
         session.storbinary('STOR holdings/resources.xml', file)     # send the file
         file.close()                                    # close file and FTP
         session.quit()
-
-        message='The resources file for the BODB database have been updated'
-        send_mail("New resources file", message, settings.EMAIL_HOST_USER, ['linkout@ncbi.nlm.nih.gov'])
