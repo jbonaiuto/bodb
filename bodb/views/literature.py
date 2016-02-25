@@ -384,9 +384,9 @@ def exportPubmedResources():
     pubmed_ids=[]
     for literature in Literature.objects.all().exclude(pubmed_id=''):
         related_brain_regions=BrainRegion.objects.filter(nomenclature__lit=literature)
-        related_bops=BOP.objects.filter(literature=literature)
-        related_models=Model.objects.filter(literature=literature)
-        related_seds=SED.objects.filter(literature=literature)
+        related_bops=BOP.objects.filter(literature=literature,public=1)
+        related_models=Model.objects.filter(literature=literature,public=1)
+        related_seds=SED.objects.filter(literature=literature,public=1)
         if related_brain_regions or related_bops or related_models or related_seds:
             if not literature.pubmed_id in pubmed_ids:
                 pubmed_ids.append(literature.pubmed_id)
