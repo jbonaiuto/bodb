@@ -8,11 +8,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         exportPubmedResources()
-        session = ftplib.FTP('ftp-private.ncbi.nlm.nih.gov','bodb','MzuEdNxB')
+        session = ftplib.FTP('ftp-private.ncbi.nlm.nih.gov','bodb',settings.LINKOUT_PASSWORD)
         file = open(settings.MEDIA_ROOT+'/pubmed/resources.xml','rb')                  # file to send
         session.storbinary('STOR holdings/resources.xml', file)     # send the file
         file.close()                                    # close file and FTP
         session.quit()
-
-        message='The resources file for the BODB database have been updated'
-        send_mail("New resources file", message, settings.DEFAULT_FROM_EMAIL, 'linkout@ncbi.nlm.nih.gov')

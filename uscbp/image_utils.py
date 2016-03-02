@@ -1,6 +1,3 @@
-import matplotlib
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-matplotlib.use('Agg')
 import Image
 import os
 
@@ -28,13 +25,3 @@ def scale(w, h, x, y, maximum=True):
         return nw or 1, y
     return x, nh or 1
 
-
-def save_to_png(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_png(output_file, dpi=72)
-
-def save_to_eps(fig, output_file):
-    fig.set_facecolor("#FFFFFF")
-    canvas = FigureCanvasAgg(fig)
-    canvas.print_eps(output_file, dpi=72)

@@ -1,5 +1,4 @@
 from django.contrib.sites.models import get_current_site
-import h5py
 import os
 from string import atof
 from django.contrib.auth import login
@@ -244,7 +243,7 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         user = self.request.user
         security_q=Document.get_security_q(user)
         self.queryset = self.model.objects.all()
-        return super(SEDDetailView, self).get(request, *args, **kwargs)
+        return DetailView.get(self, request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SEDDetailView, self).get_context_data(**kwargs)

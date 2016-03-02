@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction
 from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -29,6 +29,23 @@ class DocumentAPIListView(generics.ListCreateAPIView):
         return Document.objects.filter(security_q)
 
 class DocumentDetailView(DetailView):
+
+    model=Document
+
+    def get(self, request, *args, **kwargs):
+        id=self.kwargs.get('pk', None)
+        if BOP.objects.filter(id=id).exists():
+            return redirect('/bodb/bop/%s/' % id)
+        elif Model.objects.filter(id=id).exists():
+            return redirect('/bodb/model/%s/' % id)
+        elif Module.objects.filter(id=id).exists():
+            return redirect('/bodb/module/%s/' % id)
+        elif Prediction.objects.filter(id=id).exists():
+            return redirect('/bodb/prediction/%s/' % id)
+        elif SED.objects.filter(id=id).exists():
+            return redirect('/bodb/sed/%s/' % id)
+        elif SSR.objects.filter(id=id).exists():
+            return redirect('/bodb/ssr/%s/' % id)
 
     def get_context_data(self, **kwargs):
         context = super(DocumentDetailView, self).get_context_data(**kwargs)
