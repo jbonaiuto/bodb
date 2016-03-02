@@ -1,5 +1,5 @@
 from tastypie.resources import ModelResource
-from bodb.models import SED, BOP, Model, SSR, BrainRegion, RelatedModel, RelatedBOP, RelatedBrainRegion
+from bodb.models import *
 from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.authentication import SessionAuthentication
@@ -11,14 +11,34 @@ from tastypie.paginator import Paginator
 from django.conf.urls import patterns, url
 from tastypie.utils import trailing_slash 
 
+class BuildSEDResource(ModelResource):
+    build_sed = fields.ForeignKey('bodb.api.SEDResource', 'build_sed', full = True, null=True) 
+    
+    class Meta:
+        queryset = BuildSED.objects.all()
+        resource_name = 'build_sed'
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class TestSEDResource(ModelResource):
+    test_sed = fields.ForeignKey('bodb.api.TestResource', 'test_sed', full = True, null=True) 
+    
+    class Meta:
+        queryset = TestSED.objects.all()
+        resource_name = 'test_sed'
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
 
 class SEDResource(ModelResource):
+    related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
         queryset = SED.objects.all()
         resource_name = 'sed'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
 class RelatedBOPResource(ModelResource):   
@@ -26,63 +46,79 @@ class RelatedBOPResource(ModelResource):
     class Meta:
         queryset = RelatedBOP.objects.all()
         resource_name = 'related_bop'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
 class BOPResource(ModelResource):
+    related_bops = fields.ToManyField('bodb.api.RelatedBOPResource', 'related_bop_document', full=True, null=True)
+    related_models = fields.ToManyField('bodb.api.RelatedModelResource', 'related_model_document', full=True, null=True)
+    related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
         queryset = BOP.objects.all()
         resource_name = 'bop'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
 
+class SSRResource(ModelResource):   
+    class Meta:
+        queryset = RelatedModel.objects.all()
+        resource_name = 'ssr'
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+    
+class PredictionResource(ModelResource):   
+    ssr = fields.ForeignKey('bodb.api.SSRResource', 'ssr', full = True, null=True) 
+    
+    class Meta:
+        queryset = Prediction.objects.all()
+        resource_name = 'prediction'
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
 class RelatedModelResource(ModelResource):   
     class Meta:
         queryset = RelatedModel.objects.all()
         resource_name = 'related_model'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
-    
         
-class ModelResource(ModelResource):
-    related_models = fields.ToManyField('bodb.api.RelatedModelResource', 'related_model_document', full=True, null=True)
+class BODBModelResource(ModelResource):
+    build_seds = fields.ToManyField('bodb.api.BuildSEDResource', 'related_build_sed_document', full=True, null=True)
+    test_seds = fields.ToManyField('bodb.api.TestSEDResource', 'related_test_sed_document', full=True, null=True)
+    predictions = fields.ToManyField('bodb.api.PredictionResource', 'prediction', full=True, null=True)
     related_bops = fields.ToManyField('bodb.api.RelatedBOPResource', 'related_bop_document', full=True, null=True)
-    related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', null=True)
+    related_models = fields.ToManyField('bodb.api.RelatedModelResource', 'related_model_document', full=True, null=True)
+    related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
         queryset = Model.objects.all()
         resource_name = 'model'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
-class SSRResource(ModelResource):
-    class Meta:
-        queryset = SSR.objects.all()
-        resource_name = 'ssr'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
-        cache = SimpleCache(timeout=10)
         
 class BrainRegionResource(ModelResource):
     class Meta:
         queryset = BrainRegion.objects.all()
         resource_name = 'brain_region'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
 class RelatedBrainRegionResource(ModelResource):  
-    bop = fields.ToManyField(BrainRegionResource, 'brain_region', full=True, null=True) 
+    brain_region = fields.ForeignKey('bodb.api.BrainRegionResource', 'brain_region', full = True, null=True) 
     class Meta:
         queryset = RelatedBrainRegion.objects.all()
         resource_name = 'related_brain_region'
-        #authorization = DjangoAuthorization()
-        #authentication = SessionAuthentication()
+        authorization = DjangoAuthorization()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         

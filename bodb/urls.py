@@ -23,14 +23,18 @@ import autocomplete_light
 autocomplete_light.autodiscover()
 
 from tastypie.api import Api
-from bodb.api import SEDResource, BOPResource, ModelResource, SSRResource, BrainRegionResource
+from bodb.api import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(SEDResource())
 v1_api.register(BOPResource())
-v1_api.register(ModelResource())
+v1_api.register(BODBModelResource())
 v1_api.register(SSRResource())
+v1_api.register(PredictionResource())
 v1_api.register(BrainRegionResource())
+v1_api.register(RelatedBrainRegionResource())
+v1_api.register(TestSEDResource())
+v1_api.register(BuildSEDResource())
 
 feeds = {
     'latestModels': LatestModels,
