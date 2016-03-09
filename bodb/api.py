@@ -10,6 +10,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.paginator import Paginator
 from django.conf.urls import patterns, url
 from tastypie.utils import trailing_slash 
+from bodb.authorization import BODBAPIAuthorization
 
 class BuildSEDResource(ModelResource):
     build_sed = fields.ForeignKey('bodb.api.SEDResource', 'build_sed', full = True, null=True) 
@@ -17,7 +18,7 @@ class BuildSEDResource(ModelResource):
     class Meta:
         queryset = BuildSED.objects.all()
         resource_name = 'build_sed'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -27,7 +28,7 @@ class TestSEDResource(ModelResource):
     class Meta:
         queryset = TestSED.objects.all()
         resource_name = 'test_sed'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
@@ -37,7 +38,7 @@ class SEDResource(ModelResource):
     class Meta:
         queryset = SED.objects.all()
         resource_name = 'sed'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -46,7 +47,7 @@ class RelatedBOPResource(ModelResource):
     class Meta:
         queryset = RelatedBOP.objects.all()
         resource_name = 'related_bop'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
@@ -58,7 +59,7 @@ class BOPResource(ModelResource):
     class Meta:
         queryset = BOP.objects.all()
         resource_name = 'bop'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -67,7 +68,7 @@ class SSRResource(ModelResource):
     class Meta:
         queryset = RelatedModel.objects.all()
         resource_name = 'ssr'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
     
@@ -77,7 +78,7 @@ class PredictionResource(ModelResource):
     class Meta:
         queryset = Prediction.objects.all()
         resource_name = 'prediction'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -85,7 +86,7 @@ class RelatedModelResource(ModelResource):
     class Meta:
         queryset = RelatedModel.objects.all()
         resource_name = 'related_model'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -100,7 +101,7 @@ class BODBModelResource(ModelResource):
     class Meta:
         queryset = Model.objects.all()
         resource_name = 'model'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -109,7 +110,7 @@ class BrainRegionResource(ModelResource):
     class Meta:
         queryset = BrainRegion.objects.all()
         resource_name = 'brain_region'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
@@ -118,7 +119,7 @@ class RelatedBrainRegionResource(ModelResource):
     class Meta:
         queryset = RelatedBrainRegion.objects.all()
         resource_name = 'related_brain_region'
-        authorization = DjangoAuthorization()
+        authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
