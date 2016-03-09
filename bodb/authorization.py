@@ -1,5 +1,6 @@
 from tastypie.authorization import Authorization
 from tastypie.exceptions import Unauthorized
+from bodb.models import Document
 
 
 class BODBAPIAuthorization(Authorization):
@@ -7,11 +8,9 @@ class BODBAPIAuthorization(Authorization):
         # This assumes a ``QuerySet`` from ``ModelResource``.
         #return object_list.filter(user=bundle.request.user)
     
-        if user.is_superuser:
-            return object_list
-        else:
-            return object_list.filter(collator=bundle.request.user).filter(public=1)
-            #not quite sure how to do groups that can see drafts here.
+        q=Document.get_security_q(bundle.request.user)
+        return object_list.filter(q)
+            
 
     def read_detail(self, object_list, bundle):
         # Is the requested object owned by the user?
