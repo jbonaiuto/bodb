@@ -18,11 +18,11 @@ class BODBAPIAuthorization(Authorization):
         if bundle.request.user.is_superuser:
             return True
         else:
-            if self.collator.id==user.id or self.public==1:
+            if bundle.obj.collator.id==bundle.request.user.id or bundle.obj.public==1:
                 return True
-            elif self.draft==0:
-                for group in user.groups.all():
-                    if self.collator.groups.filter(id=group.id).exists():
+            elif bundle.obj.draft==0:
+                for group in bundle.request.user.groups.all():
+                    if bundle.obj.collator.groups.filter(id=group.id).exists():
                         return True
 
     def create_list(self, object_list, bundle):
