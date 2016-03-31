@@ -35,6 +35,9 @@ v1_api.register(BrainRegionResource())
 v1_api.register(RelatedBrainRegionResource())
 v1_api.register(TestSEDResource())
 v1_api.register(BuildSEDResource())
+v1_api.register(BrainImaginingSEDResource())
+v1_api.register(ERPSEDResource())
+v1_api.register(ConnectivitySEDResource())
 
 feeds = {
     'latestModels': LatestModels,
