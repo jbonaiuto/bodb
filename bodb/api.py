@@ -23,7 +23,7 @@ class BuildSEDResource(ModelResource):
         cache = SimpleCache(timeout=10)
         
 class TestSEDResource(ModelResource):
-    test_sed = fields.ForeignKey('bodb.api.TestResource', 'test_sed', full = True, null=True) 
+    test_sed = fields.ForeignKey('bodb.api.SEDResource', 'test_sed', full = True, null=True) 
     
     class Meta:
         queryset = TestSED.objects.all()
@@ -38,6 +38,35 @@ class SEDResource(ModelResource):
     class Meta:
         queryset = SED.objects.all()
         resource_name = 'sed'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+
+class BrainImaginingSEDResource(SEDResource):
+
+    class Meta:
+        queryset = BrainImagingSED.objects.all()
+        resource_name = 'brain_imagining_sed'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class ERPSEDResource(SEDResource):
+
+    class Meta:
+        queryset = ERPSED.objects.all()
+        resource_name = 'erp_sed'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class ConnectivitySEDResource(SEDResource):
+    source_region = fields.ForeignKey('bodb.api.BrainRegionResource', 'source_region', full=True, null=True)
+    target_region = fields.ForeignKey('bodb.api.BrainRegionResource', 'target_region', full=True, null=True)
+
+    class Meta:
+        queryset = ConnectivitySED.objects.all()
+        resource_name = 'connectivity_sed'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
