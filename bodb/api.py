@@ -13,7 +13,7 @@ from tastypie.utils import trailing_slash
 from bodb.authorization import BODBAPIAuthorization
 
 class BuildSEDResource(ModelResource):
-    build_sed = fields.ForeignKey('bodb.api.SEDResource', 'build_sed', full = True, null=True) 
+    build_sed = fields.ForeignKey('bodb.api.SEDResource', 'sed', full = True, null=True) 
     
     class Meta:
         queryset = BuildSED.objects.all()
@@ -23,7 +23,7 @@ class BuildSEDResource(ModelResource):
         cache = SimpleCache(timeout=10)
         
 class TestSEDResource(ModelResource):
-    test_sed = fields.ForeignKey('bodb.api.SEDResource', 'test_sed', full = True, null=True) 
+    test_sed = fields.ForeignKey('bodb.api.SEDResource', 'sed', full = True, null=True) 
     
     class Meta:
         queryset = TestSED.objects.all()
@@ -43,6 +43,7 @@ class SEDResource(ModelResource):
         cache = SimpleCache(timeout=10)
 
 class BrainImaginingSEDResource(SEDResource):
+    coordinates = fields.ToManyField('bodb.api.SEDCoordResource', 'coordinates', full=True,  null=True)
 
     class Meta:
         queryset = BrainImagingSED.objects.all()
@@ -51,11 +52,40 @@ class BrainImaginingSEDResource(SEDResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
-class ERPSEDResource(SEDResource):
+class SEDCoordResource(ModelResource):
+    threedcoord = fields.ForeignKey('bodb.api.ThreeDCoordResource', 'threedcoord', full = True, null=True)
 
+    class Meta:
+        queryset = SEDCoord.objects.all()
+        resource_name = 'sed_coord'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class ThreeDCoordResource(ModelResource):
+
+    class Meta:
+        queryset = ThreeDCoord.objects.all()
+        resource_name = 'threedcoord'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class ERPSEDResource(SEDResource):
+    erp_component = fields.ToManyField('bodb.api.ERPComponentResource', 'components', full=True,  null=True)
+    
     class Meta:
         queryset = ERPSED.objects.all()
         resource_name = 'erp_sed'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class ERPComponentResource(ModelResource):
+
+    class Meta:
+        queryset = ERPComponent.objects.all()
+        resource_name = 'erp_component'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
@@ -72,7 +102,7 @@ class ConnectivitySEDResource(SEDResource):
         cache = SimpleCache(timeout=10)
         
 class RelatedBOPResource(ModelResource):   
-    bop = fields.ForeignKey('bodb.api.BOPResource', 'related_bop', full=True, null=True)
+    bop = fields.ForeignKey('bodb.api.BOPResource', 'bop', full=True, null=True)
     class Meta:
         queryset = RelatedBOP.objects.all()
         resource_name = 'related_bop'
@@ -114,7 +144,7 @@ class PredictionResource(ModelResource):
 class RelatedModelResource(ModelResource):   
     class Meta:
         queryset = RelatedModel.objects.all()
-        resource_name = 'related_model'
+        resource_name = 'model'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
@@ -130,6 +160,25 @@ class BODBModelResource(ModelResource):
     class Meta:
         queryset = Model.objects.all()
         resource_name = 'model'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+class DocumentFigureResource(ModelResource):
+    document = fields.ForeignKey('bodb.api.DocumentResource', 'figures', full=True, null=True)
+    
+    class Meta:
+        queryset = DocumentFigure.objects.all()
+        resource_name = 'documentfigure'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+
+class DocumentResource(ModelResource):
+    
+    class Meta:
+        queryset = Document.objects.all()
+        resource_name = 'document'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
