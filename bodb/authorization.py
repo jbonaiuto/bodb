@@ -8,8 +8,10 @@ class BODBAPIAuthorization(Authorization):
         # This assumes a ``QuerySet`` from ``ModelResource``.
         #return object_list.filter(user=bundle.request.user)
     
-        q=Document.get_security_q(bundle.request.user)
-        return object_list.filter(q)
+        #q=Document.get_security_q(bundle.request.user)
+        #return object_list.filter(q)
+        
+        return object_list
             
 
     def read_detail(self, object_list, bundle):

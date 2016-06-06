@@ -280,7 +280,7 @@ class SEDCoord(models.Model):
     # SED that coordinate is from
     sed = models.ForeignKey('BrainImagingSED', related_name = 'coordinates')
     # three-d coordinate
-    coord = models.ForeignKey('ThreeDCoord')
+    coord = models.ForeignKey('ThreeDCoord', related_name = 'threedcoord')
     # rCBF measure
     rcbf = models.DecimalField(decimal_places=3, max_digits=10, null=True)
     # t- or z- value

@@ -38,6 +38,10 @@ v1_api.register(BuildSEDResource())
 v1_api.register(BrainImaginingSEDResource())
 v1_api.register(ERPSEDResource())
 v1_api.register(ConnectivitySEDResource())
+v1_api.register(SEDCoordResource())
+v1_api.register(ThreeDCoordResource())
+v1_api.register(DocumentResource())
+v1_api.register(DocumentFigureResource())
 
 feeds = {
     'latestModels': LatestModels,
