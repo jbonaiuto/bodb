@@ -165,7 +165,7 @@ class BODBModelResource(ModelResource):
         cache = SimpleCache(timeout=10)
         
 class DocumentFigureResource(ModelResource):
-    document = fields.ForeignKey('bodb.api.DocumentResource', 'figures', full=True, null=True)
+    document = fields.ForeignKey('bodb.api.DocumentResource', 'document', full=True, null=True)
     
     class Meta:
         queryset = DocumentFigure.objects.all()
