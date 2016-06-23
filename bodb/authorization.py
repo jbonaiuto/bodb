@@ -8,10 +8,10 @@ class BODBAPIAuthorization(Authorization):
         # This assumes a ``QuerySet`` from ``ModelResource``.
         #return object_list.filter(user=bundle.request.user)
     
-        #q=Document.get_security_q(bundle.request.user)
-        #return object_list.filter(q)
+        q=Document.get_security_q(bundle.request.user)
+        return object_list.filter(q)
         
-        return object_list
+        #return object_list
             
 
     def read_detail(self, object_list, bundle):
@@ -34,6 +34,9 @@ class BODBAPIAuthorization(Authorization):
 
     def create_detail(self, object_list, bundle):
         #return bundle.obj.user == bundle.request.user
+        print bundle.request.user
+        print bundle.obj.collator.id
+        #return True 
         raise Unauthorized("Sorry, no puts.")
 
     def update_list(self, object_list, bundle):

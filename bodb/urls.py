@@ -42,6 +42,7 @@ v1_api.register(SEDCoordResource())
 v1_api.register(ThreeDCoordResource())
 v1_api.register(DocumentResource())
 v1_api.register(DocumentFigureResource())
+v1_api.register(UserResource())
 
 feeds = {
     'latestModels': LatestModels,
