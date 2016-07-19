@@ -39,11 +39,11 @@ class SEDResource(ModelResource):
     related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
-        allowed_methods = ['get', 'post', 'put']
+        allowed_methods = ['get','post', 'put']
         queryset = SED.objects.all()
         resource_name = 'sed'
         authorization = BODBAPIAuthorization()
-        #authentication = SessionAuthentication()
+        authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
 class BrainImaginingSEDResource(SEDResource):
@@ -225,13 +225,12 @@ class UserResource(ModelResource):
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
 
-        data = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        data = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
 
         username = data.get('username', '')
         password = data.get('password', '')
 
         user = authenticate(username=username, password=password)
-        print request.user
         if user:
             if user.is_active:
                 login(request, user)
@@ -251,7 +250,6 @@ class UserResource(ModelResource):
 
     def logout(self, request, **kwargs):
         self.method_check(request, allowed=['get'])
-        print request.user
         if request.user and request.user.is_authenticated():
             logout(request)
             return self.create_response(request, { 'success': True })
