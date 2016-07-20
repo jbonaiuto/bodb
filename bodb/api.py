@@ -15,6 +15,27 @@ from bodb.authorization import BODBAPIAuthorization
 from django.contrib.auth import authenticate, login, logout
 from tastypie.http import HttpUnauthorized, HttpForbidden
 
+class DocumentResource(ModelResource):
+    
+    collator = fields.ToOneField('bodb.api.UserResource','collator')
+    last_modified_by = fields.ToOneField('bodb.api.UserResource','last_modified_by')
+    
+    class Meta:
+        queryset = Document.objects.all()
+        resource_name = 'document'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+        
+    def hydrate_collator(self, bundle):
+        bundle.data['collator'] = bundle.request.user
+        return bundle
+    
+    def hydrate_last_modified_by(self, bundle):
+        bundle.data['last_modified_by'] = bundle.request.user
+        return bundle
+    
+
 class BuildSEDResource(ModelResource):
     build_sed = fields.ForeignKey('bodb.api.SEDResource', 'sed', full = True, null=True) 
     
@@ -35,7 +56,7 @@ class TestSEDResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
-class SEDResource(ModelResource):
+class SEDResource(DocumentResource):
     related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
@@ -114,7 +135,7 @@ class RelatedBOPResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
-class BOPResource(ModelResource):
+class BOPResource(DocumentResource):
     related_bops = fields.ToManyField('bodb.api.RelatedBOPResource', 'related_bop_document', full=True, null=True)
     related_models = fields.ToManyField('bodb.api.RelatedModelResource', 'related_model_document', full=True, null=True)
     related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
@@ -127,7 +148,7 @@ class BOPResource(ModelResource):
         cache = SimpleCache(timeout=10)
         
 
-class SSRResource(ModelResource):   
+class SSRResource(DocumentResource):   
     class Meta:
         queryset = RelatedModel.objects.all()
         resource_name = 'ssr'
@@ -135,7 +156,7 @@ class SSRResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
     
-class PredictionResource(ModelResource):   
+class PredictionResource(DocumentResource):   
     ssr = fields.ForeignKey('bodb.api.SSRResource', 'ssr', full = True, null=True) 
     
     class Meta:
@@ -153,7 +174,7 @@ class RelatedModelResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
-class BODBModelResource(ModelResource):
+class BODBModelResource(DocumentResource):
     build_seds = fields.ToManyField('bodb.api.BuildSEDResource', 'related_build_sed_document', full=True, null=True)
     test_seds = fields.ToManyField('bodb.api.TestSEDResource', 'related_test_sed_document', full=True, null=True)
     predictions = fields.ToManyField('bodb.api.PredictionResource', 'prediction', full=True, null=True)
@@ -177,16 +198,6 @@ class DocumentFigureResource(ModelResource):
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
-
-class DocumentResource(ModelResource):
-    
-    class Meta:
-        queryset = Document.objects.all()
-        resource_name = 'document'
-        authorization = BODBAPIAuthorization()
-        authentication = SessionAuthentication()
-        cache = SimpleCache(timeout=10)
-        
         
 class BrainRegionResource(ModelResource):
     class Meta:
@@ -196,14 +207,17 @@ class BrainRegionResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
+        
 class RelatedBrainRegionResource(ModelResource):  
     brain_region = fields.ForeignKey('bodb.api.BrainRegionResource', 'brain_region', full = True, null=True) 
+
     class Meta:
         queryset = RelatedBrainRegion.objects.all()
         resource_name = 'related_brain_region'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
+        
         
 class UserResource(ModelResource):
     class Meta:
