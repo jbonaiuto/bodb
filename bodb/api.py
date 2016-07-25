@@ -15,7 +15,47 @@ from bodb.authorization import BODBAPIAuthorization
 from django.contrib.auth import authenticate, login, logout
 from tastypie.http import HttpUnauthorized, HttpForbidden
 
-class DocumentResource(ModelResource):
+from haystack.query import SearchQuerySet, EmptySearchQuerySet
+
+class SearchResourceMixin:
+    def prepend_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/search/?$" % (self._meta.resource_name), self.wrap_view('get_search'), name="api_get_search"),
+            ]
+
+    def get_search(self, request, **kwargs):
+        '''
+        Custom endpoint for search
+        '''
+
+        self.method_check(request, allowed=['get'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        query = request.GET.get('q', '')
+
+        results = SearchQuerySet().models(self._meta.queryset.model).auto_query(query)
+        if not results:
+            results = EmptySearchQuerySet()
+
+        paginator = Paginator(request.GET, results, resource_uri='/bodb/api/v1/%s/search/' % self._meta.resource_name)
+
+        bundles = []
+        for result in paginator.page()['objects']:
+            bundle = self.build_bundle(obj=result.object, request=request)
+            bundles.append(self.full_dehydrate(bundle))
+
+        object_list = {
+            'meta': paginator.page()['meta'],
+            'objects': bundles
+        }
+        object_list['meta']['search_query'] = query
+
+        self.log_throttled_access(request)
+        return self.create_response(request, object_list)
+    
+
+class DocumentResource(SearchResourceMixin, ModelResource):
     
     collator = fields.ToOneField('bodb.api.UserResource','collator')
     last_modified_by = fields.ToOneField('bodb.api.UserResource','last_modified_by')
