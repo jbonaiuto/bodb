@@ -23,7 +23,6 @@ from registration.models import User
 from uscbp import settings
 from uscbp.settings import MEDIA_ROOT
 from uscbp.views import JSONResponseMixin
-from bodb.serializers import SEDSerializer, ERPSEDSerializer, BrainImagingSEDSerializer, ConnectivitySEDSerializer
 from django.http import HttpResponseForbidden
 from django.core.cache import cache
 
@@ -148,71 +147,6 @@ class DeleteSEDView(ObjectRolePermissionRequiredMixin,DeleteView):
         self.request=request
         self.delete(request, *args, **kwargs)
         return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
-
-
-class SEDAPIListView(DocumentAPIListView):
-    serializer_class = SEDSerializer
-    model = SED
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return SED.objects.filter(security_q)
-
-
-class ERPSEDAPIListView(DocumentAPIListView):
-    serializer_class = ERPSEDSerializer
-    model = ERPSED
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return ERPSED.objects.filter(security_q)
-
-
-class BrainImagingSEDAPIListView(DocumentAPIListView):
-    serializer_class = BrainImagingSEDSerializer
-    model = BrainImagingSED
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return BrainImagingSED.objects.filter(security_q)
-
-
-class ConnectivitySEDAPIListView(DocumentAPIListView):
-    serializer_class = ConnectivitySEDSerializer
-    model = ConnectivitySED
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return ConnectivitySED.objects.filter(security_q)
-
-
-class SEDAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
-    serializer_class = SEDSerializer
-    model = SED
-    permission_required = 'view'
-
-    def get(self, request, *args, **kwargs):
-        id=self.kwargs.get('pk', None)
-        type=SED.objects.get(id=id).type
-        if type=='event related potential':
-            self.serializer_class = ERPSEDSerializer
-            self.model=ERPSED
-        elif type=='brain imaging':
-            self.serializer_class = BrainImagingSEDSerializer
-            self.model=BrainImagingSED
-            if BredeBrainImagingSED.objects.filter(id=id).exists():
-                self.model=BredeBrainImagingSED
-        elif type=='connectivity':
-            self.serializer_class = ConnectivitySEDSerializer
-            self.model=ConnectivitySED
-            if CoCoMacConnectivitySED.objects.filter(id=id).exists():
-                self.model=CoCoMacConnectivitySED
-        self.queryset = self.model.objects.all()
-        return super(SEDAPIDetailView, self).get(request, *args, **kwargs)
 
 
 class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):

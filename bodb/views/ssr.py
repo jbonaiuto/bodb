@@ -15,8 +15,6 @@ from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from uscbp.views import JSONResponseMixin
 
-from bodb.serializers import SSRSerializer
-
 class EditSSRMixin():
     model = SSR
     form_class = SSRForm
@@ -119,26 +117,10 @@ class DeleteSSRView(ObjectRolePermissionRequiredMixin, DeleteView):
         return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
-class SSRAPIListView(DocumentAPIListView):
-    serializer_class = SSRSerializer
-    model = SSR
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return SSR.objects.filter(security_q)
-
-
-class SSRAPIDetailView(ObjectRolePermissionRequiredMixin, DocumentAPIDetailView):
-    serializer_class = SSRSerializer
-    model = SSR
-    permission_required = 'view'
-
 
 class SSRDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
     model = SSR
     template_name = 'bodb/ssr/ssr_view.html'
-    serializer_class = SSRSerializer
     permission_required = 'view'
 
     def get(self, request, *args, **kwargs):

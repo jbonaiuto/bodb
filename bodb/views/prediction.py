@@ -3,26 +3,9 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import UpdateView, DeleteView, TemplateView
 from bodb.forms.ssr import PredictionForm
 from bodb.models import Prediction, SSR, Document, UserSubscription, Model
-from bodb.serializers import PredictionSerializer
 from bodb.views.document import DocumentDetailView, DocumentAPIListView, DocumentAPIDetailView
 from bodb.views.main import BODBView, set_context_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
-
-class PredictionAPIListView(DocumentAPIListView):
-    serializer_class = PredictionSerializer
-    model = Prediction
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return Prediction.objects.filter(security_q)
-
-
-class PredictionAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
-    serializer_class = PredictionSerializer
-    model = Prediction
-    permission_required = 'view'
-
 
 class UpdatePredictionView(ObjectRolePermissionRequiredMixin,UpdateView):
     model = Prediction
