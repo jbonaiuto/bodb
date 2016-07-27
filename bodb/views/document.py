@@ -15,9 +15,7 @@ from rest_framework import generics
 from rest_framework.renderers import JSONRenderer, XMLRenderer
 
 class DocumentAPIListView(generics.ListCreateAPIView):
-    renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer,)
     queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
     permission_classes = (IsEditorOrReadOnly,)
     model = Document
 
@@ -109,10 +107,7 @@ class DocumentDetailView(DetailView):
     
 class DocumentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     
-    renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer)
-    
     queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
     permission_classes = (IsEditorOrReadOnly,)
  
 
