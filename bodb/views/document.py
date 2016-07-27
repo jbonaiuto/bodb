@@ -12,8 +12,6 @@ from uscbp.views import JSONResponseMixin
 from bodb.permissions import IsEditorOrReadOnly
 from rest_framework import generics
 
-from rest_framework.renderers import JSONRenderer, XMLRenderer
-
 class DocumentAPIListView(generics.ListCreateAPIView):
     queryset = Document.objects.all()
     permission_classes = (IsEditorOrReadOnly,)
