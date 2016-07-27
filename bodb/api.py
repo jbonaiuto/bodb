@@ -100,11 +100,11 @@ class SEDResource(DocumentResource):
     related_brain_regions = fields.ToManyField('bodb.api.RelatedBrainRegionResource', 'related_region_document', full=True,  null=True)
     
     class Meta:
-        allowed_methods = ['get','post', 'put']
+        #allowed_methods = ['get','post', 'put']
         queryset = SED.objects.all()
         resource_name = 'sed'
         authorization = BODBAPIAuthorization()
-        authentication = SessionAuthentication()
+        #authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
 
 class BrainImaginingSEDResource(SEDResource):

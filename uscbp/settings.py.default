@@ -1,4 +1,4 @@
-import os
+from PIL import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 

@@ -3,6 +3,9 @@ import json
 import requests
 
 class UserBehavior(TaskSet):
+    
+    #last_added 
+    
     def on_start(self):
         """ on_start is called when a Locust start before any task is scheduled """
         self.login()
@@ -21,7 +24,11 @@ class UserBehavior(TaskSet):
     def post_sed(self):
         payload = {"brief_description": "locust_swarm_post", "draft": 1, "narrative": "", "public": 0, "related_brain_regions": [], "title": "locust_swarm_post", "type": "generic"}
         headers = {'content-type': 'application/json'}
-        self.client.post("/api/v1/sed/", data=json.dumps(payload), headers=headers, catch_response=True)
+        response = self.client.post("/api/v1/sed/", data=json.dumps(payload), headers=headers, catch_response=True)
+        
+    @task(3)
+    def search_sed(self):
+        self.client.get("/api/v1/sed/search/?format=json&q=mirror")
         
 
 class WebsiteUser(HttpLocust):

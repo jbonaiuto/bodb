@@ -41,6 +41,7 @@ class BODBAPIAuthorization(Authorization):
 
     def update_detail(self, object_list, bundle):
         usr = bundle.request.user
+        #print usr.is_superuser
 
         if usr.is_superuser:
             return True
