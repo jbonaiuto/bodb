@@ -24,8 +24,7 @@ class BODBAPIAuthorization(Authorization):
 
     def create_detail(self, object_list, bundle):
         usr = bundle.request.user
-        #print bundle.obj
-        
+
         if usr.is_superuser:
             return True
         elif isinstance(bundle.obj, SED):
@@ -42,8 +41,7 @@ class BODBAPIAuthorization(Authorization):
 
     def update_detail(self, object_list, bundle):
         usr = bundle.request.user
-        #print bundle.obj
-        
+
         if usr.is_superuser:
             return True
         elif isinstance(bundle.obj, SED):
@@ -59,4 +57,16 @@ class BODBAPIAuthorization(Authorization):
         raise Unauthorized("Sorry, you are not allowed to perform this operation.")
 
     def delete_detail(self, object_list, bundle):
-        raise Unauthorized("Sorry, you are not allowed to perform this operation.")
+        usr = bundle.request.user
+        print usr.is_superuser
+        
+        if usr.is_superuser:
+            return True
+        elif isinstance(bundle.obj, SED):
+            usr.has_perm('bodb.delete_sed')
+        elif isinstance(bundle.obj, BOP):
+            usr.has_perm('bodb.delete_bop')
+        elif isinstance(bundle.obj, Model):
+            usr.has_perm('bodb.delete_model')
+        else: 
+            raise Unauthorized("Sorry, you are not allowed to perform this operation.")

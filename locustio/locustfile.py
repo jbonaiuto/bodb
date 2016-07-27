@@ -1,5 +1,6 @@
 from locust import HttpLocust, TaskSet, task
 import json
+import requests
 
 class UserBehavior(TaskSet):
     def on_start(self):
@@ -13,12 +14,15 @@ class UserBehavior(TaskSet):
         self.client.post('/api/v1/user/login/', data=json.dumps(payload), headers=headers, catch_response=True)
 
     @task(1)
-    def profile(self):
+    def get_sed(self):
         self.client.get("/api/v1/sed/")
         
-    #@task(2)
-    #def profile(self):
-    #    self.client.get("/api/v1/user/logout/")
+    @task(2)
+    def post_sed(self):
+        payload = {"brief_description": "locust_swarm_post", "draft": 1, "narrative": "", "public": 0, "related_brain_regions": [], "title": "locust_swarm_post", "type": "generic"}
+        headers = {'content-type': 'application/json'}
+        self.client.post("/api/v1/sed/", data=json.dumps(payload), headers=headers, catch_response=True)
+        
 
 class WebsiteUser(HttpLocust):
     task_set = UserBehavior
