@@ -9,12 +9,10 @@ from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
 from uscbp.views import JSONResponseMixin
 
-from bodb.serializers import DocumentSerializer
 from bodb.permissions import IsEditorOrReadOnly
 from rest_framework import generics
 
 from rest_framework.renderers import JSONRenderer, XMLRenderer
-from bodb.renderers import BODBBrowsableAPIRenderer
 
 class DocumentAPIListView(generics.ListCreateAPIView):
     renderer_classes = (BODBBrowsableAPIRenderer, JSONRenderer, XMLRenderer,)
