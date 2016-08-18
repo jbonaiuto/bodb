@@ -17,18 +17,7 @@ from bodb.forms.sed import SEDReportForm
 from bodb.views.main import set_context_workspace
 from uscbp.image_utils import get_thumbnail
 import json
-from bodb.serializers.sed import SEDSerializer
 from rest_framework.renderers import UnicodeJSONRenderer
-
-def report_json(context, display_settings):
-    response = HttpResponse(mimetype='application/json')
-    response['Content-Disposition'] = 'attachment; filename=SED_Report.json'
-
-    serializer = SEDSerializer(context['sed'])
-    data = UnicodeJSONRenderer().render(serializer.data)
-    json.dump(data, response)
-
-    return response
 
 
 thin_edge  = BorderPS( width=10, style=BorderPS.SINGLE )
@@ -323,8 +312,6 @@ class SEDReportView(FormView):
             doc = SimpleDocTemplate(response)
             elements=sed_report_pdf(context, display_settings)
             doc.build(elements)
-        elif format=='json':
-            response=report_json(context, display_settings)
         return response
         
 

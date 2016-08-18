@@ -13,7 +13,6 @@ from bodb.views.security import AdminUpdateView, AdminCreateView
 from guardian.mixins import LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView
-from bodb.serializers import BrainRegionSerializer
 
 class BrainRegionRequestListView(LoginRequiredMixin,ListView):
     model=BrainRegionRequest
@@ -136,20 +135,6 @@ class BrainRegionRequestApproveView(AdminCreateView):
         text='Your request for the addition of the region: <a href="%s">%s</a> has been approved.<br>' % (region_url, self.object.name)
 
         messageUser(self.request.user, subject, text)
-
-
-class BrainRegionAPIListView(DocumentAPIListView):
-    serializer_class = BrainRegionSerializer
-    model = BrainRegion
-
-    def get_queryset(self):
-        return BrainRegion.objects.all()
-    
-    
-class BrainRegionAPIDetailView(DocumentAPIDetailView):    
-    queryset = BrainRegion.objects.all()
-    serializer_class = BrainRegionSerializer
-    model = BrainRegion
 
 
 class BrainRegionView(DetailView):

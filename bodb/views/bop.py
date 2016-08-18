@@ -18,8 +18,6 @@ from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp.views import JSONResponseMixin
 
-from bodb.serializers.bop import BOPSerializer
-
 class EditBOPMixin():
     model = BOP
     form_class = BOPForm
@@ -184,22 +182,6 @@ class DeleteBOPView(ObjectRolePermissionRequiredMixin,DeleteView):
         self.request=request
         self.delete(request, *args, **kwargs)
         return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
-
-
-class BOPAPIListView(DocumentAPIListView):
-    serializer_class = BOPSerializer
-    model = BOP
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=BOP.get_security_q(user)
-        return BOP.objects.filter(security_q)
-
-
-class BOPAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
-    serializer_class = BOPSerializer
-    model = BOP
-    permission_required = 'view'
 
 
 class BOPDetailView(ObjectRolePermissionRequiredMixin, DocumentDetailView):
