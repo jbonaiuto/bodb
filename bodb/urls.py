@@ -25,6 +25,8 @@ autocomplete_light.autodiscover()
 from tastypie.api import Api
 from bodb.api import *
 
+from django.views.generic import TemplateView
+
 v1_api = Api(api_name='v1')
 v1_api.register(SEDResource())
 v1_api.register(BOPResource())
@@ -56,6 +58,12 @@ urlpatterns = patterns('',
     url(r'^todo/', include('todo.urls')),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^api/', include(v1_api.urls)),
+)
+
+#apps
+urlpatterns = urlpatterns + patterns('',
+    url(r'^apps/figure_search/$', TemplateView.as_view(template_name="apps/figure_search.html"), name='figure_search'),
+    url(r'^apps/model_connect/$', TemplateView.as_view(template_name="apps/model_connect.html"), name='model_connect'),
 )
 
 urlpatterns = urlpatterns + patterns('',

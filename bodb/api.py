@@ -229,7 +229,7 @@ class BODBModelResource(DocumentResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         
-class DocumentFigureResource(ModelResource):
+class DocumentFigureResource(SearchResourceMixin, ModelResource):
     document = fields.ForeignKey('bodb.api.DocumentResource', 'document', full=True, null=True)
     
     class Meta:
