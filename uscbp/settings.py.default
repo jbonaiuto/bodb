@@ -173,7 +173,8 @@ INSTALLED_APPS = (
     'disqus',
     'debug_toolbar',
     'south',
-    'todo'
+    'todo',
+    'haystack'
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -271,3 +272,13 @@ TODO_STAFF_ONLY = False
 #TODO_PUBLIC_SUBMIT_REDIRECT = 'dashboard'
 
 LINKOUT_PASSWORD=''
+
+SENSORIMOTORDB_SERVER='http://sensorimotordb.usc.edu'
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'bodb',
+    },
+}
