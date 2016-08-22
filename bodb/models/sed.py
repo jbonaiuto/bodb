@@ -412,6 +412,69 @@ class SelectedSEDCoord(models.Model):
             return self.user.username
 
 
+class NeurophysiologySED(SED):
+    region = models.ForeignKey("BrainRegion")
+    total_num_units=models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        app_label='bodb'
+
+    def html_url_string(self):
+        return ''
+
+    @staticmethod
+    def get_literature_seds(literature, user):
+        return NeurophysiologySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').order_by('title')
+
+    @staticmethod
+    def get_brain_region_seds(brain_region, user):
+        region_q=Q(region=brain_region) | Q(related_region_document__brain_region=brain_region)
+        return NeurophysiologySED.objects.filter(Q(region_q & Document.get_security_q(user))).distinct().select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').order_by('title')
+
+    @staticmethod
+    def get_tagged_seds(name, user):
+        return NeurophysiologySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').order_by('title')
+
+
+class NeuronClassification(models.Model):
+    sed = models.ForeignKey('NeurophysiologySED', related_name = 'classifications')
+    label = models.CharField(max_length=100, blank=False)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        app_label='bodb'
+
+
+class NeuronClassificationFactor(models.Model):
+    classification=models.ForeignKey('NeuronClassification')
+    name = models.CharField(max_length=100, blank=False)
+    description = models.TextField(blank=True)
+    events=models.TextField()
+    event_times=models.TextField()
+
+    class Meta:
+        app_label='bodb'
+
+
+class NeuronClassificationLevel(models.Model):
+    factor=models.ForeignKey('NeuronClassificationFactor')
+    name = models.CharField(max_length=100, blank=False)
+    times=models.TextField()
+    mean_rate=models.TextField()
+
+    class Meta:
+        app_label='bodb'
+
+
+class SensoriMotorDBNeurophysiologySED(NeurophysiologySED):
+    smdb_id=models.IntegerField()
+    class Meta:
+        app_label='bodb'
+
+    def html_url_string(self):
+        url='http://neuro.imm.dtu.dk/services/brededatabase/WOEXP_%s.html' % str(self.woexp)
+        return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in Brede</a>' % (url,url)
+
 # A summary of connectivity data: inherits from SED
 class ConnectivitySED(SED):
     source_region = models.ForeignKey('BrainRegion', related_name='source_region')
