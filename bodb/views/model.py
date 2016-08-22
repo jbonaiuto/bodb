@@ -18,14 +18,12 @@ from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
 from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription, SSR, BOP, BrainRegion
 from bodb.models.ssr import Prediction
-from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
+from bodb.views.document import DocumentDetailView
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
 from bodb.views.security import ObjectRolePermissionRequiredMixin
 from guardian.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from uscbp import settings
 from uscbp.views import JSONResponseMixin
-
-from bodb.serializers import ModelSerializer
 
 class EditModelMixin():
     model = Model
@@ -888,22 +886,6 @@ class DeleteModuleView(ObjectRolePermissionRequiredMixin,DeleteView):
     model=Module
     success_url = '/bodb/index.html'
     permission_required = 'delete'
-
-
-class ModelAPIListView(DocumentAPIListView):
-    serializer_class = ModelSerializer
-    model = Model
-
-    def get_queryset(self):
-        user = self.request.user
-        security_q=Document.get_security_q(user)
-        return Model.objects.filter(security_q)
-
-
-class ModelAPIDetailView(ObjectRolePermissionRequiredMixin,DocumentAPIDetailView):
-    serializer_class = ModelSerializer
-    model = Model
-    permission_required = 'view'
 
 
 class ModuleDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):

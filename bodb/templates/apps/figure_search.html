@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+    <title>Find Relationships Among Models</title>
+
+    <!--<script type="text/javascript" src="vis.min.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/3.11.0/vis.min.js"></script>
+    <script type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/vis/3.11.0/vis.min.css"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    
+    <style>
+		body {
+		    background-color: linen;
+		}
+		
+	</style>
+
+</head>
+
+<body>
+
+	<form id="loginForm">
+		  Username: 
+		  <input type="text" id="username" name="username"> &nbsp
+		  Password:
+		  <input type="password" id="password" name="password"><br>
+		  <input type="submit" value="Login">
+	</form> 
+	
+	<br>
+	
+	<form id="searchForm">
+		  Keywords:
+		  <input type="text" id="keywords" name="keywords">  &nbsp
+		  Max Number of Results:
+		  <input type="number" id="limit" name="limit" min="1" max="100" value=20><br>
+		  <input type="submit" value="Search">
+	</form> 
+	
+	<br>
+
+    <div id="results">
+
+    </div>
+
+
+
+<script type="text/javascript">
+
+    var json;
+    
+    document.getElementById("loginForm").onsubmit = function() {
+	     login(document.getElementById("username").value, document.getElementById("password").value);
+	     return false;
+	 };
+	 
+	 document.getElementById("searchForm").onsubmit = function() {
+	     getData(document.getElementById("keywords").value, document.getElementById("limit").value).done(handleData);
+	     return false;
+	 };
+          
+    function login(username, password) {
+        $.ajax({
+            url: '/bodb/api/v1/user/login/',
+            type: 'POST',
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader( "Content-type", "application/json" );
+            },
+            data: JSON.stringify({
+                "username": username,
+                "password": password
+            }),
+            success: function() {
+                //alert('Test');
+                //getData().done(handleData);
+            },  
+            error: function(errorThrown){
+                alert('Login Failed');
+            }
+        });
+    }
+
+
+
+    function getData(keywords, limit) {
+        return $.ajax({
+            url: '/bodb/api/v1/documentfigure/search/?format=json&q='+keywords+'&limit='+limit,
+            type: 'GET',
+            xhrFields: {
+              withCredentials: true
+            },
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader( "Content-type", "application/json" );
+            }
+        });
+    }
+    
+        
+    function handleData(data) {
+    	
+    	$( "#results" ).empty();
+
+        json = data;
+        var figures = json.objects;
+        
+    
+        var imgs = [];
+        var urls = [];
+        
+        for(var i = 0; i < figures.length; i++){
+            var url = "http://bodb.usc.edu" + figures[i].figure;
+            urls.push(url);
+            imgs.push(new Image());
+        }
+        
+        for(var i = 0; i < urls.length; i++){
+        
+            var newImgs = [];
+
+            imgs[i].onload = function() {
+                
+                var can = document.createElement('canvas');
+                var scaler1 = 450/this.width;
+                var scaler2 = 450/this.height;
+                var scaler = scaler1;
+                if(scaler1 > scaler2){
+                	scaler = scaler2;
+                }
+                can.width = 500;
+                can.height = 500;
+                var ctx = can.getContext('2d');
+                ctx.drawImage(this, 
+                	can.width / 2 - this.width * scaler / 2,
+        			can.height / 2 - this.height * scaler / 2,
+        			this.width * scaler, this.height * scaler);
+                                   
+                ctx.strokeStyle = '#000000';  // some color/style
+				ctx.lineWidth = 2;         // thickness
+				ctx.strokeRect(0, 0, 500, 500);
+                var newImg = new Image();
+                newImg.src = can.toDataURL("image/jpg");
+                //console.log(this.alt);
+                $("#results").append('<a target="_blank" href="'+this.alt+'/"><img src=' + newImg.src + '></a>&nbsp');
+            };
+
+            imgs[i].setAttribute('crossOrigin', 'anonymous');
+            imgs[i].setAttribute('alt', "http://bodb.usc.edu/bodb/document/" + figures[i].document.id);
+            imgs[i].src = urls[i];
+            
+        }
+                
+    }
+
+    //login();
+
+
+
+</script>
+
+</body>
+</html>

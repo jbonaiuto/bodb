@@ -1,27 +1,50 @@
 from django.conf.urls import patterns, url
 from bodb.feeds import LatestModels, LatestBOPs, LatestSEDs, LatestSSRs
 from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, CreateGroupView, GroupDetailView, UpdateUserView, UpdateGroupView, UserToggleActiveView, UserToggleStaffView, UserToggleAdminView, DeleteGroupView, GetUserIconUrlView
-from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPAPIListView, BOPAPIDetailView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView
-from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionAPIListView, BrainRegionAPIDetailView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
+from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView
+from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.discussion import ForumPostView
-from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
+from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
-from bodb.views.model import CreateModelView, SimilarModelView, ModelAPIListView, ModelAPIDetailView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, CreateModelWizardView, MODEL_WIZARD_FORMS
-from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView, PredictionAPIListView, PredictionAPIDetailView
+from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, CreateModelWizardView, MODEL_WIZARD_FORMS
+from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView, ModuleReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
-from bodb.views.sed import CreateSEDView, SEDAPIListView, ERPSEDAPIListView, BrainImagingSEDAPIListView, ConnectivitySEDAPIListView, SEDAPIDetailView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
-from bodb.views.ssr import SSRAPIListView, SSRAPIDetailView, SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
+from bodb.views.sed import CreateSEDView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
+from bodb.views.ssr import SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
 
-from rest_framework.urlpatterns import format_suffix_patterns
 from django.conf.urls import include
 
 import autocomplete_light
 autocomplete_light.autodiscover()
+
+from tastypie.api import Api
+from bodb.api import *
+
+from django.views.generic import TemplateView
+
+v1_api = Api(api_name='v1')
+v1_api.register(SEDResource())
+v1_api.register(BOPResource())
+v1_api.register(BODBModelResource())
+v1_api.register(SSRResource())
+v1_api.register(PredictionResource())
+v1_api.register(BrainRegionResource())
+v1_api.register(RelatedBrainRegionResource())
+v1_api.register(TestSEDResource())
+v1_api.register(BuildSEDResource())
+v1_api.register(BrainImaginingSEDResource())
+v1_api.register(ERPSEDResource())
+v1_api.register(ConnectivitySEDResource())
+v1_api.register(SEDCoordResource())
+v1_api.register(ThreeDCoordResource())
+v1_api.register(DocumentResource())
+v1_api.register(DocumentFigureResource())
+v1_api.register(UserResource())
 
 feeds = {
     'latestModels': LatestModels,
@@ -34,30 +57,14 @@ urlpatterns = patterns('',
                        
     url(r'^todo/', include('todo.urls')),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
-    url(r'^api/document/$', DocumentAPIListView.as_view()),
-    url(r'^api/document/(?P<pk>[0-9]+)/$', DocumentAPIDetailView.as_view()),
-    url(r'^api/document/sed/$', SEDAPIListView.as_view()),
-    url(r'^api/document/sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/erp_sed/$', ERPSEDAPIListView.as_view()),
-    url(r'^api/document/sed/erp_sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/brain_imaging_sed/$', BrainImagingSEDAPIListView.as_view()),
-    url(r'^api/document/sed/brain_imaging_sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/sed/connectivity_sed/$', ConnectivitySEDAPIListView.as_view()),
-    url(r'^api/document/sed/connectivity_sed/(?P<pk>[0-9]+)/$', SEDAPIDetailView.as_view()),
-    url(r'^api/document/ssr/$', SSRAPIListView.as_view()),
-    url(r'^api/document/ssr/(?P<pk>[0-9]+)/$', SSRAPIDetailView.as_view()),
-    url(r'^api/document/bop/$', BOPAPIListView.as_view()),
-    url(r'^api/document/bop/(?P<pk>[0-9]+)/$', BOPAPIDetailView.as_view()),
-    url(r'^api/document/model/$', ModelAPIListView.as_view()),
-    url(r'^api/document/model/(?P<pk>[0-9]+)/$', ModelAPIDetailView.as_view()),
-    url(r'^api/document/prediction/$', PredictionAPIListView.as_view()),
-    url(r'^api/document/prediction/(?P<pk>[0-9]+)/$', PredictionAPIDetailView.as_view()),
-    url(r'^api/brain_region/$', BrainRegionAPIListView.as_view()),
-    url(r'^api/brain_region/(?P<pk>[0-9]+)/$', BrainRegionAPIDetailView.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls',namespace='rest_framework')),
+    url(r'^api/', include(v1_api.urls)),
 )
 
-urlpatterns = format_suffix_patterns(urlpatterns)
+#apps
+urlpatterns = urlpatterns + patterns('',
+    url(r'^apps/figure_search/$', TemplateView.as_view(template_name="apps/figure_search.html"), name='figure_search'),
+    url(r'^apps/model_connect/$', TemplateView.as_view(template_name="apps/model_connect.html"), name='model_connect'),
+)
 
 urlpatterns = urlpatterns + patterns('',
     (r'^feeds/latestModels/$', LatestModels()),

@@ -1,0 +1,6 @@
+{{ object.collator.last_name }}
+{{ object.collator.first_name }}
+{{ object.collator.username }}
+{{ object.title }}
+{{ object.brief_description }}
+{{ object.narrative }}
