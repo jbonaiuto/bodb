@@ -30,7 +30,7 @@ django-kombu==0.9.4
 django-picklefield==0.3.0
 django-recaptcha-works==0.3.4
 django-robots==1.0
-django-tastypie==0.13.3
+django-tastypie==0.12.0
 django-threaded-multihost==1.4-1
 django-tinymce==1.5.1b2
 django-transaction-signals==1.0.0
