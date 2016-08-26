@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from bodb.models.discussion import Forum
 from bodb.models.messaging import Message, UserSubscription, messageUser
 from todo.models import List
 from bodb.signals import document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
@@ -23,6 +24,7 @@ class Workspace(models.Model):
     admin_users = models.ManyToManyField(User,related_name='workspace_admin')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    forum=models.ForeignKey('Forum')
     tasks=models.ForeignKey('todo.List')
     related_models = models.ManyToManyField('Model')
     related_bops = models.ManyToManyField('BOP')
@@ -36,6 +38,7 @@ class Workspace(models.Model):
     class Meta:
         app_label='bodb'
         permissions=(
+            ('add_post','Add discussion post'),
             ('add_entry','Add workspace entry'),
             ('remove_entry','Remove workspace entry'),
             ('add_coordinate_selection','Add coordinate selection'),
@@ -75,6 +78,14 @@ class Workspace(models.Model):
 
             # now add user to new group
             self.created_by.groups.add(self.group)
+
+
+        # test if workspace already has a forum assigned to it
+        if (not hasattr(self, 'forum')) or (self.forum is None):
+            workspace_forum=Forum()
+            workspace_forum.save()
+
+            self.forum=workspace_forum
 
         # test if workspace already has a task list assigned to it
         created_tasks=False

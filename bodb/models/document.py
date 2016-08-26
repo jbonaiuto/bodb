@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
+from bodb.models.discussion import Forum
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
@@ -45,6 +46,8 @@ class Document(models.Model):
     last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
     # tags
     tags = TaggableManager()
+    # forum
+    forum=models.ForeignKey('Forum',null=True,blank=True)
     
     class Meta:
         app_label='bodb'
@@ -104,6 +107,12 @@ class Document(models.Model):
         return False
 
     def save(self, *args, **kwargs):
+
+        # test if document already has a forum assigned to it
+        if (not hasattr(self, 'forum')) or (self.forum is None):
+            doc_forum=Forum()
+            doc_forum.save(*args, **kwargs)
+            self.forum=doc_forum
 
         # Save document
         super(Document, self).save(*args, **kwargs)
