@@ -80,8 +80,10 @@ class DocumentDetailView(DetailView):
         context['ispopup']=('_popup' in self.request.GET)
         context['is_favorite']=self.object.id in context['fav_docs']
 
+        context['can_add_post']=False
         context['public_request_sent']=False
         if user.is_authenticated() and not user.is_anonymous():
+            context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
 
             # If the user has viewed this entry recently, update the view time

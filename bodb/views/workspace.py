@@ -273,6 +273,7 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['can_delete_coord_selection']=user.has_perm('delete_coordinate_selection',self.object)
         context['can_add_coord_selection']=user.has_perm('add_coordinate_selection',self.object)
         context['can_change_coord_selection']=user.has_perm('change_coordinate_selection',self.object)
+        context['can_add_post']=user.has_perm('add_post',self.object)
         context['can_add_entry']=user.has_perm('add_entry',self.object)
         context['can_remove_entry']=user.has_perm('remove_entry',self.object)
         context['can_add_bookmark']=user.has_perm('add_bookmark',self.object)
