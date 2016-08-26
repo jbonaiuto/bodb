@@ -138,7 +138,8 @@ class SearchView(FormView):
                 cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
                 for connSED in cococmacConnSEDs:
                     connectivitySEDs.append(connSED)
-            if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='imaging':
+
+            if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='brain imaging':
                 bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
                 for imagingSED in bredeImagingSEDs:
                     imagingSEDs.append(imagingSED)
@@ -843,7 +844,7 @@ class SEDSearchView(FormView):
             cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
             for connSED in cocomacConnSEDs:
                 connectivitySEDs.append(connSED)
-        if form.cleaned_data['type']=='' or form.cleaned_data['type']=='imaging':
+        if form.cleaned_data['type']=='' or form.cleaned_data['type']=='brain imaging':
             bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
             for imagingSED in bredeImagingSEDs:
                 imagingSEDs.append(imagingSED)
