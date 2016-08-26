@@ -9,10 +9,9 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from bodb.models.discussion import Forum
 from bodb.models.messaging import Message, UserSubscription, messageUser
 from todo.models import List
-from bodb.signals import forum_post_added, document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
+from bodb.signals import document_changed, coord_selection_created, coord_selection_changed, coord_selection_deleted, bookmark_added, bookmark_deleted
 from guardian.shortcuts import assign_perm
 from registration.models import User
 from django.core.cache import cache
@@ -24,7 +23,6 @@ class Workspace(models.Model):
     admin_users = models.ManyToManyField(User,related_name='workspace_admin')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    forum=models.ForeignKey('Forum')
     tasks=models.ForeignKey('todo.List')
     related_models = models.ManyToManyField('Model')
     related_bops = models.ManyToManyField('BOP')
@@ -38,7 +36,6 @@ class Workspace(models.Model):
     class Meta:
         app_label='bodb'
         permissions=(
-            ('add_post','Add discussion post'),
             ('add_entry','Add workspace entry'),
             ('remove_entry','Remove workspace entry'),
             ('add_coordinate_selection','Add coordinate selection'),
@@ -79,13 +76,6 @@ class Workspace(models.Model):
             # now add user to new group
             self.created_by.groups.add(self.group)
 
-        # test if workspace already has a forum assigned to it
-        if (not hasattr(self, 'forum')) or (self.forum is None):
-            workspace_forum=Forum()
-            workspace_forum.save()
-
-            self.forum=workspace_forum
-        
         # test if workspace already has a task list assigned to it
         created_tasks=False
         if (not hasattr(self, 'tasks')) or (self.tasks is None):
@@ -231,37 +221,6 @@ class WorkspaceActivityItem(models.Model):
     class Meta:
         app_label='bodb'
 
-
-@receiver(forum_post_added)
-def workspace_forum_post_added(sender, **kwargs):
-    try:
-        workspace=Workspace.objects.get(forum=sender.forum)
-    except (Workspace.DoesNotExist, Workspace.MultipleObjectsReturned), err:
-        workspace=None
-    if workspace is not None:
-        activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
-        activity.text='%s added a comment to the workspace: %s' % (sender.author.username, sender.body)
-        activity.save()
-    for workspace in Workspace.objects.prefetch_related('related_models__forum').filter(related_models__forum=sender.forum):
-        for model in workspace.related_models.filter(forum=sender.forum).prefetch_related('authors__author'):
-            activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
-            activity.text='%s added a comment to the model <a href="%s">%s</a>: %s' % (sender.author.username,model.get_absolute_url(), model.__unicode__(), sender.body)
-            activity.save()
-    for workspace in Workspace.objects.prefetch_related('related_bops__forum').filter(related_bops__forum=sender.forum):
-        for bop in workspace.related_bops.filter(forum=sender.forum):
-            activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
-            activity.text='%s added a comment to the BOP <a href="%s">%s</a>: %s' % (sender.author.username, bop.get_absolute_url(), bop.__unicode__(), sender.body)
-            activity.save()
-    for workspace in Workspace.objects.prefetch_related('related_seds__forum').filter(related_seds__forum=sender.forum):
-        for sed in workspace.related_seds.filter(forum=sender.forum):
-            activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
-            activity.text='%s added a comment to the SED <a href="%s">%s</a>: %s' % (sender.author.username, sed.get_absolute_url(), sed.__unicode__(), sender.body)
-            activity.save()
-    for workspace in Workspace.objects.prefetch_related('related__ssrs__forum').filter(related_ssrs__forum=sender.forum):
-        for ssr in workspace.related_ssrs.filter(forum=sender.forum):
-            activity=WorkspaceActivityItem(workspace=workspace, user=sender.author)
-            activity.text='%s added a comment to the SSR <a href="%s">%s</a>: %s' % (sender.author.username, ssr.get_absolute_url(), ssr.__unicode__(), sender.body)
-            activity.save()
 
 
 @receiver(document_changed)

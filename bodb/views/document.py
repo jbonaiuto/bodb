@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, Post, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction
 from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -78,13 +78,10 @@ class DocumentDetailView(DetailView):
         context['canDelete']=self.object.check_perm(user,'delete')
         context['canManage']=self.object.check_perm(user,'manage')
         context['ispopup']=('_popup' in self.request.GET)
-        context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted').select_related('author'))
         context['is_favorite']=self.object.id in context['fav_docs']
 
-        context['can_add_post']=False
         context['public_request_sent']=False
         if user.is_authenticated() and not user.is_anonymous():
-            context['can_add_post']=True
             context['public_request_sent']=DocumentPublicRequest.objects.filter(user=user,document=self.object).exists()
 
             # If the user has viewed this entry recently, update the view time

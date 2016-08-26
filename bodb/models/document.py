@@ -5,7 +5,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from bodb.models import Message, BodbProfile, messageUser
-from bodb.models.discussion import Forum
 from bodb.signals import document_changed
 from taggit.managers import TaggableManager
 import os
@@ -46,9 +45,7 @@ class Document(models.Model):
     last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
     # tags
     tags = TaggableManager()
-    # forum
-    forum=models.ForeignKey('Forum',null=True,blank=True)
-
+    
     class Meta:
         app_label='bodb'
         # When listing multiple records order by title
@@ -107,12 +104,6 @@ class Document(models.Model):
         return False
 
     def save(self, *args, **kwargs):
-
-        # test if document already has a forum assigned to it
-        if (not hasattr(self, 'forum')) or (self.forum is None):
-            doc_forum=Forum()
-            doc_forum.save(*args, **kwargs)
-            self.forum=doc_forum
 
         # Save document
         super(Document, self).save(*args, **kwargs)

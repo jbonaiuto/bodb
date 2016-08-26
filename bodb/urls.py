@@ -3,7 +3,6 @@ from bodb.feeds import LatestModels, LatestBOPs, LatestSEDs, LatestSSRs
 from bodb.views.admin import AdminDetailView, CreateUserView, UserDetailView, CreateGroupView, GroupDetailView, UpdateUserView, UpdateGroupView, UserToggleActiveView, UserToggleStaffView, UserToggleAdminView, DeleteGroupView, GetUserIconUrlView
 from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPDetailView, UpdateBOPView, DeleteBOPView, BOPTaggedView, ToggleSelectBOPView
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
-from bodb.views.discussion import ForumPostView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
 from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView
@@ -215,8 +214,6 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^subscription/user/new/', CreateUserSubscriptionView.as_view(), {}, 'user_subscription_new'),
 
     url(r'^tag/(?P<name>[^/]+)/$', TagView.as_view(), {}, 'tagged'),
-
-    url(r'^forum/(?P<pk>\d+)/new_post/$', ForumPostView.as_view(), {}, 'forum_post_view'),
 
     url(r'^workspace/active/$', ActiveWorkspaceDetailView.as_view(), {}, 'active_workspace_view'),
     url(r'^workspace/(?P<pk>\d+)/$', WorkspaceDetailView.as_view(), {}, 'workspace_view'),

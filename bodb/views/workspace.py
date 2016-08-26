@@ -7,7 +7,6 @@ from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import BaseUpdateView, FormView, CreateView, BaseCreateView, DeleteView, ProcessFormView
 from bodb.forms.workspace import WorkspaceInvitationForm, WorkspaceForm, WorkspaceUserForm, WorkspaceBookmarkForm
 from bodb.models import Workspace, WorkspaceInvitation, BrainImagingSED, ConnectivitySED, ERPSED, WorkspaceActivityItem, SelectedSEDCoord, SavedSEDCoordSelection, Model, BOP, SED, SEDCoord, SSR, Document, WorkspaceBookmark, ERPComponent, Literature, BrainRegion
-from bodb.models.discussion import Post
 from bodb.signals import coord_selection_created
 from bodb.views.main import get_profile, BODBView, set_context_workspace, get_active_workspace
 from bodb.views.security import ObjectRolePermissionRequiredMixin
@@ -18,7 +17,7 @@ from guardian.shortcuts import assign_perm, remove_perm
 from uscbp.views import JSONResponseMixin
 from django.core.cache import cache
 
-workspace_permissions=['add_post','add_entry','remove_entry',
+workspace_permissions=['add_entry','remove_entry',
                        'add_coordinate_selection','change_coordinate_selection','delete_coordinate_selection',
                        'add_bookmark','delete_bookmark']
 
@@ -274,7 +273,6 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['can_delete_coord_selection']=user.has_perm('delete_coordinate_selection',self.object)
         context['can_add_coord_selection']=user.has_perm('add_coordinate_selection',self.object)
         context['can_change_coord_selection']=user.has_perm('change_coordinate_selection',self.object)
-        context['can_add_post']=user.has_perm('add_post',self.object)
         context['can_add_entry']=user.has_perm('add_entry',self.object)
         context['can_remove_entry']=user.has_perm('remove_entry',self.object)
         context['can_add_bookmark']=user.has_perm('add_bookmark',self.object)
@@ -293,7 +291,6 @@ class WorkspaceDetailView(ObjectRolePermissionRequiredMixin, FormView):
         context['members']=members
         if context['admin']:
             context['invitations']=WorkspaceInvitation.objects.filter(workspace=self.object).select_related('invited_user','invited_by')
-        context['posts']=list(Post.objects.filter(forum=self.object.forum,parent=None).order_by('-posted').select_related('author'))
         context['bookmarks']=WorkspaceBookmark.objects.filter(workspace=self.object).select_related('collator').order_by('title')
 
         # Visibility query filter
