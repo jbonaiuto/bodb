@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>BODB - Apps</title>
+{% endblock %}
+{% block content %}
+    <div id="list">
+        <table class="tab_panel">
+            <tr class="section_header">
+                <td align=center>The Brain Operation Database Applications</td>
+            </tr>
+            <tr>
+                <td>
+                	<a href="/bodb/apps/figure_search/" target="_blank">
+                    <h2>Figure Search</h2>
+                    </a>
+                    The figure search application is a visual search. Users may filter results based on keywords which will then display all figures within documents that contain the given keyword. Then, users may browse the figures which are directed to the document when clicked on.
+                <br><br>
+                    <a href="/bodb/apps/model_connect/" target="_blank">
+                    <h2>Model Connect</h2>
+                    </a>
+                    While BODB allow benchmarking of two models, the Model Connect application allows the user to find perhaps unknown relationships between models. The interface allows the user to filter models by keyword search. Then the user can select two models and an intermediary link (e.g. brain regions) to see if their exists a relational path between the models in order to discover unknown connection between models that might otherwise seem disparate. 
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

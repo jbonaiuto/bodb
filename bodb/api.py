@@ -234,7 +234,7 @@ class DocumentFigureResource(SearchResourceMixin, ModelResource):
     
     class Meta:
         queryset = DocumentFigure.objects.all()
-        resource_name = 'documentfigure'
+        resource_name = 'document_figure'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
