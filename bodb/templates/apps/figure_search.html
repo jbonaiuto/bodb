@@ -84,7 +84,7 @@
 
     function getData(keywords, limit) {
         return $.ajax({
-            url: '/bodb/api/v1/documentfigure/search/?format=json&q='+keywords+'&limit='+limit,
+            url: '/bodb/api/v1/document_figure/search/?format=json&q='+keywords+'&limit='+limit,
             type: 'GET',
             xhrFields: {
               withCredentials: true

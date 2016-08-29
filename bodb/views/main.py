@@ -554,3 +554,11 @@ class BrainSurferView(View):
         response = HttpResponse(jnlp_str, content_type='application/x-java-jnlp-file')
         response['Content-Disposition'] = 'attachment; filename="brainSurfer.jnlp"'
         return response
+    
+class AppsView(BODBView):
+    template_name = 'bodb/apps.html'
+
+    def get_context_data(self, **kwargs):
+        context=super(AppsView,self).get_context_data(**kwargs)
+        context['helpPage']='index.html'
+        return context

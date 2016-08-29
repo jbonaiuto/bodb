@@ -5,7 +5,7 @@ from bodb.views.bop import CreateBOPView, SimilarBOPView, BOPDetailView, UpdateB
 from bodb.views.brain_region import BrainRegionRequestListView, CreateBrainRegionRequestView, CheckBrainRegionRequestExistsView, BrainRegionView, BrainRegionRequestDenyView, BrainRegionRequestApproveView, ToggleSelectBrainRegionView
 from bodb.views.document import ManageDocumentPermissionsView, DocumentPublicRequestView, DocumentDetailView
 from bodb.views.literature import CreateLiteratureView, LiteratureDetailView, UpdateLiteratureView, DeleteLiteratureView, ExportLiteratureView, ToggleSelectLiteratureView, LiteraturePubmedView
-from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView
+from bodb.views.main import IndexView, AboutView, InsertView, DraftListView, FavoriteListView, ToggleFavoriteView, TagView, BrainSurferView, ToggleFavoriteBrainRegionView, ToggleFavoriteLiteratureView, RecentEntriesListView, AppsView
 from bodb.views.messaging import UserMessageListView, CreateUserMessageView, ReadReplyUserMessageView, DeleteUserMessageView
 from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView, ModuleDetailView, UpdateModelView, DeleteModelView, UpdateModuleView, DeleteModuleView, ModelTaggedView, BenchmarkModelView, ReverseBenchmarkModelView, ToggleSelectModelView, CreateModelWizardView, MODEL_WIZARD_FORMS
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
@@ -61,6 +61,7 @@ urlpatterns = patterns('',
 
 #apps
 urlpatterns = urlpatterns + patterns('',
+    url(r'^apps/$', AppsView.as_view(), {}, 'apps'),
     url(r'^apps/figure_search/$', TemplateView.as_view(template_name="apps/figure_search.html"), name='figure_search'),
     url(r'^apps/model_connect/$', TemplateView.as_view(template_name="apps/model_connect.html"), name='model_connect'),
 )
