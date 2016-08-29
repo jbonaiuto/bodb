@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.authentication import SessionAuthentication
 from tastypie.cache import SimpleCache
-from tastypie.constants import ALL_WITH_RELATIONS
+from tastypie.constants import ALL_WITH_RELATIONS, ALL
 from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
 from tastypie.paginator import Paginator
@@ -238,14 +238,37 @@ class DocumentFigureResource(SearchResourceMixin, ModelResource):
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
-        
+
+
+class SpeciesResource(ModelResource):
+    class Meta:
+        queryset=Species.objects.all()
+        resource_name='species'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+
+class NomenclatureResource(ModelResource):
+    species = fields.ManyToManyField('bodb.api.SpeciesResource', 'species', full=True, null=False)
+    class Meta:
+        queryset = Nomenclature.objects.all()
+        resource_name = 'nomenclature'
+        authorization = BODBAPIAuthorization()
+        authentication = SessionAuthentication()
+        cache = SimpleCache(timeout=10)
+
+
 class BrainRegionResource(ModelResource):
+    nomenclature = fields.ForeignKey('bodb.api.NomenclatureResource', 'nomenclature', full=True, null=False)
     class Meta:
         queryset = BrainRegion.objects.all()
         resource_name = 'brain_region'
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
+        filtering={
+            'abbreviation': ALL
+        }
         
         
 class RelatedBrainRegionResource(ModelResource):  

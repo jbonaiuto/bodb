@@ -1,0 +1,685 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - Import SensorimotorDB SED</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/jquery.poshytip.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/d3.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bodb/css/tip-skyblue/tip-skyblue.css' %}" type="text/css" media="all" />
+    <script type="text/javascript">
+        animatedcollapse.addDiv('figureData', 'fade=1');
+        animatedcollapse.addDiv('brainRegionData', 'fade=1');
+        animatedcollapse.addDiv('referenceData', 'fade=1');
+
+        var checkSimilar=true;
+        {% if form.instance.id %}
+            checkSimilar=false;
+        {% endif %}
+
+        var isDraft=0;
+
+        $(document).ready(function(){
+            var data = {};
+            var args = {
+                type: "GET",
+                url: "{{ smdb_server }}/sensorimotordb/api/v1/visuomotor_classification_analysis_results/{{ smbid }}/?format=json&username={{ smdb_username }}&api_key={{ smdb_api_key }}",
+                data: data,
+                success: loadedAnalysisResultsData,
+                error: function(data) {
+                    //alert("Something went wrong!");
+                } };
+            $.ajax(args);
+        });
+
+        /**
+         * Loaded analysis results
+         * @param resp
+         */
+        function loadedAnalysisResultsData(resp)
+        {
+            $('#id_title').val(resp.name+' in ' + resp.unit_analysis_results[0].unit.area.abbreviation);
+            $('#id_brief_description').val(construct_brief_description(resp));
+
+            var data=construct_data_hierarchy(resp);
+
+            function count_function(d)
+            {
+                return d[1][1].length;
+            }
+
+            function label_function(d)
+            {
+                return d[2]+": "+Math.round((d[1]-d[0])/(2*Math.PI)*100)+"% neurons";
+            }
+
+            function legend_function(d)
+            {
+                return "<h3>"+d[2]+"</h3>";
+            }
+
+            var color = d3.scale.category20c();
+
+            function color_function(d)
+            {
+                return color(d[2]);
+            }
+            d3.select(self.frameElement).style("height", "800px");
+            init_code_hierarchy_plot("analysis_results-pie",data,count_function,color_function,label_function,legend_function);
+
+            var data = {};
+            var args = {
+                type: "GET",
+                url: "/bodb/api/v1/brain_region/?format=json&abbreviation="+resp.unit_analysis_results[0].unit.area.abbreviation,
+                data: data,
+                success: loadedBrainRegionData,
+                error: function(data) {
+                    //alert("Something went wrong!");
+                } };
+            $.ajax(args);
+        }
+
+        function loadedBrainRegionData(resp)
+        {
+            for(var idx=0; idx<resp.objects.length; idx++)
+            {
+                region_data=[];
+                var name='';
+                if(resp.objects[idx].abbreviation.length>0)
+                    name=resp.objects[idx].abbreviation;
+                else
+                    name=resp.objects[idx].name;
+                var nomenclature=resp.objects[idx].nomenclature.name+' ('+resp.objects[idx].nomenclature.version+')';
+                var species='';
+                for(var s_idx=0; s_idx<resp.objects[idx].nomenclature.species.length; s_idx++)
+                {
+                    if(s_idx>0)
+                        species=species+', ';
+                    species=species+resp.objects[idx].nomenclature.species[s_idx].genus_name+' '+resp.objects[idx].nomenclature.species[s_idx].species_name;
+                }
+                addBrainRegionMultiple('', 'Location of recording', resp.objects[idx].id, [name,nomenclature,species]);
+            }
+        }
+
+        function construct_data_hierarchy(resp)
+        {
+            var data=[
+                "All neurons",
+                [
+                    -1,
+                    []
+                ],
+                {}
+            ];
+            for(var idx=0; idx<resp.unit_classifications.length; idx++)
+            {
+                var classification=resp.unit_classifications[idx];
+                if(classification.parent==null)
+                {
+                    for(var unit_idx=0; unit_idx<classification.units.length; unit_idx++)
+                        data[1][1].push(classification.units[unit_idx]);
+                    data[2][classification.label]=[
+                        classification.label,
+                        [
+                            classification.id,
+                            classification.units
+                        ],
+                        {}
+                    ];
+                }
+            }
+            for(var idx=0; idx<resp.unit_classifications.length; idx++)
+            {
+                var classification=resp.unit_classifications[idx];
+                if(classification.parent!=null)
+                {
+                    var parent_id=parseInt(classification.parent.split('/')[5]);
+                    for(var child_label in data[2])
+                    {
+                        var child=data[2][child_label];
+                        if(child[1][0]==parent_id)
+                        {
+                            child[2][classification.label]=[
+                                classification.label,
+                                [
+                                    classification.id,
+                                    classification.units
+                                ],
+                                {}
+                            ];
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        function construct_brief_description(resp)
+        {
+            var brief_description='In region '+resp.unit_analysis_results[0].unit.area.abbreviation;
+            var first_level_uris=[];
+            var first_level_names=[];
+            var first_level_counts=[];
+            for(var class_idx=0; class_idx<resp.unit_classifications.length; class_idx++)
+            {
+                var classification=resp.unit_classifications[class_idx];
+                if(classification.parent==null)
+                {
+                    first_level_uris.push(classification.resource_uri);
+                    first_level_names.push(classification.label);
+                    first_level_counts.push(classification.units.length);
+                    var percentage=Math.round(classification.units.length/resp.total_num_units*100.0);
+                    if(class_idx==(resp.unit_classifications.length-1))
+                        brief_description=brief_description+', and '+percentage+'% are '+classification.label;
+                    else if(class_idx==0)
+                        brief_description=brief_description+', '+percentage+'% of cells are '+classification.label;
+                    else
+                        brief_description=brief_description+', '+percentage+'% are '+classification.label;
+                }
+            }
+            brief_description=brief_description+'.'
+            for(var parent_idx=0; parent_idx<first_level_uris.length; parent_idx++)
+            {
+                var parent_uri=first_level_uris[parent_idx];
+                var has_children=false;
+                for(var class_idx=0; class_idx<resp.unit_classifications.length; class_idx++)
+                {
+                    var classification=resp.unit_classifications[class_idx];
+                    if(classification.parent!=null && classification.parent==parent_uri)
+                    {
+                        has_children=true;
+                        break;
+                    }
+                }
+                if(has_children)
+                {
+                    brief_description=brief_description+' Of '+first_level_names[parent_idx]+' cells';
+                    for(var class_idx=0; class_idx<resp.unit_classifications.length; class_idx++)
+                    {
+                        var classification=resp.unit_classifications[class_idx];
+                        if(classification.parent!=null && classification.parent==parent_uri)
+                        {
+                            var percentage=Math.round(classification.units.length/first_level_counts[parent_idx]*100.0);
+                            brief_description=brief_description+', '+percentage+'% are '+classification.label;
+                        }
+                    }
+                    brief_description=brief_description+'.'
+                }
+            };
+            return brief_description;
+        }
+
+        function init_code_hierarchy_plot(element_id,data,count_function,color_function,title_function,legend_function)
+        {
+            var plot = document.getElementById(element_id);
+
+            while (plot.hasChildNodes())
+            {
+                plot.removeChild(plot.firstChild);
+            }
+
+            var width = 350;
+            var height = width;
+            var x_margin = 20;
+            var y_margin = 20;
+
+            var max_depth=3;
+
+            var data_slices = [];
+            var max_level = 4;
+
+            var svg = d3.select("#"+element_id).append("svg")
+                    .attr("width", width)
+                    .attr("height", 225)
+                    .append("g")
+                    .attr("transform", "translate(" + width / 2 + "," + height/3 + ")");
+
+            function process_data(data,level,start_deg,stop_deg)
+            {
+                var name = data[0];
+                var total = count_function(data);
+                var children = data[2];
+                var current_deg = start_deg;
+                if (level > max_level)
+                {
+                    return;
+                }
+                if (start_deg == stop_deg)
+                {
+                    return;
+                }
+                data_slices.push([start_deg,stop_deg,name,level,data[1]]);
+                for (var key in children)
+                {
+                    child = children[key];
+                    var inc_deg = (stop_deg-start_deg)/total*count_function(child);
+                    var child_start_deg = current_deg;
+                    current_deg+=inc_deg;
+                    var child_stop_deg = current_deg;
+                    var span_deg = child_stop_deg-child_start_deg;
+                    process_data(child,level+1,child_start_deg,child_stop_deg);
+                }
+            }
+
+            process_data(data,0,0,360./180.0*Math.PI);
+
+            var ref = data_slices[0];
+            var next_ref = ref;
+            var last_refs = [];
+
+            var thickness = width/2.0/(max_level+2)*1.1;
+
+            var arc = d3.svg.arc()
+                    .startAngle(function(d) { if(d[3]==0){return d[0];}return d[0]+0.01; })
+                    .endAngle(function(d) { if(d[3]==0){return d[1];}return d[1]-0.01; })
+                    .innerRadius(function(d) { return 1.1*d[3]*thickness; })
+                    .outerRadius(function(d) { return (1.1*d[3]+1)*thickness; });
+
+            var slices = svg.selectAll(".form")
+                    .data(function(d) { return data_slices; })
+                    .enter()
+                    .append("g");
+            slices.append("path")
+                    .attr("d", arc)
+                    .attr("id",function(d,i){return element_id+i;})
+                    .style("fill", function(d) { return color_function(d);})
+                    .attr("class","form");
+            slices.on("click",animate);
+
+            if (title_function != undefined)
+            {
+                slices.append("svg:title")
+                        .text(title_function);
+            }
+            function get_start_angle(d,ref)
+            {
+                if (ref)
+                {
+                    var ref_span = ref[1]-ref[0];
+                    return (d[0]-ref[0])/ref_span*Math.PI*2.0
+                }
+                else
+                {
+                    return d[0];
+                }
+            }
+
+            function get_stop_angle(d,ref)
+            {
+                if (ref)
+                {
+                    var ref_span = ref[1]-ref[0];
+                    return (d[1]-ref[0])/ref_span*Math.PI*2.0
+                }
+                else
+                {
+                    return d[0];
+                }
+            }
+
+            function get_level(d,ref)
+            {
+                if (ref)
+                {
+                    return d[3]-ref[3];
+                }
+                else
+                {
+                    return d[3];
+                }
+            }
+
+            function rebaseTween(new_ref)
+            {
+                return function(d)
+                {
+                    var level = d3.interpolate(get_level(d,ref),get_level(d,new_ref));
+                    var start_deg = d3.interpolate(get_start_angle(d,ref),get_start_angle(d,new_ref));
+                    var stop_deg = d3.interpolate(get_stop_angle(d,ref),get_stop_angle(d,new_ref));
+                    var opacity = d3.interpolate(100,0);
+                    return function(t)
+                    {
+                        return arc([start_deg(t),stop_deg(t),d[2],level(t)]);
+                    }
+                }
+            }
+
+            d3.select("#"+element_id+"_legend").html("<h3>"+data[0]+"</h3>");
+            var animating = false;
+
+            function animate(d) {
+                if (animating)
+                {
+                    return;
+                }
+                var legend = d3.select("#"+element_id+"_legend")
+
+                animating = true;
+                var revert = false;
+                var new_ref;
+                if (d == ref && last_refs.length > 0)
+                {
+                    revert = true;
+                    last_ref = last_refs.pop();
+                }
+                if (revert)
+                {
+                    d = last_ref;
+                    legend.html(legend_function(d));
+                    new_ref = ref;
+                    svg.selectAll(".form")
+                            .filter(
+                            function (b)
+                            {
+                                if (b[0].toFixed(5) >= last_ref[0].toFixed(5) && b[1].toFixed(5) <= last_ref[1].toFixed(5)  && b[3] >= last_ref[3])
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }
+                    )
+                            .transition().duration(1000).style("opacity","1").attr("pointer-events","all");
+                }
+                else
+                {
+                    legend.html(legend_function(d));
+                    new_ref = d;
+                    svg.selectAll(".form")
+                            .filter(
+                            function (b)
+                            {
+                                if (b[0].toFixed(5) < d[0].toFixed(5) || b[1].toFixed(5) > d[1].toFixed(5) || b[3] < d[3])
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }
+                    )
+                            .transition().duration(1000).style("opacity","0").attr("pointer-events","none");
+                }
+                svg.selectAll(".form")
+                        .filter(
+                        function (b)
+                        {
+                            if (b[0].toFixed(5) >= new_ref[0].toFixed(5) && b[1].toFixed(5) <= new_ref[1].toFixed(5) && b[3] >= new_ref[3])
+                            {
+                                return true;
+                            }
+                            return false;
+                        }
+                )
+                        .transition().duration(1000).attrTween("d",rebaseTween(d));
+                setTimeout(function(){
+                    animating = false;
+                    if (! revert)
+                    {
+                        last_refs.push(ref);
+                        ref = d;
+                    }
+                    else
+                    {
+                        ref = d;
+                    }
+                },1000);
+            };
+
+        }
+
+        function validateForm()
+        {
+            var errors=0;
+            var figureErrors=0;
+            clearSpan(document, 'form_errors');
+            clearSpan(document, 'title_errors');
+            clearSpan(document, 'description_errors');
+            errors+=validateField('title', 'Title', 'title_errors');
+            if(isDraft>0)
+            {
+                figureErrors=validateInlineForm('figure', ['order', 'title'], ['Order','Title']);
+            }
+            else{
+                errors+=validateField('brief_description', 'Brief description', 'description_errors');
+                figureErrors=validateInlineForm('figure', ['order', 'title', 'caption'], ['Order','Title','Caption']);
+                var relatedBrainRegionErrors=validateInlineForm('related_brain_region', ['relationship'], ['Relationship']);
+                if(relatedBrainRegionErrors>0)
+                    animatedcollapse.show('brainRegionData');
+                errors+=relatedBrainRegionErrors;
+            }
+
+            if(figureErrors>0)
+                animatedcollapse.show('figureData');
+            errors+=figureErrors;
+
+            if(errors>0)
+                document.getElementById('form_errors').innerHTML='Please correct form errors before saving';
+            return errors==0;
+        }
+
+        /**
+         * Validate and save the form
+         * @param isDraft - 1 if draft, 0 if not
+         */
+        function save()
+        {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            document.getElementById('id_draft').value=isDraft;
+            document.getElementById('sedForm').submit();
+        }
+
+        function checkSimilarSEDs()
+        {
+            if(validateForm())
+            {
+                document.getElementById('savingMsg').style.display = 'block';
+                document.getElementById('savingOver').style.display = 'block';
+                var title=document.getElementById('id_title').value;
+                var brief_desc=document.getElementById('id_brief_description').value
+                var data={'title': title, 'brief_description': brief_desc};
+                var args={type:"GET", url:"/bodb/sed/similar/", data: data, complete: doneCheckSimilarSEDs };
+                $.ajax(args)
+            }
+            return false;
+        }
+
+        function doneCheckSimilarSEDs(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if (status=="success")
+            {
+                if(checkSimilar && data.similar_sed_ids.length>0)
+                {
+                    document.getElementById('savingMsg').style.display = 'none';
+                    document.getElementById('savingOver').style.display = 'none';
+
+                    var dispTxt='The SED you entered is similar to the following existing SEDs:';
+                    dispTxt+='<table>';
+                    for(var i=0; i<data.similar_sed_ids.length; i++)
+                    {
+                        if(i<10)
+                            dispTxt+='<tr><td><a href="#" onclick="parent.window.open(\'/bodb/sed/'+data.similar_sed_ids[i]+'/\');">'+data.similar_sed_titles[i]+'</a></td></tr>';
+                    }
+                    dispTxt+='</table>';
+                    dispTxt+='Do you want to continue adding this SED?<br>'
+                    dispTxt+='<input class="btn" type="button" value="Yes" onclick="save();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
+                    dispTxt+='<input class="btn" type="button" value="No" onclick="disablePopup();" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>&nbsp;';
+                    //saveModel=confirm(dispTxt);
+                    document.getElementById('popup_content').innerHTML=dispTxt;
+                    loadPopup();
+                }
+                else
+                    save();
+            }
+        }
+
+        $(document).ready(function()
+        {
+            $('#id_title').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter the name of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignX: 'right',
+                offsetX: 5,
+                offsetY: -45,
+                timeOnScreen: 3000
+            });
+
+            $('#id_brief_description').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a brief description of the SED.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_narrative').poshytip({
+                className: 'tip-skyblue',
+                content: "Enter a complete description of the SED.",
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignY: 'center',
+                alignX: 'right',
+                offsetX: 5,
+                timeOnScreen: 3000
+            });
+
+            $('#id_tags').poshytip({
+                className: 'tip-skyblue',
+                content: 'Enter a comma-separated list of keywords. Look a the tag cloud for suggested keywords.',
+                showOn: 'focus',
+                showTimeout: 100,
+                alignTo: 'target',
+                alignX: 'right',
+                offsetX: 5,
+                offsetY: -75,
+                timeOnScreen: 3000
+            });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+<div id="detail">
+    <h2>Import SensorimotorDB SED</h2>
+    <form id="cleanSEDForm" method="post" action="">
+        {% csrf_token %}
+        <table class="tab_panel">
+            <tr valign=top>
+                <td width=30%>{{ form.title.label_tag }}*</td>
+                <td>{{ form.title }} {%if form.instance.draft%}<font color=red>&lt;draft&gt;</font>{%endif%}</td>
+                <td class="myerrors" width=10%><span id="title_errors">{{ form.title.errors }}</span></td>
+            </tr>
+            <tr valign=top>
+                <td valign=top>{{ form.brief_description.label_tag }}*</td>
+                <td>{{ form.brief_description }}</td>
+                <td class="myerrors"><span id="description_errors">{{ form.brief_description.errors }}</span></td>
+            </tr>
+            <tr valign=top>
+                <td>{{ form.narrative.label_tag }}</td>
+                <td>{{ form.narrative }}</td>
+                {% if form.narrative %}<td class="myerrors">{{ form.narrative.errors }}</td>{% endif %}
+            </tr>
+            <tr valign=top>
+                <td>{{ form.tags.label_tag }}</td>
+                <td>{{ form.tags }}</td>
+                {% if form.tags.errors %}<td class="myerrors">{{ form.tags.errors }}</td>{% endif %}
+            </tr>
+            {% if perms.bodb.public_sed or user.is_superuser %}
+                <tr valign=top>
+                    <td>{{ form.public.label_tag }}</td>
+                    <td><input {% if form.public.value %}checked="checked" {% endif %} id="id_public" name="public" type="checkbox"/></td>
+                    {% if form.public.errors %}<td class="myerrors">{{ form.public.errors }}</td>{% endif %}
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan="2">
+                    <div id="analysis_results-pie_legend" style="text-align:center"></div>
+                    <div id="analysis_results-pie" style="text-align:center"><img src="{% static 'bodb/images/loading.gif' %}"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 style="padding:0">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=3>
+                    Figures (<a href="javascript:animatedcollapse.toggle('figureData')"><span id="figureDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 style="padding:0">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3>
+                    {% include "bodb/document_figure_detail.html" %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=3>
+                    Related Brain Regions (<a href="javascript:animatedcollapse.toggle('brainRegionData')"><span id="brainRegionDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <td colspan="3">
+                {% include "bodb/brainRegion/related_brain_region_list_detail.html" %}
+            </td>
+            <tr>
+                <td colspan=3 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=3>
+                    References (<a href="javascript:animatedcollapse.toggle('referenceData')"><span id="referenceDataLabel">Show</span></a>)
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    {% include "bodb/literature/related_reference_list_detail.html" %}
+                </td>
+            </tr>
+        </table>
+        <span id="form_errors" class="myerrors">
+                {{ form.errors }}
+            </span>
+        <br>
+        <input id="id_type" name="type" value="generic" type="hidden"/>
+        {{ form.draft }}
+        {{ form.collator }}
+        <input class="btn" type="button" value="Save Draft" onclick="isDraft=1; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% if perms.bodb.save_sed or user.is_superuser%}
+            <input class="btn" type="button" value="Save" onclick="isDraft=0; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if ispopup %}
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if form.instance.id %}
+            {% if not ispopup %}
+                <input class="btn" type="button" value="Cancel" onclick="document.location.href='/bodb/sed/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

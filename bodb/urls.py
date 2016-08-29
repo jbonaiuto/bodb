@@ -12,7 +12,7 @@ from bodb.views.model import CreateModelView, SimilarModelView, ModelDetailView,
 from bodb.views.prediction import PredictionDetailView, UpdatePredictionView, DeletePredictionView, PredictionTaggedView
 from bodb.views.report import BOPReportView, ModelReportView, SEDReportView, SSRReportView, ModuleReportView
 from bodb.views.search import SearchView, BOPSearchView, SEDSearchView, LiteratureSearchView, BrainRegionSearchView, ModelSearchView, PubmedSearchView, ModelDBSearchView
-from bodb.views.sed import CreateSEDView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView
+from bodb.views.sed import CreateSEDView, SEDDetailView, SimilarSEDView, UpdateSEDView, DeleteSEDView, SEDTaggedView, CreateERPSEDView, UpdateERPSEDView, DeleteERPSEDView, CreateBrainImagingSEDView, CleanBrainImagingSEDView, UpdateBrainImagingSEDView, DeleteBrainImagingSEDView, ToggleSelectSEDView, SaveCoordinateSelectionView, CloseCoordinateSelectionView, CoordinateSelectionView, DeleteCoordinateSelectionView, SelectSEDCoordView, UnselectSEDCoordView, SelectSelectedSEDCoordView, UnselectSelectedSEDCoordView, DeleteConnectivitySEDView, UpdateConnectivitySEDView, CreateConnectivitySEDView, ElectrodePositionsView, ImportSensorimotorDBSEDView
 from bodb.views.ssr import SSRDetailView, UpdateSSRView, DeleteSSRView, SSRTaggedView, ToggleSelectSSRView, CreateSSRView, SortSSRListView
 from bodb.views.subscription import CreateSubscriptionView, CreateUserSubscriptionView
 from bodb.views.workspace import ActivateWorkspaceView, WorkspaceDetailView, ActiveWorkspaceDetailView, WorkspaceUserToggleAdminView, WorkspaceInvitationResponseView, WorkspaceUserRemoveView, CreateWorkspaceView, WorkspaceTitleAvailableView, DeleteWorkspaceView, UpdateWorkspaceView, SaveWorkspaceCoordinateSelectionView, WorkspaceInvitationView, WorkspaceUserDetailView, UpdateWorkspaceUserView, WorkspaceInvitationResendView, CreateWorkspaceBookmarkView, DeleteWorkspaceBookmarkView
@@ -181,6 +181,8 @@ urlpatterns = urlpatterns + patterns('',
     url(r'^sed/imaging/(?P<pk>\d+)/delete/$', DeleteBrainImagingSEDView.as_view(), name='imaging_sed_delete'),
     url(r'^sed/imaging/(?P<pk>\d+)/edit/$', UpdateBrainImagingSEDView.as_view(), name='imaging_sed_edit'),
     url(r'^sed/imaging/new/$', CreateBrainImagingSEDView.as_view(), {}, 'imaging_sed_add'),
+
+    url(r'^sed/neurophysiology/sensorimotordb/import/$', ImportSensorimotorDBSEDView.as_view(), name='sensorimotordb_import'),
 
     url(r'^ssr/(?P<pk>\d+)/$', SSRDetailView.as_view(), {}, 'ssr_view'),
     url(r'^ssr/(?P<pk>\d+)/delete/$', DeleteSSRView.as_view(), {}, 'ssr_delete'),

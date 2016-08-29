@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import ErrorList, formset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
-from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR
+from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, NeurophysiologySED, SensoriMotorDBNeurophysiologySED
 from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
@@ -26,6 +26,20 @@ class ConnectivitySEDForm(SEDForm):
 
     class Meta:
         model=ConnectivitySED
+
+
+class NeurophysiologySEDForm(SEDForm):
+    region = forms.ModelChoiceField(queryset=BrainRegion.objects.all(), widget=forms.HiddenInput, required=True)
+    total_num_inpurts = forms.IntegerField(widget=forms.HiddenInput, required=True)
+
+    class Meta:
+        model=NeurophysiologySED
+
+class SensoriMotorDBNeurophysiologySEDForm(NeurophysiologySEDForm):
+    smbid = forms.IntegerField(widget=forms.HiddenInput, required=True)
+
+    class Meta:
+        model=SensoriMotorDBNeurophysiologySED
 
 
 class ERPSEDForm(SEDForm):

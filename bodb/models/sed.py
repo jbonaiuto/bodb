@@ -475,6 +475,7 @@ class SensoriMotorDBNeurophysiologySED(NeurophysiologySED):
         url='http://neuro.imm.dtu.dk/services/brededatabase/WOEXP_%s.html' % str(self.woexp)
         return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in Brede</a>' % (url,url)
 
+
 # A summary of connectivity data: inherits from SED
 class ConnectivitySED(SED):
     source_region = models.ForeignKey('BrainRegion', related_name='source_region')

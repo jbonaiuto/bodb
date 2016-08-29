@@ -10,8 +10,8 @@ from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message
+from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, SensoriMotorDBNeurophysiologySEDForm
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message, SensoriMotorDBNeurophysiologySED
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
@@ -634,6 +634,37 @@ class CleanBrainImagingSEDView(BODBView):
         return self.render_to_response({'sedCoordCleanFormSet': sedCoordCleanFormSet,
                                         'ispopup': ('_popup' in request.GET),
                                         'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
+
+
+class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
+    model = SensoriMotorDBNeurophysiologySED
+    form_class = SensoriMotorDBNeurophysiologySEDForm
+    template_name = 'bodb/sed/neurophysiology/sensorimotordb_sed_import.html'
+
+    permission_required='bodb.add_sed'
+
+    def get_object(self, queryset=None):
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super(ImportSensorimotorDBSEDView,self).get_context_data(**kwargs)
+        context=set_context_workspace(context, self.request)
+        context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='figure')
+        context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
+            prefix='related_brain_region')
+        context['helpPage']='insert_data.html#insert-generic-sed'
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
+        context['multiple']=('_multiple' in self.request.GET)
+        context['type']=self.request.GET.get('type','')
+        context['smdb_server']=settings.SENSORIMOTORDB_SERVER
+        context['smbid']=self.request.GET.get('analysis_id','')
+        context['smdb_username']=self.request.GET.get('user','')
+        context['smdb_api_key']=self.request.GET.get('api_key','')
+        return context
+
+
 
 
 class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):
