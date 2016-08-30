@@ -991,16 +991,16 @@ class BenchmarkModelView(BODBView):
                 bseds=BuildSED.objects.filter(Q(sed_q) & Q(model_q))
                 for building_sed in bseds:
                     if building_sed.relationship=='scene setting':
-                        attr='bgColor=''#0099FF'''
+                        attr='bgColor=''#00bec3'''
                         r=0
-                        g=153
-                        b=255
+                        g=190
+                        b=195
                         label='Scene Setting'
                     elif building_sed.relationship=='support':
-                        attr='bgColor=''#9966FF'''
-                        r=153
-                        g=102
-                        b=255
+                        attr='bgColor=''#c67cfd'''
+                        r=198
+                        g=124
+                        b=253
                         label='Support'
                         context['scores'][modelIdx] += 1
                     attr=attr+' title="'+building_sed.relevance_narrative+'"'
@@ -1008,17 +1008,17 @@ class BenchmarkModelView(BODBView):
                 tseds=TestSED.objects.filter(Q(sed_q) & Q(model_q))
                 for testing_sed in tseds:
                     if testing_sed.relationship=='explanation':
-                        attr='bgColor=''#00FF99'''
-                        r=0
-                        g=255
-                        b=153
+                        attr='bgColor=''#7bad03'''
+                        r=123
+                        g=173
+                        b=3
                         label='Explanation'
                         context['scores'][modelIdx] += 1
                     elif testing_sed.relationship=='contradiction':
-                        attr='bgColor=''#FFFF66'''
-                        r=255
-                        g=255
-                        b=102
+                        attr='bgColor=''#f6766d'''
+                        r=246
+                        g=118
+                        b=109
                         label='Contradiction'
                         context['scores'][modelIdx] -= 1
                     attr=attr+' title="'+testing_sed.relevance_narrative+'"'
@@ -1088,16 +1088,16 @@ class ReverseBenchmarkModelView(BODBView):
                 bseds=BuildSED.objects.filter(Q(sed_q) & Q(model_q))
                 for building_sed in bseds:
                     if building_sed.relationship=='scene setting':
-                        attr='bgColor=''#0099FF'''
+                        attr='bgColor=''#00bec3'''
                         r=0
-                        g=153
-                        b=255
+                        g=190
+                        b=195
                         label='Scene Setting'
                     elif building_sed.relationship=='support':
-                        attr='bgColor=''#9966FF'''
-                        r=153
-                        g=102
-                        b=255
+                        attr='bgColor=''#c67cfd'''
+                        r=198
+                        g=124
+                        b=253
                         label='Support'
                         context['scores'][modelIdx] += 1
                     attr=attr+' title="'+building_sed.relevance_narrative+'"'
@@ -1105,17 +1105,17 @@ class ReverseBenchmarkModelView(BODBView):
                 tseds=TestSED.objects.filter(Q(sed_q) & Q(model_q))
                 for testing_sed in tseds:
                     if testing_sed.relationship=='explanation':
-                        attr='bgColor=''#00FF99'''
-                        r=0
-                        g=255
-                        b=153
+                        attr='bgColor=''#7bad03'''
+                        r=123
+                        g=173
+                        b=3
                         label='Explanation'
                         context['scores'][modelIdx] += 1
                     elif  testing_sed.relationship=='contradiction':
-                        attr='bgColor=''#FFFF66'''
-                        r=255
-                        g=255
-                        b=102
+                        attr='bgColor=''#f6766d'''
+                        r=246
+                        g=118
+                        b=109
                         label='Contradiction'
                         context['scores'][modelIdx] -= 1
                     attr=attr+' title="'+testing_sed.relevance_narrative+'"'
