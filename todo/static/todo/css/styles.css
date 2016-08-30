@@ -43,10 +43,6 @@ input {
  font-size:14px;
 }
 
-input[type='text'] {
-   width:300px;
-}
-
 input#id_priority {
     width:30px;
 }

@@ -68,7 +68,7 @@
         <tr class="col_header">
             <td style="width:60px">&nbsp;</td>
             <td style="width:100px">Order*</td>
-            <td style="width:275px">File*</td>
+            <td style="width:300px">File*</td>
             <td style="width:250px">Title*</td>
             <td>Caption*</td>
         </tr>
@@ -98,14 +98,14 @@
                 <td style="width:100px">
                     <input id="id_figure-<%= idx %>-order" name="figure-<%= idx %>-order" size="3" type="text" value="<%= idx %>"/>
                 </td>
-                <td style="width:275px">
-                    <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" width="275" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
+                <td style="width:300">
+                    <% if(file.length>0){ %><a href="/media/<%= file %>" target="_blank"><img src="/media/<%= file %>" width="200" alt="<%= file %>"><%= file %></a> <br />Change: <% } %><input id="id_figure-<%= idx %>-figure" name="figure-<%= idx %>-figure" type="file" /></p>
                 </td>
                 <td style="width:250px">
                     <input id="id_figure-<%= idx %>-title" maxlength="100" name="figure-<%= idx %>-title" type="text" value="<%= _.escape(title) %>"/>
                 </td>
                 <td>
-                    <textarea cols="40" id="id_figure-<%= idx %>-caption" name="figure-<%= idx %>-caption" rows="10"><%= _.escape(caption) %></textarea>
+                    <textarea cols="60" id="id_figure-<%= idx %>-caption" name="figure-<%= idx %>-caption" rows="10"><%= _.escape(caption) %></textarea>
                 </td>
             </tr>
         </table>
