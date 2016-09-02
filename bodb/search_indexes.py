@@ -43,3 +43,68 @@ class SEDIndex(DocumentIndex):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+
+class BrainImagingSEDIndex(SEDIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return BrainImagingSED
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+    
+    
+class ConnectivitySEDIndex(SEDIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return ConnectivitySED
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+    
+    
+class ERPSEDIndex(SEDIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return ERPSED
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+    
+
+class BOPIndex(DocumentIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return BOP
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+    
+
+class SSRIndex(DocumentIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return SSR
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+    
+class PredictionIndex(DocumentIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return Prediction
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()

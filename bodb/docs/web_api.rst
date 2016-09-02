@@ -110,7 +110,7 @@ For example:
 Creating Applications
 -------------------------
 
-The true power of the API is the ability to create third party apps. The developers of BODB have created 2 example apps that are now linked to the new apps page on bodb. The two apps are described in detail below.
+The true power of the API is the ability to create third party apps. The developers of BODB have created 2 example apps that are now linked to the new apps page on bodb. The two apps are described in detail below. The code can be viewed at http://www.github.com/uscbp/bodb_apps
 
 .. figure:: images/apps_page.png
     :align: center
