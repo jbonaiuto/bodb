@@ -21,7 +21,7 @@
             var data = {};
             var args = {
                 type: "GET",
-                url: "{{ smdb_server }}/sensorimotordb/api/v1/visuomotor_classification_analysis_results/{{ smbid }}/?format=json&username={{ smdb_username }}&api_key={{ smdb_api_key }}",
+                url: "{{ smdb_server }}/sensorimotordb/api/v1/visuomotor_classification_analysis_results/{{ smdb_id }}/?format=json&username={{ smdb_username }}&api_key={{ smdb_api_key }}",
                 data: data,
                 success: loadedAnalysisResultsData,
                 error: function(data) {
@@ -38,6 +38,7 @@
         {
             $('#id_title').val(resp.name+' in ' + resp.unit_analysis_results[0].unit.area.abbreviation);
             $('#id_brief_description').val(construct_brief_description(resp));
+            $('#total_num_units').val(resp.total_num_units);
 
             var data=construct_data_hierarchy(resp);
 
@@ -65,10 +66,11 @@
             d3.select(self.frameElement).style("height", "800px");
             init_code_hierarchy_plot("analysis_results-pie",data,count_function,color_function,label_function,legend_function);
 
+            var region=resp.unit_analysis_results[0].unit.area;
             var data = {};
             var args = {
                 type: "GET",
-                url: "/bodb/api/v1/brain_region/?format=json&abbreviation="+resp.unit_analysis_results[0].unit.area.abbreviation,
+                url: "/bodb/api/v1/brain_region/?format=json&name="+region.name+"&nomenclature__name="+region.nomenclature.name+"&nomenclature__version="+region.nomenclature.version,
                 data: data,
                 success: loadedBrainRegionData,
                 error: function(data) {
@@ -79,23 +81,28 @@
 
         function loadedBrainRegionData(resp)
         {
-            for(var idx=0; idx<resp.objects.length; idx++)
+            if(resp.objects.length>0)
             {
-                region_data=[];
+                var region=resp.objects[0];
+                var region_data=[];
                 var name='';
-                if(resp.objects[idx].abbreviation.length>0)
-                    name=resp.objects[idx].abbreviation;
+                if(region.abbreviation.length>0)
+                    name=region.abbreviation;
                 else
-                    name=resp.objects[idx].name;
-                var nomenclature=resp.objects[idx].nomenclature.name+' ('+resp.objects[idx].nomenclature.version+')';
+                    name=region.name;
+                var nomenclature=region.nomenclature.name+' ('+region.nomenclature.version+')';
                 var species='';
-                for(var s_idx=0; s_idx<resp.objects[idx].nomenclature.species.length; s_idx++)
+                for(var s_idx=0; s_idx<region.nomenclature.species.length; s_idx++)
                 {
                     if(s_idx>0)
                         species=species+', ';
-                    species=species+resp.objects[idx].nomenclature.species[s_idx].genus_name+' '+resp.objects[idx].nomenclature.species[s_idx].species_name;
+                    species=species+region.nomenclature.species[s_idx].genus_name+' '+region.nomenclature.species[s_idx].species_name;
                 }
-                addBrainRegionMultiple('', 'Location of recording', resp.objects[idx].id, [name,nomenclature,species]);
+                addBrainRegionMultiple('', 'Location of recording', region.id, [name,nomenclature,species]);
+
+                $('#id_region').val(region.id);
+                $('#id_region_name').append(name+", "+nomenclature);
+
             }
         }
 
@@ -566,7 +573,7 @@
 {% block content %}
 <div id="detail">
     <h2>Import SensorimotorDB SED</h2>
-    <form id="cleanSEDForm" method="post" action="">
+    <form id="sedForm" method="post" action="">
         {% csrf_token %}
         <table class="tab_panel">
             <tr valign=top>
@@ -578,6 +585,11 @@
                 <td valign=top>{{ form.brief_description.label_tag }}*</td>
                 <td>{{ form.brief_description }}</td>
                 <td class="myerrors"><span id="description_errors">{{ form.brief_description.errors }}</span></td>
+            </tr>
+            <tr valign=top>
+                <td valign=top>{{ form.region.label_tag }}*</td>
+                <td><div id="id_region_name"></div></td>
+                <td class="myerrors"></td>
             </tr>
             <tr valign=top>
                 <td>{{ form.narrative.label_tag }}</td>
@@ -668,6 +680,9 @@
         <input id="id_type" name="type" value="generic" type="hidden"/>
         {{ form.draft }}
         {{ form.collator }}
+        {{ form.smdb_id }}
+        {{ form.region }}
+        {{ form.total_num_units }}
         <input class="btn" type="button" value="Save Draft" onclick="isDraft=1; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% if perms.bodb.save_sed or user.is_superuser%}
             <input class="btn" type="button" value="Save" onclick="isDraft=0; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;

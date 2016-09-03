@@ -256,6 +256,10 @@ class NomenclatureResource(ModelResource):
         authorization = BODBAPIAuthorization()
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
+        filtering={
+            'name': ALL,
+            'version': ALL
+        }
 
 
 class BrainRegionResource(ModelResource):
@@ -267,7 +271,9 @@ class BrainRegionResource(ModelResource):
         authentication = SessionAuthentication()
         cache = SimpleCache(timeout=10)
         filtering={
-            'abbreviation': ALL
+            'abbreviation': ALL,
+            'name': ALL,
+            'nomenclature': ALL_WITH_RELATIONS
         }
         
         

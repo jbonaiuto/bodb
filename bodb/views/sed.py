@@ -643,6 +643,12 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
 
     permission_required='bodb.add_sed'
 
+    def get_initial(self):
+        return {
+            'smdb_id': self.request.GET.get('analysis_id',''),
+            'type': 'neurophysiology'
+        }
+
     def get_object(self, queryset=None):
         return None
 
@@ -657,14 +663,66 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
         context['ispopup']=('_popup' in self.request.GET)
         context['action']='add'
         context['multiple']=('_multiple' in self.request.GET)
-        context['type']=self.request.GET.get('type','')
+        context['type']='neurophysiology'
         context['smdb_server']=settings.SENSORIMOTORDB_SERVER
-        context['smbid']=self.request.GET.get('analysis_id','')
+        context['smdb_id']=self.request.GET.get('analysis_id','')
         context['smdb_username']=self.request.GET.get('user','')
         context['smdb_api_key']=self.request.GET.get('api_key','')
         return context
 
+    def form_valid(self, form):
+        context = self.get_context_data()
+        figure_formset = context['figure_formset']
+        related_brain_region_formset = context['related_brain_region_formset']
 
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid():
+
+            self.object = form.save(commit=False)
+            # Set collator if this is a new SED
+            if self.object.id is None:
+                self.object.collator=self.request.user
+            self.object.last_modified_by=self.request.user
+            self.object.save()
+            # Needed for literature and tags
+            form.save_m2m()
+
+            # save figures
+            figure_formset.instance = self.object
+            for figure_form in figure_formset.forms:
+                if not figure_form in figure_formset.deleted_forms:
+                    figure=figure_form.save(commit=False)
+                    figure.document=self.object
+                    figure.save()
+
+            # delete removed figures
+            for figure_form in figure_formset.deleted_forms:
+                if figure_form.instance.id:
+                    figure_form.instance.delete()
+
+            # save related brain regions
+            related_brain_region_formset.instance=self.object
+            for related_brain_region_form in related_brain_region_formset.forms:
+                if not related_brain_region_form in related_brain_region_formset.deleted_forms:
+                    related_brain_region=related_brain_region_form.save(commit=False)
+                    related_brain_region.document=self.object
+                    related_brain_region.save()
+
+            # delete removed related brain regions
+            for related_brain_region_form in related_brain_region_formset.deleted_forms:
+                if related_brain_region_form.instance.id:
+                    related_brain_region_form.instance.delete()
+
+            url=self.get_success_url()
+            params='?type='+context['type']+'&action='+context['action']
+            if context['ispopup']:
+                params+='&_popup=1'
+            if context['multiple']:
+                params+='&_multiple=1'
+            url+=params
+
+            return redirect(url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):

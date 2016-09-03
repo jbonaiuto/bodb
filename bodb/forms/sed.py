@@ -30,13 +30,13 @@ class ConnectivitySEDForm(SEDForm):
 
 class NeurophysiologySEDForm(SEDForm):
     region = forms.ModelChoiceField(queryset=BrainRegion.objects.all(), widget=forms.HiddenInput, required=True)
-    total_num_inpurts = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    total_num_units = forms.CharField(widget=forms.HiddenInput, required=True)
 
     class Meta:
         model=NeurophysiologySED
 
 class SensoriMotorDBNeurophysiologySEDForm(NeurophysiologySEDForm):
-    smbid = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    smdb_id = forms.CharField(widget=forms.HiddenInput, required=True)
 
     class Meta:
         model=SensoriMotorDBNeurophysiologySED
