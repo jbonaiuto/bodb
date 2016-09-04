@@ -1,0 +1,344 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>BODB - View {{ neurophysiologysed.title }} SED</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bodb/scripts/sortFunctions.js' %}"></script>
+    <script type="text/javascript">
+        animatedcollapse.addDiv('figureData', 'fade=1');
+        animatedcollapse.addDiv('narrativeData', 'fade=1');
+        animatedcollapse.addDiv('relatedBrainRegionData', 'fade=1');
+        animatedcollapse.addDiv('relatedBopData', 'fade=1');
+        animatedcollapse.addDiv('relatedModelData', 'fade=1');
+        animatedcollapse.addDiv('referenceData', 'fade=1');
+        animatedcollapse.addDiv('sedData', 'fade=1');
+        animatedcollapse.addDiv('ssrData', 'fade=1');
+        animatedcollapse.addDiv('discussionData', 'fade=1');
+
+        {% if ispopup and action %}
+            {% if multiple %}
+                {% if action == "add" %}
+                    {% ifequal type 'build' %}
+                        opener.addBuildSEDMultiple('', '', '', {{ neurophysiologysed.id }}, ['{{ neurophysiologysed.title|escapejs }}', '{{ neurophysiologysed.brief_description|escapejs }}', '{{ neurophysiologysed.type|escapejs }}']);
+                    {% else %}
+                        opener.addTestSEDMultiple('', '', '', {{ neurophysiologysed.id }}, ['{{ neurophysiologysed.title|escapejs }}', '{{ neurophysiologysed.brief_description|escapejs }}', '{{ neurophysiologysed.type|escapejs }}'],'', []);
+                    {% endifequal %}
+                {% endif %}
+            {% endif %}
+            self.close();
+        {% endif %}
+
+        function deleteSED()
+        {
+            if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
+            {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
+            {% if ispopup %}
+                var elem=opener.document.getElementById('span_sed_{{ neurophysiologysed.id }}');
+                if(elem!=null)
+                {
+                    clearSpan(opener.document, 'span_sed_{{ neurophysiologysed.id }}');
+                }
+            {% endif %}
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/bodb/sed/neurophysiology/{{ neurophysiologysed.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/bodb/';
+        }
+
+        function doneToggleSEDSelect(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                if(data.selected)
+                {
+                    document.getElementById('selectButton').value='Workspace Unselect';
+                    document.getElementById('sed_message').innerHTML='SED added to the '+data['workspace']+' workspace.';
+                }
+                else
+                {
+                    document.getElementById('selectButton').value='Workspace Select';
+                    document.getElementById('sed_message').innerHTML='SED removed from the '+data['workspace']+' workspace.';
+                }
+                document.getElementById('sed_message').style.display='block';
+                $('#sed_message').fadeOut(5000, function(){});
+            }
+            else
+                alert(res.responseText);
+        }
+
+        function exportSED()
+        {
+            showPopup('sed_{{ neurophysiologysed.id }}_export',400,500,'/bodb/sed/{{ neurophysiologysed.id }}/report/');
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+    <h2>
+        {% if user.is_authenticated and not user.is_anonymous %}
+            <a id="favLink" href="" onclick="return toggleFavorite({{ neurophysiologysed.id }},'favIcon','{{ csrf_token }}');">
+                <img id="favIcon" name="favIcon" src="{% if is_favorite %}{% static 'bodb/images/star.png' %}{% else %}{% static 'bodb/images/grey_star.png' %}{% endif %}"/>
+            </a>
+        {% endif %}
+        Neurophysiology SED: {{ neurophysiologysed.title }}
+        {%if neurophysiologysed.draft%}<span style="color: red; ">&lt;draft&gt;</span>{%endif%}</h2>
+    <table class="tab_panel">
+    <tr valign="top">
+        <td colspan="2"><strong>Collator:</strong> <a href="/bodb/user/{{ neurophysiologysed.collator.id }}/">{{ neurophysiologysed.get_collator_str }}</a> {% if not neurophysiologysed.collator == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_collator %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ neurophysiologysed.collator.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="2"><strong>Created:</strong> {{ neurophysiologysed.get_created_str }}</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="2"><strong>Last modified by:</strong> <a href="/bodb/user/{{ neurophysiologysed.last_modified_by.id }}/">{{ neurophysiologysed.get_modified_by_str }}</a> {% if not neurophysiologysed.last_modified_by == user and user.is_authenticated and not user.is_anonymous %}{% if subscribed_to_last_modified_by %}Subscribed{% else %}<a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user={{ neurophysiologysed.last_modified_by.id }}&type=SED');"><strong>Subscribe</strong></a>{% endif %}{% endif %}</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="2"><strong>Last modified:</strong> {{ neurophysiologysed.get_modified_str }}</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="2"><strong>Tags:</strong> {% for tag in neurophysiologysed.tags.all %}{% if forloop.counter0 %}, {% endif %}<a href="/bodb/sed/tag/{{ tag }}/">{{ tag }}</a>{% endfor %}</td>
+    </tr>
+    <tr class="section_subheader">
+        <td colspan=2>Brief Description</td>
+    </tr>
+    <tr>
+        <td colspan=2>{{ neurophysiologysed.brief_description|linebreaks }}</td>
+    </tr>
+    <tr>
+        <td colspan=2 valign=top>
+            <strong>Public:</strong>&nbsp;
+            {% if neurophysiologysed.public %}
+                YES
+            {% else %}
+                NO
+                {% if not neurophysiologysed.draft and not perms.bodb.public_sed and not user.is_superuser and neurophysiologysed.collator == user %}
+                    <br>
+                    <span id="public_request">
+                                {% if public_request_sent %}
+                                    Public request sent.
+                                {% else %}
+                                    <a href="" onclick="return publicRequest({{ neurophysiologysed.id }},'{{ csrf_token }}');">Request that this entry be made public</a>
+                                {% endif %}
+                            </span>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="section_subheader">
+        <td colspan=2>Brief Description</td>
+    </tr>
+    <tr>
+        <td colspan=2>{{ neurophysiologysed.brief_description }}</td>
+    </tr>
+    <tr valign="top">
+        <td width="150px"><strong>Region:</strong></td>
+        <td><a href="/bodb/brain_region/{{ neurophysiologysed.region.id }}/">{{ neurophysiologysed.region }} - {{ neurophysiologysed.region.nomenclature }}</a></td>
+    </tr>
+    {% if url %}
+        <tr>
+            <td colspan="2">
+                {{ url|safe }}
+            </td>
+        </tr>
+    {% endif %}
+    {% if figures %}
+        <tr class="section_subheader">
+            <td colspan=2>
+                Figures (<a href="javascript:animatedcollapse.toggle('figureData')"><span id="figureDataLabel">Hide</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                {% include "bodb/document_figure_list.html" %}
+            </td>
+        </tr>
+    {% endif %}
+    {% if neurophysiologysed.narrative %}
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=2>
+                Narrative (<a href="javascript:animatedcollapse.toggle('narrativeData')"><span id="narrativeDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                <div id="narrativeData" style="display:none">
+                    <b class="d1f"></b><b class="d2f"></b><b class="d3f"></b><b class="d4f"></b>
+                    <table class="tab_panel" style="background:#e6e8ed;">
+                        <tr valign=top>
+                            <td>{{ neurophysiologysed.narrative|linebreaks }}</td>
+                        <tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% if related_bops or reverse_related_bops %}
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=2>
+                Related BOPs (<a href="javascript:animatedcollapse.toggle('relatedBopData')"><span id="relatedBopDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {% with related_bops as related_bop_list %}
+                    {% with reverse_related_bops as reverse_related_bop_list %}
+                        {% include "bodb/bop/related_bop_list_view.html" %}
+                    {% endwith %}
+                {% endwith %}
+            </td>
+        </tr>
+    {% endif %}
+    {% if related_models or reverse_related_models %}
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=2>
+                Related Models (<a href="javascript:animatedcollapse.toggle('relatedModelData')"><span id="relatedModelDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {% with related_models as related_model_list %}
+                    {% with reverse_related_models as reverse_related_model_list %}
+                        {% include "bodb/model/related_model_list_view.html" %}
+                    {% endwith %}
+                {% endwith %}
+            </td>
+        </tr>
+    {% endif %}
+    {% if related_brain_regions %}
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b></span>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=2>
+                Related Brain Regions (<a href="javascript:animatedcollapse.toggle('relatedBrainRegionData')"><span id="relatedBrainRegionDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {% with related_brain_regions as related_brain_region_list %}
+                    {% include "bodb/brainRegion/related_brain_region_list_view.html" %}
+                {% endwith %}
+            </td>
+        </tr>
+    {% endif %}
+    {% if references %}
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+            </td>
+        </tr>
+        <tr class="section_header">
+            <td colspan=2>
+                References (<a href="javascript:animatedcollapse.toggle('referenceData')"><span id="referenceDataLabel">Show</span></a>)
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2 style="padding:0px">
+                <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div id="referenceData" style="display:none">
+                    {% with references as literatures %}
+                        {% include "bodb/literature/related_reference_list_view.html" %}
+                    {% endwith %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td colspan=2 style="padding:0px">
+            <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+        </td>
+    </tr>
+    <tr class="section_header">
+        <td colspan=2>
+            Discussion (<a href="javascript:animatedcollapse.toggle('discussionData')"><span id="discussionDataLabel">Show</span></a>)
+        </td>
+    </tr>
+    <tr>
+        <td colspan=2 style="padding:0px">
+            <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="discussionData" style="display:none">
+                {% with neurophysiologysed.forum as forum %}
+                    {% include "bodb/discussion/forum_view.html" %}
+                {% endwith %}
+            </div>
+        </td>
+    </tr>
+    </table>
+    <span id="sed_message" class="messages"></span>
+    {% if perms.bodb.change_sed and canEdit %}
+        <input class="btn" type="button" value="Edit" onclick="document.location.href='/bodb/sed/neurophysiology/{{neurophysiologysed.id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    {% endif %}
+    {% if ispopup %}
+        <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+    {% else %}
+        {% if perms.bodb.delete_sed and canDelete %}
+            <input class="btn" type="button" value="Delete" onclick="deleteSED()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+    {% endif %}
+    {% if user.is_authenticated and not user.is_anonymous %}
+        {% if not selected and can_add_entry or selected and can_remove_entry %}
+            <input id="selectButton" class="btn" type="button" value="{% if not selected %}Workspace Select{% else %}Workspace Unselect{% endif %}" onclick="toggleSEDSelect('{{neurophysiologysed.id}}','{{ csrf_token }}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if canManage %}
+            <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{neurophysiologysed.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+    {% endif %}
+    <input class="btn" type="button" value="Export" onclick="exportSED()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+    <br>
+    </div>
+    <form id="fileForm" action=""></form>
+{% endblock %}

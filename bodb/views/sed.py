@@ -11,7 +11,7 @@ from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, SensoriMotorDBNeurophysiologySEDForm
-from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message, SensoriMotorDBNeurophysiologySED
+from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message, SensoriMotorDBNeurophysiologySED, NeurophysiologySED
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
 from bodb.views.main import set_context_workspace, BODBView, get_active_workspace, get_profile
@@ -174,6 +174,11 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
             if CoCoMacConnectivitySED.objects.filter(id=id).exists():
                 self.model=CoCoMacConnectivitySED
             self.template_name = 'bodb/sed/connectivity/connectivity_sed_view.html'
+        elif type=='neurophysiology':
+            self.model=NeurophysiologySED
+            if SensoriMotorDBNeurophysiologySED.objects.filter(id=id).exists():
+                self.model=SensoriMotorDBNeurophysiologySED
+            self.template_name = 'bodb/sed/neurophysiology/neurophysiology_sed_view.html'
         user = self.request.user
         security_q=Document.get_security_q(user)
         self.queryset = self.model.objects.all()
@@ -188,6 +193,9 @@ class SEDDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         elif self.object.type=='connectivity':
             context['url']=self.object.html_url_string()
             context['connectivitysed']=self.object
+        elif self.object.type=='neurophysiology':
+            context['url']=self.object.html_url_string()
+            context['neurophysiologysed']=self.object
         elif self.object.type=='brain imaging':
             context['url']=self.object.html_url_string()
             context['brainimagingsed']=self.object
