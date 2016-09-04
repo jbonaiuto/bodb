@@ -38,7 +38,7 @@
         {
             $('#id_title').val(resp.name+' in ' + resp.unit_analysis_results[0].unit.area.abbreviation);
             $('#id_brief_description').val(construct_brief_description(resp));
-            $('#total_num_units').val(resp.total_num_units);
+            $('#id_total_num_units').val(resp.total_num_units);
 
             var data=construct_data_hierarchy(resp);
 
@@ -677,7 +677,7 @@
                 {{ form.errors }}
             </span>
         <br>
-        <input id="id_type" name="type" value="generic" type="hidden"/>
+        <input id="id_type" name="type" value="neurophysiology" type="hidden"/>
         {{ form.draft }}
         {{ form.collator }}
         {{ form.smdb_id }}
