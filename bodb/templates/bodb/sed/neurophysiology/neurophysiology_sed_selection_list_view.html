@@ -1,0 +1,142 @@
+{% load staticfiles %}
+{% load bodb_extras %}
+{% block extrahead %}
+    <script type="text/javascript">
+
+        var neurophysiology_seds=[];
+        {% for selected,is_favorite,subscribed,sed in neurophysiology_seds %}
+            neurophysiology_seds.push({
+                id: {{ sed.id }},
+                title: '{{ sed.title|escapejs }}',
+                sed_type: 'neurophysiology',
+                brief_description: '{{ sed.brief_description|escapejs }}',
+                url_str: '{{ sed.html_url_string|escapejs }}',
+                is_favorite: {% if is_favorite %}true{% else %}false{% endif %},
+                selected: {% if selected %}true{% else %}false{% endif %},
+                title_str: '{{ sed|escapejs }}',
+                draft: {% if sed.draft %}true{% else %}false{% endif %},
+                collator_id: {{ sed.collator.id }},
+                collator: '{{ sed.get_collator_str|escapejs }}',
+                subscribed_to_user: {% if subscribed %}true{% else %}false{% endif %}
+            });
+        {% endfor %}
+
+        function addNeurophysiologySEDs()
+        {
+            $('[name=neurophysiology_seds]').each(function(index, element){
+                $(this).empty();
+                var tmplMarkup = $('#neurophysiology_sed-template').html();
+                for(var idx=0; idx<neurophysiology_seds.length; idx++)
+                {
+                    neurophysiology_seds[idx]['idx'] = $(this).children().length;
+                    var compiledTmpl = _.template(tmplMarkup, neurophysiology_seds[idx]);
+                    $(this).append(compiledTmpl);
+                }
+            });
+        }
+        $(document).ready(function()
+        {
+            addNeurophysiologySEDs();
+        });
+
+        function deleteNeurophysiologySED(id, idx)
+        {
+            if(confirm('This will delete this SED as well as all links to it from other entries. Do you really want to delete the current SED?'))
+            {
+                document.getElementById('deletingMsg').style.display = 'block';
+                document.getElementById('deletingOver').style.display = 'block';
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}', 'idx': idx};
+                var args={type:"POST", url:"/bodb/sed/neurophysiology/"+id+"/delete/", data: data, complete: doneDeleteNeurophysiologySED };
+                $.ajax(args);
+            }
+            return false;
+        }
+
+        function doneDeleteNeurophysiologySED(res, status)
+        {
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
+            if(status=="success")
+            {
+                document.getElementById('neurophysiology_sed-'+data.idx).style.display='none';
+            }
+            document.getElementById('deletingMsg').style.display = 'none';
+            document.getElementById('deletingOver').style.display = 'none';
+        }
+    </script>
+{% endblock %}
+<div id="neurophysiologySEDData">
+    <table class="tab_panel">
+        <tr class="section_subheader">
+            <td colspan={% if delete_mode %}8{% else %}7{% endif %}>Neurophysiology SEDs (1-<span id="numNeurophysiologySEDResults" name="numNeurophysiologySEDResults">{{ neurophysiology_seds|length }}</span>)</td>
+        </tr>
+        {% if not ispopup %}
+            {% if can_add_entry or can_remove_entry %}
+                <tr class="col_header">
+                    <td colspan={% if delete_mode %}8{% else %}7{% endif %}>
+                        Workspace Select: {% if can_add_entry %}<a href="../../" onclick="return toggleAllSEDSelect('Neurophysiology',true,'{{ csrf_token }}');">All</a>{% endif %}{% if can_remove_entry %}, <a href="../../" onclick="return toggleAllSEDSelect('Neurophysiology',false,'{{ csrf_token }}');">None</a>{% endif %}&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endif %}
+        {% endif %}
+        <tr class="col_header">
+            <td width=25px>&nbsp;</td>
+            <td style="width:{% if ispopup %}120{% else %}45{% endif %}px">&nbsp;</td>
+            {% if delete_mode %}
+                <td style="width:45px">&nbsp;</td>
+            {% endif %}
+            <td width=200px><a id="id_neurophysiology_sed_sort_title" href="" onclick="return sortNeurophysiologySEDs('title',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Title <img id="id_neurophysiology_sed_sort_title_dir" name="neurophysiology_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px"/></a></td>
+            <td width=200px><a id="id_neurophysiology_sed_sort_collator" href="" onclick="return sortNeurophysiologySEDs('collator',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Collator <img id="id_neurophysiology_sed_sort_collator_dir" name="neurophysiology_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td><a id="id_neurophysiology_sed_sort_brief_description" href="" onclick="return sortNeurophysiologySEDs('brief_description',this.value,'{% static 'bodb/images/up.png' %}','{% static 'bodb/images/down.png' %}');" value="descending">Description <img id="id_neurophysiology_sed_sort_brief_description_dir" name="neurophysiology_sed_sort_dir" src="{% static 'bodb/images/up.png' %}" width="10px" style="display:none"/></a></td>
+            <td width=150px>&nbsp;</td>
+            <td width=100px>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="{% if delete_mode %}8{% else %}7{% endif %}">
+                <div id="neurophysiology_seds" name="neurophysiology_seds">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/html" id="neurophysiology_sed-template">
+    <div id="neurophysiology_sed-<%= idx %>" name="neurophysiology_sed">
+        <input type="hidden" id="neurophysiology_sed_<%= id %>" name="neurophysiology_sed" value="<%= id %>"/>
+        <table class="tab_panel">
+            <tr class="<%= getTRTag(idx) %>" valign=top>
+                <td width=25px><%= idx %></td>
+                <td align=center style="width:{% if ispopup %}120{% else %}45{% endif %}px">
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        {% if ispopup %}
+                            {% if multiple %}
+                                <a href="../../" onclick="{% ifequal type 'build' %}return opener.addBuildSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>']);{% else %}return opener.addTestSEDMultiple('', '', '', <%= id %>, ['<%= addslashes(title) %>', '<%= addslashes(brief_description) %>', '<%= addslashes(sed_type) %>'],'', []);{% endifequal %}">Select</a>
+                            {% endif %}
+                        {% else %}
+                            <a id="favLink" href="" onclick="return toggleFavorite(<%= id %>,'favIcon-<%= id %>','{{ csrf_token }}');">
+                                <img id="favIcon-<%= id %>" name="favIcon-<%= id %>" src="<% if(is_favorite){ %>{% static 'bodb/images/star.png' %}<% } else{ %>{% static 'bodb/images/grey_star.png' %}<% } %>"/>
+                            </a>
+                            <input type=checkbox class="selectedNeurophysiologySEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedNeurophysiologySEDCheckbox_<%= id %>" value="<%= id %>" <% if(selected){ %>checked=True<% } %> <% if(selected){ %> {% if not can_remove_entry %}disabled="True"{% endif %}<% } else{ %>{% if not can_add_entry %}disabled="True"{% endif %}<% } %> onclick="toggleSEDSelect(this.value, '{{ csrf_token }}');"/>
+                        {% endif %}
+                    {% else %}
+                        <input type=checkbox class="selectedNeurophysiologySEDCheckbox" name="selectedSEDCheckbox_<%= id %>" id="selectedNeurophysiologySEDCheckbox_<%= id %>" value="<%= id %>" style="display:none"/>
+                    {% endif %}
+                    <input type=hidden name="selectedSED" id="selectedSED_<%= id %>" value="<%= id %>"/>
+                </td>
+                {% if delete_mode %}
+                    <td width=45px><a href="" onclick="return deleteNeurophysiologySED(<%= id %>, <%= idx %>);">Delete</a></td>
+                {% endif %}
+                <td width=200px>
+                    <a href="/bodb/sed/<%= id %>/" onclick="return openInNewTab('/bodb/sed/<%= id %>/');"><%= _.escape(title_str) %></a>
+                    <% if(draft){ %><span style="color: red;">&lt;draft&gt;</span><% } %>
+                </td>
+                <td width=200px><a href="/bodb/user/<%= collator_id %>/"><%= _.escape(collator) %></a> {% if user.is_authenticated and not user.is_anonymous %}<% if(collator_id != {{ user.id }}){ %><% if(subscribed_to_user){ %>Subscribed<% } else{ %><a href="#" title="Be notified when this user creates new entries" onclick="return showPopup('new_user_subscription', 400, 200, '/bodb/subscription/user/new/?_popup=1&user=<%= collator_id %>&type=SED');"><strong>Subscribe</strong></a><% } %><% } %>{% endif %}</td>
+                <td><%= _.escape(brief_description).replace(new RegExp('\\n', 'g'),'<br/>') %></td>
+                <td width=150px>
+                    <%= url_str %>
+                </td>
+                <td width=100px><span id="sed_<%= id %>_message" name="sed_<%= id %>_message" class="messages"></span></td>
+            </tr>
+        </table>
+    </div>
+</script>

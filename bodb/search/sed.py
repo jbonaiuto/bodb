@@ -30,7 +30,7 @@ def runSEDSearch(search_data, userId):
         user=User.get_anonymous()
 
     q = reduce(op,filters) & Document.get_security_q(user) & Q(connectivitysed__cocomacconnectivitysed__isnull=True) & \
-        Q(brainimagingsed__bredebrainimagingsed__isnull=True)
+        Q(brainimagingsed__bredebrainimagingsed__isnull=True) & Q(neurophysiologysed__sensorimotordbneurophysiologysed__isnull=True)
     results=SED.objects.filter(q).order_by('title').select_related('collator').distinct()
 
     return results
@@ -43,6 +43,30 @@ class SEDSearch(DocumentWithLiteratureSearch):
             return Q(type=self.type)
         return Q()
 
+    def search_recorded_region(self, userId):
+        if self.type=='neurophysiology' and self.recorded_region:
+            op=operator.or_
+            if self.recorded_region_options=='all':
+                op=operator.and_
+            words=parse_tags(self.recorded_region)
+            keyword_filters=[Q(Q(neurophysiologysed__region__name__icontains=word) |\
+                               Q(neurophysiologysed__region__abbreviation__icontains=word)) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+
+    def search_recorded_region_nomenclature(self, userId):
+        if self.type=='neurophysiology' and self.recorded_region_nomenclature:
+            op=operator.or_
+            if self.recorded_region_nomenclature_options=='all':
+                op=operator.and_
+            words=parse_tags(self.recorded_region_nomenclature)
+            keyword_filters=[Q(Q(neurophysiologysed__region__nomenclature__name__icontains=word) |
+                               Q(neurophysiologysed__region__nomenclature__lit__title__icontains=word) |
+                               Q(neurophysiologysed__region__nomenclature__lit__authors__author__first_name__icontains=word) |
+                               Q(neurophysiologysed__region__nomenclature__lit__authors__author__last_name__icontains=word)) for word in words]
+            return reduce(op,keyword_filters)
+        return Q()
+    
     def search_source_region(self, userId):
         if self.type=='connectivity' and self.source_region:
             op=operator.or_

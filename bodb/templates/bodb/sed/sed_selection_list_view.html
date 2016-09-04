@@ -32,6 +32,15 @@
         </tr>
         <tr>
             <td colspan="6">
+                <div id="neurophysiology_sed_list" name="neurophysiology_sed_list" style="display:{% if neurophysiology_seds|length %}block{% else %}none{% endif %}">
+                    {% with delete_mode as delete_mode %}
+                        {% include "bodb/sed/neurophysiology/neurophysiology_sed_selection_list_view.html" %}
+                    {% endwith %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
                 <div id="imaging_sed_list" name="imaging_sed_list" style="display:{% if imaging_seds|length %}block{% else %}none{% endif %}">
                     {% with delete_mode as delete_mode %}
                         {% include "bodb/sed/brain_imaging/brain_imaging_sed_selection_list_view.html" %}

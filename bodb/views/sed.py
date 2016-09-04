@@ -646,7 +646,6 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
     def get_initial(self):
         return {
             'smdb_id': self.request.GET.get('analysis_id',''),
-            'type': 'neurophysiology'
         }
 
     def get_object(self, queryset=None):

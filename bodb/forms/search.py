@@ -217,6 +217,11 @@ class SEDSearchForm(DocumentWithLiteratureSearchForm):
     connection_region_nomenclature = forms.CharField(help_text='Connection source or target brain region nomenclature',
         required=False)
     connection_region_nomenclature_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    recorded_region = forms.CharField(help_text='Brain region recorded from', required=False)
+    recorded_region_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    recorded_region_nomenclature = forms.CharField(help_text='Recorded from brain region nomenclature',
+        required=False)
+    recorded_region_nomenclature_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     cognitive_paradigm=forms.CharField(help_text='Cognitive paradigm', required=False)
     cognitive_paradigm_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     sensory_modality=forms.CharField(help_text='Sensory modality', required=False)

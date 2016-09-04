@@ -4,6 +4,7 @@ from Bio import Entrez
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from bodb.search.workspace import runWorkspaceSearch
 from bodb.views.main import set_context_workspace
+from federation.sensorimotordb.search import runSensorimotorDBSearch
 
 Entrez.email = 'uscbrainproject@gmail.com'
 from django.http import HttpResponse
@@ -20,7 +21,7 @@ from django.views.generic.edit import FormView
 from federation.brede.search import runBredeSearch
 from federation.cocomac.search import runCoCoMacSearch2
 from bodb.forms.search import AllSearchForm, BOPSearchForm, SEDSearchForm, LiteratureSearchForm, BrainRegionSearchForm, ModelSearchForm, DocumentSearchForm, PubmedSearchForm, ModelDBSearchForm, UserSearchForm, WorkspaceSearchForm
-from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, ERPComponent, BodbProfile, Workspace, Species, stop_words
+from bodb.models import BOP, SED, Literature, BrainRegion, Model, SSR, PubMedResult, ERPSED, BrainImagingSED, ConnectivitySED, ERPComponent, BodbProfile, Workspace, Species, stop_words, NeurophysiologySED
 
 class SearchView(FormView):
     form_class = AllSearchForm
@@ -71,6 +72,7 @@ class SearchView(FormView):
 
         genericSEDs=[]
         connectivitySEDs=[]
+        neurophysiologySEDs=[]
         erpSEDs=[]
         imagingSEDs=[]
         sedCoords=[]
@@ -97,6 +99,8 @@ class SearchView(FormView):
         erp_sed_direction=self.request.POST.get('erp_sed_direction','ascending')
         connectivity_sed_order_by=self.request.POST.get('connectivity_sed_order_by','title')
         connectivity_sed_direction=self.request.POST.get('connectivity_sed_direction','ascending')
+        neurophysiology_sed_order_by=self.request.POST.get('neurophysiology_sed_order_by','title')
+        neurophysiology_sed_direction=self.request.POST.get('neurophysiology_sed_direction','ascending')
         imaging_sed_order_by=self.request.POST.get('imaging_sed_order_by','title')
         imaging_sed_direction=self.request.POST.get('imaging_sed_direction','ascending')
         ssr_order_by=self.request.POST.get('ssr_order_by','title')
@@ -120,6 +124,8 @@ class SearchView(FormView):
             sed_form.cleaned_data['generic_sed_direction']=generic_sed_direction
             sed_form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
             sed_form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+            sed_form.cleaned_data['neurophysiology_sed_order_by']=neurophysiology_sed_order_by
+            sed_form.cleaned_data['neurophysiology_sed_direction']=neurophysiology_sed_direction
             sed_form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
             sed_form.cleaned_data['erp_sed_direction']=erp_sed_direction
             sed_form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
@@ -132,12 +138,18 @@ class SearchView(FormView):
                     imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
                     connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
+                elif sedObj.type=='neurophysiology':
+                    neurophysiologySEDs.append(NeurophysiologySED.objects.select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='connectivity':
                 cococmacConnSEDs=runCoCoMacSearch2(sed_form.cleaned_data, user.id)
                 for connSED in cococmacConnSEDs:
                     connectivitySEDs.append(connSED)
+            if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='neurophysiology':
+                sensorimotordbSEDs=runSensorimotorDBSearch(sed_form.cleaned_data, user.id)
+                for sensorimotordbSED in sensorimotordbSEDs:
+                    neurophysiologySEDs.append(sensorimotordbSED)
             if sed_form.cleaned_data['type']=='' or sed_form.cleaned_data['type']=='imaging':
                 bredeImagingSEDs=runBredeSearch(sed_form.cleaned_data, user.id)
                 for imagingSED in bredeImagingSEDs:
@@ -157,6 +169,14 @@ class SearchView(FormView):
                     connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=sed_form.cleaned_data['connectivity_sed_direction']=='descending')
                 elif sed_form.cleaned_data['connectivity_sed_order_by']=='brief_description':
                     connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['connectivity_sed_direction']=='descending')
+
+            if 'neurophysiology_sed_order_by' in sed_form.cleaned_data:
+                if sed_form.cleaned_data['neurophysiology_sed_order_by']=='title':
+                    neurophysiologySEDs.sort(key=lambda x: x.title,reverse=sed_form.cleaned_data['neurophysiology_sed_direction']=='descending')
+                elif sed_form.cleaned_data['neurophysiology_sed_order_by']=='collator':
+                    neurophysiologySEDs.sort(key=NeurophysiologySED.get_collator_str,reverse=sed_form.cleaned_data['neurophysiology_sed_direction']=='descending')
+                elif sed_form.cleaned_data['neurophysiology_sed_order_by']=='brief_description':
+                    neurophysiologySEDs.sort(key=lambda x: x.brief_description,reverse=sed_form.cleaned_data['neurophysiology_sed_direction']=='descending')
 
             if 'erp_sed_order_by' in sed_form.cleaned_data:
                 if sed_form.cleaned_data['erp_sed_order_by']=='title':
@@ -208,6 +228,8 @@ class SearchView(FormView):
             form.cleaned_data['generic_sed_direction']=generic_sed_direction
             form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
             form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+            form.cleaned_data['neurophysiology_sed_order_by']=neurophysiology_sed_order_by
+            form.cleaned_data['neurophysiology_sed_direction']=neurophysiology_sed_direction
             form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
             form.cleaned_data['erp_sed_direction']=erp_sed_direction
             form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
@@ -228,11 +250,16 @@ class SearchView(FormView):
                     imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
                 elif sedObj.type=='connectivity':
                     connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
+                elif sedObj.type=='neurophysiology':
+                    neurophysiologySEDs.append(NeurophysiologySED.objects.select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').get(id=sedObj.id))
                 elif sedObj.type=='generic':
                     genericSEDs.append(sedObj)
             cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
             for connSED in cocomacConnSEDs:
                 connectivitySEDs.append(connSED)
+            sensorimotordbSEDs=runSensorimotorDBSearch(form.cleaned_data, user.id)
+            for sensorimotordbSED in sensorimotordbSEDs:
+                neurophysiologySEDs.append(sensorimotordbSED)
             bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
             for imagingSED in bredeImagingSEDs:
                 imagingSEDs.append(imagingSED)
@@ -252,6 +279,14 @@ class SearchView(FormView):
                     connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
                 elif form.cleaned_data['connectivity_sed_order_by']=='brief_description':
                     connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+
+            if 'neurophysiology_sed_order_by' in form.cleaned_data:
+                if form.cleaned_data['neurophysiology_sed_order_by']=='title':
+                    neurophysiologySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
+                elif form.cleaned_data['neurophysiology_sed_order_by']=='collator':
+                    neurophysiologySEDs.sort(key=NeurophysiologySED.get_collator_str,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
+                elif form.cleaned_data['neurophysiology_sed_order_by']=='brief_description':
+                    neurophysiologySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
 
             if 'erp_sed_order_by' in form.cleaned_data:
                 if form.cleaned_data['erp_sed_order_by']=='title':
@@ -291,6 +326,8 @@ class SearchView(FormView):
         context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         if user.is_authenticated() and not user.is_anonymous():
@@ -413,6 +450,8 @@ class SearchView(FormView):
                 'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
                                       for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
                 'connectivity_sed_regions': context['connectivity_sed_regions'],
+                'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                      for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                 'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                   [(coord.as_json(),coord_selected) for (coord,coord_selected) in coords])
                                  for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
@@ -497,6 +536,8 @@ class SearchView(FormView):
             ajax_context['generic_sed_direction']=generic_sed_direction
             ajax_context['connectivity_sed_order_by']=connectivity_sed_order_by
             ajax_context['connectivity_sed_direction']=connectivity_sed_direction
+            ajax_context['neurophysiology_sed_order_by']=neurophysiology_sed_order_by
+            ajax_context['neurophysiology_sed_direction']=neurophysiology_sed_direction
             ajax_context['erp_sed_order_by']=erp_sed_order_by
             ajax_context['erp_sed_direction']=erp_sed_direction
             ajax_context['imaging_sed_order_by']=imaging_sed_order_by
@@ -808,6 +849,7 @@ class SEDSearchView(FormView):
 
         genericSEDs=[]
         connectivitySEDs=[]
+        neurophysiologySEDs=[]
         erpSEDs=[]
         imagingSEDs=[]
 
@@ -817,6 +859,8 @@ class SEDSearchView(FormView):
         erp_sed_direction=self.request.POST.get('erp_sed_direction','ascending')
         connectivity_sed_order_by=self.request.POST.get('connectivity_sed_order_by','title')
         connectivity_sed_direction=self.request.POST.get('connectivity_sed_direction','ascending')
+        neurophysiology_sed_order_by=self.request.POST.get('neurophysiology_sed_order_by','title')
+        neurophysiology_sed_direction=self.request.POST.get('neurophysiology_sed_direction','ascending')
         imaging_sed_order_by=self.request.POST.get('imaging_sed_order_by','title')
         imaging_sed_direction=self.request.POST.get('imaging_sed_direction','ascending')
 
@@ -824,6 +868,8 @@ class SEDSearchView(FormView):
         form.cleaned_data['generic_sed_direction']=generic_sed_direction
         form.cleaned_data['connectivity_sed_order_by']=connectivity_sed_order_by
         form.cleaned_data['connectivity_sed_direction']=connectivity_sed_direction
+        form.cleaned_data['neurophysiology_sed_order_by']=neurophysiology_sed_order_by
+        form.cleaned_data['neurophysiology_sed_direction']=neurophysiology_sed_direction
         form.cleaned_data['erp_sed_order_by']=erp_sed_order_by
         form.cleaned_data['erp_sed_direction']=erp_sed_direction
         form.cleaned_data['imaging_sed_order_by']=imaging_sed_order_by
@@ -837,12 +883,18 @@ class SEDSearchView(FormView):
                 imagingSEDs.append(BrainImagingSED.objects.select_related('collator').get(id=sedObj.id))
             elif sedObj.type=='connectivity':
                 connectivitySEDs.append(ConnectivitySED.objects.select_related('collator','target_region__nomenclature','source_region__nomenclature').prefetch_related('target_region__nomenclature__species','source_region__nomenclature__species').get(id=sedObj.id))
+            elif sedObj.type=='neurophysiology':
+                neurophysiologySEDs.append(NeurophysiologySED.objects.select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').get(id=sedObj.id))
             elif sedObj.type=='generic':
                 genericSEDs.append(sedObj)
         if form.cleaned_data['type']=='' or form.cleaned_data['type']=='connectivity':
             cocomacConnSEDs=runCoCoMacSearch2(form.cleaned_data, user.id)
             for connSED in cocomacConnSEDs:
                 connectivitySEDs.append(connSED)
+        if form.cleaned_data['type']=='' or form.cleaned_data['type']=='neurophysiology':
+            sensoritmotordbSEDs=runSensorimotorDBSearch(form.cleaned_data, user.id)
+            for sensoritmotordbSED in sensoritmotordbSEDs:
+                neurophysiologySEDs.append(sensoritmotordbSED)
         if form.cleaned_data['type']=='' or form.cleaned_data['type']=='imaging':
             bredeImagingSEDs=runBredeSearch(form.cleaned_data, user.id)
             for imagingSED in bredeImagingSEDs:
@@ -863,6 +915,14 @@ class SEDSearchView(FormView):
                 connectivitySEDs.sort(key=ConnectivitySED.get_collator_str,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
             elif form.cleaned_data['connectivity_sed_order_by']=='brief_description':
                 connectivitySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['connectivity_sed_direction']=='descending')
+
+        if 'neurophysiology_sed_order_by' in form.cleaned_data:
+            if form.cleaned_data['neurophysiology_sed_order_by']=='title':
+                neurophysiologySEDs.sort(key=lambda x: x.title,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
+            elif form.cleaned_data['neurophysiology_sed_order_by']=='collator':
+                neurophysiologySEDs.sort(key=NeurophysiologySED.get_collator_str,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
+            elif form.cleaned_data['neurophysiology_sed_order_by']=='brief_description':
+                neurophysiologySEDs.sort(key=lambda x: x.brief_description,reverse=form.cleaned_data['neurophysiology_sed_direction']=='descending')
 
         if 'erp_sed_order_by' in form.cleaned_data:
             if form.cleaned_data['erp_sed_order_by']=='title':
@@ -892,6 +952,8 @@ class SEDSearchView(FormView):
         context['connectivity_seds']=SED.get_sed_list(connectivitySEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         context['connectivity_sed_regions']=ConnectivitySED.get_region_map(connectivitySEDs)
+        context['neurophysiology_seds']=SED.get_sed_list(neurophysiologySEDs, context['workspace_seds'], context['fav_docs'],
+            context['subscriptions'])
         context['imaging_seds']=SED.get_sed_list(imagingSEDs, context['workspace_seds'], context['fav_docs'],
             context['subscriptions'])
         if user.is_authenticated() and not user.is_anonymous():
@@ -913,6 +975,8 @@ class SEDSearchView(FormView):
                 'connectivity_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
                                       for (selected,is_favorite,subscribed_to_user,sed) in context['connectivity_seds']],
                 'connectivity_sed_regions': context['connectivity_sed_regions'],
+                'neurophysiology_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json())
+                                      for (selected,is_favorite,subscribed_to_user,sed) in context['neurophysiology_seds']],
                 'imaging_seds': [(selected,is_favorite,subscribed_to_user,sed.as_json(),
                                   [(coord.as_json(),coord_selected) for (coord, coord_selected) in coords])
                                  for (selected,is_favorite,subscribed_to_user,sed,coords) in context['imaging_seds']],
@@ -921,6 +985,8 @@ class SEDSearchView(FormView):
             ajax_context['generic_sed_direction']=generic_sed_direction
             ajax_context['connectivity_sed_order_by']=connectivity_sed_order_by
             ajax_context['connectivity_sed_direction']=connectivity_sed_direction
+            ajax_context['neurophysiology_sed_order_by']=neurophysiology_sed_order_by
+            ajax_context['neurophysiology_sed_direction']=neurophysiology_sed_direction
             ajax_context['erp_sed_order_by']=erp_sed_order_by
             ajax_context['erp_sed_direction']=erp_sed_direction
             ajax_context['imaging_sed_order_by']=imaging_sed_order_by

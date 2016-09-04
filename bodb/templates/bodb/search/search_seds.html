@@ -11,6 +11,10 @@
             animatedcollapse.show(['sedConnectivityTypeOptions']);
         else
             animatedcollapse.hide(['sedConnectivityTypeOptions']);
+        if(sedType=='neurophysiology')
+            animatedcollapse.show(['sedNeurophysiologyTypeOptions']);
+        else
+            animatedcollapse.hide(['sedNeurophysiologyTypeOptions']);
         if(sedType=='event related potential')
             animatedcollapse.show(['sedERPTypeOptions']);
         else
@@ -23,6 +27,8 @@
     var imagingSEDSortDirection='ascending';
     var connectivitySEDSortOrderBy='title';
     var connectivitySEDSortDirection='ascending'
+    var neurophysiologySEDSortOrderBy='title';
+    var neurophysiologySEDSortDirection='ascending'
     var erpSEDSortOrderBy='title';
     var erpSEDSortDirection='ascending'
     var genericSEDSortOrderBy='title';
@@ -35,7 +41,7 @@
         document.getElementById('searchingMsg').style.display = 'block';
         document.getElementById('searchingOver').style.display = 'block';
         var frm = $('#sed_search_form');
-        var data=frm.serialize()+'&generic_sed_order_by='+genericSEDSortOrderBy+'&generic_sed_direction='+genericSEDSortDirection+'&imaging_sed_order_by='+imagingSEDSortOrderBy+'&imaging_sed_direction='+imagingSEDSortDirection+'&connectivity_sed_order_by='+connectivitySEDSortOrderBy+'&connectivity_sed_direction='+connectivitySEDSortDirection+'&erp_sed_order_by='+erpSEDSortOrderBy+'&erp_sed_direction='+erpSEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
+        var data=frm.serialize()+'&generic_sed_order_by='+genericSEDSortOrderBy+'&generic_sed_direction='+genericSEDSortDirection+'&imaging_sed_order_by='+imagingSEDSortOrderBy+'&imaging_sed_direction='+imagingSEDSortDirection+'&connectivity_sed_order_by='+connectivitySEDSortOrderBy+'&connectivity_sed_direction='+connectivitySEDSortDirection+'&neurophysiology_sed_order_by='+neurophysiologySEDSortOrderBy+'&neurophysiology_sed_direction='+neurophysiologySEDSortDirection+'&erp_sed_order_by='+erpSEDSortOrderBy+'&erp_sed_direction='+erpSEDSortDirection+'&up_image='+addslashes('{% static 'bodb/images/up.png' %}')+'&down_image='+addslashes('{% static 'bodb/images/down.png' %}');
         $.ajax({
             aysnc: false,
             type: frm.attr('method'),
@@ -71,6 +77,14 @@
         return false;
     }
 
+    function sortNeurophysiologySEDs(order_by, direction, up_image, down_image)
+    {
+        neurophysiologySEDSortOrderBy=order_by;
+        neurophysiologySEDSortDirection=direction;
+        submitSearchSEDs();
+        return false;
+    }
+
     function sortERPSEDs(order_by, direction, up_image, down_image)
     {
         erpSEDSortOrderBy=order_by;
@@ -90,6 +104,7 @@
     animatedcollapse.addDiv('sedAdvancedOptions', 'fade=1');
     animatedcollapse.addDiv('sedImagingTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedConnectivityTypeOptions', 'fade=1');
+    animatedcollapse.addDiv('sedNeurophysiologyTypeOptions', 'fade=1');
     animatedcollapse.addDiv('sedERPTypeOptions', 'fade=1');
 
     $( document ).ready(function() {
@@ -222,6 +237,20 @@
                                                 <td><strong>Source or Target Region Nomenclature</strong></td>
                                                 <td>{{ sed_search_form.connection_region_nomenclature }}&nbsp;
                                                     <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.connection_region_nomenclature_options }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div id="sedNeurophysiologyTypeOptions" style="display:{% if sed_search_form.type.value == 'neurophysiology' %}inline{% else %}none{% endif %}">
+                                        <table class="tab_panel">
+                                            <tr>
+                                                <td width="20%"><strong>Region</strong></td>
+                                                <td>{{ sed_search_form.recorded_region }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.recorded_region_options }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Region Nomenclature</strong></td>
+                                                <td>{{ sed_search_form.recorded_region_nomenclature }}&nbsp;
+                                                    <strong>Phrase combination:</strong>&nbsp;{{ sed_search_form.recorded_region_nomenclature_options }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -388,7 +417,7 @@
             </tr>
         </table>
     </form>
-    <div id="sed_section" name="sed_section" style="display:{% if generic_seds or connectivity_seds or erp_seds or imaging_seds %}block{% else %}none{% endif %}">
+    <div id="sed_section" name="sed_section" style="display:{% if generic_seds or connectivity_seds or erp_seds or imaging_seds or neurophysiology_seds %}block{% else %}none{% endif %}">
         <table class="tab_panel">
             <tr>
                 <td colspan=10>&nbsp;</td>

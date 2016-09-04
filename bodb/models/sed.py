@@ -13,6 +13,7 @@ from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
 from registration.models import User
 import numpy as np
+from uscbp import settings
 
 class SED(Document):
     """
@@ -24,6 +25,7 @@ class SED(Document):
         ('brain imaging', 'imaging'),
         ('connectivity', 'connectivity'),
         ('event related potential', 'erp'),
+        ('neurophysiology','neurophysiology')
     )
     objects = InheritanceManager()
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
@@ -422,6 +424,12 @@ class NeurophysiologySED(SED):
     def html_url_string(self):
         return ''
 
+    def as_json(self):
+        json=super(NeurophysiologySED,self).as_json()
+        json['url_str']=self.html_url_string()
+        json['region']=self.region.id
+        return json
+
     @staticmethod
     def get_literature_seds(literature, user):
         return NeurophysiologySED.objects.filter(Q(Q(literature=literature) & Document.get_security_q(user))).distinct().select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').order_by('title')
@@ -472,8 +480,8 @@ class SensoriMotorDBNeurophysiologySED(NeurophysiologySED):
         app_label='bodb'
 
     def html_url_string(self):
-        url='http://neuro.imm.dtu.dk/services/brededatabase/WOEXP_%s.html' % str(self.woexp)
-        return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in Brede</a>' % (url,url)
+        url='%s/sensorimotordb/visuomotor_classification_analysis_results/%d/' % (settings.SENSORIMOTORDB_SERVER,self.smdb_id)
+        return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in SensorimotorDB</a>' % (url,url)
 
 
 # A summary of connectivity data: inherits from SED
@@ -537,21 +545,12 @@ class CoCoMacConnectivitySED(ConnectivitySED):
 
         if cocomac_source is not None and cocomac_target is not None:
             cocomac_url='http://cocomac.g-node.org/cocomac2/services/axonal_projections.php?axonOriginList='
-            #cocomac_url="http://cocomac.org/URLSearch.asp?Search=Connectivity&DataSet=PRIMPROJ&User=jbonaiuto&Password=4uhk48s3&OutputType=HTML_Browser&SearchString="
 
             source_id=cocomac_source.cocomac_id.split('-',1)
             cocomac_url+='%s-%s' % (source_id[0],source_id[1])
-#            cocomac_url+="(\\'"+source_id[0]+"\\')[SourceMap]"
-#            cocomac_url+=" AND "
-#            cocomac_url+="(\\'"+source_id[1]+"\\') [SourceSite]"
-#            cocomac_url+=" AND "
 
             target_id=cocomac_target.cocomac_id.split('-',1)
             cocomac_url+='&axonTerminalList=%s-%s' % (target_id[0],target_id[1])
-#            cocomac_url+="(\\'"+target_id[0]+"\\')[TargetMap]"
-#            cocomac_url+=" AND "
-#            cocomac_url+="(\\'"+target_id[1]+"\\') [TargetSite]"
-            #cocomac_url+="&Details=&SortOrder=asc&SortBy=SOURCEMAP&Dispmax=32767&ItemsPerPage= 20"
             cocomac_url+='&includeLargeInjections=0&useAM=1&useSORT=0&output=dhtml&undefined=undefined'
             return '<a href="%s" onclick="window.open(\'%s\'); return false;">View in CoCoMac</a>' % (cocomac_url,
                                                                                                       cocomac_url)
