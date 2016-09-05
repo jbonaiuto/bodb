@@ -10,7 +10,7 @@ from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseUpdateView, BaseCreateView
 from bodb.forms.brain_region import RelatedBrainRegionFormSet
 from bodb.forms.document import DocumentFigureFormSet
-from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, SensoriMotorDBNeurophysiologySEDForm
+from bodb.forms.sed import SEDForm, BrainImagingSEDForm, SEDCoordCleanFormSet, ConnectivitySEDForm, ERPSEDForm, ERPComponentFormSet, SensoriMotorDBNeurophysiologySEDForm, NeuronClassificationFormSet
 from bodb.models import DocumentFigure, RelatedBrainRegion, RelatedBOP, ThreeDCoord, WorkspaceActivityItem, RelatedModel, ElectrodePositionSystem, ElectrodePosition, Document, Literature, Message, SensoriMotorDBNeurophysiologySED, NeurophysiologySED
 from bodb.models.sed import SED, find_similar_seds, ERPSED, ERPComponent, BrainImagingSED, SEDCoord, ConnectivitySED, SavedSEDCoordSelection, SelectedSEDCoord, BredeBrainImagingSED, CoCoMacConnectivitySED, ElectrodeCap
 from bodb.views.document import DocumentAPIListView, DocumentAPIDetailView, DocumentDetailView
@@ -644,6 +644,24 @@ class CleanBrainImagingSEDView(BODBView):
                                         'helpPage':'insert_data.html#summary-of-brain-imaging-summary-data'})
 
 
+class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):
+    model=BrainImagingSED
+    success_url = '/bodb/index.html'
+    permission_required = 'delete'
+
+    def get_context_data(self, **kwargs):
+        context={}
+        if 'idx' in self.request.POST:
+            context['idx']=self.request.POST['idx']
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.request=request
+        self.delete(request, *args, **kwargs)
+        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
+
+
 class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
     model = SensoriMotorDBNeurophysiologySED
     form_class = SensoriMotorDBNeurophysiologySEDForm
@@ -654,7 +672,7 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
     def get_initial(self):
         return {
             'smdb_id': self.request.GET.get('analysis_id',''),
-        }
+            }
 
     def get_object(self, queryset=None):
         return None
@@ -662,6 +680,8 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(ImportSensorimotorDBSEDView,self).get_context_data(**kwargs)
         context=set_context_workspace(context, self.request)
+        context['neuron_classification_formset']=NeuronClassificationFormSet(self.request.POST or None,
+            self.request.FILES or None, prefix='neuron_classification')
         context['figure_formset']=DocumentFigureFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='figure')
         context['related_brain_region_formset']=RelatedBrainRegionFormSet(self.request.POST or None,
@@ -681,8 +701,10 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
         context = self.get_context_data()
         figure_formset = context['figure_formset']
         related_brain_region_formset = context['related_brain_region_formset']
+        neuron_classification_formset=context['neuron_classification_formset']
 
-        if figure_formset.is_valid() and related_brain_region_formset.is_valid():
+        print(neuron_classification_formset.errors)
+        if figure_formset.is_valid() and related_brain_region_formset.is_valid() and neuron_classification_formset.is_valid():
 
             self.object = form.save(commit=False)
             # Set collator if this is a new SED
@@ -719,6 +741,19 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
                 if related_brain_region_form.instance.id:
                     related_brain_region_form.instance.delete()
 
+            # save neuron classifications
+            neuron_classification_formset.instance=self.object
+            for neuron_classification_form in neuron_classification_formset.forms:
+                if not neuron_classification_form in neuron_classification_formset.deleted_forms:
+                    neuron_classification=neuron_classification_form.save(commit=False)
+                    neuron_classification.sed=self.object
+                    neuron_classification.save()
+
+            # delete removed neuron classifications
+            for neuron_classification_form in neuron_classification_formset.deleted_forms:
+                if neuron_classification_form.instance.id:
+                    neuron_classification_form.instance.delete()
+
             url=self.get_success_url()
             params='?type='+context['type']+'&action='+context['action']
             if context['ispopup']:
@@ -730,24 +765,6 @@ class ImportSensorimotorDBSEDView(PermissionRequiredMixin, CreateView):
             return redirect(url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
-
-
-class DeleteBrainImagingSEDView(ObjectRolePermissionRequiredMixin, DeleteView):
-    model=BrainImagingSED
-    success_url = '/bodb/index.html'
-    permission_required = 'delete'
-
-    def get_context_data(self, **kwargs):
-        context={}
-        if 'idx' in self.request.POST:
-            context['idx']=self.request.POST['idx']
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.request=request
-        self.delete(request, *args, **kwargs)
-        return HttpResponse(json.dumps(self.get_context_data(**kwargs)), content_type='application/json')
 
 
 class EditConnectivitySEDMixin():

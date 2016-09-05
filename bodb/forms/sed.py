@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import ErrorList, formset_factory, inlineformset_factory
 from bodb.forms.document import DocumentWithLiteratureForm
-from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, NeurophysiologySED, SensoriMotorDBNeurophysiologySED
+from bodb.models import Literature, SED, BrainRegion, ConnectivitySED, ERPSED, ERPComponent, ElectrodePositionSystem, ElectrodePosition, ElectrodeCap, CoordinateSpace, BrainImagingSED, SEDCoord, Document, BuildSED, Model, TestSED, SSR, NeurophysiologySED, SensoriMotorDBNeurophysiologySED, NeuronClassification
 from registration.models import User
 from taggit.forms import TagField
 from uscbp.forms import nested_formset_factory
@@ -40,6 +40,21 @@ class SensoriMotorDBNeurophysiologySEDForm(NeurophysiologySEDForm):
 
     class Meta:
         model=SensoriMotorDBNeurophysiologySED
+
+
+class NeuronClassificationInlineForm(forms.ModelForm):
+    parent = forms.ModelChoiceField(queryset=NeuronClassification.objects.all(),widget=forms.HiddenInput,required=False)
+    sed = forms.ModelChoiceField(queryset=NeurophysiologySED.objects.all(),widget=forms.HiddenInput,required=False)
+    label = forms.CharField(widget=forms.TextInput(attrs={'size':'50'}),required=True)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'3'}),required=False)
+    num_units = forms.CharField(widget=forms.HiddenInput, required=True)
+
+    class Meta:
+        model=NeuronClassification
+
+
+NeuronClassificationFormSet = inlineformset_factory(NeurophysiologySED, NeuronClassification, form=NeuronClassificationInlineForm, fk_name='sed',
+    extra=0, can_delete=True)
 
 
 class ERPSEDForm(SEDForm):

@@ -11,6 +11,8 @@ from numpy.numarray import arange
 from bodb.models import Document, sendNotifications, CoCoMacBrainRegion, UserSubscription, ElectrodePosition, BrainRegion, BodbProfile, Message, stop_words
 from bodb.signals import coord_selection_changed, coord_selection_deleted
 from model_utils.managers import InheritanceManager
+from mptt.fields import TreeForeignKey
+from mptt.models import MPTTModel
 from registration.models import User
 import numpy as np
 from uscbp import settings
@@ -444,10 +446,12 @@ class NeurophysiologySED(SED):
         return NeurophysiologySED.objects.filter(Q(tags__name__iexact=name) & Document.get_security_q(user)).distinct().select_related('collator','region__nomenclature').prefetch_related('region__nomenclature__species').order_by('title')
 
 
-class NeuronClassification(models.Model):
+class NeuronClassification(MPTTModel):
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     sed = models.ForeignKey('NeurophysiologySED', related_name = 'classifications')
     label = models.CharField(max_length=100, blank=False)
     description = models.TextField(blank=True)
+    num_units = models.IntegerField()
 
     class Meta:
         app_label='bodb'

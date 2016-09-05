@@ -40,6 +40,18 @@
             $('#id_brief_description').val(construct_brief_description(resp));
             $('#id_total_num_units').val(resp.total_num_units);
 
+            for(var idx=0; idx<resp.unit_classifications.length; idx++)
+            {
+                var count = $('#neuron_classifications').children().length;
+                var tmplMarkup = $('#neuron_classification-template').html();
+                var parent=null;
+                if(resp.unit_classifications[idx].parent!=null)
+                    parent=parseInt(resp.unit_classifications[idx].parent.split('/')[5]);
+                var compiledTmpl = _.template(tmplMarkup, { idx : count, label: resp.unit_classifications[idx].label,
+                    description: resp.unit_classifications[idx].description, parent: parent,
+                    num_units: resp.unit_classifications[idx].units.length});
+                $('#neuron_classifications').append(compiledTmpl);
+            }
             var data=construct_data_hierarchy(resp);
 
             function count_function(d)
@@ -683,6 +695,10 @@
         {{ form.smdb_id }}
         {{ form.region }}
         {{ form.total_num_units }}
+        <input id="id_neuron_classification-TOTAL_FORMS" name="neuron_classification-TOTAL_FORMS" type="hidden" value="2" />
+        <input id="id_neuron_classification-INITIAL_FORMS" name="neuron_classification-INITIAL_FORMS" type="hidden" value="0" />
+        <input id="id_neuron_classification-MAX_NUM_FORMS" name="neuron_classification-MAX_NUM_FORMS" type="hidden" value="1000" />
+        <div id="neuron_classifications"></div>
         <input class="btn" type="button" value="Save Draft" onclick="isDraft=1; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         {% if perms.bodb.save_sed or user.is_superuser%}
             <input class="btn" type="button" value="Save" onclick="isDraft=0; checkSimilarSEDs();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
@@ -697,4 +713,12 @@
         {% endif %}
     </form>
 </div>
+<script type="text/html" id="neuron_classification-template">
+<div id="neuron_classification-<%= idx %>">
+    <input id="id_neuron_classification-<%= idx %>-label" name="neuron_classification-<%= idx %>-label" type="hidden" value="<%= label %>"/>
+    <input id="id_neuron_classification-<%= idx %>-description" name="neuron_classification-<%= idx %>-description" type="hidden" value="<%= description %>"/>
+    <input id="id_neuron_classification-<%= idx %>-parent" name="neuron_classification-<%= idx %>-parent" type="hidden" value="<%= parent %>"/>
+    <input id="id_neuron_classification-<%= idx %>-num_units" name="neuron_classification-<%= idx %>-num_units" type="hidden" value="<%= num_units %>"/>
+</div>
+</script>
 {% endblock %}
