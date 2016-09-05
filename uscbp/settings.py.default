@@ -167,7 +167,6 @@ INSTALLED_APPS = (
     'registration',
     'taggit',
     'taggit_templatetags',
-    'rest_framework',
     'documentation',
     'autocomplete_light',
     'disqus',
