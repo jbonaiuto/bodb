@@ -386,27 +386,15 @@ def create_user_profile(user):
     #    skip setting permissions if occurs during 'syncdb' bootstrapping
     #        (by testing for the 'add_literature' permission)
     if not user.is_superuser and Permission.objects.filter(codename='add_literature'):
-        user.user_permissions.add(Permission.objects.get(codename='add_literature'))
         user.user_permissions.add(Permission.objects.get(codename='change_literature'))
         user.user_permissions.add(Permission.objects.get(codename='delete_literature'))
-        user.user_permissions.add(Permission.objects.get(codename='add_model'))
-        user.user_permissions.add(Permission.objects.get(codename='change_model'))
-        user.user_permissions.add(Permission.objects.get(codename='delete_model'))
         user.user_permissions.add(Permission.objects.get(codename='add_module'))
         user.user_permissions.add(Permission.objects.get(codename='change_module'))
         user.user_permissions.add(Permission.objects.get(codename='delete_module'))
-        user.user_permissions.add(Permission.objects.get(codename='add_bop'))
-        user.user_permissions.add(Permission.objects.get(codename='change_bop'))
-        user.user_permissions.add(Permission.objects.get(codename='delete_bop'))
-        user.user_permissions.add(Permission.objects.get(codename='add_sed'))
-        user.user_permissions.add(Permission.objects.get(codename='change_sed'))
-        user.user_permissions.add(Permission.objects.get(codename='delete_sed'))
-        user.user_permissions.add(Permission.objects.get(codename='add_ssr'))
-        user.user_permissions.add(Permission.objects.get(codename='change_ssr'))
-        user.user_permissions.add(Permission.objects.get(codename='delete_ssr'))
-        user.user_permissions.add(Permission.objects.get(codename='add_prediction'))
-        user.user_permissions.add(Permission.objects.get(codename='change_prediction'))
-        user.user_permissions.add(Permission.objects.get(codename='delete_prediction'))
+        for perm in ['add','change','delete','save']:
+            for obj_type in ['model','bop','sed','ssr','prediction']:
+                print('%s_%s' % (perm,obj_type))
+                user.user_permissions.add(Permission.objects.get(codename='%s_%s' % (perm,obj_type)))
 
     user.save()
 
