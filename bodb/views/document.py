@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import BaseCreateView
-from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction
+from bodb.models import DocumentFigure, RelatedBOP, RelatedModel, RelatedBrainRegion, BuildSED, Document, DocumentPublicRequest, Model, BOP, SED, SSR, RecentlyViewedEntry, Module, Prediction, ConnectivitySED
 from bodb.views.main import set_context_workspace
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from registration.models import User
@@ -51,19 +51,29 @@ class DocumentDetailView(DetailView):
         context['connectivity_build_seds']=[]
         context['imaging_build_seds']=[]
         context['erp_build_seds']=[]
+        context['connectivity_build_sed_seds']=[]
         if BuildSED.get_building_seds(self.object,user).exists():
             generic_build_seds=BuildSED.get_generic_building_seds(self.object, user)
             context['generic_build_seds'] = BuildSED.get_building_sed_list(generic_build_seds,
                 context['workspace_seds'], context['fav_docs'], context['subscriptions'])
+
             conn_build_seds=BuildSED.get_connectivity_building_seds(self.object, user)
+            for build_sed in conn_build_seds:
+                conn_sed=ConnectivitySED.objects.get(id=build_sed.sed.id)
+                build_sed.sed=conn_sed
+                if not conn_sed in context['connectivity_build_sed_seds']:
+                    context['connectivity_build_sed_seds'].append(conn_sed)
+            context['connectivity_build_sed_regions']=ConnectivitySED.get_region_map(context['connectivity_build_sed_seds'])
             context['connectivity_build_seds'] = BuildSED.get_building_sed_list(conn_build_seds,
                 context['workspace_seds'], context['fav_docs'], context['subscriptions'])
+
             imaging_build_seds=BuildSED.get_imaging_building_seds(self.object, user)
             context['imaging_build_seds'] = BuildSED.get_imaging_building_sed_list(imaging_build_seds,
                 context['workspace_seds'], context['fav_docs'], context['subscriptions'])
             erp_build_seds=BuildSED.get_erp_building_seds(self.object, user)
             context['erp_build_seds'] = BuildSED.get_building_sed_list(erp_build_seds, context['workspace_seds'],
                 context['fav_docs'], context['subscriptions'])
+
         rbops=RelatedBOP.get_related_bops(self.object, user)
         context['related_bops'] = RelatedBOP.get_related_bop_list(rbops, context['workspace_bops'], context['fav_docs'],
             context['subscriptions'])

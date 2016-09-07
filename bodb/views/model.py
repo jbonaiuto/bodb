@@ -16,7 +16,7 @@ from bodb.forms.document import DocumentFigureFormSet
 from bodb.forms.model import ModelForm, VariableFormSet, RelatedModelFormSet, ModelAuthorFormSet, ModuleFormSet, ModuleForm, ModelForm1, ModelForm2, ModelForm6
 from bodb.forms.sed import TestSEDFormSet, BuildSEDFormSet
 from bodb.forms.ssr import PredictionFormSet
-from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription, SSR, BOP, BrainRegion
+from bodb.models import Model, DocumentFigure, RelatedBOP, RelatedBrainRegion, find_similar_models, Variable, RelatedModel, ModelAuthor, Author, Module, BuildSED, TestSED, SED, WorkspaceActivityItem, Document, Literature, UserSubscription, SSR, BOP, BrainRegion, ConnectivitySED
 from bodb.models.ssr import Prediction
 from bodb.views.document import DocumentDetailView
 from bodb.views.main import set_context_workspace, get_active_workspace, get_profile, BODBView
@@ -677,9 +677,18 @@ class ModelDetailView(ObjectRolePermissionRequiredMixin,DocumentDetailView):
         generic_test_seds=TestSED.get_generic_testing_seds(self.object,user)
         context['generic_test_seds'] = TestSED.get_testing_sed_list(generic_test_seds, context['workspace_seds'],
             context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+
         conn_test_seds=TestSED.get_connectivity_testing_seds(self.object,user)
         context['connectivity_test_seds'] = TestSED.get_testing_sed_list(conn_test_seds, context['workspace_seds'],
             context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])
+        context['connectivity_test_sed_seds']=[]
+        for test_sed in conn_test_seds:
+            conn_sed=ConnectivitySED.objects.get(id=test_sed.sed.id)
+            test_sed.sed=conn_sed
+            if not conn_sed in context['connectivity_test_sed_seds']:
+                context['connectivity_test_sed_seds'].append(conn_sed)
+        context['connectivity_test_sed_regions']=ConnectivitySED.get_region_map(context['connectivity_test_sed_seds'])
+
         imaging_test_seds=TestSED.get_imaging_testing_seds(self.object, user)
         context['imaging_test_seds'] = TestSED.get_testing_sed_list(imaging_test_seds, context['workspace_seds'],
             context['workspace_ssrs'], context['fav_docs'], context['subscriptions'])

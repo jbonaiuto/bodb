@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load bodb_extras %}
+<script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
 <script type="text/javascript">
     var generic_build_seds=[];
     {% for selected,is_favorite,subscribed,buildsed in generic_build_seds %}
@@ -63,12 +65,71 @@
     {% endfor %}
 
 
+    var buildConnGraphnodes=[
+        {% for region_id in connectivity_build_sed_regions %}
+            { id: {{ region_id }}, label: '{{ connectivity_build_sed_regions|lookup:region_id|lookup:'str' }}',
+                title:'Name: {{ connectivity_build_sed_regions|lookup:region_id|lookup:'name' }}<br>Abbreviation: {{ connectivity_build_sed_regions|lookup:region_id|lookup:'abbreviation' }}<br>Nomenclature: {{ connectivity_build_sed_regions|lookup:region_id|lookup:'nomenclature' }}' },
+        {% endfor %}
+    ];
+
+    var buildConnGraphedges=[
+        {% for sed in connectivity_build_sed_seds %}
+            {from: {{sed.source_region.id}}, to:{{ sed.target_region.id }}, id:{{ sed.id }}, title:'{{ sed.brief_description|escapejs }}'},
+        {% endfor %}
+    ];
+
     $(document).ready(function(){
         addBuildingSEDs('generic', generic_build_seds);
         addBuildingSEDs('connectivity', connectivity_build_seds);
         addBuildingSEDs('imaging', imaging_build_seds);
         addBuildingSEDs('erp', erp_build_seds);
     });
+
+
+
+    function generateConnDiagram(graphId, nodes, edges)
+    {
+        document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+
+        var container=document.getElementById(graphId+'Div');
+
+        var data= {
+            nodes: nodes,
+            edges: edges
+        };
+
+        var options = {
+            width: '100%',
+            height: '400px',
+            edges: {
+                style: 'arrow'
+            },
+            nodes: {
+                color: {
+                    border:'black',
+                    background: 'white'
+                },
+                fontSize: 20
+            },
+            physics: {
+                barnesHut:{
+                    springLength: 20,
+                    gravitationalConstant: -2000,
+                    springConstant: 0.001
+                }
+            }
+        };
+        var network = new vis.Network(container, data, options);
+
+        network.on('doubleClick',function(properties){
+            if(properties.nodes.length>0)
+                document.location.href='/bodb/brain_region/'+properties.nodes[0]+'/';
+            else if(properties.edges.length>0)
+                document.location.href='/bodb/sed/'+network.edges[properties.edges[0]].id+'/';
+        });
+        document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view brain region details. Double-click on an edge to view connection details";
+        return false;
+    }
 
     function addBuildingSEDs(sed_type, building_seds)
     {
@@ -140,29 +201,22 @@
             </tr>
             <tr>
                 <td colspan="7">
-                    <div id="connectivity_build_seds"></div>                        
+                    <div id="connectivity_build_seds"></div>
                 </td>
             </tr>
             <tr class="col_header">
                 <td colspan="7">
-                    Graph Generation Tool:&nbsp;
-                    <select id="buildConnDiagramGraphtool">
-                        <option value="dot">dot</option>
-                        <option value="neato">neato</option>
-                        <option value="fdp">fdp</option>
-                        <option value="sfdp">sfdp</option>
-                        <option value="twopi">twopi</option>
-                        <option value="circo">circo</option>
-                    </select>&nbsp;
-                    <a href="" onclick="return generateConnDiagram([{% for selected,is_favorite,subscribed,buildsed in connectivity_build_seds %}{% if forloop.counter0 > 0 %},{% endif %}{{ buildsed.sed.id }}{% endfor %}],document.getElementById('buildConnDiagramGraphtool').value,'buildConnDiagram','{{ csrf_token }}');">Generate Connectivity Graph</a>
+                    <a id="buildConnGraphLink" href="" onclick="return generateConnDiagram('buildConnGraph',buildConnGraphnodes,buildConnGraphedges);">Generate Connectivity Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
                 <td colspan="7">
-                    <img id="buildConnDiagram" usemap="#buildConnDiagramMap"/>
-                    <map id="buildConnDiagramMap" name="buildConnDiagramMap">
-                    </map>
-                    <br><span id="buildConnDiagramMsg"></span>
+                    <div id="buildConnGraphDiv" style="background: #ffffff;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <span id="buildConnGraphMsg"></span>
                 </td>
             </tr>
         {% endif %}

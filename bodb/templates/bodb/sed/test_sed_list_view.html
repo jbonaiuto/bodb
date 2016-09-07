@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load bodb_extras %}
+<script type="text/javascript" src="{% static 'bodb/scripts/vis.min.js' %}"></script>
 <script type="text/javascript">
     var generic_test_seds=[];
     {% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in generic_test_seds %}
@@ -80,6 +82,63 @@
             relevance_narrative: '{{ testsed.relevance_narrative|escapejs }}',
         });
     {% endfor %}
+
+    var testConnGraphnodes=[
+        {% for region_id in connectivity_test_sed_regions %}
+            { id: {{ region_id }}, label: '{{ connectivity_test_sed_regions|lookup:region_id|lookup:'str' }}',
+                title:'Name: {{ connectivity_test_sed_regions|lookup:region_id|lookup:'name' }}<br>Abbreviation: {{ connectivity_test_sed_regions|lookup:region_id|lookup:'abbreviation' }}<br>Nomenclature: {{ connectivity_test_sed_regions|lookup:region_id|lookup:'nomenclature' }}' },
+        {% endfor %}
+    ];
+
+    var testConnGraphedges=[
+        {% for sed in connectivity_test_sed_seds %}
+            {from: {{sed.source_region.id}}, to:{{ sed.target_region.id }}, id:{{ sed.id }}, title:'{{ sed.brief_description|escapejs }}'},
+        {% endfor %}
+    ];
+
+    function generateConnDiagram(graphId, nodes, edges)
+    {
+        document.getElementById(graphId+'Msg').innerHTML="<div align='center' style='color:red;'>Generating diagram...</div>";
+
+        var container=document.getElementById(graphId+'Div');
+
+        var data= {
+            nodes: nodes,
+            edges: edges
+        };
+
+        var options = {
+            width: '100%',
+            height: '400px',
+            edges: {
+                style: 'arrow'
+            },
+            nodes: {
+                color: {
+                    border:'black',
+                    background: 'white'
+                },
+                fontSize: 20
+            },
+            physics: {
+                barnesHut:{
+                    springLength: 20,
+                    gravitationalConstant: -2000,
+                    springConstant: 0.001
+                }
+            }
+        };
+        var network = new vis.Network(container, data, options);
+
+        network.on('doubleClick',function(properties){
+            if(properties.nodes.length>0)
+                document.location.href='/bodb/brain_region/'+properties.nodes[0]+'/';
+            else if(properties.edges.length>0)
+                document.location.href='/bodb/sed/'+network.edges[properties.edges[0]].id+'/';
+        });
+        document.getElementById(graphId+'Msg').innerHTML="Double-click on a node to view brain region details. Double-click on an edge to view connection details";
+        return false;
+    }
 
     function addTestSEDs(sed_type, testing_seds)
     {
@@ -163,24 +222,17 @@
             </tr>
             <tr class="col_header">
                 <td colspan="10">
-                    Graph Generation Tool:&nbsp;
-                    <select id="testConnDiagramGraphtool">
-                        <option value="dot">dot</option>
-                        <option value="neato">neato</option>
-                        <option value="fdp">fdp</option>
-                        <option value="sfdp">sfdp</option>
-                        <option value="twopi">twopi</option>
-                        <option value="circo">circo</option>
-                    </select>&nbsp;
-                    <a href="" onclick="return generateConnDiagram([{% for sed_selected,sed_is_favorite,sed_subscribed_to_user,ssr_selected,ssr_is_favorite,ssr_subscribed_to_user,testsed in connectivity_test_seds %}{% if forloop.counter0 > 0 %},{% endif %}{{ testsed.sed.id }}{% endfor %}],document.getElementById('testConnDiagramGraphtool').value,'testConnDiagram','{{ csrf_token }}');">Generate Connectivity Graph</a>
+                    <a id="testConnGraphLink" href="" onclick="return generateConnDiagram('testConnGraph',testConnGraphnodes,testConnGraphedges);">Generate Connectivity Graph</a>
                 </td>
             </tr>
             <tr class="col_header">
                 <td colspan="10">
-                    <img id="testConnDiagram" usemap="#testConnDiagramMap"/>
-                    <map id="testConnDiagramMap" name="testConnDiagramMap">
-                    </map>
-                    <br><span id="testConnDiagramMsg"></span>
+                    <div id="testConnGraphDiv" style="background: #ffffff;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="10">
+                    <span id="testConnGraphMsg"></span>
                 </td>
             </tr>
         {% endif %}
