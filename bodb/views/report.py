@@ -15,6 +15,7 @@ from bodb.models import BOP, compareDocuments, compareRelatedModels, compareRela
 from bodb.forms.model import ModelReportForm, ModuleReportForm
 from bodb.forms.sed import SEDReportForm
 from bodb.views.main import set_context_workspace
+from uscbp import settings
 from uscbp.image_utils import get_thumbnail
 import json
 from rest_framework.renderers import UnicodeJSONRenderer
@@ -383,6 +384,10 @@ def ssr_report_rtf(context, display_settings, doc=None):
     p.append('SSR: %s' % unicode(context['ssr'].title).encode('utf8','ignore'))
     section.append(p)
 
+    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
+    p.append('%s/bodb/ssr/%d/' % (settings.URL_BASE, context['ssr'].id))
+    section.append(p)
+
     p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
     p.append('Model: %s' % unicode(context['model']).encode('utf8','ignore'))
     section.append(p)
@@ -440,6 +445,7 @@ def ssr_report_pdf(context, display_settings, elements=None):
         elements = []
 
     elements.append(Paragraph('SSR: %s' % unicode(context['ssr'].title).encode('utf8','ignore'), styles['Heading1']))
+    elements.append(Paragraph('%s/bodb/ssr/%d/' % (settings.URL_BASE, context['ssr'].id), styles['Heading2'], encoding='utf8'))
 
     elements.append(Paragraph('Model: %s' % unicode(context['model']).encode('utf8','ignore'), styles['Heading1']))
 
@@ -519,6 +525,10 @@ def sed_report_rtf(context, display_settings, doc=None):
     #print sed title
     p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
     p.append(unicode('SED: %s' % context['sed'].title).encode('utf8','ignore'))
+    section.append(p)
+
+    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
+    p.append('%s/bodb/sed/%d/' % (settings.URL_BASE, context['sed'].id))
     section.append(p)
 
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
@@ -668,6 +678,7 @@ def sed_report_pdf(context, display_settings, elements=None):
         elements = []
 
     elements.append(Paragraph('SED: %s' % unicode(context['sed'].title).encode('utf8','ignore'), styles['Heading1']))
+    elements.append(Paragraph('%s/bodb/sed/%d/' % (settings.URL_BASE, context['sed'].id), styles['Heading2'], encoding='utf8'))
 
     rows=0
     basicInfoData=[[Paragraph('Brief Description *',styles['Heading2']),
@@ -809,8 +820,7 @@ def get_module_architecture_table_rtf(ss, context, display_settings):
         table.AddRow(c1)
 
         for figure in context['figures']:
-            thumb_path = get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
-            image = PyRTF.Image(thumb_path)
+            image = PyRTF.Image(figure.figure.path)
             c1 = Cell(PyRTF.Paragraph(image))
             c1.SetSpan(2)
             c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal, unicode(figure.caption).encode('utf8', 'replace')),
@@ -929,6 +939,10 @@ def model_report_rtf(context, display_settings, doc=None):
     #print model title
     p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
     p.append('Model: %s' % unicode(context['model'].title).encode('utf8','replace'))
+    section.append(p)
+
+    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
+    p.append('%s/bodb/model/%d/' % (settings.URL_BASE, context['model'].id))
     section.append(p)
 
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
@@ -1397,6 +1411,7 @@ def model_report_pdf(context, display_settings, elements=None):
         elements = []
 
     elements.append(Paragraph('Model: %s' % context['model'].title, styles['Heading1'], encoding='utf8'))
+    elements.append(Paragraph('%s/bodb/model/%d/' % (settings.URL_BASE, context['model'].id), styles['Heading2'], encoding='utf8'))
 
     rows=0
     basicInfoData = [[Paragraph('Authors',styles['Heading2']),'',''],
@@ -1812,6 +1827,10 @@ def bop_report_rtf(context, display_settings, doc=None):
     p.append('BOP: %s' % unicode(context['bop'].title).encode('utf8','ignore'))
     section.append(p)
 
+    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
+    p.append('%s/bodb/bop/%d/' % (settings.URL_BASE, context['bop'].id))
+    section.append(p)
+
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 9 )
     #print model description
     c1 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Heading4,'Brief Description *'), thin_frame)
@@ -1900,6 +1919,7 @@ def bop_report_pdf(context, display_settings, elements=None):
 
     #print bop title
     elements.append(Paragraph('BOP: %s' % unicode(context['bop'].title).encode('utf8','ignore'), styles['Heading1']))
+    elements.append(Paragraph('%s/bodb/bop/%d/' % (settings.URL_BASE, context['bop'].id), styles['Heading2'], encoding='utf8'))
 
     rows=0
     basicInfoData=[[Paragraph('Brief Description *',styles['Heading2']),
@@ -2305,8 +2325,7 @@ def figure_section_rtf(section, ss, figures):
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 9, TabPS.DEFAULT_WIDTH * 4 )
 
     for figure in figures:
-        thumb_path=get_thumbnail(figure.figure.path, figure.figure.width, figure.figure.height)
-        image = PyRTF.Image(thumb_path)
+        image = PyRTF.Image(figure.figure.path)
         c1 = Cell(PyRTF.Paragraph(image))
         c2 = Cell(PyRTF.Paragraph(ss.ParagraphStyles.Normal,unicode(figure.caption).encode('utf8','ignore')), thin_frame)
         table.AddRow(c1, c2)

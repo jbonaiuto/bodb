@@ -11,7 +11,7 @@ def get_thumbnail(image_path, w, h):
 #        if image.mode not in ("L", "RGB"):
 #            image = image.convert("RGB")
     try:
-        image.thumbnail(new_size)#, Image.ANTIALIAS)
+        image.thumbnail(new_size, Image.ANTIALIAS)
         image.save(thumb_path, "PNG", quality=100)
     except Exception,e:
         print(str(e))
