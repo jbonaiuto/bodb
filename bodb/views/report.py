@@ -380,12 +380,10 @@ def ssr_report_rtf(context, display_settings, doc=None):
     doc.Sections.append( section )
 
     #print ssr title
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
-    p.append('SSR: %s' % unicode(context['ssr'].title).encode('utf8','ignore'))
-    section.append(p)
-
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
-    p.append('%s/bodb/ssr/%d/' % (settings.URL_BASE, context['ssr'].id))
+    rtfhyperlink = 'SSR: {\\field{\*\\fldinst{HYPERLINK "%s"}}{\\fldrslt{\ul %s}}}'
+    link='%s/bodb/ssr/%d/' % (settings.URL_BASE, context['ssr'].id)
+    text=unicode(context['ssr'].title).encode('utf8','replace')
+    p=PyRTF.Paragraph(ss.ParagraphStyles.Heading1,rtfhyperlink % (link, text))
     section.append(p)
 
     p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
@@ -523,12 +521,10 @@ def sed_report_rtf(context, display_settings, doc=None):
     doc.Sections.append( section )
 
     #print sed title
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
-    p.append(unicode('SED: %s' % context['sed'].title).encode('utf8','ignore'))
-    section.append(p)
-
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
-    p.append('%s/bodb/sed/%d/' % (settings.URL_BASE, context['sed'].id))
+    rtfhyperlink = 'SED: {\\field{\*\\fldinst{HYPERLINK "%s"}}{\\fldrslt{\ul %s}}}'
+    link='%s/bodb/sed/%d/' % (settings.URL_BASE, context['sed'].id)
+    text=unicode(context['sed'].title).encode('utf8','replace')
+    p=PyRTF.Paragraph(ss.ParagraphStyles.Heading1,rtfhyperlink % (link, text))
     section.append(p)
 
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
@@ -937,12 +933,10 @@ def model_report_rtf(context, display_settings, doc=None):
     doc.Sections.append( section )
 
     #print model title
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
-    p.append('Model: %s' % unicode(context['model'].title).encode('utf8','replace'))
-    section.append(p)
-
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
-    p.append('%s/bodb/model/%d/' % (settings.URL_BASE, context['model'].id))
+    rtfhyperlink = 'Model: {\\field{\*\\fldinst{HYPERLINK "%s"}}{\\fldrslt{\ul %s}}}'
+    link='%s/bodb/model/%d/' % (settings.URL_BASE, context['model'].id)
+    text=unicode(context['model'].title).encode('utf8','replace')
+    p=PyRTF.Paragraph(ss.ParagraphStyles.Heading1,rtfhyperlink % (link, text))
     section.append(p)
 
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 3,TabPS.DEFAULT_WIDTH * 6 )
@@ -1823,12 +1817,10 @@ def bop_report_rtf(context, display_settings, doc=None):
     doc.Sections.append( section )
 
     #print model title
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading1)
-    p.append('BOP: %s' % unicode(context['bop'].title).encode('utf8','ignore'))
-    section.append(p)
-
-    p = PyRTF.Paragraph(ss.ParagraphStyles.Heading2)
-    p.append('%s/bodb/bop/%d/' % (settings.URL_BASE, context['bop'].id))
+    rtfhyperlink = 'BOP: {\\field{\*\\fldinst{HYPERLINK "%s"}}{\\fldrslt{\ul %s}}}'
+    link='%s/bodb/bop/%d/' % (settings.URL_BASE, context['bop'].id)
+    text=unicode(context['bop'].title).encode('utf8','replace')
+    p=PyRTF.Paragraph(ss.ParagraphStyles.Heading1,rtfhyperlink % (link, text))
     section.append(p)
 
     table = PyRTF.Table( TabPS.DEFAULT_WIDTH * 4,TabPS.DEFAULT_WIDTH * 9 )
